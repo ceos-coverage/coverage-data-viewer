@@ -60,7 +60,8 @@ export class HelpContainer extends Component {
             : "";
         let listClasses = MiscUtil.generateStringFromSet({
             [styles.menu]: true,
-            [displayStyles.hidden]: this.props.helpPage !== ""
+            [displayStyles.hidden]: this.props.helpPage !== "",
+            [this.props.className]: typeof this.props.className !== "undefined"
         });
         let pageClasses = MiscUtil.generateStringFromSet({
             [displayStyles.hidden]: this.props.helpPage === ""
@@ -123,7 +124,7 @@ export class HelpContainer extends Component {
                             button
                             onClick={() => {
                                 MiscUtil.openLinkInNewTab(
-                                    "https://github.jpl.nasa.gov/CommonMappingClient/cmc-core"
+                                    "https://github.com/nasa/common-mapping-client"
                                 );
                             }}
                         >
@@ -148,7 +149,8 @@ export class HelpContainer extends Component {
 HelpContainer.propTypes = {
     appActions: PropTypes.object.isRequired,
     helpOpen: PropTypes.bool.isRequired,
-    helpPage: PropTypes.string.isRequired
+    helpPage: PropTypes.string.isRequired,
+    className: PropTypes.string
 };
 
 function mapStateToProps(state) {
