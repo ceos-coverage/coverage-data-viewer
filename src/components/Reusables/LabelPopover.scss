@@ -1,0 +1,23 @@
+.root {
+    display: inline-block;
+}
+
+.button {
+    padding: 0px 0.5rem;
+    display: block;
+}
+.label {
+    display: flex;
+    height: 2.4rem;
+    line-height: 2.4rem;
+    flex-flow: row nowrap;
+    align-content: flex-start;
+    align-items: center;
+}
+.subtitle {
+    display: block;
+    text-align: left;
+}
+.content {
+    padding: 1rem;
+}

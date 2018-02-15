@@ -1,0 +1,44 @@
+.root {
+    display: inline-block;
+}
+.button {
+    padding: 0px 0.5rem;
+    display: block;
+    &:before {
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 1px;
+        content: "";
+        position: absolute;
+        transition: background-color 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+        pointer-events: none;
+        background-color: rgba(0, 0, 0, 0.42);
+    }
+    &:after {
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 2px;
+        content: "";
+        position: absolute;
+        transform: scaleX(0);
+        transition: transform 200ms cubic-bezier(0, 0, 0.2, 1) 0ms;
+        pointer-events: none;
+        background-color: #00bcd4;
+    }
+    &.active:after {
+        transform: scaleX(1);
+    }
+}
+.label {
+    display: flex;
+    height: 2.4rem;
+    line-height: 2.4rem;
+    flex-flow: row nowrap;
+    align-content: flex-start;
+    align-items: center;
+}
+.content {
+    padding: 1rem;
+}

@@ -9,31 +9,108 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import Button from "material-ui/Button";
 import Tabs, { Tab } from "material-ui/Tabs";
 import Paper from "material-ui/Paper";
+import Slide from "material-ui/transitions/Slide";
+import Button from "material-ui/Button";
+import IconButton from "material-ui/IconButton";
+import ArrowBack from "material-ui-icons/KeyboardArrowLeft";
+import { ChartMenu } from "components/Chart";
+import { LayerSearchMenu } from "components/MainMenu/LayerSearch";
 import * as appActions from "actions/appActions";
+import MiscUtil from "_core/utils/MiscUtil";
 import styles from "components/MainMenu/MainMenu.scss";
+import displayStyles from "_core/styles/display.scss";
 
 export class MainMenu extends Component {
     render() {
+        let toggleIconClasses = MiscUtil.generateStringFromSet({
+            [styles.toggleIcon]: true,
+            [styles.toggleIconFlip]: this.props.isOpen
+        });
+
+        let tabDatasetsClasses = MiscUtil.generateStringFromSet({
+            [styles.tabContent]: true,
+            [displayStyles.hidden]: this.props.tabIndex !== 0
+        });
+
+        let tabChartClasses = MiscUtil.generateStringFromSet({
+            [styles.tabContent]: true,
+            [displayStyles.hidden]: this.props.tabIndex !== 1
+        });
+
+        let tabOptionsClasses = MiscUtil.generateStringFromSet({
+            [styles.tabContent]: true,
+            [displayStyles.hidden]: this.props.tabIndex !== 2
+        });
+
+        let tabHelpClasses = MiscUtil.generateStringFromSet({
+            [styles.tabContent]: true,
+            [displayStyles.hidden]: this.props.tabIndex !== 3
+        });
+
         return (
-            <Paper elevation={1} className={styles.root}>
-                <Tabs
-                    value={this.props.tabIndex}
-                    onChange={(evt, value) => this.props.appActions.setMainMenuTabIndex(value)}
-                    indicatorColor="primary"
-                >
-                    <Tab label="Datasets" />
-                    <Tab label="Charts" />
-                    <Tab label="Options" />
-                    <Tab label="Help" />
-                </Tabs>
-                {this.props.tabIndex === 0 && <div>Datasets</div>}
-                {this.props.tabIndex === 1 && <div>Charts</div>}
-                {this.props.tabIndex === 2 && <div>Options</div>}
-                {this.props.tabIndex === 3 && <div>Help</div>}
-            </Paper>
+            <Slide direction="left" in={this.props.isOpen} className={styles.root}>
+                <Paper elevation={4}>
+                    <Button
+                        variant="raised"
+                        className={styles.toggleBtn}
+                        aria-label={this.props.isOpen ? "Close" : "Open"}
+                        onClick={() => this.props.appActions.setMainMenuOpen(!this.props.isOpen)}
+                    >
+                        <ArrowBack className={toggleIconClasses} />
+                    </Button>
+                    <div className={styles.menu}>
+                        <Tabs
+                            value={this.props.tabIndex}
+                            className={styles.tabs}
+                            onChange={(evt, value) =>
+                                this.props.appActions.setMainMenuTabIndex(value)
+                            }
+                            textColor="primary"
+                            indicatorColor="primary"
+                            fullWidth={true}
+                        >
+                            <Tab
+                                classes={{
+                                    rootPrimary: styles.tabLabel,
+                                    rootPrimarySelected: styles.tabSelected
+                                }}
+                                label="Datasets"
+                            />
+                            <Tab
+                                classes={{
+                                    rootPrimary: styles.tabLabel,
+                                    rootPrimarySelected: styles.tabSelected
+                                }}
+                                label="Charts"
+                            />
+                            <Tab
+                                classes={{
+                                    rootPrimary: styles.tabLabel,
+                                    rootPrimarySelected: styles.tabSelected
+                                }}
+                                label="Options"
+                            />
+                            <Tab
+                                classes={{
+                                    rootPrimary: styles.tabLabel,
+                                    rootPrimarySelected: styles.tabSelected
+                                }}
+                                label="Help"
+                            />
+                        </Tabs>
+                        <div className={tabDatasetsClasses}>
+                            <LayerSearchMenu />
+                        </div>
+                        <div className={tabChartClasses}>
+                            <ChartMenu />
+                        </div>
+                        <div className={tabOptionsClasses}>Options</div>
+                        <div className={tabHelpClasses}>Help</div>
+                    </div>
+                </Paper>
+            </Slide>
         );
     }
 }

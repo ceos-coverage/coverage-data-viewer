@@ -8,6 +8,9 @@ export default function view(state = viewState, action, opt_reducer = ViewReduce
         case actionTypes.SET_MAIN_MENU_TAB_INDEX:
             return opt_reducer.setMainMenuTabIndex(state, action);
 
+        case actionTypes.SET_MAIN_MENU_OPEN:
+            return opt_reducer.setMainMenuOpen(state, action);
+
         default:
             return viewCore.call(this, state, action, opt_reducer);
     }

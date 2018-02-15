@@ -1,0 +1,17 @@
+.root {
+    position: absolute;
+    z-index: 2;
+    top: 0.2rem;
+    right: 0.7rem;
+}
+
+.btnWrapper {
+    display: inline-block;
+}
+
+.btn {
+    width: 30px;
+    height: 30px;
+    font-size: 1.7rem;
+    margin-left: 5px;
+}

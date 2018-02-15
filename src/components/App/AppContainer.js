@@ -11,25 +11,22 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { MuiThemeProvider, createMuiTheme } from "material-ui/styles";
 import { cyan, grey } from "material-ui/colors";
-import * as appActions from "_core/actions/appActions";
-import * as mapActions from "_core/actions/mapActions";
-import * as appStrings from "_core/constants/appStrings";
+import * as appActionsCore from "_core/actions/appActions";
+import * as mapActionsCore from "_core/actions/mapActions";
+import * as appStringsCore from "_core/constants/appStrings";
 import appConfig from "constants/appConfig";
 import MiscUtil from "_core/utils/MiscUtil";
 import { MapContainer, MapControlsContainer } from "components/Map";
 import { MainMenu } from "components/MainMenu";
-import { SettingsContainer } from "_core/components/Settings";
-import { ShareContainer } from "_core/components/Share";
 import { LayerInfoContainer } from "_core/components/LayerInfo";
 import { LoadingContainer } from "_core/components/Loading";
-import { HelpContainer } from "_core/components/Help";
 import { AlertsContainer } from "_core/components/Alerts";
 import { DatePickerContainer } from "_core/components/DatePicker";
-import { AppBarContainer } from "_core/components/AppBar";
-// import { LayerMenuContainer } from "_core/components/LayerMenu";
 import { MouseFollowerContainer } from "_core/components/MouseFollower";
 import { KeyboardControlsContainer } from "_core/components/KeyboardControls";
-import styles from "_core/components/App/AppContainer.scss";
+import { SatelliteLayerSelector, InsituLayerMenu } from "components/LayerMenu";
+import styles from "components/App/AppContainer.scss";
+import stylesCore from "_core/components/App/AppContainer.scss";
 import displayStyles from "_core/styles/display.scss";
 
 const theme = createMuiTheme({
@@ -37,12 +34,7 @@ const theme = createMuiTheme({
         htmlFontSize: 10
     },
     palette: {
-        primary: {
-            light: cyan["400"],
-            main: cyan["600"],
-            dark: cyan["900"],
-            contrastText: "#000"
-        }
+        primary: cyan
     }
 });
 
@@ -81,7 +73,7 @@ export class AppContainer extends Component {
             window.requestAnimationFrame(() => {
                 setTimeout(() => {
                     // initialize the maps
-                    this.props.initializeMap(appStrings.MAP_LIB_2D, "map2D");
+                    this.props.initializeMap(appStringsCore.MAP_LIB_2D, "map2D");
 
                     // set initial view
                     this.props.setMapView({ extent: appConfig.DEFAULT_BBOX_EXTENT }, true);
@@ -107,26 +99,23 @@ export class AppContainer extends Component {
     render() {
         let hideMouse = this.props.mapControlsHidden && this.props.distractionFreeMode;
         let containerClasses = MiscUtil.generateStringFromSet({
-            [styles.appContainer]: true,
+            [stylesCore.appContainer]: true,
             [displayStyles.mouseVisible]: !hideMouse,
             [displayStyles.mouseHidden]: hideMouse
         });
         return (
             <MuiThemeProvider theme={theme}>
                 <div className={containerClasses}>
-                    <DatePickerContainer />
-                    <HelpContainer />
+                    <DatePickerContainer className={styles.datePicker} />
                     <MapContainer />
-                    <LoadingContainer />
                     <MapControlsContainer />
-                    <AppBarContainer />
-                    <SettingsContainer />
-                    <ShareContainer />
+                    <SatelliteLayerSelector />
+                    <InsituLayerMenu />
                     <LayerInfoContainer />
-                    {/* <LayerMenuContainer /> */}
                     <MainMenu />
                     <AlertsContainer />
                     <MouseFollowerContainer />
+                    <LoadingContainer />
                     <KeyboardControlsContainer />
                 </div>
             </MuiThemeProvider>
@@ -155,16 +144,16 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        completeInitialLoad: bindActionCreators(appActions.completeInitialLoad, dispatch),
+        completeInitialLoad: bindActionCreators(appActionsCore.completeInitialLoad, dispatch),
         checkBrowserFunctionalities: bindActionCreators(
-            appActions.checkBrowserFunctionalities,
+            appActionsCore.checkBrowserFunctionalities,
             dispatch
         ),
-        loadInitialData: bindActionCreators(mapActions.loadInitialData, dispatch),
-        activateDefaultLayers: bindActionCreators(mapActions.activateDefaultLayers, dispatch),
-        runUrlConfig: bindActionCreators(appActions.runUrlConfig, dispatch),
-        initializeMap: bindActionCreators(mapActions.initializeMap, dispatch),
-        setMapView: bindActionCreators(mapActions.setMapView, dispatch)
+        loadInitialData: bindActionCreators(mapActionsCore.loadInitialData, dispatch),
+        activateDefaultLayers: bindActionCreators(mapActionsCore.activateDefaultLayers, dispatch),
+        runUrlConfig: bindActionCreators(appActionsCore.runUrlConfig, dispatch),
+        initializeMap: bindActionCreators(mapActionsCore.initializeMap, dispatch),
+        setMapView: bindActionCreators(mapActionsCore.setMapView, dispatch)
     };
 }
 

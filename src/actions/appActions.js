@@ -10,3 +10,7 @@ import * as types from "constants/actionTypes";
 export function setMainMenuTabIndex(tabIndex) {
     return { type: types.SET_MAIN_MENU_TAB_INDEX, tabIndex };
 }
+
+export function setMainMenuOpen(isOpen) {
+    return { type: types.SET_MAIN_MENU_OPEN, isOpen };
+}

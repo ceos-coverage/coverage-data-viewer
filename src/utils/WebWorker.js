@@ -6,8 +6,17 @@
  */
 
 import WebWorkerCore from "_core/utils/WebWorker";
+import * as appStrings from "constants/appStrings";
+import { largestTriangleThreeBucket } from "d3fc-sample";
+import Papa from "papaparse";
 
 export default class WebWorker extends WebWorkerCore {
+    constructor(options) {
+        super(options);
+
+        this._remoteData = {};
+    }
+
     /*
     Edit this function to handle worker jobs.
     Whatever is sent back by the promise will be
@@ -24,8 +33,212 @@ export default class WebWorker extends WebWorkerCore {
     handleMessage(message, workerRef) {
         let operation = message.operation;
         switch (operation) {
+            case appStrings.WORKER_TASK_RETRIEVE_DATA:
+                return this._retrieveRemoteData(message);
+            case appStrings.WORKER_TASK_DECIMATE_POINTS_LTTB:
+                return this._decimateLTTB(message);
             default:
                 return WebWorkerCore.prototype.handleMessage.call(this, message, workerRef);
         }
+    }
+
+    _retrieveRemoteData(eventData) {
+        return new Promise((resolve, reject) => {
+            let options = eventData.options;
+            let url = options.url;
+
+            // check if we've retrieved this data before
+            if (!options.force && typeof this._remoteData[url] !== "undefined") {
+                resolve("success");
+            } else {
+                console.time("parsing");
+                Papa.parse(url, {
+                    download: true,
+                    delimiter: ",",
+                    header: true,
+                    fastMode: true,
+                    complete: results => {
+                        console.timeEnd("parsing");
+                        this._remoteData[url] = { data: results.data, meta: {} };
+                        if (options.processMeta) {
+                            console.time("process meta");
+                            this._processExtremes(url);
+                            console.timeEnd("process meta");
+                        }
+                        resolve("success");
+                    },
+                    error: err => {
+                        console.warn("Error in _retrieveRemoteData: ", err);
+                        reject(err);
+                    }
+                });
+            }
+        });
+    }
+
+    _processExtremes(url) {
+        let dataRows = this._remoteData[url].data;
+        let extremes = {};
+        if (dataRows.length > 0) {
+            let seed = dataRows[0];
+            let keys = Object.keys(seed);
+
+            // get the read functions
+            let readFuncs = keys.reduce((acc, key) => {
+                acc[key] = this._getReadFuncForKey(key);
+                return acc;
+            }, {});
+
+            // seed the extremes
+            extremes = keys.reduce((acc, key) => {
+                acc[key] = { min: readFuncs[key](seed), max: readFuncs[key](seed) };
+                return acc;
+            }, {});
+
+            // find the min/max for each key
+            extremes = dataRows.reduce((acc, row) => {
+                for (let i = 0; i < keys.length; i++) {
+                    let key = keys[i];
+                    let keyVal = readFuncs[key](row);
+                    acc[key].min = Math.min(acc[key].min, keyVal);
+                    acc[key].max = Math.max(acc[key].max, keyVal);
+                }
+                return acc;
+            }, extremes);
+        }
+
+        this._remoteData[url].meta.extremes = extremes;
+    }
+
+    _decimateLTTB(eventData) {
+        return new Promise((resolve, reject) => {
+            console.time("decimating");
+            let dataRows = eventData.dataRows
+                ? eventData.dataRows
+                : eventData.url ? this._remoteData[eventData.url].data : [];
+            let xFunc = this._getReadFuncForKey(eventData.keys.xKey);
+            let yFunc = this._getReadFuncForKey(eventData.keys.yKey);
+            let zFunc = this._getReadFuncForKey(eventData.keys.zKey);
+            let target = eventData.target;
+            let range = eventData.xRange;
+            if (range) {
+                let startIndex = Math.max(
+                    this._binaryIndexOf(dataRows, range[0], index => {
+                        return xFunc(dataRows[index]);
+                    }),
+                    0
+                );
+                let endIndex = Math.min(
+                    this._binaryIndexOf(dataRows, range[1], index => {
+                        return xFunc(dataRows[index]);
+                    }),
+                    dataRows.length
+                );
+                dataRows = dataRows.slice(startIndex, endIndex);
+            }
+
+            // Create the sampler
+            const sampler = largestTriangleThreeBucket();
+
+            // Configure the x / y value accessors
+            sampler.x(xFunc).y(yFunc);
+
+            // attempt to find a good bucket number
+            let buckets = 1;
+            let base = target;
+            let numRows = dataRows.length;
+            if (numRows > base) {
+                buckets = Math.round(numRows / base);
+            }
+
+            // Configure the size of the buckets used to downsample the data.
+            sampler.bucketSize(buckets);
+
+            // Run the sampler
+            let decData = sampler(dataRows);
+
+            // format the downsampled data
+            let data = this._transformRowData(decData, eventData.format, xFunc, yFunc, zFunc);
+
+            console.timeEnd("decimating");
+
+            resolve([data, this._remoteData[eventData.url].meta]);
+        });
+    }
+
+    _transformRowData(rowData, format, xFunc, yFunc, zFunc = undefined) {
+        if (typeof zFunc !== "undefined") {
+            return rowData.map(entry => {
+                if (format === "array") {
+                    return [xFunc(entry), yFunc(entry), zFunc(entry)];
+                } else {
+                    return {
+                        x: xFunc(entry),
+                        y: yFunc(entry),
+                        z: zFunc(entry)
+                    };
+                }
+            });
+        } else {
+            return rowData.map(entry => {
+                if (format === "array") {
+                    return [xFunc(entry), yFunc(entry)];
+                } else {
+                    return {
+                        x: xFunc(entry),
+                        y: yFunc(entry)
+                    };
+                }
+            });
+        }
+    }
+
+    _getReadFuncForKey(key) {
+        if (typeof key === "undefined") {
+            return undefined;
+        }
+
+        switch (key) {
+            case "Time":
+                return this._readTime();
+            default:
+                return this._readFloat(key);
+        }
+    }
+
+    _readTime() {
+        return entry => {
+            return new Date(entry["Time"]).getTime();
+        };
+    }
+
+    _readFloat(key) {
+        return entry => {
+            return parseFloat(entry[key]);
+        };
+    }
+
+    _binaryIndexOf(arr, searchElement, readFunc) {
+        let minIndex = 0;
+        let maxIndex = arr.length - 1;
+        let currentIndex = 0;
+        let currentElement = null;
+
+        while (minIndex <= maxIndex) {
+            currentIndex = ((minIndex + maxIndex) / 2) | 0;
+            currentElement = readFunc(currentIndex);
+
+            if (currentElement < searchElement) {
+                minIndex = currentIndex + 1;
+            } else if (currentElement > searchElement) {
+                maxIndex = currentIndex - 1;
+            } else {
+                return currentIndex;
+            }
+        }
+
+        // if we cannot find the actual value, return the nearest
+        console.warn("Could not find value: " + searchElement + " returning: ", readFunc(minIndex));
+        return minIndex;
     }
 }

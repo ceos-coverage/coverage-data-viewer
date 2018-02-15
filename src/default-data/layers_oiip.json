@@ -1,0 +1,100 @@
+{
+    "layers": [{
+        "id": "VIIRS_SNPP_CorrectedReflectance_TrueColor",
+        "title": "True Color",
+        "type": "data",
+        "handleAs": "GIBS_raster",
+        "isDefault": true,
+        "wmtsOptions": {
+            "urlFunctions": {
+                "openlayers": "kvpTimeParam",
+                "cesium": "kvpTimeParam"
+            }
+        },
+        "metadata": {
+            "url": "default-data/_core_default-data/layer-metadata/VIIRS_SNPP_CorrectedReflectance_TrueColor.json",
+            "handleAs": "json"
+        },
+        "thumbnailImage": "img/VIIRS_SNPP_CorrectedReflectance_TrueColor.png"
+    }, {
+        "id": "GHRSST_L4_G1SST_Sea_Surface_Temperature",
+        "title": "Sea Surface Temperature",
+        "type": "data",
+        "handleAs": "GIBS_raster",
+        "min": 0.0,
+        "max": 32.0,
+        "units": "˚C",
+        "wmtsOptions": {
+            "urlFunctions": {
+                "openlayers": "kvpTimeParam",
+                "cesium": "kvpTimeParam"
+            }
+        },
+        "metadata": {
+            "url": "default-data/_core_default-data/layer-metadata/GHRSST_L4_G1SST_Sea_Surface_Temperature.json",
+            "handleAs": "json"
+        },
+        "palette": {
+            "name": "GIBS_SST",
+            "handleAs": "json-fixed"
+        },
+        "thumbnailImage": "img/GHRSST_L4_G1SST_Sea_Surface_Temperature.png"
+    }, {
+        "id": "Reference_Labels",
+        "title": "Reference Labels",
+        "type": "reference",
+        "handleAs": "GIBS_raster",
+        "updateParameters": { "time": false }
+    }, {
+        "id": "Reference_Features",
+        "title": "Reference Features",
+        "type": "reference",
+        "handleAs": "GIBS_raster",
+        "updateParameters": { "time": false }
+    }, {
+        "id": "ESRI_World_Imagery",
+        "title": "ESRI High Resolution World Imagery",
+        "type": "basemap",
+        "thumbnailImage": "https://gibs.earthdata.nasa.gov/wmts/epsg4326/best/wmts.cgi?layer=BlueMarble_ShadedRelief_Bathymetry&tilematrixset=500m&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image/jpeg&TileMatrix=2&TileCol=1&TileRow=1&TIME=2016-05-22",
+        "isDefault": true,
+        "handleAs": "xyz_raster",
+        "updateParameters": { "time": false },
+        "wmtsOptions": {
+            "projection": "EPSG:4326",
+            "layer": "ESRI_World_Imagery",
+            "url": "https://services.arcgisonline.com/arcgis/rest/services/ESRI_Imagery_World_2D/MapServer/tile/{z}/{y}/{x}",
+            "tileGrid": {
+                "minZoom": 1,
+                "maxZoom": 16,
+                "tileSize": 512
+            },
+            "urlFunctions": {
+                "openlayers": "esriCustom512"
+            },
+            "tileFunctions": {
+                "openlayers": "catsTile"
+            }
+        }
+    }, {
+        "id": "BlueMarble_ShadedRelief_Bathymetry",
+        "title": "Blue Marble, Shaded Relief w/Bathymetry",
+        "type": "basemap",
+        "thumbnailImage": "https://gibs.earthdata.nasa.gov/wmts/epsg4326/best/wmts.cgi?layer=BlueMarble_ShadedRelief_Bathymetry&tilematrixset=500m&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image/jpeg&TileMatrix=2&TileCol=1&TileRow=1&TIME=2016-05-22",
+        "handleAs": "GIBS_raster",
+        "updateParameters": { "time": false }
+    }, {
+        "id": "OSM_Land_Water_Map",
+        "title": "Land/Water Map (data from OSM)",
+        "type": "basemap",
+        "thumbnailImage": "https://gibs.earthdata.nasa.gov/wmts/epsg4326/best/wmts.cgi?layer=OSM_Land_Water_Map&tilematrixset=250m&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image/png&TileMatrix=2&TileCol=1&TileRow=1&TIME=2016-05-22",
+        "handleAs": "GIBS_raster",
+        "updateParameters": { "time": false }
+    }, {
+        "id": "ASTER_GDEM_Color_Shaded_Relief",
+        "title": "Digital Elevation Map (Color Shaded Relief)",
+        "type": "basemap",
+        "thumbnailImage": "https://gibs.earthdata.nasa.gov/wmts/epsg4326/best/wmts.cgi?layer=ASTER_GDEM_Color_Shaded_Relief&tilematrixset=31.25m&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image/jpeg&TileMatrix=2&TileCol=1&TileRow=1",
+        "handleAs": "GIBS_raster",
+        "updateParameters": { "time": false }
+    }]
+}

@@ -6,7 +6,7 @@
  */
 
 import * as appStrings from "_core/constants/appStrings";
-import MapWrapperOpenlayers from "_core/utils/MapWrapperOpenlayers";
+import MapWrapperOpenlayers from "utils/MapWrapperOpenlayers";
 // import MapWrapperCesium from "_core/utils/MapWrapperCesium";
 
 // creates a new object that abstracts a mapping library
