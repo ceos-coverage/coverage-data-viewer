@@ -81,7 +81,7 @@ export class LabelPopover extends Component {
 }
 
 LabelPopover.propTypes = {
-    label: PropTypes.string.isRequired,
+    label: PropTypes.oneOfType([PropTypes.string, PropTypes.node]).isRequired,
     subtitle: PropTypes.string,
     className: PropTypes.string,
     children: PropTypes.oneOfType([PropTypes.object, PropTypes.array, PropTypes.node])

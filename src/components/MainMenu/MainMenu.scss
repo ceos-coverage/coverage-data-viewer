@@ -19,6 +19,10 @@
     background: #3f3f3f;
 }
 
+.tabLabel {
+    min-width: 72px;
+}
+
 .tabLabel:not(.tabSelected) {
     color: #ffffff;
 }

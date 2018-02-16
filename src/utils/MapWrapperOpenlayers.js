@@ -52,12 +52,15 @@ const LOAD_COMPLETE_STATES = [TILE_STATE_LOADED, TILE_STATE_ERROR, TILE_STATE_EM
 let _tilesLoading = 0;
 
 export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
-    constructor(container, options) {
-        super(container, options);
+    initStaticClasses(container, options) {
+        MapWrapperOpenlayersCore.prototype.initStaticClasses.call(this, container, options);
+        this.miscUtil = MiscUtil;
+    }
 
+    initObjects(container, options) {
+        MapWrapperOpenlayersCore.prototype.initObjects.call(this, container, options);
         this.animationBuffer = new AnimationBuffer(22);
         this.tileLoadingQueue = new TileLoadingQueue();
-        this.miscUtil = MiscUtil;
     }
 
     createMap(container, options) {
@@ -73,7 +76,9 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
         return map;
     }
 
-    configureStyles() {
+    configureStyles(container, options) {
+        MapWrapperOpenlayersCore.prototype.configureStyles.call(this, container, options);
+
         this.defaultGeometryStyle = new Ol_Style({
             fill: new Ol_Style_Fill({
                 color: appConfig.GEOMETRY_FILL_COLOR

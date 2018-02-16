@@ -1,3 +1,5 @@
+@import "~styles/colors";
+
 .root {
     position: relative;
     display: inline-block;
@@ -19,7 +21,7 @@
         transform: scaleX(0);
         transition: transform 200ms cubic-bezier(0, 0, 0.2, 1) 0ms;
         pointer-events: none;
-        background-color: #00bcd4;
+        background-color: $color-primary;
     }
     &.active {
         border-color: white;

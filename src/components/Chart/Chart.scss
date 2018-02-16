@@ -1,3 +1,5 @@
+@import "~styles/colors";
+
 .root {
     display: block;
     position: relative;
@@ -77,8 +79,8 @@
         stroke: none;
     }
     text {
-        color: #00bcd4 !important;
-        fill: #00bcd4 !important;
+        color: $color-primary !important;
+        fill: $color-primary !important;
     }
 }
 

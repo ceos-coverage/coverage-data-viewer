@@ -1,9 +1,22 @@
 .root {
     position: absolute;
-    bottom: 0.7rem;
+    top: 0.7rem;
     left: 17.9rem;
     width: 26.9rem;
     min-height: 6rem;
     background: #3f3f3f;
     padding: 0.3rem 0.7rem;
+}
+
+.label {
+    color: white;
+    width: 100%;
+    button {
+        padding-left: 0px;
+        width: 100%;
+        .labelContent {
+            text-align: left;
+            flex-grow: 1;
+        }
+    }
 }

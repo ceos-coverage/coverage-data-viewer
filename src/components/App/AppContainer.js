@@ -106,9 +106,9 @@ export class AppContainer extends Component {
         return (
             <MuiThemeProvider theme={theme}>
                 <div className={containerClasses}>
-                    <DatePickerContainer className={styles.datePicker} />
+                    <DatePickerContainer />
                     <MapContainer />
-                    <MapControlsContainer />
+                    <MapControlsContainer className={styles.mapControls} />
                     <SatelliteLayerSelector />
                     <InsituLayerMenu />
                     <LayerInfoContainer />

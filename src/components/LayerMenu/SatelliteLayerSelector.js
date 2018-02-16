@@ -47,6 +47,14 @@ export class SatelliteLayerSelector extends Component {
         }
     }
 
+    renderLabel(activeLayer) {
+        return (
+            <span className={styles.labelContent}>
+                {activeLayer ? activeLayer.get("title") : "No data layer selected"}
+            </span>
+        );
+    }
+
     render() {
         let layerList = this.props.layers
             .filter(layer => !layer.get("isDisabled"))
@@ -64,9 +72,7 @@ export class SatelliteLayerSelector extends Component {
 
         return (
             <div className={styles.root}>
-                <LabelPopover
-                    label={activeLayer ? activeLayer.get("title") : "No data layer selected"}
-                >
+                <LabelPopover label={this.renderLabel(activeLayer)} className={styles.label}>
                     <div className="layer-option-list">{this.renderLayerList(layerList)}</div>
                 </LabelPopover>
                 <div className="colorbar-wrapper">
