@@ -1,10 +1,14 @@
 .root {
     padding: 1.5rem 1rem;
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    z-index: 2;
 }
 
-.createBtn {
-    float: right;
-    margin-right: 5px;
+.options {
+    flex-grow: 1;
+    padding-right: 1rem;
 }
 
 .chartOption {

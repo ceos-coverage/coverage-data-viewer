@@ -28,6 +28,7 @@
     width: 100%;
     height: calc(100% - 4.8rem);
     overflow: hidden;
+    background: darken(white, 3%);
 }
 
 .toggleBtn {
@@ -39,6 +40,7 @@
     min-height: 4.8rem;
     z-index: 0;
     transform: translate(-100%, 0px);
+    background: white;
 }
 
 .toggleIcon {

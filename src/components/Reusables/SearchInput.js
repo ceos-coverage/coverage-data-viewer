@@ -3,11 +3,14 @@ import { findDOMNode } from "react-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import ButtonBase from "material-ui/ButtonBase";
+import Paper from "material-ui/Paper";
 import ArrowDropDown from "material-ui-icons/ArrowDropDown";
 import Popover from "material-ui/Popover";
 import Typography from "material-ui/Typography";
+import { IconButtonSmall } from "_core/components/Reusables";
 import MiscUtil from "_core/utils/MiscUtil";
 import styles from "components/Reusables/SearchInput.scss";
+import displayStyles from "_core/styles/display.scss";
 
 export class LabelPopover extends Component {
     constructor(props) {
@@ -28,6 +31,56 @@ export class LabelPopover extends Component {
         this.forceUpdate();
     }
 
+    renderLeftAction() {
+        if (typeof this.props.leftAction !== "undefined") {
+            let action = this.props.leftAction;
+            if (typeof action.onClick !== "undefined") {
+                return (
+                    <div
+                        color="inherit"
+                        className={styles.actionBtn}
+                        onClick={this.props.leftAction.onClick}
+                    >
+                        {this.props.leftAction.icon}
+                    </div>
+                );
+            } else {
+                return (
+                    <div color="inherit" className={styles.actionBtn}>
+                        {this.props.leftAction.icon}
+                    </div>
+                );
+            }
+        } else {
+            return <div className={displayStyles.hidden} />;
+        }
+    }
+
+    renderRightAction() {
+        if (typeof this.props.rightAction !== "undefined") {
+            let action = this.props.rightAction;
+            if (typeof action.onClick !== "undefined") {
+                return (
+                    <IconButtonSmall
+                        color="inherit"
+                        className={styles.actionBtnRight}
+                        onClick={this.props.rightAction.onClick}
+                    >
+                        {this.props.rightAction.icon}
+                    </IconButtonSmall>
+                );
+            } else {
+                return (
+                    <IconButtonSmall color="inherit" className={styles.actionBtnRight}>
+                        {this.props.rightAction.icon}
+                    </IconButtonSmall>
+                );
+            }
+        } else {
+            return <div className={displayStyles.hidden} />;
+        }
+    }
+
     render() {
         let containerClasses = MiscUtil.generateStringFromSet({
             [styles.root]: true,
@@ -36,11 +89,21 @@ export class LabelPopover extends Component {
 
         let btnClasses = MiscUtil.generateStringFromSet({
             [styles.button]: true,
+            [styles.padRight]: typeof this.props.rightAction !== "undefined",
             [styles.active]: this.popoverOpen
         });
 
+        let width = "initial";
+        if (
+            typeof this.button !== "undefined" &&
+            typeof this.button.getBoundingClientRect === "function"
+        ) {
+            let dim = this.button.getBoundingClientRect();
+            width = dim.width;
+        }
+
         return (
-            <div className={containerClasses}>
+            <Paper elevation={this.popoverOpen ? 8 : 0} className={containerClasses}>
                 <ButtonBase
                     disableRipple={true}
                     onClick={() => this.handleClickButton()}
@@ -49,10 +112,12 @@ export class LabelPopover extends Component {
                         this.button = node;
                     }}
                 >
+                    {this.renderLeftAction()}
                     <Typography variant="body2" color="inherit" className={styles.label}>
                         {this.props.label}
                     </Typography>
                 </ButtonBase>
+                {this.renderRightAction()}
                 <Popover
                     open={this.popoverOpen}
                     anchorEl={this.button}
@@ -66,17 +131,18 @@ export class LabelPopover extends Component {
                         vertical: "top",
                         horizontal: "left"
                     }}
+                    PaperProps={{ style: { width: width } }}
                     classes={{ paper: styles.content }}
                 >
                     {this.props.children}
                 </Popover>
-            </div>
+            </Paper>
         );
     }
 }
 
 LabelPopover.propTypes = {
-    label: PropTypes.string,
+    label: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
     placeholder: PropTypes.string,
     leftAction: PropTypes.object,
     rightAction: PropTypes.object,
