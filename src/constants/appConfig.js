@@ -49,6 +49,7 @@ const APP_CONFIG = Immutable.fromJS({
         "#4CAF50", // green
         "#009688", // teal
         "#00BCD4", // cyan
+        "#b2ebf2", // cyan 100
         "#3F51B5", // indigo
         "#03A9F4", // light blue
         "#607D8B", // blue grey

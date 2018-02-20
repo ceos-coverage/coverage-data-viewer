@@ -2,11 +2,14 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
+import Paper from "material-ui/Paper";
+import Typography from "material-ui/Typography";
 import { InsituLayerItem } from "components/LayerMenu";
 import * as mapActions from "actions/mapActions";
 import * as appStrings from "constants/appStrings";
 import MiscUtil from "utils/MiscUtil";
 import styles from "components/LayerMenu/InsituLayerMenu.scss";
+import displayStyles from "_core/styles/display.scss";
 
 export class InsituLayerMenu extends Component {
     renderLayerList(layerList) {
@@ -22,21 +25,24 @@ export class InsituLayerMenu extends Component {
             .sort(MiscUtil.getImmutableObjectSort("title"));
 
         let listClasses = MiscUtil.generateStringFromSet({
-            "insitu-list": true,
-            hidden: layerList.size === 0
+            [styles.list]: true,
+            [displayStyles.hidden]: layerList.size === 0
         });
         let warningClasses = MiscUtil.generateStringFromSet({
-            "no-layers-warning": true,
-            hidden: layerList.size > 0
+            [displayStyles.hidden]: layerList.size > 0
         });
         return (
-            <div className={styles.root}>
-                <div className="title">In-Situ Datasets</div>
-                <div className="intsitu-list-wrapper">
+            <Paper elevation={2} className={styles.root}>
+                <Typography variant="body2" color="inherit">
+                    In-Situ Datasets
+                </Typography>
+                <div className={styles.listWrapper}>
                     <div className={listClasses}>{this.renderLayerList(layerList)}</div>
-                    <div className={warningClasses}>None Selected</div>
+                    <Typography variant="caption" color="inherit" className={warningClasses}>
+                        None Selected
+                    </Typography>
                 </div>
-            </div>
+            </Paper>
         );
     }
 }

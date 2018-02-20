@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
+import Typography from "material-ui/Typography";
+import Paper from "material-ui/Paper";
 import { Colorbar } from "_core/components/Colorbar";
 import { LabelPopover } from "components/Reusables";
 import * as mapActionsCore from "_core/actions/mapActions";
@@ -12,20 +14,18 @@ import styles from "components/LayerMenu/SatelliteLayerSelector.scss";
 export class SatelliteLayerSelector extends Component {
     renderLayerList(layerList) {
         return layerList.map(layer => {
-            let classes = "layer-option";
-            if (layer.get("isActive")) {
-                classes += " active-layer";
-            }
             return (
-                <div
+                <Typography
                     key={layer.get("id") + "-satellite-select-option"}
-                    className={classes}
+                    variant="body1"
+                    color={layer.get("isActive") ? "primary" : "inherit"}
+                    className={styles.layerOption}
                     onClick={() => {
                         this.props.mapActionsCore.setLayerActive(layer.get("id"), true);
                     }}
                 >
                     {layer.get("title")}
-                </div>
+                </Typography>
             );
         });
     }
@@ -71,14 +71,14 @@ export class SatelliteLayerSelector extends Component {
         }
 
         return (
-            <div className={styles.root}>
+            <Paper elevation={2} className={styles.root}>
                 <LabelPopover label={this.renderLabel(activeLayer)} className={styles.label}>
-                    <div className="layer-option-list">{this.renderLayerList(layerList)}</div>
+                    <div className={styles.listWrapper}>{this.renderLayerList(layerList)}</div>
                 </LabelPopover>
-                <div className="colorbar-wrapper">
+                <div className={styles.colorbarWrapper}>
                     {this.renderColorbar(activePalette, activeLayer)}
                 </div>
-            </div>
+            </Paper>
         );
     }
 }

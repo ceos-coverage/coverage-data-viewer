@@ -15,6 +15,7 @@ export class LabelPopover extends Component {
 
         this.popoverOpen = false;
         this.button = undefined;
+        this.width = "initial";
     }
 
     handleClickButton() {
@@ -33,6 +34,17 @@ export class LabelPopover extends Component {
             [styles.root]: true,
             [this.props.className]: typeof this.props.className !== "undefined"
         });
+
+        // if we've found the width before, use that
+        if (typeof this.width !== "number") {
+            if (
+                typeof this.button !== "undefined" &&
+                typeof this.button.getBoundingClientRect === "function"
+            ) {
+                let dim = this.button.getBoundingClientRect();
+                this.width = dim.width;
+            }
+        }
 
         return (
             <div className={containerClasses}>
@@ -71,6 +83,7 @@ export class LabelPopover extends Component {
                         vertical: "top",
                         horizontal: "left"
                     }}
+                    PaperProps={{ style: { minWidth: this.width } }}
                     classes={{ paper: styles.content }}
                 >
                     {this.props.children}

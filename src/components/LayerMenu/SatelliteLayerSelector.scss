@@ -2,21 +2,34 @@
     position: absolute;
     top: 0.7rem;
     left: 17.9rem;
-    width: 26.9rem;
+    width: 27.5rem;
     min-height: 6rem;
     background: #3f3f3f;
-    padding: 0.3rem 0.7rem;
+    padding: 0.5rem 1rem;
+    color: white;
 }
 
 .label {
-    color: white;
     width: 100%;
     button {
         padding-left: 0px;
+        padding-right: 0px;
         width: 100%;
         .labelContent {
             text-align: left;
             flex-grow: 1;
         }
     }
+}
+
+.layerOption {
+    cursor: pointer;
+    margin-bottom: 0.5rem;
+    &:last-of-type {
+        margin-bottom: 0px;
+    }
+}
+
+.colorbarWrapper {
+    margin-top: 0.3rem;
 }

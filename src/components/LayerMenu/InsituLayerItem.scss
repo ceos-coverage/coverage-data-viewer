@@ -1,0 +1,25 @@
+.root {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    &:last-of-type {
+        margin-bottom: 0px;
+    }
+}
+
+.color {
+    display: inline-block;
+    margin-right: 0.5rem;
+}
+
+.label {
+    display: inline-block;
+    flex-grow: 1;
+}
+
+.removeBtn {
+    width: 16px;
+    height: 16px;
+    font-size: 1.5rem;
+}
