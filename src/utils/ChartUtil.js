@@ -148,6 +148,8 @@ export default class ChartUtil {
             let displayOptions = options.displayOptions;
             let onZoom = options.onZoom;
 
+            let hoveredPoint = undefined;
+
             // check if we have data a place to render to
             if (typeof node !== "undefined" && typeof data !== "undefined") {
                 if (data.length === 0) {
@@ -176,6 +178,13 @@ export default class ChartUtil {
                                     fontFamily: "'Roboto', Helvetica, Arial, sans-serif",
                                     fontWeight: 500,
                                     textTransform: "uppercase"
+                                }
+                            }
+                        },
+                        events: {
+                            click: function(e) {
+                                if (typeof options.onClick === "function") {
+                                    options.onClick(hoveredPoint);
                                 }
                             }
                         }
@@ -370,7 +379,14 @@ export default class ChartUtil {
                             colorByPoint: true,
                             color: "PRIMARY_COLOR",
                             showInLegend: false,
-                            data: data
+                            data: data,
+                            point: {
+                                events: {
+                                    mouseOver: function(e) {
+                                        hoveredPoint = e.target;
+                                    }
+                                }
+                            }
                         }
                     ]
                 });
@@ -452,7 +468,9 @@ export default class ChartUtil {
                     keys.xKey +
                     ": </span>" +
                     "<span class='tooltip-value'>" +
-                    moment(x).format("MMM DD, YYYY · HH:mm") +
+                    moment(x)
+                        .utc()
+                        .format("MMM DD, YYYY · HH:mm") +
                     "</span>" +
                     "</div>" +
                     "<div class='tooltip-table-row'>" +

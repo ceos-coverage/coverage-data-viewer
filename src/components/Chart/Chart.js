@@ -2,8 +2,10 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
+import moment from "moment";
 import Paper from "material-ui/Paper";
 import Typography from "material-ui/Typography";
+import * as mapActionsCore from "_core/actions/mapActions";
 import * as chartActions from "actions/chartActions";
 import { ChartButtons, ChartSettings } from "components/Chart";
 import MiscUtil from "utils/MiscUtil";
@@ -30,6 +32,22 @@ export class Chart extends Component {
             },
             onZoom: bounds => {
                 this.props.chartActions.zoomChartData(this.props.chart.get("id"), bounds);
+            },
+            onClick: evt => {
+                let axisIsTime =
+                    this.props.chart.getIn(["formOptions", "xAxis"]).toLocaleLowerCase() === "time";
+                if (axisIsTime) {
+                    let date = moment(
+                        moment(evt.x)
+                            .utc()
+                            .format("YYYY-MM-DD"),
+                        "YYYY-MM-DD"
+                    );
+                    // set the map date, if found
+                    if (date.isValid()) {
+                        this.props.mapActionsCore.setDate(date.toDate());
+                    }
+                }
             }
         });
     }
@@ -87,12 +105,14 @@ export class Chart extends Component {
 
 Chart.propTypes = {
     chart: PropTypes.object.isRequired,
-    chartActions: PropTypes.object.isRequired
+    chartActions: PropTypes.object.isRequired,
+    mapActionsCore: PropTypes.object.isRequired
 };
 
 function mapDispatchToProps(dispatch) {
     return {
-        chartActions: bindActionCreators(chartActions, dispatch)
+        chartActions: bindActionCreators(chartActions, dispatch),
+        mapActionsCore: bindActionCreators(mapActionsCore, dispatch)
     };
 }
 
