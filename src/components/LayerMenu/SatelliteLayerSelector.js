@@ -4,30 +4,77 @@ import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import Typography from "material-ui/Typography";
 import Paper from "material-ui/Paper";
+import Checkbox from "material-ui/Checkbox";
+import {
+    FormLabel,
+    FormControl,
+    FormGroup,
+    FormControlLabel,
+    FormHelperText
+} from "material-ui/Form";
 import { Colorbar } from "_core/components/Colorbar";
 import { LabelPopover } from "components/Reusables";
 import * as mapActionsCore from "_core/actions/mapActions";
 import * as appStringsCore from "_core/constants/appStrings";
+import * as appStrings from "constants/appStrings";
+import Radio, { RadioGroup } from "material-ui/Radio";
 import MiscUtil from "_core/utils/MiscUtil";
 import styles from "components/LayerMenu/SatelliteLayerSelector.scss";
 
 export class SatelliteLayerSelector extends Component {
+    handleLayerSelect(val) {
+        if (val) {
+            if (val === appStrings.NO_DATA) {
+                let activeLayer = this.props.layers
+                    .filter(layer => !layer.get("isDisabled"))
+                    .find(layer => {
+                        return layer.get("isActive");
+                    });
+                if (activeLayer) {
+                    this.props.mapActionsCore.setLayerActive(activeLayer.get("id"), false);
+                }
+            } else {
+                this.props.mapActionsCore.setLayerActive(val, true);
+            }
+        }
+    }
     renderLayerList(layerList) {
-        return layerList.map(layer => {
+        let activeLayer = false;
+        let list = layerList.map(layer => {
+            activeLayer = layer.get("isActive") ? layer : activeLayer;
             return (
-                <Typography
+                <FormControlLabel
                     key={layer.get("id") + "-satellite-select-option"}
-                    variant="body1"
-                    color={layer.get("isActive") ? "primary" : "inherit"}
-                    className={styles.layerOption}
-                    onClick={() => {
-                        this.props.mapActionsCore.setLayerActive(layer.get("id"), true);
-                    }}
-                >
-                    {layer.get("title")}
-                </Typography>
+                    value={layer.get("id")}
+                    control={<Radio />}
+                    label={layer.get("title")}
+                />
             );
         });
+
+        list = list.push(
+            <FormControlLabel
+                key={"none-satellite-select-option"}
+                value={appStrings.NO_DATA}
+                control={<Radio />}
+                label={"None"}
+            />
+        );
+
+        return (
+            <FormGroup>
+                <FormLabel component="legend">Satellite Overlay</FormLabel>
+                <RadioGroup
+                    aria-label="satellite_layer"
+                    name="satellite_layer"
+                    value={activeLayer ? activeLayer.get("id") : appStrings.NO_DATA}
+                    onChange={(evt, val) => this.handleLayerSelect(val)}
+                    onClick={evt => this.handleLayerSelect(evt.target.value)}
+                >
+                    {list}
+                </RadioGroup>
+            </FormGroup>
+        );
     }
 
     renderColorbar(palette, layer) {
@@ -50,7 +97,7 @@ export class SatelliteLayerSelector extends Component {
     renderLabel(activeLayer) {
         return (
             <span className={styles.labelContent}>
-                {activeLayer ? activeLayer.get("title") : "No data layer selected"}
+                {activeLayer ? activeLayer.get("title") : "No overlay selected"}
             </span>
         );
     }

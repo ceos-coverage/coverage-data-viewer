@@ -29,6 +29,7 @@ export class InsituLayerMenu extends Component {
             [displayStyles.hidden]: layerList.size === 0
         });
         let warningClasses = MiscUtil.generateStringFromSet({
+            [styles.empty]: true,
             [displayStyles.hidden]: layerList.size > 0
         });
         return (

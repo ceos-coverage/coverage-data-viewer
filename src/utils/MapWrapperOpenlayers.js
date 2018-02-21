@@ -267,10 +267,10 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
 
             return new Ol_Layer_Vector({
                 source: layerSource,
+                renderMode: "image",
                 opacity: layer.get("opacity"),
                 visible: layer.get("isActive"),
-                style: this.createVectorTileTrackLayerStyles(layer),
-                extent: appConfig.DEFAULT_MAP_EXTENT
+                style: this.createVectorTileTrackLayerStyles(layer)
             });
         } catch (err) {
             console.warn("Error in MapWrapperOpenlayers.createVectorTileTrackLayer:", err);
@@ -382,13 +382,15 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
             this.map.forEachFeatureAtPixel(
                 pixel,
                 (feature, mapLayer) => {
-                    if (feature.getGeometry() instanceof Ol_Geom_Point) {
-                        data.push({
-                            layerId: mapLayer.get("_layerId"),
-                            properties: feature.getProperties(),
-                            coords: feature.getGeometry().getCoordinates()
-                        });
-                        return false;
+                    if (mapLayer) {
+                        if (feature.getGeometry() instanceof Ol_Geom_Point) {
+                            data.push({
+                                layerId: mapLayer.get("_layerId"),
+                                properties: feature.getProperties(),
+                                coords: feature.getGeometry().getCoordinates()
+                            });
+                            return false;
+                        }
                     }
                 },
                 undefined,

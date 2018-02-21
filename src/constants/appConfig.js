@@ -55,7 +55,9 @@ const APP_CONFIG = Immutable.fromJS({
         "#607D8B", // blue grey
         "#2196F3", // blue
         "#9C27B0", // purple
-        "#673AB7" // deep purple
+        "#673AB7", // deep purple
+        "#3e2723", // brown
+        "#000000" // black,
     ],
     CHART_DISPLAY_TYPES: {
         TIME_SERIES: [

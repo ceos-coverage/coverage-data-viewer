@@ -27,9 +27,15 @@
     margin-bottom: 0.5rem;
     &:last-of-type {
         margin-bottom: 0px;
+        padding-top: 0.5rem;
+        border-top: 1px solid darken(white, 10%);
     }
 }
 
 .colorbarWrapper {
     margin-top: 0.3rem;
+}
+
+.labelContent {
+    text-transform: capitalize;
 }

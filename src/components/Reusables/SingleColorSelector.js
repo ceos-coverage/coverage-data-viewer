@@ -72,11 +72,14 @@ export class SingleColorSelector extends Component {
                     classes={{ paper: styles.colorList }}
                 >
                     {colorList.map((colorStr, i) => {
+                        let selected = colorStr === this.props.color;
                         return (
-                            <Paper
+                            <div
                                 key={"color-option-" + i}
-                                elevation={colorStr === this.props.color ? 4 : 0}
-                                className={styles.colorOption}
+                                elevation={selected ? 4 : 0}
+                                className={
+                                    selected ? styles.colorOptionSelected : styles.colorOption
+                                }
                                 style={{ background: colorStr }}
                                 onClick={() => this.handleColorSelect(colorStr)}
                             />
