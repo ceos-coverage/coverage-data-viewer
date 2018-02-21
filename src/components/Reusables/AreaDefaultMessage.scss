@@ -1,0 +1,23 @@
+.root {
+    position: absolute;
+    top: 33%;
+    left: 50%;
+    text-align: center;
+    transform: translate(-50%, -50%);
+    color: darken(white, 30%);
+}
+.icon {
+    margin-left: auto;
+    margin-right: auto;
+    svg {
+        width: 12rem;
+        height: 12rem;
+    }
+}
+.label {
+    margin-bottom: 1rem;
+}
+
+.sublabel {
+    // font-style: italic;
+}
