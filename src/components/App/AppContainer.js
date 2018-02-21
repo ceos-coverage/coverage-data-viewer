@@ -34,7 +34,19 @@ const theme = createMuiTheme({
         htmlFontSize: 10
     },
     palette: {
-        primary: cyan
+        primary: cyan,
+        // secondary: {
+        //     light: "#88ffff",
+        //     main: "#4dd0e1",
+        //     dark: "#009faf",
+        //     contrastText: "#000"
+        // }
+        secondary: {
+            light: "#ffffff",
+            main: "#f5f5f5",
+            dark: "#c2c2c2",
+            contrastText: "#000"
+        }
     }
 });
 

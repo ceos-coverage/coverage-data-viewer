@@ -59,7 +59,11 @@ export class ChartCreateForm extends Component {
                         </FormGroup>
                         <FormLabel component="legend">Non-Shared Variables</FormLabel>
                         <FormGroup>
-                            <Typography variant="body1" component="span">
+                            <Typography
+                                variant="body1"
+                                component="span"
+                                className={styles.nonShared}
+                            >
                                 Salinity, Pressure, Light
                             </Typography>
                         </FormGroup>
@@ -79,7 +83,11 @@ export class ChartCreateForm extends Component {
                         </FormGroup>
                         <FormLabel component="legend">Non-Shared Variables</FormLabel>
                         <FormGroup>
-                            <Typography variant="body1" component="span">
+                            <Typography
+                                variant="body1"
+                                component="span"
+                                className={styles.nonShared}
+                            >
                                 Salinity, Pressure, Light
                             </Typography>
                         </FormGroup>
@@ -99,7 +107,11 @@ export class ChartCreateForm extends Component {
                         </FormGroup>
                         <FormLabel component="legend">Non-Shared Variables</FormLabel>
                         <FormGroup>
-                            <Typography variant="body1" component="span">
+                            <Typography
+                                variant="body1"
+                                component="span"
+                                className={styles.nonShared}
+                            >
                                 Salinity, Pressure, Light
                             </Typography>
                         </FormGroup>

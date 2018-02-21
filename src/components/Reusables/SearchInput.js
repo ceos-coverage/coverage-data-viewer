@@ -18,6 +18,7 @@ export class LabelPopover extends Component {
 
         this.popoverOpen = false;
         this.button = undefined;
+        this.width = "initial";
     }
 
     handleClickButton() {
@@ -93,13 +94,15 @@ export class LabelPopover extends Component {
             [styles.active]: this.popoverOpen
         });
 
-        let width = "initial";
-        if (
-            typeof this.button !== "undefined" &&
-            typeof this.button.getBoundingClientRect === "function"
-        ) {
-            let dim = this.button.getBoundingClientRect();
-            width = dim.width;
+        // if we've found the width before, use that
+        if (typeof this.width !== "number") {
+            if (
+                typeof this.button !== "undefined" &&
+                typeof this.button.getBoundingClientRect === "function"
+            ) {
+                let dim = this.button.getBoundingClientRect();
+                this.width = dim.width;
+            }
         }
 
         return (
@@ -131,7 +134,7 @@ export class LabelPopover extends Component {
                         vertical: "top",
                         horizontal: "left"
                     }}
-                    PaperProps={{ style: { width: width } }}
+                    PaperProps={{ style: { width: this.width } }}
                     classes={{ paper: styles.content }}
                 >
                     {this.props.children}

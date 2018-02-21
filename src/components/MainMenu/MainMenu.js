@@ -17,7 +17,10 @@ import IconButton from "material-ui/IconButton";
 import ArrowBack from "material-ui-icons/KeyboardArrowLeft";
 import { ChartMenu } from "components/Chart";
 import { LayerSearchMenu } from "components/MainMenu/LayerSearch";
+import { SettingsContainer } from "components/Settings";
+import { HelpContainer } from "components/Help";
 import * as appActions from "actions/appActions";
+import appConfig from "constants/appConfig";
 import MiscUtil from "_core/utils/MiscUtil";
 import styles from "components/MainMenu/MainMenu.scss";
 import displayStyles from "_core/styles/display.scss";
@@ -67,37 +70,27 @@ export class MainMenu extends Component {
                             onChange={(evt, value) =>
                                 this.props.appActions.setMainMenuTabIndex(value)
                             }
-                            textColor="primary"
-                            indicatorColor="primary"
+                            textColor="secondary"
+                            indicatorColor="secondary"
                             fullWidth={true}
                         >
                             <Tab
                                 classes={{
-                                    rootPrimary: styles.tabLabel,
-                                    rootPrimarySelected: styles.tabSelected
+                                    root: styles.tabLabel,
+                                    rootPrimarySelected: styles.tabSelected,
+                                    rootSecondarySelected: styles.tabSelected,
+                                    rootInheritSelected: styles.tabSelected
                                 }}
                                 label="Datasets"
                             />
                             <Tab
                                 classes={{
-                                    rootPrimary: styles.tabLabel,
-                                    rootPrimarySelected: styles.tabSelected
+                                    root: styles.tabLabel,
+                                    rootPrimarySelected: styles.tabSelected,
+                                    rootSecondarySelected: styles.tabSelected,
+                                    rootInheritSelected: styles.tabSelected
                                 }}
                                 label="Charts"
-                            />
-                            <Tab
-                                classes={{
-                                    rootPrimary: styles.tabLabel,
-                                    rootPrimarySelected: styles.tabSelected
-                                }}
-                                label="Options"
-                            />
-                            <Tab
-                                classes={{
-                                    rootPrimary: styles.tabLabel,
-                                    rootPrimarySelected: styles.tabSelected
-                                }}
-                                label="Help"
                             />
                         </Tabs>
                         <div className={tabDatasetsClasses}>
@@ -106,8 +99,6 @@ export class MainMenu extends Component {
                         <div className={tabChartClasses}>
                             <ChartMenu />
                         </div>
-                        <div className={tabOptionsClasses}>Options</div>
-                        <div className={tabHelpClasses}>Help</div>
                     </div>
                 </Paper>
             </Slide>

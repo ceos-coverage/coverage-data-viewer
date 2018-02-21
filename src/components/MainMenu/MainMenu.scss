@@ -21,10 +21,16 @@
 
 .tabLabel {
     min-width: 72px;
+    max-width: initial;
 }
 
 .tabLabel:not(.tabSelected) {
-    color: #ffffff;
+    color: darken(white, 15%);
+    // &.tabDisabled {
+    //     color: darken(white, 20%);
+    //     letter-spacing: 1px;
+    //     font-family: "Roboto Mono", Helvetica, Arial, sans-serif;
+    // }
 }
 
 .tabContent {
@@ -32,7 +38,7 @@
     width: 100%;
     height: calc(100% - 4.8rem);
     overflow: hidden;
-    background: darken(white, 3%);
+    // background: darken(white, 3%);
 }
 
 .toggleBtn {

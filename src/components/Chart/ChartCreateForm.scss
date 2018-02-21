@@ -1,9 +1,10 @@
 .root {
-    padding: 1.5rem 1rem;
+    padding: 1.5rem 2rem;
     display: flex;
     flex-flow: row nowrap;
     align-items: center;
     z-index: 2;
+    background: darken(white, 3%);
 }
 
 .options {
@@ -13,4 +14,11 @@
 
 .chartOption {
     margin-right: 1rem;
+    &:last-of-type {
+        margin-right: 0px;
+    }
+}
+
+.nonShared {
+    padding-top: 0.5rem;
 }
