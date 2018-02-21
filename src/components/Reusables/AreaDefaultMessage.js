@@ -7,7 +7,7 @@ import MiscUtil from "utils/MiscUtil";
 import styles from "components/Reusables/AreaDefaultMessage.scss";
 import displayStyles from "_core/styles/display.scss";
 
-export class Checkbox extends Component {
+export class AreaDefaultMessage extends Component {
     render() {
         let containerClasses = MiscUtil.generateStringFromSet({
             [styles.root]: true,
@@ -33,7 +33,7 @@ export class Checkbox extends Component {
     }
 }
 
-Checkbox.propTypes = {
+AreaDefaultMessage.propTypes = {
     label: PropTypes.string.isRequired,
     sublabel: PropTypes.string,
     icon: PropTypes.node,
@@ -41,4 +41,4 @@ Checkbox.propTypes = {
     className: PropTypes.string
 };
 
-export default connect()(Checkbox);
+export default connect()(AreaDefaultMessage);
