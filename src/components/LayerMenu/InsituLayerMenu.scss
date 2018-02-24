@@ -2,7 +2,7 @@
     position: absolute;
     top: 0.7rem;
     left: 0.7rem;
-    width: 16.5rem;
+    width: 18.5rem;
     max-height: calc(100% - 12rem);
     background: #3f3f3f;
     padding: 0.5rem 1rem;
@@ -17,5 +17,5 @@
 }
 
 .empty {
-    padding: 0.2rem 0px 0.1rem 0px;
+    line-height: 2rem;
 }

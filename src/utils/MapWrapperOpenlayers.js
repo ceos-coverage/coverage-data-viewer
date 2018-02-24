@@ -365,13 +365,38 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
         let mapLayer = this.miscUtil.findObjectInArray(mapLayers, "_layerId", layer.get("id"));
         if (!mapLayer) {
             console.warn(
-                "Error in MapWrapperOpenLayers: Could not find corresponding map layer",
+                "Error in MapWrapperOpenLayers.setVectorLayerColor: Could not find corresponding map layer",
                 layer
             );
             return false;
         }
 
         mapLayer.setStyle(this.createVectorTileTrackLayerStyles(layer, color));
+        return true;
+    }
+
+    zoomToLayer(layer) {
+        let mapLayers = this.map.getLayers().getArray();
+        let mapLayer = this.miscUtil.findObjectInArray(mapLayers, "_layerId", layer.get("id"));
+        if (!mapLayer) {
+            console.warn(
+                "Error in MapWrapperOpenLayers.zoomToLayer: Could not find corresponding map layer",
+                layer
+            );
+            return false;
+        }
+
+        let source = mapLayer.getSource();
+        if (typeof source.getExtent === "function") {
+            let extent = source.getExtent();
+            this.map.getView().fit(extent, {
+                size: this.map.getSize() || [],
+                padding: [120, 120, 120, 120],
+                duration: 350,
+                constrainResolution: false
+            });
+        }
+
         return true;
     }
 

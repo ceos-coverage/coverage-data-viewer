@@ -25,7 +25,6 @@ export class InsituLayerMenu extends Component {
             .sort(MiscUtil.getImmutableObjectSort("title"));
 
         let listClasses = MiscUtil.generateStringFromSet({
-            [styles.list]: true,
             [displayStyles.hidden]: layerList.size === 0
         });
         let warningClasses = MiscUtil.generateStringFromSet({

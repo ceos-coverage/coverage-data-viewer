@@ -8,6 +8,9 @@ export default function map(state = mapState, action, opt_reducer = MapReducer) 
         case actionTypes.SET_INSITU_LAYER_COLOR:
             return opt_reducer.setInsituVectorLayerColor(state, action);
 
+        case actionTypes.ZOOM_TO_LAYER:
+            return opt_reducer.zoomToLayer(state, action);
+
         default:
             return mapCore.call(this, state, action, opt_reducer);
     }

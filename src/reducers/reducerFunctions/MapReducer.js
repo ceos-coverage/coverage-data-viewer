@@ -223,4 +223,23 @@ export default class MapReducer extends MapReducerCore {
 
         return state;
     }
+
+    static zoomToLayer(state, action) {
+        // resolve layer from id if necessary
+        let actionLayer = action.layer;
+        if (typeof actionLayer === "string") {
+            actionLayer = this.findLayerById(state, actionLayer);
+        }
+
+        if (typeof actionLayer !== "undefined") {
+            let anySucceed = state.get("maps").reduce((acc, map) => {
+                if (map.zoomToLayer(actionLayer)) {
+                    return true;
+                }
+                return acc;
+            }, false);
+        }
+
+        return state;
+    }
 }
