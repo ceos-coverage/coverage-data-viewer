@@ -4,3 +4,19 @@
     bottom: 7rem;
     align-items: start;
 }
+
+.title {
+    display: inline-flex;
+    line-height: 4.8rem;
+    color: darken(white, 0%);
+    padding: 0px 2rem;
+    font-family: "Roboto Mono", Helvetica, Arial, sans-serif;
+    align-items: baseline;
+}
+
+.version {
+    height: 1.2rem;
+    font-family: "Roboto Mono", Helvetica, Arial, sans-serif;
+    color: darken(white, 15%);
+    margin-left: 0.3rem;
+}

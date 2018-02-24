@@ -32,9 +32,11 @@ export class ChartSettings extends Component {
             >
                 <Slide direction="left" in={this.props.displayOptions.get("isOpen")}>
                     <Paper elevation={2} className={styles.root}>
-                        <Typography variant="title">Settings</Typography>
+                        <Typography variant="subheading" className={styles.label}>
+                            Chart Settings
+                        </Typography>
                         <div className={styles.content}>
-                            <FormGroup>
+                            <FormGroup className={styles.formGroup}>
                                 <FormControl>
                                     <InputLabel htmlFor="markerType">Display Style</InputLabel>
                                     <Select
@@ -69,7 +71,7 @@ export class ChartSettings extends Component {
                                     </Select>
                                 </FormControl>
                             </FormGroup>
-                            <FormGroup>
+                            <FormGroup className={styles.formGroup}>
                                 <Checkbox
                                     label="Invert Y-Axis"
                                     checked={this.props.displayOptions.get("yAxisReversed")}

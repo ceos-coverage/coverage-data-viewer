@@ -13,6 +13,7 @@ import Tabs, { Tab } from "material-ui/Tabs";
 import Paper from "material-ui/Paper";
 import Slide from "material-ui/transitions/Slide";
 import Button from "material-ui/Button";
+import Typography from "material-ui/Typography";
 import IconButton from "material-ui/IconButton";
 import ArrowBack from "material-ui-icons/KeyboardArrowLeft";
 import { ChartMenu } from "components/Chart";

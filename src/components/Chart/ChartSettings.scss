@@ -12,15 +12,27 @@
     flex-flow: column nowrap;
     overflow: hidden;
 }
+.label {
+    padding: 1rem 1rem 1rem 1rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.87);
+}
+
 .content {
     flex-grow: 1;
     overflow: hidden;
     overflow-y: auto;
-    padding: 1rem 1rem;
-    padding-bottom: 4rem;
+    padding: 1rem 1.2rem 4rem 1.2rem;
 }
+
+.formGroup {
+    margin-bottom: 1rem;
+    &:last-of-type {
+        margin-bottom: 0px;
+    }
+}
+
 .doneBtn {
     position: absolute;
-    bottom: 1rem;
+    top: 0.6rem;
     right: 1rem;
 }
