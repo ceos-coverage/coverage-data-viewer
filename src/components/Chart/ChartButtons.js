@@ -20,7 +20,13 @@ export class ChartButtons extends Component {
                     placement="bottom"
                     className={styles.btnWrapper}
                 >
-                    <IconButtonSmall color="inherit" className={styles.btn}>
+                    <IconButtonSmall
+                        color="inherit"
+                        className={styles.btn}
+                        onClick={() => {
+                            this.props.chartActions.exportChart(this.props.nodeId);
+                        }}
+                    >
                         <FileDownloadIcon />
                     </IconButtonSmall>
                 </Tooltip>
@@ -63,6 +69,7 @@ export class ChartButtons extends Component {
 
 ChartButtons.propTypes = {
     chartId: PropTypes.string.isRequired,
+    nodeId: PropTypes.string.isRequired,
     chartActions: PropTypes.object.isRequired
 };
 

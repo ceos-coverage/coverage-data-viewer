@@ -103,6 +103,7 @@ export default class ChartUtil {
     static updateSingleSeriesWithColor(options) {
         let node = options.node;
         let dataExtremes = options.dataExtremes;
+        let note = options.note;
 
         if (typeof node !== "undefined") {
             let chart = nodeChartMap.get(node.id);
@@ -117,6 +118,9 @@ export default class ChartUtil {
                     if (typeof caxis !== "undefined") {
                         caxis.setExtremes(dataExtremes.min, dataExtremes.max, false);
                     }
+                }
+                if (typeof note !== "undefined") {
+                    chart.subtitle.update({ text: note });
                 }
             }
             return this.updateSingleSeries(options);
@@ -147,6 +151,7 @@ export default class ChartUtil {
             let keys = options.keys;
             let displayOptions = options.displayOptions;
             let onZoom = options.onZoom;
+            let note = options.note || "";
 
             let hoveredPoint = undefined;
 
@@ -309,7 +314,7 @@ export default class ChartUtil {
                     },
 
                     subtitle: {
-                        text: "80% Decimation",
+                        text: note,
                         align: "right",
                         verticalAlign: "bottom",
                         y: 0,

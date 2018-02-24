@@ -108,6 +108,7 @@ export default class WebWorker extends WebWorkerCore {
         }
 
         this._remoteData[url].meta.extremes = extremes;
+        this._remoteData[url].meta.size = dataRows.length;
     }
 
     _decimateLTTB(eventData) {
@@ -159,6 +160,9 @@ export default class WebWorker extends WebWorkerCore {
 
             // format the downsampled data
             let data = this._transformRowData(decData, eventData.format, xFunc, yFunc, zFunc);
+
+            // store decimation size
+            this._remoteData[eventData.url].meta.lastSize = dataRows.length;
 
             console.timeEnd("decimating");
 

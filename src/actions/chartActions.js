@@ -1,6 +1,7 @@
 import * as appStrings from "constants/appStrings";
 import * as types from "constants/actionTypes";
 import DataStore from "utils/DataStore";
+import ChartUtil from "utils/ChartUtil";
 
 const url = "http://localhost:3000/default-data/albacoreTunaData.csv";
 const xKey = "Time";
@@ -104,7 +105,7 @@ export function zoomChartData(chartId, bounds) {
             )
             .then(
                 data => {
-                    dispatch(updateChartData(chart.get("id"), data[0]));
+                    dispatch(updateChartData(chart.get("id"), data[0], data[1]));
                     dispatch(setChartLoading(chartId, false));
                 },
                 err => {
@@ -122,6 +123,19 @@ export function zoomChartData(chartId, bounds) {
 
 export function updateChartData(id, data, meta) {
     return { type: types.UPDATE_CHART_DATA, id, data, meta };
+}
+
+export function exportChart(chartId) {
+    return dispatch => {
+        ChartUtil.downloadChartAsImage(
+            { id: chartId },
+            {
+                filename: chartId,
+                format: "image/png",
+                width: 640
+            }
+        );
+    };
 }
 
 function initializeChart(id, formOptions, dataStore) {

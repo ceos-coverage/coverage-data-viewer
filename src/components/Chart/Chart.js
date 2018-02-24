@@ -25,6 +25,7 @@ export class Chart extends Component {
             data: this.props.chart.get("data"),
             displayOptions: this.props.chart.get("displayOptions"),
             chartType: this.props.chart.get("chartType"),
+            note: "decimation unknown",
             keys: {
                 xKey: this.props.chart.getIn(["formOptions", "xAxis"]),
                 yKey: this.props.chart.getIn(["formOptions", "yAxis"]),
@@ -70,6 +71,12 @@ export class Chart extends Component {
                 dataExtremes: this.props.chart.get("dataMeta").extremes[
                     this.props.chart.getIn(["formOptions", "zAxis"])
                 ],
+                note:
+                    Math.round(
+                        this.props.chart.get("data").length /
+                            this.props.chart.get("dataMeta").lastSize *
+                            100
+                    ) + "% of points shown",
                 chartType: this.props.chart.get("chartType"),
                 displayOptions: this.props.chart.get("displayOptions")
             });
@@ -88,7 +95,10 @@ export class Chart extends Component {
                     ref="chartWrapper"
                     className={styles.chart}
                 />
-                <ChartButtons chartId={this.props.chart.get("id")} />
+                <ChartButtons
+                    chartId={this.props.chart.get("id")}
+                    nodeId={this.props.chart.get("nodeId")}
+                />
                 <div className={loadingClasses}>
                     <Typography variant="title" component="div" className={styles.loading}>
                         loading data...
