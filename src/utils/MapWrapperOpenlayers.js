@@ -297,9 +297,6 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
         return new Ol_Source_Vector({
             url: options.url,
             loader: function(extent, resolution, projection) {
-                // d3.json(options.url, function(error, mapData) {
-                //     var features = mapData.features;
-                // });
                 MiscUtil.asyncFetch({
                     url: options.url,
                     handleAs: appStringsCore.FILE_TYPE_TEXT
