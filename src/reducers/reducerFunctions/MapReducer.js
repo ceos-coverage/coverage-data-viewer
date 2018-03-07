@@ -233,7 +233,7 @@ export default class MapReducer extends MapReducerCore {
 
         if (typeof actionLayer !== "undefined") {
             let anySucceed = state.get("maps").reduce((acc, map) => {
-                if (map.zoomToLayer(actionLayer)) {
+                if (map.zoomToLayer(actionLayer, action.pad)) {
                     return true;
                 }
                 return acc;

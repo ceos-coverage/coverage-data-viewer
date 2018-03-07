@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import RemoveIcon from "material-ui-icons/Close";
-import ZoomToIcon from "mdi-material-ui/Target";
+import TargetIcon from "mdi-material-ui/Target";
 import Typography from "material-ui/Typography";
 import MiscUtil from "utils/MiscUtil";
 import { IconButtonSmall } from "_core/components/Reusables";
@@ -41,7 +41,7 @@ export class InsituLayerItem extends Component {
                     className={styles.actionBtn}
                     onClick={() => this.props.mapActions.zoomToLayer(this.props.layer.get("id"))}
                 >
-                    <ZoomToIcon />
+                    <TargetIcon />
                 </IconButtonSmall>
                 <IconButtonSmall
                     color="inherit"

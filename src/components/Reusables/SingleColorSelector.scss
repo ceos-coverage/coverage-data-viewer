@@ -31,9 +31,15 @@
     transition-property: border-radius;
     transition-duration: 0.2s;
     transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
+    &:hover {
+        border-radius: 35%;
+    }
 }
 
 .colorOptionSelected {
     composes: colorOption;
     border-radius: 50%;
+    &:hover {
+        border-radius: 50%;
+    }
 }

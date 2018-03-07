@@ -372,7 +372,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
         return true;
     }
 
-    zoomToLayer(layer) {
+    zoomToLayer(layer, extraPad = false) {
         let mapLayers = this.map.getLayers().getArray();
         let mapLayer = this.miscUtil.findObjectInArray(mapLayers, "_layerId", layer.get("id"));
         if (!mapLayer) {
@@ -386,9 +386,13 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
         let source = mapLayer.getSource();
         if (typeof source.getExtent === "function") {
             let extent = source.getExtent();
+            let padding = [50, 50, 50, 50];
+            if (extraPad) {
+                padding[1] = padding[1] + 600;
+            }
             this.map.getView().fit(extent, {
                 size: this.map.getSize() || [],
-                padding: [120, 120, 120, 120],
+                padding: padding,
                 duration: 350,
                 constrainResolution: false
             });
