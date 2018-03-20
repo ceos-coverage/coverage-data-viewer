@@ -26,6 +26,7 @@ import appConfig from "constants/appConfig";
 import MiscUtil from "_core/utils/MiscUtil";
 import { MapButton, MapButtonGroup } from "_core/components/Reusables";
 import { MapToolsButton, MapLabelsButton } from "_core/components/Map";
+import { BasemapPicker } from "components/Map";
 import styles from "_core/components/Map/MapControlsContainer.scss";
 import displayStyles from "_core/styles/display.scss";
 
@@ -148,6 +149,7 @@ export class MapControlsContainer extends Component {
                         </MapButton>
                     </Tooltip>
                 </Paper>
+                <BasemapPicker />
             </div>
         );
     }

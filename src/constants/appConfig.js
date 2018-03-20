@@ -36,7 +36,7 @@ const APP_CONFIG = Immutable.fromJS({
         paletteConfig: "default-data/palettes_oiip.json"
     },
     DEFAULT_WEB_WORKER_NUM: 1,
-    DEFAULT_MAP_EXTENT: [-360, -90, 360, 90],
+    DEFAULT_MAP_EXTENT: [-180 * 2, -90, 180 * 2, 90],
     INSITU_VECTOR_COLORS: [
         "#F44336", // red
         "#E91E63", // pink

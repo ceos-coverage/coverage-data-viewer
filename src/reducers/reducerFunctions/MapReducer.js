@@ -185,7 +185,11 @@ export default class MapReducer extends MapReducerCore {
                         let dateStrAlt = data.getIn([0, "properties", "datetimestamp"]);
                         dateStr = typeof dateStr === "undefined" ? dateStrAlt : dateStr;
                         if (typeof dateStr !== "undefined") {
-                            state = MapReducerCore.setMapDate(state, { date: new Date(dateStr) });
+                            let date = moment(
+                                dateStr,
+                                data.getIn([0, "layer", "timeFormat"])
+                            ).utc();
+                            state = MapReducerCore.setMapDate(state, { date: date.toDate() });
                         }
                     } else {
                         pixelCoordinate = pixelCoordinate.set("isValid", false);

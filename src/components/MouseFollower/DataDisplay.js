@@ -18,7 +18,7 @@ export class DataDisplay extends Component {
         let timeStrAlt = this.props.data.getIn(["properties", "datetimestamp"]);
         timeStr = typeof timeStr === "undefined" ? timeStrAlt : timeStr;
 
-        let time = moment(timeStr);
+        let time = moment(timeStr, this.props.data.getIn(["layer", "timeFormat"]));
         timeStr = time.format("MMM DD, YYYY · HH:mm");
         return (
             <div className={containerClasses}>

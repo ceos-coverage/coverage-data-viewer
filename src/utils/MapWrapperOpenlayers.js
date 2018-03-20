@@ -294,6 +294,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
         }
 
         let geojsonFormat = new Ol_Format_GeoJSON();
+        let _context = this;
         return new Ol_Source_Vector({
             url: options.url,
             loader: function(extent, resolution, projection) {
@@ -302,6 +303,8 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                     handleAs: appStringsCore.FILE_TYPE_TEXT
                 }).then(
                     dataStr => {
+                        let date = moment(_context.mapDate).startOf("d");
+                        let nextDate = moment(date).add(1, "d");
                         let data = geojsonFormat.readFeatures(dataStr);
                         for (let i = 0; i < data.length - 1; ++i) {
                             let feature = data[i];
@@ -319,6 +322,26 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                             newFeature.setGeometry(new Ol_Geom_LineString([coords, nextCoords]));
                             this.addFeature(newFeature);
                             this.addFeature(feature);
+
+                            // check if we need to highlight the feature
+                            let featureTime =
+                                feature.get("time") || feature.get("datetimestamp") || undefined;
+                            if (
+                                feature.getGeometry() instanceof Ol_Geom_Point &&
+                                typeof featureTime !== "undefined"
+                            ) {
+                                featureTime = moment(featureTime, layer.get("timeFormat"));
+                                if (featureTime.isBetween(date, nextDate, null, "[)")) {
+                                    feature.setStyle(
+                                        _context.createVectorTileTrackHighlightStyle(
+                                            undefined,
+                                            layer.get("vectorColor")
+                                        )
+                                    );
+                                } else {
+                                    feature.setStyle(null);
+                                }
+                            }
                         }
 
                         // catch the last feature
@@ -349,12 +372,50 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                 width: 1
             }),
             image: new Ol_Style_Circle({
-                radius: 3,
+                radius: 4,
                 fill: new Ol_Style_Fill({
                     color: color
                 })
             })
         });
+    }
+
+    createVectorTileTrackHighlightStyle(mapLayer, color = false) {
+        return [
+            new Ol_Style({
+                image: new Ol_Style_Circle({
+                    fill: new Ol_Style_Fill({ color: "#000" }),
+                    radius: 8.5
+                }),
+                zIndex: 2
+            }),
+            new Ol_Style({
+                image: new Ol_Style_Circle({
+                    fill: new Ol_Style_Fill({ color: "#fff" }),
+                    radius: 7.25
+                }),
+                zIndex: 2
+            }),
+            new Ol_Style({
+                image: new Ol_Style_Circle({
+                    fill: new Ol_Style_Fill({
+                        color:
+                            color ||
+                            mapLayer
+                                .getStyle()
+                                .getImage()
+                                .getFill()
+                                .getColor()
+                    }),
+                    stroke: new Ol_Style_Stroke({
+                        color: "#000",
+                        width: 1.25
+                    }),
+                    radius: 6
+                }),
+                zIndex: 2
+            })
+        ];
     }
 
     setVectorLayerColor(layer, color) {
@@ -369,6 +430,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
         }
 
         mapLayer.setStyle(this.createVectorTileTrackLayerStyles(layer, color));
+        this.updateLayer(layer);
         return true;
     }
 
@@ -386,7 +448,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
         let source = mapLayer.getSource();
         if (typeof source.getExtent === "function") {
             let extent = source.getExtent();
-            let padding = [50, 50, 50, 50];
+            let padding = [60, 60, 60, 60];
             if (extraPad) {
                 padding[1] = padding[1] + 600;
             }
@@ -921,6 +983,54 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                 mapLayer.getSource().refresh();
             }
             return true;
+        } catch (err) {
+            console.warn("Error in MapWrapperOpenlayers.recolorLayer:", err);
+            return false;
+        }
+    }
+
+    updateLayer(layer) {
+        try {
+            if (layer.get("handleAs") === appStrings.LAYER_VECTOR_TILE_TRACK) {
+                let mapLayers = this.map.getLayers().getArray();
+                let mapLayer = this.miscUtil.findObjectInArray(
+                    mapLayers,
+                    "_layerId",
+                    layer.get("id")
+                );
+                if (mapLayer) {
+                    // update the layer
+                    this.setLayerRefInfo(layer, mapLayer);
+
+                    // let date = moment(mapLayer.get("_layerTime"), layer.get("timeFormat")).startOf(
+                    //     "d"
+                    // );
+                    let date = moment(this.mapDate).startOf("d");
+                    let nextDate = moment(date).add(1, "d");
+                    let source = mapLayer.getSource();
+                    mapLayer.getSource().forEachFeature(feature => {
+                        let featureTime =
+                            feature.get("time") || feature.get("datetimestamp") || undefined;
+                        if (
+                            feature.getGeometry() instanceof Ol_Geom_Point &&
+                            typeof featureTime !== "undefined"
+                        ) {
+                            featureTime = moment(featureTime, layer.get("timeFormat"));
+                            if (featureTime.isBetween(date, nextDate, null, "[)")) {
+                                feature.setStyle(
+                                    this.createVectorTileTrackHighlightStyle(mapLayer)
+                                );
+                            } else {
+                                feature.setStyle(null);
+                            }
+                        }
+                    });
+                }
+
+                return true;
+            } else {
+                return MapWrapperOpenlayersCore.prototype.updateLayer.call(this, layer);
+            }
         } catch (err) {
             console.warn("Error in MapWrapperOpenlayers.updateLayer:", err);
             return false;

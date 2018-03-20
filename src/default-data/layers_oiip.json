@@ -56,7 +56,6 @@
         "title": "ESRI High Resolution World Imagery",
         "type": "basemap",
         "thumbnailImage": "https://gibs.earthdata.nasa.gov/wmts/epsg4326/best/wmts.cgi?layer=BlueMarble_ShadedRelief_Bathymetry&tilematrixset=500m&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image/jpeg&TileMatrix=2&TileCol=1&TileRow=1&TIME=2016-05-22",
-        "isDefault": true,
         "handleAs": "xyz_raster",
         "updateParameters": { "time": false },
         "wmtsOptions": {
@@ -80,6 +79,7 @@
         "title": "Blue Marble, Shaded Relief w/Bathymetry",
         "type": "basemap",
         "thumbnailImage": "https://gibs.earthdata.nasa.gov/wmts/epsg4326/best/wmts.cgi?layer=BlueMarble_ShadedRelief_Bathymetry&tilematrixset=500m&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image/jpeg&TileMatrix=2&TileCol=1&TileRow=1&TIME=2016-05-22",
+        "isDefault": true,
         "handleAs": "GIBS_raster",
         "updateParameters": { "time": false }
     }, {

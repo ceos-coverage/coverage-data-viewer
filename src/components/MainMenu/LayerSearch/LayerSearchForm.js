@@ -18,7 +18,7 @@ import EditIcon from "material-ui-icons/ModeEdit";
 import TodayIcon from "material-ui-icons/Today";
 import ArrowForward from "material-ui-icons/ArrowForward";
 import Typography from "material-ui/Typography";
-import { LabelPopover, SearchInput } from "components/Reusables";
+import { LabelPopover, SearchInput, AreaSelectionForm } from "components/Reusables";
 import styles from "components/MainMenu/LayerSearch/LayerSearchForm.scss";
 
 export class LayerSearchForm extends Component {
@@ -51,7 +51,7 @@ export class LayerSearchForm extends Component {
                         }
                     }}
                 >
-                    Area selection tool
+                    <AreaSelectionForm />
                 </SearchInput>
                 <SearchInput
                     label={this.renderDateRange()}

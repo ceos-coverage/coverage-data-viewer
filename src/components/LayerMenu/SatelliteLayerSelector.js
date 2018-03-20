@@ -12,7 +12,7 @@ import {
     FormControlLabel,
     FormHelperText
 } from "material-ui/Form";
-import { Colorbar } from "_core/components/Colorbar";
+import { Colorbar } from "components/Colorbar";
 import { LabelPopover } from "components/Reusables";
 import * as mapActionsCore from "_core/actions/mapActions";
 import * as appStringsCore from "_core/constants/appStrings";
@@ -20,6 +20,7 @@ import * as appStrings from "constants/appStrings";
 import Radio, { RadioGroup } from "material-ui/Radio";
 import MiscUtil from "_core/utils/MiscUtil";
 import styles from "components/LayerMenu/SatelliteLayerSelector.scss";
+import displayStyles from "_core/styles/display.scss";
 
 export class SatelliteLayerSelector extends Component {
     handleLayerSelect(val) {
@@ -117,12 +118,19 @@ export class SatelliteLayerSelector extends Component {
             activePalette = this.props.palettes.get(activeLayer.getIn(["palette", "name"]));
         }
 
+        let colorbarClasses = MiscUtil.generateStringFromSet({
+            [styles.colorbarWrapper]: true,
+            [displayStyles.hidden]:
+                typeof activeLayer === "undefined" ||
+                activeLayer.getIn(["palette", "handleAs"]) === ""
+        });
+
         return (
             <Paper elevation={2} className={styles.root}>
                 <LabelPopover label={this.renderLabel(activeLayer)} className={styles.label}>
                     <div className={styles.listWrapper}>{this.renderLayerList(layerList)}</div>
                 </LabelPopover>
-                <div className={styles.colorbarWrapper}>
+                <div className={colorbarClasses}>
                     {this.renderColorbar(activePalette, activeLayer)}
                 </div>
             </Paper>
