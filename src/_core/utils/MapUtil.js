@@ -193,7 +193,6 @@ export default class MapUtil {
      */
     static getWmtsOptions(options) {
         try {
-            this.prepProjection();
             let parseOptions = Ol_Source_WMTS.optionsFromCapabilities(
                 options.capabilities,
                 options.options
@@ -223,41 +222,50 @@ export default class MapUtil {
             return false;
         }
     }
+
     /**
      * Sets the proj4 instance used by openlayers and initializes the default
      * projection data within that instance
      *
      * @static
+     * @param {object|array} [projectionList=appConfig.DEFAULT_AVAILABLE_PROJECTIONS] the projection configuration
+     * or list of configurations to be prepped. If ommitted, this function will prep all default projections
+     * - code - {string} the identifier for this projection
+     * - proj4Def - {string} the proj4js definition
+     * - extent - {array} valid extents for this projection [minx, miny, maxx, maxy]
+     * - aliases - {array} list of string aliases for this projection code
      * @returns {object} the openlayers projection object for the default projection
      * @memberof MapUtil
      */
-    static prepProjection() {
-        // define the projection for this application and reproject defaults
+    static prepProjection(projectionList = appConfig.DEFAULT_AVAILABLE_PROJECTIONS) {
+        // assign the proj4js instance to openlayers
         Ol_Proj.setProj4(proj4js);
-        proj4js.defs(appConfig.DEFAULT_PROJECTION.code, appConfig.DEFAULT_PROJECTION.proj4Def);
 
-        // Ol3 doesn't properly handle the "urn:ogc:def:crs:OGC:1.3:CRS84"
-        // string in getCapabilities and parses it into "OGC:CRS84". This
-        // hopefully adds that as an equivalent projection
-        let epsg4326Proj = Ol_Proj.get("EPSG:4326");
-        let ogcCrs84Proj = new Ol_Proj_Projection({
-            code: "OGC:CRS84",
-            units: epsg4326Proj.getUnits(),
-            extent: epsg4326Proj.getExtent(),
-            global: epsg4326Proj.isGlobal(),
-            metersPerUnit: epsg4326Proj.getMetersPerUnit(),
-            worldExtent: epsg4326Proj.getWorldExtent(),
-            getPointResolution: function(res, point) {
-                return Ol_Proj.getPointResolution("EPSG:4326", res, point);
+        // make sure we're using a list
+        if (!(projectionList instanceof Array)) {
+            projectionList = [projectionList];
+        }
+
+        // prep all specified projections
+        for (let i = 0; i < projectionList.length; ++i) {
+            let projection = projectionList[i];
+
+            // add configured projection
+            let projDef = proj4js.defs(projection.code);
+            if (typeof proj4Def === "undefined") {
+                proj4js.defs(projection.code, projection.proj4Def);
+                Ol_Proj.get(projection.code).setExtent(projection.extent);
             }
-        });
-        Ol_Proj.addProjection(ogcCrs84Proj);
-        Ol_Proj.addEquivalentProjections([ogcCrs84Proj, epsg4326Proj]);
 
-        let mapProjection = Ol_Proj.get(appConfig.DEFAULT_PROJECTION.code);
-        mapProjection.setExtent(appConfig.DEFAULT_PROJECTION.extent);
+            // load aliases
+            if (typeof projection.aliases !== "undefined") {
+                for (let i = 0; i < projection.aliases.length; ++i) {
+                    proj4js.defs(projection.aliases[i], proj4js.defs(projection.code));
+                }
+            }
+        }
 
-        return mapProjection;
+        return Ol_Proj.get(appConfig.DEFAULT_PROJECTION.code);
     }
 
     /**
@@ -677,11 +685,13 @@ export default class MapUtil {
             );
             return false;
         }
-        let coords = geometry.coordinates.map(x => [x.lon, x.lat]);
+        let coords = geometry.coordinates.map(x =>
+            proj4js(geometry.proj, appStrings.PROJECTIONS.latlon.code, [x.lon, x.lat])
+        );
         coords = this.generateGeodesicArcsForLineString(coords);
         if (measurementType === appStrings.MEASURE_DISTANCE) {
             if (geometry.type === appStrings.GEOMETRY_LINE_STRING) {
-                return this.calculatePolylineDistance(coords, geometry.proj);
+                return this.calculatePolylineDistance(coords, appStrings.PROJECTIONS.latlon.code);
             } else {
                 console.warn(
                     "Error in MapUtil.measureGeometry: Could not measure distance, unsupported geometry type: ",
@@ -691,7 +701,7 @@ export default class MapUtil {
             }
         } else if (measurementType === appStrings.MEASURE_AREA) {
             if (geometry.type === appStrings.GEOMETRY_POLYGON) {
-                return this.calculatePolygonArea(coords, geometry.proj);
+                return this.calculatePolygonArea(coords, appStrings.PROJECTIONS.latlon.code);
             } else {
                 console.warn(
                     "Error in MapUtil.measureGeometry: Could not measure area, unsupported geometry type: ",
@@ -750,7 +760,21 @@ export default class MapUtil {
         if (geometry.type === appStrings.GEOMETRY_LINE_STRING) {
             let lastCoord = geometry.coordinates[geometry.coordinates.length - 1];
             if (lastCoord) {
-                return this.constrainCoordinates([lastCoord.lon, lastCoord.lat]);
+                // Convert from geometry proj to latlon so we can constrain coords
+                let latLonLastCoord = proj4js(geometry.proj, appStrings.PROJECTIONS.latlon.code, [
+                    lastCoord.lon,
+                    lastCoord.lat
+                ]);
+                let constrainedLastCoord = this.constrainCoordinates([
+                    latLonLastCoord[0],
+                    latLonLastCoord[1]
+                ]);
+                // Convert from latlon back to geometry proj
+                return proj4js(
+                    appStrings.PROJECTIONS.latlon.code,
+                    geometry.proj,
+                    constrainedLastCoord
+                );
             } else {
                 console.warn(
                     "Error in MapUtil.getLabelPosition: Could not find label placement, no coordinates in geometry."
@@ -758,9 +782,19 @@ export default class MapUtil {
                 return false;
             }
         } else if (geometry.type === appStrings.GEOMETRY_POLYGON) {
-            let coords = geometry.coordinates.map(x => [x.lon, x.lat]);
-            coords = this.generateGeodesicArcsForLineString(coords);
-            return this.constrainCoordinates(this.calculatePolygonCenter(coords, geometry.proj));
+            // Convert from geometry proj to latlon
+            let coords = geometry.coordinates.map(x =>
+                proj4js(geometry.proj, appStrings.PROJECTIONS.latlon.code, [x.lon, x.lat])
+            );
+
+            let arcCoords = this.generateGeodesicArcsForLineString(coords);
+            let centerCoord = this.calculatePolygonCenter(
+                arcCoords,
+                appStrings.PROJECTIONS.latlon.code
+            );
+            let constrainedCoord = this.constrainCoordinates(centerCoord);
+            // Convert from latlon back to geometry proj
+            return proj4js(appStrings.PROJECTIONS.latlon.code, geometry.proj, constrainedCoord);
         } else {
             console.warn(
                 "Error in MapUtil.getLabelPosition: Could not find label placement, unsupported geometry type: ",
@@ -795,5 +829,29 @@ export default class MapUtil {
             }
             return acc;
         }, []);
+    }
+
+    /**
+     * format lat lon pair for display in cardinal directions
+     *
+     * @static
+     * @param {number} lat
+     * @param {number} lon
+     * @param {boolean} isValid
+     * @returns {string}
+     * @memberof MapUtil
+     */
+    static formatLatLon(lat, lon, isValid) {
+        let latUnit = lat >= 0 ? "°E" : "°W";
+        let lonUnit = lon >= 0 ? "°N" : "°S";
+
+        let currCoord =
+            MiscUtil.padNumber(Math.abs(lon).toFixed(3), 5, "&nbsp;") +
+            lonUnit +
+            "," +
+            MiscUtil.padNumber(Math.abs(lat).toFixed(3), 6, "&nbsp;") +
+            latUnit;
+
+        return isValid ? currCoord : " ------" + lonUnit + ", ------" + latUnit;
     }
 }

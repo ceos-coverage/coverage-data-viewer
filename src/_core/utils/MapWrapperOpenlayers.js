@@ -547,6 +547,14 @@ export default class MapWrapperOpenlayers extends MapWrapper {
     setExtent(extent) {
         try {
             if (extent) {
+                extent = Ol_Proj.transformExtent(
+                    extent,
+                    appStrings.PROJECTIONS.latlon.code,
+                    this.map
+                        .getView()
+                        .getProjection()
+                        .getCode()
+                );
                 let mapSize = this.map.getSize() || [];
                 this.map.getView().fit(extent, {
                     size: mapSize,
@@ -569,7 +577,15 @@ export default class MapWrapperOpenlayers extends MapWrapper {
      */
     getExtent() {
         try {
-            return this.map.getView().calculateExtent(this.map.getSize());
+            let extent = this.map.getView().calculateExtent(this.map.getSize());
+            return Ol_Proj.transformExtent(
+                extent,
+                this.map
+                    .getView()
+                    .getProjection()
+                    .getCode(),
+                appStrings.PROJECTIONS.latlon.code
+            );
         } catch (err) {
             console.warn("Error in MapWrapperOpenlayers.getExtent:", err);
             return false;
@@ -1155,23 +1171,35 @@ export default class MapWrapperOpenlayers extends MapWrapper {
                 "_layerId",
                 "_vector_drawings"
             );
+            let mapProjection = Ol_Proj.get(appConfig.DEFAULT_PROJECTION.code);
             if (mapLayer) {
                 let measureDistGeom = (coords, opt_geom) => {
                     let geom = opt_geom ? opt_geom : new Ol_Geom_Linestring();
 
                     // remove duplicates
-                    let newCoords = coords.reduce((acc, el, i) => {
+                    let newCoords = coords.reduce((acc, coord, i) => {
                         let prev = acc[i - 1];
-                        el = this.mapUtil.constrainCoordinates(el);
-                        if (!prev || (prev[0] !== el[0] || prev[1] !== el[1])) {
-                            acc.push(el);
+                        coord = Ol_Proj.transform(
+                            coord,
+                            mapProjection,
+                            appStrings.PROJECTIONS.latlon.code
+                        );
+                        coord = this.mapUtil.constrainCoordinates(coord);
+                        if (!prev || (prev[0] !== coord[0] || prev[1] !== coord[1])) {
+                            acc.push(coord);
                         }
                         return acc;
                     }, []);
 
                     let lineCoords = this.mapUtil.generateGeodesicArcsForLineString(newCoords);
-                    geom.setCoordinates(lineCoords);
-                    geom.set("originalCoordinates", newCoords, true);
+                    let transformedLineCoords = lineCoords.map(coords =>
+                        Ol_Proj.transform(coords, appStrings.PROJECTIONS.latlon.code, mapProjection)
+                    );
+                    let transformedOriginalCoords = newCoords.map(coords =>
+                        Ol_Proj.transform(coords, appStrings.PROJECTIONS.latlon.code, mapProjection)
+                    );
+                    geom.setCoordinates(transformedLineCoords);
+                    geom.set("originalCoordinates", transformedOriginalCoords, true);
                     return geom;
                 };
                 let measureAreaGeom = (coords, opt_geom) => {
@@ -1179,11 +1207,16 @@ export default class MapWrapperOpenlayers extends MapWrapper {
                     let geom = opt_geom ? opt_geom : new Ol_Geom_Polygon();
 
                     // remove duplicates
-                    let newCoords = coords.reduce((acc, el, i) => {
+                    let newCoords = coords.reduce((acc, coord, i) => {
                         let prev = acc[i - 1];
-                        el = this.mapUtil.constrainCoordinates(el);
-                        if (!prev || (prev[0] !== el[0] || prev[1] !== el[1])) {
-                            acc.push(el);
+                        coord = Ol_Proj.transform(
+                            coord,
+                            mapProjection,
+                            appStrings.PROJECTIONS.latlon.code
+                        );
+                        coord = this.mapUtil.constrainCoordinates(coord);
+                        if (!prev || (prev[0] !== coord[0] || prev[1] !== coord[1])) {
+                            acc.push(coord);
                         }
                         return acc;
                     }, []);
@@ -1194,8 +1227,14 @@ export default class MapWrapperOpenlayers extends MapWrapper {
                     }
 
                     let lineCoords = this.mapUtil.generateGeodesicArcsForLineString(newCoords);
-                    geom.setCoordinates([lineCoords]);
-                    geom.set("originalCoordinates", newCoords, true);
+                    let transformedLineCoords = lineCoords.map(coords =>
+                        Ol_Proj.transform(coords, appStrings.PROJECTIONS.latlon.code, mapProjection)
+                    );
+                    let transformedOriginalCoords = newCoords.map(coords =>
+                        Ol_Proj.transform(coords, appStrings.PROJECTIONS.latlon.code, mapProjection)
+                    );
+                    geom.setCoordinates([transformedLineCoords]);
+                    geom.set("originalCoordinates", transformedOriginalCoords, true);
                     return geom;
                 };
 
@@ -1790,6 +1829,14 @@ export default class MapWrapperOpenlayers extends MapWrapper {
     getLatLonFromPixelCoordinate(pixel) {
         try {
             let coordinate = this.map.getCoordinateFromPixel(pixel);
+            coordinate = Ol_Proj.transform(
+                coordinate,
+                this.map
+                    .getView()
+                    .getProjection()
+                    .getCode(),
+                appStrings.PROJECTIONS.latlon.code
+            );
             let constrainCoordinate = this.mapUtil.constrainCoordinates(coordinate);
             if (
                 typeof constrainCoordinate[0] !== "undefined" &&
@@ -2194,6 +2241,33 @@ export default class MapWrapperOpenlayers extends MapWrapper {
      * @memberof MapWrapperOpenlayers
      */
     createGIBSWMTSSource(layer, options) {
+        // determine if we have preset imagery resolutions
+        let resolutions = options.tileGrid.resolutions;
+        if (
+            options.projection === appStrings.PROJECTIONS.latlon.code ||
+            appStrings.PROJECTIONS.latlon.aliases.indexOf(options.projection) !== -1
+        ) {
+            resolutions = appConfig.GIBS_IMAGERY_RESOLUTIONS[appStrings.PROJECTIONS.latlon.code];
+        } else if (
+            options.projection === appStrings.PROJECTIONS.webmercator.code ||
+            appStrings.PROJECTIONS.webmercator.aliases.indexOf(options.projection) !== -1
+        ) {
+            resolutions =
+                appConfig.GIBS_IMAGERY_RESOLUTIONS[appStrings.PROJECTIONS.webmercator.code];
+        } else if (
+            options.projection === appStrings.PROJECTIONS.northpolar.code ||
+            appStrings.PROJECTIONS.northpolar.aliases.indexOf(options.projection) !== -1
+        ) {
+            resolutions =
+                appConfig.GIBS_IMAGERY_RESOLUTIONS[appStrings.PROJECTIONS.northpolar.code];
+        } else if (
+            options.projection === appStrings.PROJECTIONS.southpolar.code ||
+            appStrings.PROJECTIONS.southpolar.aliases.indexOf(options.projection) !== -1
+        ) {
+            resolutions =
+                appConfig.GIBS_IMAGERY_RESOLUTIONS[appStrings.PROJECTIONS.southpolar.code];
+        }
+
         return new Ol_Source_WMTS({
             url: options.url,
             layer: options.layer,
@@ -2204,13 +2278,8 @@ export default class MapWrapperOpenlayers extends MapWrapper {
             tileGrid: new Ol_Tilegrid_WMTS({
                 extent: options.extents,
                 origin: options.tileGrid.origin,
-                resolutions: options.tileGrid.resolutions.slice(
-                    2,
-                    appConfig.GIBS_IMAGERY_RESOLUTIONS.length
-                ),
-                // resolutions: options.tileGrid.resolutions,
-                matrixIds: options.tileGrid.matrixIds.slice(2, options.tileGrid.matrixIds.length),
-                // matrixIds: options.tileGrid.matrixIds,
+                resolutions: resolutions.slice(2, options.tileGrid.matrixIds.length), // top two zoom levels are misaligned
+                matrixIds: options.tileGrid.matrixIds.slice(2),
                 tileSize: options.tileGrid.tileSize
             }),
             transition: appConfig.DEFAULT_TILE_TRANSITION_TIME,

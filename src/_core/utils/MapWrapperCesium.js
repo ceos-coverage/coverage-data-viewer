@@ -1109,12 +1109,14 @@ export default class MapWrapperCesium extends MapWrapper {
                         entity.polyline.material.color.setValue(c);
                     }
                     if (entity.billboard) {
-                        entity.billboard.color = new this.cesium.Color(
-                            1.0,
-                            1.0,
-                            1.0,
-                            opacity * 1.0
-                        );
+                        let c = entity.billboard.color.getValue();
+                        c.alpha = opacity * 1.0;
+                        entity.billboard.color.setValue(c);
+                    }
+                    if (entity.point) {
+                        let c = entity.point.color.getValue();
+                        c.alpha = opacity * 1.0;
+                        entity.point.color.setValue(c);
                     }
                 });
                 return true;
@@ -1751,7 +1753,10 @@ export default class MapWrapperCesium extends MapWrapper {
      * @memberof MapWrapperCesium
      */
     createTilingScheme(options, tileSchemeOptions) {
-        if (options.projection === appStrings.PROJECTIONS.latlon.code) {
+        if (
+            options.projection === appStrings.PROJECTIONS.latlon.code ||
+            appStrings.PROJECTIONS.latlon.aliases.indexOf(options.projection) !== -1
+        ) {
             if (options.handleAs === appStrings.LAYER_GIBS_RASTER) {
                 return new CesiumTilingScheme_GIBS(
                     { numberOfLevelZeroTilesX: 2, numberOfLevelZeroTilesY: 1 },
@@ -1759,7 +1764,10 @@ export default class MapWrapperCesium extends MapWrapper {
                 );
             }
             return new this.cesium.GeographicTilingScheme();
-        } else if (options.projection === appStrings.PROJECTIONS.webmercator.code) {
+        } else if (
+            options.projection === appStrings.PROJECTIONS.webmercator.code ||
+            appStrings.PROJECTIONS.webmercator.aliases.indexOf(options.projection) !== -1
+        ) {
             return new this.cesium.WebMercatorTilingScheme();
         }
         return false;
