@@ -25,9 +25,10 @@ import * as appStrings from "_core/constants/appStrings";
 import appConfig from "constants/appConfig";
 import MiscUtil from "_core/utils/MiscUtil";
 import { MapButton, MapButtonGroup } from "_core/components/Reusables";
-import { MapToolsButton, MapLabelsButton } from "_core/components/Map";
-import { BasemapPicker } from "components/Map";
-import styles from "_core/components/Map/MapControlsContainer.scss";
+import { MapLabelsButton } from "_core/components/Map";
+import { BasemapPicker, MapToolsButton } from "components/Map";
+import styles from "components/Map/MapControlsContainer.scss";
+import stylesCore from "_core/components/Map/MapControlsContainer.scss";
 import displayStyles from "_core/styles/display.scss";
 
 export class MapControlsContainer extends Component {
@@ -99,7 +100,7 @@ export class MapControlsContainer extends Component {
             [displayStyles.hiddenFadeIn]:
                 !this.props.mapControlsHidden && this.props.distractionFreeMode,
             [this.props.className]: typeof this.props.className !== "undefined",
-            [styles.mapControlsContainer]: true
+            [stylesCore.mapControlsContainer]: true
         });
         return (
             <div
@@ -107,15 +108,16 @@ export class MapControlsContainer extends Component {
                 onMouseLeave={() => this.onMapControlsMouseLeave()}
                 onMouseEnter={() => this.onMapControlsMouseEnter()}
             >
-                <Paper elevation={2} className={styles.buttonGroup}>
+                <Paper elevation={2} className={stylesCore.buttonGroup}>
                     <MapToolsButton
                         isOpen={this.props.mapControlsToolsOpen}
-                        className={styles.lineButton}
+                        className={stylesCore.lineButton}
                         setOpen={isOpen => this.props.appActions.setMapControlsToolsOpen(isOpen)}
                     />
+                    <BasemapPicker className={styles.basemapPicker} />
                     <MapLabelsButton />
                 </Paper>
-                <Paper elevation={2} className={styles.buttonGroup}>
+                <Paper elevation={2} className={stylesCore.buttonGroup}>
                     <Tooltip title="Home" placement="right">
                         <MapButton
                             onClick={() => {
@@ -125,7 +127,7 @@ export class MapControlsContainer extends Component {
                                 );
                             }}
                             aria-label="Home"
-                            className={`${styles.firstButton} ${styles.lineButton}`}
+                            className={`${stylesCore.firstButton} ${stylesCore.lineButton}`}
                         >
                             <HomeIcon />
                         </MapButton>
@@ -134,7 +136,7 @@ export class MapControlsContainer extends Component {
                         <MapButton
                             onClick={this.props.mapActions.zoomIn}
                             aria-label="Zoom in"
-                            className={styles.lineButton}
+                            className={stylesCore.lineButton}
                         >
                             <PlusIcon />
                         </MapButton>
@@ -143,13 +145,12 @@ export class MapControlsContainer extends Component {
                         <MapButton
                             onClick={this.props.mapActions.zoomOut}
                             aria-label="Zoom out"
-                            className={styles.lastButton}
+                            className={stylesCore.lastButton}
                         >
                             <RemoveIcon />
                         </MapButton>
                     </Tooltip>
                 </Paper>
-                <BasemapPicker />
             </div>
         );
     }

@@ -12,17 +12,17 @@ import { bindActionCreators } from "redux";
 import Button from "material-ui/Button";
 import Tooltip from "material-ui/Tooltip";
 import { Manager, Target, Popper } from "react-popper";
-import Paper from "material-ui/Paper";
 import Grow from "material-ui/transitions/Grow";
 import ClickAwayListener from "material-ui/utils/ClickAwayListener";
-import ButtonBase from "material-ui/ButtonBase";
-import Typography from "material-ui/Typography";
+import MapIcon from "material-ui-icons/Layers";
 import * as mapActions from "_core/actions/mapActions";
 import * as appActions from "_core/actions/appActions";
 import * as appStrings from "_core/constants/appStrings";
 import { BaseMapList } from "_core/components/Settings";
+import { MapButton } from "_core/components/Reusables";
 import MiscUtil from "_core/utils/MiscUtil";
 import styles from "_core/components/Map/BasemapPicker.scss";
+import mapControlsStyles from "_core/components/Map/MapControlsContainer.scss";
 import displayStyles from "_core/styles/display.scss";
 
 export class BasemapPicker extends Component {
@@ -76,34 +76,17 @@ export class BasemapPicker extends Component {
                     <Manager>
                         <Target>
                             <Tooltip title={"Select Basemap"} placement="left">
-                                <Paper elevation={2}>
-                                    <ButtonBase
-                                        onClick={() =>
-                                            this.props.appActions.setMapControlsBasemapPickerOpen(
-                                                !this.props.mapControlsBasemapPickerOpen
-                                            )
-                                        }
-                                        focusRipple
-                                        style={{ width: "100%" }}
-                                        className={styles.buttonBase}
-                                    >
-                                        <div>
-                                            <div
-                                                className={styles.image}
-                                                style={{
-                                                    backgroundImage: `url(${activeBasemapThumbnail})`
-                                                }}
-                                                alt="basemap preview image"
-                                            />
-                                            <Typography
-                                                variant="caption"
-                                                className={styles.caption}
-                                            >
-                                                Basemap
-                                            </Typography>
-                                        </div>
-                                    </ButtonBase>
-                                </Paper>
+                                <MapButton
+                                    onClick={() =>
+                                        this.props.appActions.setMapControlsBasemapPickerOpen(
+                                            !this.props.mapControlsBasemapPickerOpen
+                                        )
+                                    }
+                                    aria-label="basemap selection"
+                                    className={mapControlsStyles.lineButton}
+                                >
+                                    <MapIcon />
+                                </MapButton>
                             </Tooltip>
                         </Target>
                         <Popper

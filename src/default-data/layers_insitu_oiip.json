@@ -13,7 +13,7 @@
         "thumbnailImage": "img/us_state_outline_topojson.png"
     },{
         "id": "bigEyeTuna",
-        "title": "Big Eye Tuna",
+        "title": "Bigeye Tuna",
         "type": "insitu_data",
         "handleAs": "vector_tile_track",
         "url": "default-data/bigEyeTuna.geojson",

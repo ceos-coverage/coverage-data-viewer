@@ -16,22 +16,6 @@ export class ChartButtons extends Component {
             <div className={styles.root}>
                 <Tooltip
                     disableTriggerFocus
-                    title="Download"
-                    placement="bottom"
-                    className={styles.btnWrapper}
-                >
-                    <IconButtonSmall
-                        color="inherit"
-                        className={styles.btn}
-                        onClick={() => {
-                            this.props.chartActions.exportChart(this.props.nodeId);
-                        }}
-                    >
-                        <FileDownloadIcon />
-                    </IconButtonSmall>
-                </Tooltip>
-                <Tooltip
-                    disableTriggerFocus
                     title="Options"
                     placement="bottom"
                     className={styles.btnWrapper}
