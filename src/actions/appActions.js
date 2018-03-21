@@ -14,3 +14,7 @@ export function setMainMenuTabIndex(tabIndex) {
 export function setMainMenuOpen(isOpen) {
     return { type: types.SET_MAIN_MENU_OPEN, isOpen };
 }
+
+export function setSearchDateRange(startDate, endDate) {
+    return { type: types.SET_SEARCH_DATE_RANGE, startDate, endDate };
+}
