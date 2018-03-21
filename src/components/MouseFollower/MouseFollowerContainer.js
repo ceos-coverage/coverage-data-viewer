@@ -14,8 +14,9 @@ import {
     DrawingTooltip,
     MouseCoordinates as MouseCoordinatesCore
 } from "_core/components/MouseFollower";
-import { MouseCoordinates, DataDisplayContainer } from "components/MouseFollower";
-import styles from "_core/components/MouseFollower/MouseFollowerContainer.scss";
+import { DataDisplayContainer } from "components/MouseFollower";
+import styles from "components/MouseFollower/MouseFollowerContainer.scss";
+import stylesCore from "_core/components/MouseFollower/MouseFollowerContainer.scss";
 import displayStyles from "_core/styles/display.scss";
 
 export class MouseFollowerContainer extends Component {
@@ -41,16 +42,7 @@ export class MouseFollowerContainer extends Component {
 
     renderCoordinates(data) {
         if (data.size > 0) {
-            let coords = data.getIn([0, "coords"]);
-            return (
-                <MouseCoordinates
-                    pixelCoordinate={Immutable.fromJS({
-                        lat: coords.get(0),
-                        lon: coords.get(1),
-                        isValid: true
-                    })}
-                />
-            );
+            return "";
         } else {
             return <MouseCoordinatesCore />;
         }
@@ -71,11 +63,12 @@ export class MouseFollowerContainer extends Component {
         let dataAvailable = this.props.pixelCoordinate.get("data").size > 0;
 
         let containerClasses = MiscUtil.generateStringFromSet({
-            [styles.mouseFollowerContainer]: true,
-            [styles.active]:
+            [styles.root]: true,
+            [stylesCore.mouseFollowerContainer]: true,
+            [stylesCore.active]:
                 this.props.pixelCoordinate.get("isValid") &&
                 (this.props.pixelCoordinate.get("showData") || drawOrMeasure),
-            [styles.right]: left > maxLeft,
+            [stylesCore.right]: left > maxLeft,
             [this.props.className]: typeof this.props.className !== "undefined"
         });
 
@@ -87,10 +80,9 @@ export class MouseFollowerContainer extends Component {
             [displayStyles.hidden]: !this.props.pixelCoordinate.get("showData") || drawOrMeasure
         });
 
-        // TODO - make a data display component
         return (
             <div className={containerClasses} style={style}>
-                <div className={styles.content}>
+                <div className={stylesCore.content}>
                     <DrawingTooltip
                         drawing={this.props.drawing}
                         measuring={this.props.measuring}
@@ -101,7 +93,7 @@ export class MouseFollowerContainer extends Component {
                         data={this.props.pixelCoordinate.get("data")}
                     />
                 </div>
-                <div className={styles.footer}>
+                <div className={stylesCore.footer}>
                     {this.renderCoordinates(this.props.pixelCoordinate.get("data"))}
                 </div>
             </div>

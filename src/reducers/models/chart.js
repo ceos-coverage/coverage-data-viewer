@@ -21,7 +21,7 @@ export const chartModel = Immutable.fromJS({
     },
     displayOptions: {
         isOpen: false,
-        yAxisReversed: false,
+        yAxisReversed: true,
         markerType: appStrings.PLOT_STYLES.TIME_SERIES.DOTS
     }
 });

@@ -6,7 +6,7 @@ import * as appStrings from "constants/appStrings";
 
 const PRIMARY_COLOR = "#0288d1";
 const SECONDARY_COLOR = "#d14702";
-const CHART_WIDTH = 560;
+const CHART_WIDTH = 510;
 const CHART_HEIGHT = 298;
 
 let nodeChartMap = Immutable.Map();
