@@ -384,15 +384,12 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
         return [
             new Ol_Style({
                 image: new Ol_Style_Circle({
-                    fill: new Ol_Style_Fill({ color: "#000" }),
-                    radius: 8.5
-                }),
-                zIndex: 2
-            }),
-            new Ol_Style({
-                image: new Ol_Style_Circle({
                     fill: new Ol_Style_Fill({ color: "#fff" }),
-                    radius: 7.25
+                    stroke: new Ol_Style_Stroke({
+                        color: "#000",
+                        width: 1.25
+                    }),
+                    radius: 8.5
                 }),
                 zIndex: 2
             }),
@@ -490,7 +487,6 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                 }
             );
 
-            // pull just one feature to display
             return data.slice(0, 1);
 
             // return data;
