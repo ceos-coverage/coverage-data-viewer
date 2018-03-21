@@ -24,11 +24,17 @@ export class LabelPopover extends Component {
     handleClickButton() {
         this.button = findDOMNode(this.button);
         this.popoverOpen = !this.popoverOpen;
+        if (typeof this.props.onOpen === "function") {
+            this.props.onOpen();
+        }
         this.forceUpdate();
     }
 
     handleClose() {
         this.popoverOpen = false;
+        if (typeof this.props.onClose === "function") {
+            this.props.onClose();
+        }
         this.forceUpdate();
     }
 
@@ -136,6 +142,7 @@ export class LabelPopover extends Component {
                     }}
                     PaperProps={{ style: { width: this.width } }}
                     classes={{ paper: styles.content }}
+                    id="searchInputPopover"
                 >
                     {this.props.children}
                 </Popover>
@@ -151,6 +158,8 @@ LabelPopover.propTypes = {
     rightAction: PropTypes.object,
     error: PropTypes.string,
     className: PropTypes.string,
+    onOpen: PropTypes.func,
+    onClose: PropTypes.func,
     children: PropTypes.oneOfType([PropTypes.object, PropTypes.array, PropTypes.node])
 };
 

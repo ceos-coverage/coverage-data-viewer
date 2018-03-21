@@ -18,22 +18,16 @@ import EditIcon from "material-ui-icons/ModeEdit";
 import TodayIcon from "material-ui-icons/Today";
 import ArrowForward from "material-ui-icons/ArrowForward";
 import Typography from "material-ui/Typography";
-import { LabelPopover, SearchInput, AreaSelectionForm } from "components/Reusables";
+import {
+    LabelPopover,
+    SearchInput,
+    DateRangePicker,
+    AreaSelectionForm
+} from "components/Reusables";
+import * as appActions from "actions/appActions";
 import styles from "components/MainMenu/LayerSearch/LayerSearchForm.scss";
 
 export class LayerSearchForm extends Component {
-    renderDateRange() {
-        let end = moment(new Date());
-        let start = end.subtract(2, "months");
-
-        return (
-            <div className={styles.dateRange}>
-                {start.format("MMM DD, YYYY")}
-                <ArrowForward />
-                {end.format("MMM DD, YYYY")}
-            </div>
-        );
-    }
     render() {
         return (
             <Paper elevation={3} className={styles.root}>
@@ -53,49 +47,13 @@ export class LayerSearchForm extends Component {
                 >
                     <AreaSelectionForm />
                 </SearchInput>
-                <SearchInput
-                    label={this.renderDateRange()}
-                    placeholder="placeholder"
+                <DateRangePicker
                     className={styles.topField}
-                    leftAction={{
-                        icon: <TodayIcon />
-                    }}
-                >
-                    Date selection tool
-                </SearchInput>
+                    startDate={this.props.layerSearch.get("startDate")}
+                    endDate={this.props.layerSearch.get("endDate")}
+                    onUpdate={this.props.appActions.setSearchDateRange}
+                />
                 <div className={styles.facetRow}>
-                    <LabelPopover label="Sensor" subtitle="Any" className={styles.facet}>
-                        <FormGroup>
-                            <FormControlLabel
-                                control={<Checkbox checked={false} value="tuna_a303" />}
-                                label="Animal Tag X3K"
-                            />
-                            <FormControlLabel
-                                control={<Checkbox checked={false} value="tuna_a304" />}
-                                label="Buoy 44Z"
-                            />
-                            <FormControlLabel
-                                control={<Checkbox checked={false} value="tuna_a304" />}
-                                label="Ship Sensor Line"
-                            />
-                        </FormGroup>
-                    </LabelPopover>
-                    <LabelPopover label="Provider" subtitle="2 Selected" className={styles.facet}>
-                        <FormGroup>
-                            <FormControlLabel
-                                control={<Checkbox checked={true} value="tuna_a303" />}
-                                label="PO.DAAC"
-                            />
-                            <FormControlLabel
-                                control={<Checkbox checked={false} value="tuna_a304" />}
-                                label="Provider Name"
-                            />
-                            <FormControlLabel
-                                control={<Checkbox checked={true} value="tuna_a304" />}
-                                label="SPURS"
-                            />
-                        </FormGroup>
-                    </LabelPopover>
                     <LabelPopover label="Variable" subtitle="Any" className={styles.facet}>
                         <FormGroup>
                             <FormControlLabel
@@ -120,7 +78,7 @@ export class LayerSearchForm extends Component {
                             />
                         </FormGroup>
                     </LabelPopover>
-                    <LabelPopover label="Species" subtitle="Tuna" className={styles.facet}>
+                    <LabelPopover label="Platform" subtitle="Tuna" className={styles.facet}>
                         <FormGroup>
                             <FormControlLabel
                                 control={<Checkbox checked={false} value="tuna_a304" />}
@@ -144,35 +102,35 @@ export class LayerSearchForm extends Component {
                             />
                         </FormGroup>
                     </LabelPopover>
-                    <LabelPopover label="Sample Rate" subtitle="Any" className={styles.facet}>
+                    <LabelPopover label="Sensor" subtitle="Any" className={styles.facet}>
                         <FormGroup>
                             <FormControlLabel
-                                control={<Checkbox checked={false} value="tuna_a304" />}
-                                label="Second"
-                            />
-                            <FormControlLabel
-                                control={<Checkbox checked={false} value="tuna_a304" />}
-                                label="Minute"
-                            />
-                            <FormControlLabel
                                 control={<Checkbox checked={false} value="tuna_a303" />}
-                                label="Hour"
+                                label="Animal Tag X3K"
                             />
                             <FormControlLabel
                                 control={<Checkbox checked={false} value="tuna_a304" />}
-                                label="Day"
+                                label="Buoy 44Z"
                             />
                             <FormControlLabel
                                 control={<Checkbox checked={false} value="tuna_a304" />}
-                                label="Week"
+                                label="Ship Sensor Line"
+                            />
+                        </FormGroup>
+                    </LabelPopover>
+                    <LabelPopover label="Project" subtitle="2 Selected" className={styles.facet}>
+                        <FormGroup>
+                            <FormControlLabel
+                                control={<Checkbox checked={true} value="tuna_a303" />}
+                                label="PO.DAAC"
                             />
                             <FormControlLabel
-                                control={<Checkbox checked={false} value="tuna_a303" />}
-                                label="Month"
+                                control={<Checkbox checked={false} value="tuna_a304" />}
+                                label="Project Name"
                             />
                             <FormControlLabel
-                                control={<Checkbox checked={false} value="tuna_a303" />}
-                                label="Year"
+                                control={<Checkbox checked={true} value="tuna_a304" />}
+                                label="SPURS"
                             />
                         </FormGroup>
                     </LabelPopover>
@@ -182,6 +140,21 @@ export class LayerSearchForm extends Component {
     }
 }
 
-LayerSearchForm.propTypes = {};
+LayerSearchForm.propTypes = {
+    layerSearch: PropTypes.object.isRequired,
+    appActions: PropTypes.object.isRequired
+};
 
-export default connect()(LayerSearchForm);
+function mapStateToProps(state) {
+    return {
+        layerSearch: state.view.get("layerSearch")
+    };
+}
+
+function mapDispatchToProps(dispatch) {
+    return {
+        appActions: bindActionCreators(appActions, dispatch)
+    };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(LayerSearchForm);

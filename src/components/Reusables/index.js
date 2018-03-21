@@ -4,3 +4,4 @@ export { default as SearchInput } from "components/Reusables/SearchInput.js";
 export { default as SingleColorSelector } from "components/Reusables/SingleColorSelector.js";
 export { default as AreaDefaultMessage } from "components/Reusables/AreaDefaultMessage.js";
 export { default as AreaSelectionForm } from "components/Reusables/AreaSelectionForm.js";
+export { default as DateRangePicker } from "components/Reusables/DateRangePicker.js";
