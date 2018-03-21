@@ -18,12 +18,8 @@ export class LayerSearchForm extends Component {
     constructor(props) {
         super(props);
 
-        this.open = false;
+        this.popoverOpen = false;
         this.selectsStart = true;
-    }
-
-    closePopover() {
-        document.getElementById("searchInputPopover").childNodes[0].click();
     }
 
     handleDatePickerUpdate(value) {
@@ -39,7 +35,7 @@ export class LayerSearchForm extends Component {
                     ? value.toDate()
                     : this.props.startDate;
                 this.props.onUpdate(startDate, value.toDate());
-                this.closePopover();
+                this.handleClose();
             }
         }
     }
@@ -51,23 +47,23 @@ export class LayerSearchForm extends Component {
 
     handleOpen() {
         this.selectsStart = true;
-        this.open = true;
+        this.popoverOpen = true;
         this.forceUpdate();
     }
 
     handleClose() {
-        this.open = false;
+        this.popoverOpen = false;
         this.forceUpdate();
     }
 
     renderDateRange(start, end) {
         let startClass = MiscUtil.generateStringFromSet({
             [styles.dateStr]: true,
-            [styles.activeDate]: this.open && this.selectsStart
+            [styles.activeDate]: this.popoverOpen && this.selectsStart
         });
         let endClass = MiscUtil.generateStringFromSet({
             [styles.dateStr]: true,
-            [styles.activeDate]: this.open && !this.selectsStart
+            [styles.activeDate]: this.popoverOpen && !this.selectsStart
         });
         return (
             <div className={styles.dateRange}>
@@ -90,6 +86,7 @@ export class LayerSearchForm extends Component {
             <SearchInput
                 label={this.renderDateRange(startDate, endDate)}
                 placeholder="placeholder"
+                open={this.popoverOpen}
                 onOpen={() => this.handleOpen()}
                 onClose={() => this.handleClose()}
                 className={containerClasses}
@@ -123,7 +120,7 @@ export class LayerSearchForm extends Component {
                         variant="flat"
                         size="small"
                         color="primary"
-                        onClick={() => this.closePopover()}
+                        onClick={() => this.handleClose()}
                     >
                         Done
                     </Button>

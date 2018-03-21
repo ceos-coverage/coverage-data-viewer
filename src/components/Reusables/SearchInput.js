@@ -16,6 +16,7 @@ export class LabelPopover extends Component {
     constructor(props) {
         super(props);
 
+        this.useExternal = typeof this.props.open !== "undefined";
         this.popoverOpen = false;
         this.button = undefined;
         this.width = "initial";
@@ -23,19 +24,32 @@ export class LabelPopover extends Component {
 
     handleClickButton() {
         this.button = findDOMNode(this.button);
-        this.popoverOpen = !this.popoverOpen;
-        if (typeof this.props.onOpen === "function") {
-            this.props.onOpen();
+
+        if (this.useExternal) {
+            if (typeof this.props.onOpen === "function") {
+                this.props.onOpen();
+            }
+        } else {
+            this.popoverOpen = true;
+            if (typeof this.props.onOpen === "function") {
+                this.props.onOpen();
+            }
+            this.forceUpdate();
         }
-        this.forceUpdate();
     }
 
     handleClose() {
-        this.popoverOpen = false;
-        if (typeof this.props.onClose === "function") {
-            this.props.onClose();
+        if (this.useExternal) {
+            if (typeof this.props.onClose === "function") {
+                this.props.onClose();
+            }
+        } else {
+            this.popoverOpen = false;
+            if (typeof this.props.onClose === "function") {
+                this.props.onClose();
+            }
+            this.forceUpdate();
         }
-        this.forceUpdate();
     }
 
     renderLeftAction() {
@@ -111,6 +125,8 @@ export class LabelPopover extends Component {
             }
         }
 
+        let open = this.useExternal ? this.props.open : this.popoverOpen;
+
         return (
             <Paper elevation={this.popoverOpen ? 8 : 0} className={containerClasses}>
                 <ButtonBase
@@ -128,7 +144,7 @@ export class LabelPopover extends Component {
                 </ButtonBase>
                 {this.renderRightAction()}
                 <Popover
-                    open={this.popoverOpen}
+                    open={open}
                     anchorEl={this.button}
                     anchorReference="anchorEl"
                     onClose={() => this.handleClose()}
@@ -142,7 +158,6 @@ export class LabelPopover extends Component {
                     }}
                     PaperProps={{ style: { width: this.width } }}
                     classes={{ paper: styles.content }}
-                    id="searchInputPopover"
                 >
                     {this.props.children}
                 </Popover>
@@ -160,6 +175,7 @@ LabelPopover.propTypes = {
     className: PropTypes.string,
     onOpen: PropTypes.func,
     onClose: PropTypes.func,
+    open: PropTypes.bool,
     children: PropTypes.oneOfType([PropTypes.object, PropTypes.array, PropTypes.node])
 };
 
