@@ -29,7 +29,12 @@ const APP_CONFIG = Immutable.fromJS({
                 type: "json"
             },
             {
-                url: "default-data/_core_default-data/capabilities.xml",
+                url:
+                    "https://podaac-tools.jpl.nasa.gov/onearth/wmts/wmts.cgi?Service=WMTS&Request=GetCapabilities",
+                type: "wmts/xml"
+            },
+            {
+                url: "default-data/capabilities_oiip_gibs.xml",
                 type: "wmts/xml"
             }
         ],

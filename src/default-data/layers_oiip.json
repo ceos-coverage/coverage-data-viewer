@@ -1,44 +1,104 @@
 {
     "layers": [{
-        "id": "VIIRS_SNPP_CorrectedReflectance_TrueColor",
-        "title": "True Color",
-        "type": "data",
-        "handleAs": "GIBS_raster",
-        "isDefault": true,
-        "wmtsOptions": {
-            "urlFunctions": {
-                "openlayers": "kvpTimeParam",
-                "cesium": "kvpTimeParam"
-            }
-        },
-        "metadata": {
-            "url": "default-data/_core_default-data/layer-metadata/VIIRS_SNPP_CorrectedReflectance_TrueColor.json",
-            "handleAs": "json"
-        },
-        "thumbnailImage": "img/VIIRS_SNPP_CorrectedReflectance_TrueColor.png"
-    }, {
-        "id": "GHRSST_L4_G1SST_Sea_Surface_Temperature",
+        "id": "GHRSST_L4_MUR_Sea_Surface_Temperature",
         "title": "Sea Surface Temperature",
+        "subtitle": "GHRSST MEaSUREs MUR/PO.DAAC",
+        "isDefault": true,
+        "isDefaultSelected": true,
         "type": "data",
         "handleAs": "GIBS_raster",
         "min": 0.0,
         "max": 32.0,
-        "units": "˚C",
+        "units": "°C",
         "wmtsOptions": {
             "urlFunctions": {
                 "openlayers": "kvpTimeParam",
                 "cesium": "kvpTimeParam"
             }
+
         },
         "metadata": {
-            "url": "default-data/_core_default-data/layer-metadata/GHRSST_L4_G1SST_Sea_Surface_Temperature.json",
-            "handleAs": "json"
+            "url": "default-data/layer-metadata/GHRSST_L4_MUR_Sea_Surface_Temperature.md",
+            "handleAs": "markdown",
+            "measurement": "Sea Surface Temperature"
         },
         "palette": {
             "name": "GIBS_SST",
             "handleAs": "json-fixed"
+        }
+    }, {
+        "id": "oscar_l4_oc_third_deg___oceancurrent_speed___1088_x_544___daynight",
+        "title": "Ocean Surface Current Speed",
+        "subtitle": "ESR/OSCAR",
+        "type": "data",
+        "handleAs": "GIBS_raster",
+        "min": 0.0,
+        "max": 0.5,
+        "units": "m/s",
+        "wmtsOptions": {
+            "urlFunctions": {
+                "openlayers": "kvpTimeParam",
+                "cesium": "kvpTimeParam"
+            }
+
         },
-        "thumbnailImage": "img/GHRSST_L4_G1SST_Sea_Surface_Temperature.png"
+        "metadata": {
+            "url": "default-data/layer-metadata/oscar_l4_oc_third_deg___oceancurrent_speed___1088_x_544___daynight.md",
+            "handleAs": "markdown"
+        },
+        "palette": {
+            "name": "oceancurrent",
+            "handleAs": "json-relative"
+        }
+    }, {
+        "id": "modis_aqua_l3_chla_daily_4km_l___chlorophyll_a___8640_x_4320___daynight",
+        "title": "Ocean Color - Chlorophyll-a",
+        "subtitle": "Aqua/MODIS",
+        "isDefaultSelected": true,
+        "type": "data",
+        "handleAs": "GIBS_raster",
+        "min": 0.01,
+        "max": 10.0,
+        "units": "mg/m\u00b3",
+        "wmtsOptions": {
+            "urlFunctions": {
+                "openlayers": "kvpTimeParam",
+                "cesium": "kvpTimeParam"
+            }
+
+        },
+        "metadata": {
+            "url": "default-data/layer-metadata/modis_aqua_l3_chla_daily_4km_l___chlorophyll_a___8640_x_4320___daynight.md",
+            "handleAs": "markdown"
+        },
+        "palette": {
+            "name": "chlorophyll_log",
+            "handleAs": "json-relative"
+        }
+    }, {
+        "id": "SMAP_L3_Sea_Surface_Salinity_CAP_8Day_RunningMean",
+        "title": "Sea Surface Salinity",
+        "subtitle": "SMAP/JPL",
+        "type": "data",
+        "handleAs": "GIBS_raster",
+        "min": 30.0,
+        "max": 40.0,
+        "units": "psu",
+        "wmtsOptions": {
+            "urlFunctions": {
+                "openlayers": "kvpTimeParam",
+                "cesium": "kvpTimeParam"
+            }
+
+        },
+        "metadata": {
+            "url": "default-data/layer-metadata/SMAP_JPL_L3_SSS_CAP_8DAY-RUNNINGMEAN_V4.md",
+            "handleAs": "markdown"
+        },
+        "palette": {
+            "name": "sss_obpg_255",
+            "handleAs": "json-fixed"
+        }
     }, {
         "id": "Reference_Labels",
         "title": "Reference Labels",
@@ -52,29 +112,6 @@
         "handleAs": "GIBS_raster",
         "updateParameters": { "time": false }
     }, {
-        "id": "ESRI_World_Imagery",
-        "title": "ESRI High Resolution World Imagery",
-        "type": "basemap",
-        "thumbnailImage": "https://gibs.earthdata.nasa.gov/wmts/epsg4326/best/wmts.cgi?layer=BlueMarble_ShadedRelief_Bathymetry&tilematrixset=500m&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image/jpeg&TileMatrix=2&TileCol=1&TileRow=1&TIME=2016-05-22",
-        "handleAs": "xyz_raster",
-        "updateParameters": { "time": false },
-        "wmtsOptions": {
-            "projection": "EPSG:4326",
-            "layer": "ESRI_World_Imagery",
-            "url": "https://services.arcgisonline.com/arcgis/rest/services/ESRI_Imagery_World_2D/MapServer/tile/{z}/{y}/{x}",
-            "tileGrid": {
-                "minZoom": 1,
-                "maxZoom": 16,
-                "tileSize": 512
-            },
-            "urlFunctions": {
-                "openlayers": "esriCustom512"
-            },
-            "tileFunctions": {
-                "openlayers": "catsTile"
-            }
-        }
-    }, {
         "id": "BlueMarble_ShadedRelief_Bathymetry",
         "title": "Blue Marble, Shaded Relief w/Bathymetry",
         "type": "basemap",
@@ -84,16 +121,9 @@
         "updateParameters": { "time": false }
     }, {
         "id": "OSM_Land_Water_Map",
-        "title": "Land/Water Map (data from OSM)",
+        "title": "Land/Water Mask",
         "type": "basemap",
         "thumbnailImage": "https://gibs.earthdata.nasa.gov/wmts/epsg4326/best/wmts.cgi?layer=OSM_Land_Water_Map&tilematrixset=250m&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image/png&TileMatrix=2&TileCol=1&TileRow=1&TIME=2016-05-22",
-        "handleAs": "GIBS_raster",
-        "updateParameters": { "time": false }
-    }, {
-        "id": "ASTER_GDEM_Color_Shaded_Relief",
-        "title": "Digital Elevation Map (Color Shaded Relief)",
-        "type": "basemap",
-        "thumbnailImage": "https://gibs.earthdata.nasa.gov/wmts/epsg4326/best/wmts.cgi?layer=ASTER_GDEM_Color_Shaded_Relief&tilematrixset=31.25m&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image/jpeg&TileMatrix=2&TileCol=1&TileRow=1",
         "handleAs": "GIBS_raster",
         "updateParameters": { "time": false }
     }]
