@@ -51,6 +51,25 @@
             "handleAs": "json-relative"
         }
     }, {
+        "id": "oscar_l4_oc_third_deg___oceancurrent_dir_color",
+        "title": "Ocean Surface Current - Vectors",
+        "subtitle": "ESR/OSCAR",
+        "url": "https://podaac-tools.jpl.nasa.gov/onearth/kml/oscar_l4_oc_third_deg___oceancurrent_dir_color/oscar_l4_oc_third_deg___oceancurrent_dir_color___1088_x_544___daynight___{TIME}/{Z}/{X}/{Y}.kml",
+        "type": "data",
+        "handleAs": "multi_file_vector_kml",
+        "timeFormat": "YYYYMMDD",
+        "min": 0.0,
+        "max": 0.5,
+        "units": "m/s",
+        "metadata": {
+            "url": "default-data/layer-metadata/oscar_l4_oc_third_deg___oceancurrent_dir_color.md",
+            "handleAs": "markdown"
+        },
+        "palette": {
+            "default": "oceancurrent",
+            "handleAs": "json-relative"
+        }
+    }, {
         "id": "modis_aqua_l3_chla_daily_4km_l___chlorophyll_a___8640_x_4320___daynight",
         "title": "Ocean Color - Chlorophyll-a",
         "subtitle": "Aqua/MODIS",

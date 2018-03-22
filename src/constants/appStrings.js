@@ -25,5 +25,10 @@ export const LAYER_GROUP_TYPE_INSITU_DATA = "insitu_data";
 
 export const LAYER_VECTOR_TILE_TRACK = "vector_tile_track";
 export const LAYER_VECTOR_TILE_POINTS = "vector_tile_points";
+export const LAYER_MULTI_FILE_VECTOR_KML = "multi_file_vector_kml";
+export const VECTOR_FEATURE_LOAD = "VECTOR_FEATURE_LOAD";
+
+export const CURRENTS_VECTOR_COLOR = "oscar_l4_oc_third_deg___oceancurrent_dir_color";
+export const CURRENTS_VECTOR_BLACK = "oscar_l4_oc_third_deg___oceancurrent_dir_black";
 
 export const NO_DATA = "No Data";

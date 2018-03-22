@@ -40,7 +40,9 @@ import appConfig from "constants/appConfig";
 import * as appStrings from "constants/appStrings";
 import * as appStringsCore from "_core/constants/appStrings";
 import MiscUtil from "utils/MiscUtil";
+import MapUtil from "utils/MapUtil";
 
+const kmlLayerExtents = JSON.parse(require("default-data/kmlExtents.json"));
 const TILE_STATE_IDLE = 0; // loading states found in ol.tile.js
 const TILE_STATE_LOADING = 1;
 const TILE_STATE_LOADED = 2;
@@ -55,6 +57,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
     initStaticClasses(container, options) {
         MapWrapperOpenlayersCore.prototype.initStaticClasses.call(this, container, options);
         this.miscUtil = MiscUtil;
+        this.mapUtil = MapUtil;
     }
 
     initObjects(container, options) {
@@ -166,6 +169,9 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
             case appStrings.LAYER_VECTOR_TILE_TRACK:
                 mapLayer = this.createVectorTileTrackLayer(layer, fromCache);
                 break;
+            case appStrings.LAYER_MULTI_FILE_VECTOR_KML:
+                mapLayer = this.createMultiFileKmlLayer(layer, fromCache);
+                break;
             default:
                 mapLayer = MapWrapperOpenlayersCore.prototype.createLayer.call(
                     this,
@@ -189,6 +195,232 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
         }
 
         return mapLayer;
+    }
+
+    createMultiFileKmlLayer(layer, fromCache = true) {
+        try {
+            // pull from cache if possible
+            let cacheHash = this.getCacheHash(layer);
+            if (fromCache && this.layerCache.get(cacheHash)) {
+                let cachedLayer = this.layerCache.get(cacheHash);
+                cachedLayer.setOpacity(layer.get("opacity"));
+                cachedLayer.setVisible(layer.get("isActive"));
+                return cachedLayer;
+            }
+
+            // create a layer grouping
+            let mapLayer = new Ol_Layer_Group({
+                opacity: layer.get("opacity"),
+                visible: layer.get("isActive")
+            });
+
+            // source for dummy canvas layer
+            let imageSource = new Ol_Source_ImageCanvas({
+                canvasFunction: (extent, resolution, pixelRatio, size, projection) => {
+                    return this.multiFileKmlCanvasFunction(
+                        layer,
+                        mapLayer,
+                        extent,
+                        resolution,
+                        pixelRatio,
+                        size,
+                        projection
+                    );
+                },
+                projection: this.map.getView().getProjection(),
+                ratio: 1
+            });
+            imageSource.set("_dummyCanvas", true);
+
+            // dummy canvas image layer to track map movements
+            let imageLayer = new Ol_Layer_Image({
+                source: imageSource
+            });
+
+            // add a canvas layer that will find intersecting KMLs on each map move
+            mapLayer.setLayers(new Ol_Collection([imageLayer]));
+
+            // return the layer group
+            return mapLayer;
+        } catch (err) {
+            console.warn("Error in MapWrapperOpenlayers.createMultiFileKmlLayer:", err);
+            return false;
+        }
+    }
+
+    multiFileKmlCanvasFunction(layer, mapLayer, extent, resolution, pixelRatio, size, projection) {
+        // manage extent wrapping
+        let viewExtentsArr = [];
+        let cExtentA = this.mapUtil.constrainCoordinates([extent[0], extent[1]]);
+        let cExtentB = this.mapUtil.constrainCoordinates([extent[2], extent[3]]);
+        let cExtent = [cExtentA[0], cExtentA[1], cExtentB[0], cExtentB[1]];
+        let extentWidth = extent[2] - extent[0];
+        if (extentWidth >= 360) {
+            viewExtentsArr = [[-180, cExtent[1], 180, cExtent[3]]];
+        } else {
+            // check for extents  across the dateline
+            if (cExtent[0] > cExtent[2]) {
+                viewExtentsArr = [
+                    [cExtent[0], cExtent[1], 180, cExtent[3]],
+                    [-180, cExtent[1], cExtent[2], cExtent[3]]
+                ];
+            } else {
+                viewExtentsArr = [cExtent];
+            }
+        }
+
+        // create the canvas
+        let canvas = document.createElement("canvas");
+        let canvasWidth = size[0],
+            canvasHeight = size[1];
+        canvas.setAttribute("width", canvasWidth);
+        canvas.setAttribute("height", canvasHeight);
+
+        let layerTileExtentsList = this.getExtentsListForLayer(layer);
+        if (layerTileExtentsList) {
+            // find the zoom ids we want
+            let zoom = Math.max(1, Math.round(this.getZoom()) - 1);
+            let tileEntries = viewExtentsArr.reduce(
+                (acc, extentEntry) => {
+                    let entries = this.mapUtil.findTileExtentsInView(
+                        layerTileExtentsList,
+                        extentEntry,
+                        zoom
+                    );
+                    acc.tiles = acc.tiles.concat(entries.tiles);
+                    acc.foundZoom = entries.foundZoom;
+                    return acc;
+                },
+                { tiles: [], foundZoom: 0 }
+            );
+            let tiles = tileEntries.tiles;
+            let allTileCoords = tiles.map(tile => {
+                return tile.tileCoord.join(",");
+            });
+            let foundZoom = tileEntries.foundZoom;
+
+            // remove all vector layers currently in the layer group
+            let prevLayers = {};
+            let layerGroup = mapLayer.getLayers();
+            while (layerGroup.getLength() > 1) {
+                try {
+                    let tmpLayer = layerGroup.pop();
+                    prevLayers[tmpLayer.getSource().getUrl()] = tmpLayer;
+                } catch (e) {
+                    console.warn("Error in MapWrapperOpenlayers.multiFileKmlCanvasFunction: ", e);
+                }
+            }
+
+            // extract date string to use
+            let timeStr =
+                typeof mapLayer.get("_layerTime") !== "undefined"
+                    ? mapLayer.get("_layerTime")
+                    : moment(this.mapDate).format(layer.get("timeFormat"));
+
+            // construct the vector layers in view
+            let baseUrl = layer.get("url");
+            for (let i = 0; i < tiles.length; ++i) {
+                let tile = tiles[i];
+                let tileCoord = tile.tileCoord;
+                let tileExtent = tile.extent;
+
+                // generate tile url
+                let tileUrl = baseUrl
+                    .split("{Z}")
+                    .join(tileCoord[0])
+                    .split("{X}")
+                    .join(tileCoord[1])
+                    .split("{Y}")
+                    .join(tileCoord[2])
+                    .split("{TIME}")
+                    .join(timeStr);
+
+                let _context = this;
+                let tileLayer = prevLayers[tileUrl];
+                if (typeof tileLayer === "undefined") {
+                    // construct the vector layer for this tile
+                    let tileFormat = new Ol_Format_KML();
+                    let source = new Ol_Source_Vector({
+                        url: tileUrl,
+                        format: tileFormat,
+                        loader: Ol_FeatureLoader.loadFeaturesXhr(
+                            tileUrl,
+                            tileFormat,
+                            function(features, dataProjection) {
+                                this.addFeatures(features);
+                                this.set("_loadingState", TILE_STATE_LOADED);
+                                mapLayer.dispatchEvent(appStrings.VECTOR_FEATURE_LOAD);
+                            },
+                            function(err) {
+                                console.warn("Error in vector feature loader", err);
+                                this.set("_loadingState", TILE_STATE_ERROR);
+                                mapLayer.dispatchEvent(appStrings.VECTOR_FEATURE_LOAD);
+                            }
+                        )
+                    });
+                    source.on("addfeature", event => {
+                        let feature = event.feature;
+                        let geometry = feature.getGeometry();
+                        if (geometry.getType() === "LineString") {
+                            let coords = this.mapUtil.deconstrainLineStringArrow(
+                                geometry.getCoordinates()
+                            );
+                            geometry.setCoordinates(coords);
+                        }
+                    });
+                    source.set("_loadingState", TILE_STATE_IDLE);
+
+                    tileLayer = new Ol_Layer_Vector({
+                        opacity: 1,
+                        visible: true,
+                        renderMode: "image",
+                        source: source
+                    });
+                }
+
+                tileLayer.set("_tileCoord", tileCoord.join(","));
+                layerGroup.push(tileLayer);
+            }
+
+            mapLayer.setLayers(layerGroup);
+        }
+
+        mapLayer.set("_lastExtentChecked", JSON.stringify(extent));
+
+        return canvas;
+    }
+
+    getExtentsListForLayer(layer) {
+        switch (layer.get("id")) {
+            case appStrings.CURRENTS_VECTOR_COLOR:
+                return kmlLayerExtents.CURRENTS_EXTENTS;
+            case appStrings.CURRENTS_VECTOR_BLACK:
+                return kmlLayerExtents.CURRENTS_EXTENTS;
+            default:
+                console.warn(
+                    "Error in MapWrapperOpenlayers.getExtentsListForLayer: could not match layer id to extent list - ",
+                    layer.get("id")
+                );
+                return false;
+        }
+    }
+
+    addLayerToCache(mapLayer, updateStrategy = appStrings.TILE_LAYER_UPDATE_STRATEGIES.TILE) {
+        try {
+            if (
+                mapLayer.get("_layerRef").get("handleAs") !== appStrings.LAYER_MULTI_FILE_VECTOR_KML
+            ) {
+                return MapWrapperOpenlayersCore.prototype.addLayerToCache.call(
+                    this,
+                    mapLayer,
+                    updateStrategy
+                );
+            }
+            return true;
+        } catch (err) {
+            console.warn("Error in MapWrapper_openlayer.addLayerToCache: ", err);
+            return false;
+        }
     }
 
     createVectorTileTrackLayer(layer, fromCache = true) {
@@ -389,7 +621,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                         color: "#000",
                         width: 1.25
                     }),
-                    radius: 8.5
+                    radius: 9
                 }),
                 zIndex: 2
             }),
