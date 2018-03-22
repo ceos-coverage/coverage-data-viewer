@@ -12,7 +12,7 @@ import {
     FormControlLabel,
     FormHelperText
 } from "material-ui/Form";
-import { Colorbar } from "components/Colorbar";
+import { Colorbar } from "_core/components/Colorbar";
 import { LabelPopover } from "components/Reusables";
 import * as mapActionsCore from "_core/actions/mapActions";
 import * as appStringsCore from "_core/constants/appStrings";

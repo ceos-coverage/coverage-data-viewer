@@ -12,58 +12,8 @@ import MiscUtil from "utils/MiscUtil";
 //create a copy of the state passed and set new values on the copy.
 
 export default class MapReducer extends MapReducerCore {
-    static mergeLayers(state, action) {
-        let partials = state.getIn(["layers", appStringsCore.LAYER_GROUP_TYPE_PARTIAL]);
-        let refPartial = null;
-        let matchingPartials = null;
-        let mergedLayer = null;
-        let newLayers = null;
-        let unmatchedLayers = [];
-        while (partials.size > 0) {
-            // grab a partial
-            refPartial = partials.last();
-            // remove it from future evaluation
-            partials = partials.pop();
-            // grab matching partials
-            matchingPartials = partials.filter(el => {
-                return el.get("id") === refPartial.get("id");
-            });
-            // remove them from future evaluation
-            partials = partials.filter(el => {
-                return el.get("id") !== refPartial.get("id");
-            });
-            // merge the matching partials together
-            mergedLayer = matchingPartials.reduce((acc, el) => {
-                if (el.get("fromJson")) {
-                    return acc.mergeDeep(el);
-                }
-                return el.mergeDeep(acc);
-            }, refPartial);
-            // merge in the default values
-            mergedLayer = layerModel.mergeDeep(mergedLayer);
-
-            // put the newly minted layer into state storage
-            if (
-                typeof mergedLayer.get("id") !== "undefined" &&
-                typeof state.getIn(["layers", mergedLayer.get("type")]) !== "undefined"
-            ) {
-                state = state.setIn(
-                    ["layers", mergedLayer.get("type"), mergedLayer.get("id")],
-                    mergedLayer
-                );
-            } else {
-                unmatchedLayers.push(mergedLayer.toJS());
-            }
-        }
-
-        if (unmatchedLayers.length > 0) {
-            console.warn(
-                "Error in MapReducer.mergeLayers: could not store merged layers; missing a valid id or type.",
-                unmatchedLayers
-            );
-        }
-
-        return state.removeIn(["layers", appStrings.LAYER_GROUP_TYPE_PARTIAL]); // remove the partials list so that it doesn't intrude later
+    static getLayerModel() {
+        return layerModel;
     }
 
     static setLayerActive(state, action) {
