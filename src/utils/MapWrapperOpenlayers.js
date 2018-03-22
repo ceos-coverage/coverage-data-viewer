@@ -17,6 +17,7 @@ import Ol_Format_WFS from "ol/format/wfs";
 import Ol_Style from "ol/style/style";
 import Ol_Style_Stroke from "ol/style/stroke";
 import Ol_Style_Fill from "ol/style/fill";
+import Ol_Style_RegularShape from "ol/style/regularshape";
 import Ol_Proj from "ol/proj";
 import Ol_Collection from "ol/collection";
 import Ol_Observable from "ol/observable";
@@ -158,7 +159,9 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
 
             // update the style
             if (layer.get("handleAs") === appStrings.LAYER_VECTOR_TILE_TRACK) {
-                cachedLayer.setStyle(this.createVectorTileTrackLayerStyles(layer));
+                cachedLayer.setStyle(
+                    this.createVectorTileTrackLayerStyles(layer.get("vectorColor"))
+                );
             }
 
             return cachedLayer;
@@ -502,7 +505,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                 renderMode: "image",
                 opacity: layer.get("opacity"),
                 visible: layer.get("isActive"),
-                style: this.createVectorTileTrackLayerStyles(layer)
+                style: this.createVectorTileTrackLayerStyles(layer.get("vectorColor"))
             });
         } catch (err) {
             console.warn("Error in MapWrapperOpenlayers.createVectorTileTrackLayer:", err);
@@ -535,9 +538,9 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                     handleAs: appStringsCore.FILE_TYPE_TEXT
                 }).then(
                     dataStr => {
-                        let date = moment(_context.mapDate).startOf("d");
-                        let nextDate = moment(date).add(1, "d");
                         let data = geojsonFormat.readFeatures(dataStr);
+                        let firstFeature = data[0];
+                        let lastFeature = data[data.length - 1];
                         for (let i = 0; i < data.length - 1; ++i) {
                             let feature = data[i];
                             feature.set("_layerId", layer.get("id"));
@@ -554,32 +557,18 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                             newFeature.setGeometry(new Ol_Geom_LineString([coords, nextCoords]));
                             this.addFeature(newFeature);
                             this.addFeature(feature);
-
-                            // check if we need to highlight the feature
-                            let featureTime =
-                                feature.get("time") || feature.get("datetimestamp") || undefined;
-                            if (
-                                feature.getGeometry() instanceof Ol_Geom_Point &&
-                                typeof featureTime !== "undefined"
-                            ) {
-                                featureTime = moment(featureTime, layer.get("timeFormat"));
-                                if (featureTime.isBetween(date, nextDate, null, "[)")) {
-                                    feature.setStyle(
-                                        _context.createVectorTileTrackHighlightStyle(
-                                            undefined,
-                                            layer.get("vectorColor")
-                                        )
-                                    );
-                                } else {
-                                    feature.setStyle(null);
-                                }
-                            }
                         }
 
                         // catch the last feature
                         if (data.length > 0) {
                             this.addFeature(data[data.length - 1]);
                         }
+
+                        _context.highlightTrackPoints(
+                            this.getFeatures(),
+                            layer.get("timeFormat"),
+                            layer.get("vectorColor")
+                        );
                     },
                     err => {
                         console.warn("Error fetching vector data", err);
@@ -590,11 +579,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
         });
     }
 
-    createVectorTileTrackLayerStyles(layer, color = false) {
-        if (!color) {
-            color = layer.get("vectorColor");
-        }
-
+    createVectorTileTrackLayerStyles(color = false) {
         return new Ol_Style({
             fill: new Ol_Style_Fill({
                 color: color
@@ -612,7 +597,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
         });
     }
 
-    createVectorTileTrackHighlightStyle(mapLayer, color = false) {
+    createPointHighlightStyle(color = false) {
         return [
             new Ol_Style({
                 image: new Ol_Style_Circle({
@@ -628,13 +613,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
             new Ol_Style({
                 image: new Ol_Style_Circle({
                     fill: new Ol_Style_Fill({
-                        color:
-                            color ||
-                            mapLayer
-                                .getStyle()
-                                .getImage()
-                                .getFill()
-                                .getColor()
+                        color: color
                     }),
                     stroke: new Ol_Style_Stroke({
                         color: "#000",
@@ -645,6 +624,109 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                 zIndex: 2
             })
         ];
+    }
+
+    createPointFirstStyle(color = false, highlight = false) {
+        if (highlight) {
+            return [
+                new Ol_Style({
+                    image: new Ol_Style_RegularShape({
+                        fill: new Ol_Style_Fill({
+                            color: "#fff"
+                        }),
+                        points: 3,
+                        stroke: new Ol_Style_Stroke({
+                            color: "#000",
+                            width: 1.25
+                        }),
+                        rotation: Math.PI,
+                        radius: 13
+                    }),
+                    zIndex: 2
+                }),
+                new Ol_Style({
+                    image: new Ol_Style_RegularShape({
+                        fill: new Ol_Style_Fill({
+                            color: color
+                        }),
+                        points: 3,
+                        stroke: new Ol_Style_Stroke({
+                            color: "#000",
+                            width: 1.25
+                        }),
+                        rotation: Math.PI,
+                        radius: 8
+                    }),
+                    zIndex: 2
+                })
+            ];
+        } else {
+            return new Ol_Style({
+                image: new Ol_Style_RegularShape({
+                    fill: new Ol_Style_Fill({
+                        color: color
+                    }),
+                    points: 3,
+                    stroke: new Ol_Style_Stroke({
+                        color: "#000",
+                        width: 1.25
+                    }),
+                    rotation: Math.PI,
+                    radius: 7
+                }),
+                zIndex: 2
+            });
+        }
+    }
+
+    createPointLastStyle(color = false, highlight = false) {
+        if (highlight) {
+            return [
+                new Ol_Style({
+                    image: new Ol_Style_RegularShape({
+                        fill: new Ol_Style_Fill({
+                            color: "#fff"
+                        }),
+                        points: 3,
+                        stroke: new Ol_Style_Stroke({
+                            color: "#000",
+                            width: 1.25
+                        }),
+                        radius: 13
+                    }),
+                    zIndex: 2
+                }),
+                new Ol_Style({
+                    image: new Ol_Style_RegularShape({
+                        fill: new Ol_Style_Fill({
+                            color: color
+                        }),
+                        points: 3,
+                        stroke: new Ol_Style_Stroke({
+                            color: "#000",
+                            width: 1.25
+                        }),
+                        radius: 8
+                    }),
+                    zIndex: 2
+                })
+            ];
+        } else {
+            return new Ol_Style({
+                image: new Ol_Style_RegularShape({
+                    fill: new Ol_Style_Fill({
+                        color: color
+                    }),
+                    points: 3,
+                    stroke: new Ol_Style_Stroke({
+                        color: "#000",
+                        width: 1.25
+                    }),
+                    radius: 7
+                }),
+                zIndex: 2
+            });
+        }
     }
 
     setVectorLayerColor(layer, color) {
@@ -658,8 +740,8 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
             return false;
         }
 
-        mapLayer.setStyle(this.createVectorTileTrackLayerStyles(layer, color));
-        this.updateLayer(layer);
+        mapLayer.setStyle(this.createVectorTileTrackLayerStyles(color));
+        this.updateLayer(layer, color);
         return true;
     }
 
@@ -1217,7 +1299,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
         }
     }
 
-    updateLayer(layer) {
+    updateLayer(layer, color = false) {
         try {
             if (layer.get("handleAs") === appStrings.LAYER_VECTOR_TILE_TRACK) {
                 let mapLayers = this.map.getLayers().getArray();
@@ -1230,29 +1312,11 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                     // update the layer
                     this.setLayerRefInfo(layer, mapLayer);
 
-                    // let date = moment(mapLayer.get("_layerTime"), layer.get("timeFormat")).startOf(
-                    //     "d"
-                    // );
-                    let date = moment(this.mapDate).startOf("d");
-                    let nextDate = moment(date).add(1, "d");
-                    let source = mapLayer.getSource();
-                    mapLayer.getSource().forEachFeature(feature => {
-                        let featureTime =
-                            feature.get("time") || feature.get("datetimestamp") || undefined;
-                        if (
-                            feature.getGeometry() instanceof Ol_Geom_Point &&
-                            typeof featureTime !== "undefined"
-                        ) {
-                            featureTime = moment(featureTime, layer.get("timeFormat"));
-                            if (featureTime.isBetween(date, nextDate, null, "[)")) {
-                                feature.setStyle(
-                                    this.createVectorTileTrackHighlightStyle(mapLayer)
-                                );
-                            } else {
-                                feature.setStyle(null);
-                            }
-                        }
-                    });
+                    this.highlightTrackPoints(
+                        mapLayer.getSource().getFeatures(),
+                        layer.get("timeFormat"),
+                        color || layer.get("vectorColor")
+                    );
                 }
 
                 return true;
@@ -1262,6 +1326,67 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
         } catch (err) {
             console.warn("Error in MapWrapperOpenlayers.updateLayer:", err);
             return false;
+        }
+    }
+
+    highlightTrackPoints(features, timeFormat = "YYYY-MM-DD", color = "#000") {
+        let date = moment(this.mapDate).startOf("d");
+        let nextDate = moment(date).add(1, "d");
+        let firstFeature = features[0];
+        let lastFeature = features[0];
+        for (let i = 0; i < features.length; ++i) {
+            let feature = features[i];
+            let featureTime = feature.get("time") || feature.get("datetimestamp") || undefined;
+            if (
+                feature.getGeometry() instanceof Ol_Geom_Point &&
+                typeof featureTime !== "undefined"
+            ) {
+                featureTime = moment(featureTime, timeFormat);
+                if (featureTime.isBetween(date, nextDate, null, "[)")) {
+                    feature.setStyle(this.createPointHighlightStyle(color));
+                } else {
+                    feature.setStyle(null);
+                }
+
+                let firstFeatureTime =
+                    firstFeature.get("time") || firstFeature.get("datetimestamp") || undefined;
+                let lastFeatureTime =
+                    lastFeature.get("time") || lastFeature.get("datetimestamp") || undefined;
+                if (
+                    typeof firstFeatureTime !== "undefined" &&
+                    typeof lastFeatureTime !== "undefined"
+                ) {
+                    if (featureTime.isBefore(firstFeatureTime)) {
+                        firstFeature = feature;
+                    }
+                    if (featureTime.isAfter(lastFeatureTime)) {
+                        lastFeature = feature;
+                    }
+                }
+            }
+        }
+
+        if (typeof firstFeature !== "undefined") {
+            let firstFeatureTime =
+                firstFeature.get("time") || firstFeature.get("datetimestamp") || undefined;
+            let highlight = moment(firstFeatureTime, timeFormat).isBetween(
+                date,
+                nextDate,
+                null,
+                "[)"
+            );
+            firstFeature.setStyle(this.createPointFirstStyle(color, highlight));
+        }
+        if (typeof lastFeature !== "undefined") {
+            let lastFeatureTime =
+                lastFeature.get("time") || lastFeature.get("datetimestamp") || undefined;
+            let highlight = moment(lastFeatureTime, timeFormat).isBetween(
+                date,
+                nextDate,
+                null,
+                "[)"
+            );
+            lastFeature.setStyle(this.createPointLastStyle(color, highlight));
         }
     }
 
