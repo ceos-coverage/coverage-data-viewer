@@ -668,7 +668,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                     }),
                     points: 3,
                     stroke: new Ol_Style_Stroke({
-                        color: "#000",
+                        color: color === "#000000" ? "#fff" : "#000",
                         width: 1.25
                     }),
                     rotation: Math.PI,
@@ -719,7 +719,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                     }),
                     points: 3,
                     stroke: new Ol_Style_Stroke({
-                        color: "#000",
+                        color: color === "#000000" ? "#fff" : "#000",
                         width: 1.25
                     }),
                     radius: 7
@@ -1356,10 +1356,10 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                     typeof firstFeatureTime !== "undefined" &&
                     typeof lastFeatureTime !== "undefined"
                 ) {
-                    if (featureTime.isBefore(firstFeatureTime)) {
+                    if (featureTime.isBefore(moment(firstFeatureTime, timeFormat))) {
                         firstFeature = feature;
                     }
-                    if (featureTime.isAfter(lastFeatureTime)) {
+                    if (featureTime.isAfter(moment(lastFeatureTime, timeFormat))) {
                         lastFeature = feature;
                     }
                 }
