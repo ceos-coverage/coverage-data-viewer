@@ -80,6 +80,11 @@ export class Chart extends Component {
                 chartType: this.props.chart.get("chartType"),
                 displayOptions: this.props.chart.get("displayOptions")
             });
+
+            ChartUtil.setDateIndicator({
+                node: node,
+                date: this.props.mapDate
+            });
         }
     }
 
@@ -115,9 +120,16 @@ export class Chart extends Component {
 
 Chart.propTypes = {
     chart: PropTypes.object.isRequired,
+    mapDate: PropTypes.object.isRequired,
     chartActions: PropTypes.object.isRequired,
     mapActionsCore: PropTypes.object.isRequired
 };
+
+function mapStateToProps(state) {
+    return {
+        mapDate: state.map.get("date")
+    };
+}
 
 function mapDispatchToProps(dispatch) {
     return {
@@ -126,4 +138,4 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-export default connect(null, mapDispatchToProps)(Chart);
+export default connect(mapStateToProps, mapDispatchToProps)(Chart);

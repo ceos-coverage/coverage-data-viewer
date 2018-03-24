@@ -42,6 +42,29 @@ export default class ChartUtil {
         }
     }
 
+    static setDateIndicator(options) {
+        let node = options.node;
+        let date = options.date;
+
+        if (typeof node !== "undefined") {
+            let chart = nodeChartMap.get(node.id);
+            if (typeof chart !== "undefined") {
+                let xAxis = chart.xAxis[0];
+                let dateIndicator = chart.annotations[0];
+                if (
+                    xAxis.options.type === "datetime" &&
+                    typeof dateIndicator !== "undefined" &&
+                    typeof date !== "undefined"
+                ) {
+                    dateIndicator.setVisible(true);
+                    dateIndicator.shapes[0].points[0].plotX = xAxis.toPixels(date, true);
+                    dateIndicator.shapes[0].points[1].plotX = xAxis.toPixels(date, true);
+                    chart.drawAnnotations();
+                }
+            }
+        }
+    }
+
     static updateSingleSeries(options) {
         let node = options.node;
         let data = options.data;
@@ -195,6 +218,21 @@ export default class ChartUtil {
                         }
                     },
 
+                    annotations: [
+                        {
+                            shapes: [
+                                {
+                                    points: [{ x: 0, y: 0 }, { x: 0, y: 200 }],
+                                    type: "path",
+                                    fill: "none",
+                                    stroke: "#00bcd4",
+                                    strokeWidth: 2
+                                }
+                            ],
+                            visible: false
+                        }
+                    ],
+
                     boost: {
                         usePreallocated: false,
                         useGPUTranslations: false,
@@ -202,6 +240,7 @@ export default class ChartUtil {
                     },
 
                     xAxis: {
+                        id: "x-axis",
                         type: "datetime",
                         gridLineWidth: 1,
                         title: {
@@ -246,6 +285,7 @@ export default class ChartUtil {
 
                     yAxis: [
                         {
+                            id: "y-axis",
                             minPadding: 0,
                             maxPadding: 0,
                             reversed: displayOptions.get("yAxisReversed"),
@@ -265,6 +305,7 @@ export default class ChartUtil {
                         },
                         {
                             // hacky color axis label yAxis
+                            id: "z-axis-label",
                             gridLineWidth: 0,
                             minPadding: 0,
                             maxPadding: 0,
@@ -286,6 +327,7 @@ export default class ChartUtil {
                     ],
 
                     colorAxis: {
+                        id: "z-axis",
                         reversed: false,
                         min: dataExtremes.min,
                         max: dataExtremes.max,

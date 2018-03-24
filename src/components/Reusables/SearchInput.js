@@ -103,6 +103,8 @@ export class LabelPopover extends Component {
     }
 
     render() {
+        let open = this.useExternal ? this.props.open : this.popoverOpen;
+
         let containerClasses = MiscUtil.generateStringFromSet({
             [styles.root]: true,
             [this.props.className]: typeof this.props.className !== "undefined"
@@ -111,7 +113,7 @@ export class LabelPopover extends Component {
         let btnClasses = MiscUtil.generateStringFromSet({
             [styles.button]: true,
             [styles.padRight]: typeof this.props.rightAction !== "undefined",
-            [styles.active]: this.popoverOpen
+            [styles.active]: open
         });
 
         // if we've found the width before, use that
@@ -125,10 +127,8 @@ export class LabelPopover extends Component {
             }
         }
 
-        let open = this.useExternal ? this.props.open : this.popoverOpen;
-
         return (
-            <Paper elevation={this.popoverOpen ? 8 : 0} className={containerClasses}>
+            <Paper elevation={open ? 8 : 0} className={containerClasses}>
                 <ButtonBase
                     disableRipple={true}
                     onClick={() => this.handleClickButton()}
