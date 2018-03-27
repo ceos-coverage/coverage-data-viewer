@@ -5,3 +5,4 @@ export { default as SingleColorSelector } from "components/Reusables/SingleColor
 export { default as AreaDefaultMessage } from "components/Reusables/AreaDefaultMessage.js";
 export { default as AreaSelectionForm } from "components/Reusables/AreaSelectionForm.js";
 export { default as DateRangePicker } from "components/Reusables/DateRangePicker.js";
+export { default as MapToolsMenu } from "components/Reusables/MapToolsMenu.js";

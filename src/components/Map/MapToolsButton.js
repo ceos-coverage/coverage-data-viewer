@@ -12,7 +12,8 @@ import Grow from "material-ui/transitions/Grow";
 import { Manager, Target, Popper } from "react-popper";
 import Tooltip from "material-ui/Tooltip";
 import BuildIcon from "material-ui-icons/Build";
-import { MapButton, MapToolsMenu, ClickAwayListener } from "_core/components/Reusables";
+import { MapButton, ClickAwayListener } from "_core/components/Reusables";
+import { MapToolsMenu } from "components/Reusables";
 import MiscUtil from "_core/utils/MiscUtil";
 import displayStyles from "_core/styles/display.scss";
 
