@@ -100,11 +100,13 @@ export default class ChartUtil {
                                 },
                                 [Number.MAX_VALUE, -Number.MAX_VALUE]
                             );
+                            let range = extremes[1] - extremes[0];
+                            let scale = range * 0.1;
 
                             yaxis.update(
                                 {
-                                    min: extremes[0],
-                                    max: extremes[1],
+                                    min: extremes[0] - scale,
+                                    max: extremes[1] + scale,
                                     reversed: displayOptions.get("yAxisReversed")
                                 },
                                 false
@@ -330,8 +332,6 @@ export default class ChartUtil {
                             // hacky color axis label yAxis
                             id: "z-axis-label",
                             gridLineWidth: 0,
-                            // minPadding: 0,
-                            // maxPadding: 0,
                             opposite: true,
                             tickLength: 0,
                             title: {

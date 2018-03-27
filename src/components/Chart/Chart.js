@@ -60,26 +60,34 @@ export class Chart extends Component {
                 typeof this.refs.chartWrapper !== "undefined"
                     ? this.refs.chartWrapper
                     : document.getElementById(this.props.chart.get("nodeId"));
-            ChartUtil.updateData({
-                node: node,
-                data: this.props.chart.get("data"),
-                dataExtremes: this.props.chart.get("dataMeta").extremes[
-                    this.props.chart.getIn(["formOptions", "zAxis"])
-                ],
-                note:
-                    Math.round(
-                        this.props.chart.get("data").length /
-                            this.props.chart.get("dataMeta").lastSize *
-                            100
-                    ) + "% of points shown",
-                chartType: this.props.chart.get("chartType"),
-                displayOptions: this.props.chart.get("displayOptions")
-            });
+            if (prevProps.chart.get("data") !== this.props.chart.get("data")) {
+                ChartUtil.updateData({
+                    node: node,
+                    data: this.props.chart.get("data"),
+                    dataExtremes: this.props.chart.get("dataMeta").extremes[
+                        this.props.chart.getIn(["formOptions", "zAxis"])
+                    ],
+                    note:
+                        Math.round(
+                            this.props.chart.get("data").length /
+                                this.props.chart.get("dataMeta").lastSize *
+                                100
+                        ) + "% of points shown",
+                    chartType: this.props.chart.get("chartType"),
+                    displayOptions: this.props.chart.get("displayOptions")
+                });
+                ChartUtil.setDateIndicator({
+                    node: node,
+                    date: this.props.mapDate
+                });
+            }
 
-            ChartUtil.setDateIndicator({
-                node: node,
-                date: this.props.mapDate
-            });
+            if (prevProps.mapDate !== this.props.mapDate) {
+                ChartUtil.setDateIndicator({
+                    node: node,
+                    date: this.props.mapDate
+                });
+            }
         }
     }
 
