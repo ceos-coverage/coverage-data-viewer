@@ -77,6 +77,40 @@ export default class ChartUtil {
                 if (typeof data !== "undefined") {
                     let series = chart.series[0];
                     if (series) {
+                        // update the yaxis direction
+                        let yaxis = chart.axes.reduce((acc, a) => {
+                            if (a.side === 3) {
+                                // left side of plot
+                                return a;
+                            }
+                            return acc;
+                        }, undefined);
+                        if (typeof yaxis !== "undefined") {
+                            // calculate data min/max for yaxis
+                            let extremes = data.reduce(
+                                (acc, entry) => {
+                                    if (entry[1] < acc[0]) {
+                                        acc[0] = entry[1];
+                                    }
+                                    if (entry[1] > acc[1]) {
+                                        acc[1] = entry[1];
+                                    }
+
+                                    return acc;
+                                },
+                                [Number.MAX_VALUE, -Number.MAX_VALUE]
+                            );
+
+                            yaxis.update(
+                                {
+                                    min: extremes[0],
+                                    max: extremes[1],
+                                    reversed: displayOptions.get("yAxisReversed")
+                                },
+                                false
+                            );
+                        }
+
                         series.update(
                             {
                                 type: displayOptions.get("markerType") || "scatter",
@@ -87,22 +121,6 @@ export default class ChartUtil {
                             },
                             false
                         );
-
-                        // update the yaxis direction
-                        let yaxis = chart.axes.reduce((acc, a) => {
-                            if (a.side === 3) {
-                                // left side of plot
-                                return a;
-                            }
-                            return acc;
-                        }, undefined);
-                        if (typeof yaxis !== "undefined") {
-                            if (yaxis.reversed !== displayOptions.get("yAxisReversed")) {
-                                yaxis.update({
-                                    reversed: displayOptions.get("yAxisReversed")
-                                });
-                            }
-                        }
                     } else {
                         console.warn(
                             "Error in ChartUtil.updateSingleSeries: could not find existing series"
@@ -243,6 +261,7 @@ export default class ChartUtil {
                         id: "x-axis",
                         type: "datetime",
                         gridLineWidth: 1,
+                        lineWidth: 2,
                         title: {
                             text: keys.xKey,
                             style: {
@@ -289,6 +308,10 @@ export default class ChartUtil {
                             minPadding: 0,
                             maxPadding: 0,
                             reversed: displayOptions.get("yAxisReversed"),
+                            startOnTick: false,
+                            endOnTick: false,
+                            tickPixelInterval: 50,
+                            lineWidth: 2,
                             title: {
                                 text: keys.yKey,
                                 style: {
@@ -307,8 +330,8 @@ export default class ChartUtil {
                             // hacky color axis label yAxis
                             id: "z-axis-label",
                             gridLineWidth: 0,
-                            minPadding: 0,
-                            maxPadding: 0,
+                            // minPadding: 0,
+                            // maxPadding: 0,
                             opposite: true,
                             tickLength: 0,
                             title: {
@@ -515,9 +538,7 @@ export default class ChartUtil {
                     keys.xKey +
                     ": </span>" +
                     "<span class='tooltip-value'>" +
-                    moment(x)
-                        .utc()
-                        .format("MMM DD, YYYY · HH:mm") +
+                    moment(x).format("MMM DD, YYYY · HH:mm") +
                     "</span>" +
                     "</div>" +
                     "<div class='tooltip-table-row'>" +

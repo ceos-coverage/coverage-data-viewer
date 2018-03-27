@@ -38,12 +38,7 @@ export class Chart extends Component {
                 let axisIsTime =
                     this.props.chart.getIn(["formOptions", "xAxis"]).toLocaleLowerCase() === "time";
                 if (axisIsTime) {
-                    let date = moment(
-                        moment(evt.x)
-                            .utc()
-                            .format("YYYY-MM-DD"),
-                        "YYYY-MM-DD"
-                    );
+                    let date = moment(evt.x);
                     // set the map date, if found
                     if (date.isValid()) {
                         this.props.mapActionsCore.setDate(date.toDate());

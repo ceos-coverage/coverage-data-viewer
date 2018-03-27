@@ -20,8 +20,8 @@ export class DataDisplay extends Component {
         let timeStrAlt = this.props.data.getIn(["properties", "datetimestamp"]);
         timeStr = typeof timeStr === "undefined" ? timeStrAlt : timeStr;
 
-        let time = moment(timeStr, this.props.data.getIn(["layer", "timeFormat"])).utc();
-        timeStr = time.format("MMM DD, YYYY · HH:mm UTC");
+        let time = moment(timeStr, this.props.data.getIn(["layer", "timeFormat"]));
+        timeStr = time.format("MMM DD, YYYY · HH:mm");
 
         let coords = this.props.data.get("coords");
 
