@@ -78,18 +78,18 @@ export class MainMenu extends Component {
                             <Tab
                                 classes={{
                                     root: styles.tabLabel,
-                                    rootPrimarySelected: styles.tabSelected,
-                                    rootSecondarySelected: styles.tabSelected,
-                                    rootInheritSelected: styles.tabSelected
+                                    textColorPrimarySelected: styles.tabSelected,
+                                    textColorSecondarySelected: styles.tabSelected,
+                                    textColorInheritSelected: styles.tabSelected
                                 }}
                                 label="Datasets"
                             />
                             <Tab
                                 classes={{
                                     root: styles.tabLabel,
-                                    rootPrimarySelected: styles.tabSelected,
-                                    rootSecondarySelected: styles.tabSelected,
-                                    rootInheritSelected: styles.tabSelected
+                                    textColorPrimarySelected: styles.tabSelected,
+                                    textColorSecondarySelected: styles.tabSelected,
+                                    textColorInheritSelected: styles.tabSelected
                                 }}
                                 label="Charts"
                             />

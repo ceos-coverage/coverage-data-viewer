@@ -7,7 +7,6 @@
 
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { connect } from "react-redux";
 import Input from "material-ui/Input";
 import MiscUtil from "_core/utils/MiscUtil";
 import appConfig from "constants/appConfig";
@@ -48,38 +47,33 @@ export class YearPicker extends Component {
 
         // if the update failed because date was invalid
         // force a re-render the go back to previous valid state
-        if (this.year !== this.props.year) {
-            this.error = true;
-            this.forceUpdate();
-        }
+        this.error = this.year !== this.props.year;
+        this.forceUpdate();
     }
     render() {
         let yearStr = this.updateFromInternal ? this.year : this.props.year;
-        this.year = yearStr;
+        this.year = this.updateFromInternal ? this.year : yearStr;
         this.updateFromInternal = false;
         let containerClasses = MiscUtil.generateStringFromSet({
-            [styles.datePickerSelector]: true,
-            [styles.datePickerSelectorError]: this.error,
             [this.props.className]: typeof this.props.className !== "undefined"
         });
         return (
-            <div className={containerClasses}>
-                <Input
-                    type="text"
-                    tabIndex="0"
-                    value={yearStr}
-                    inputProps={{
-                        onBlur: evt => {
-                            this.handleBlur(evt.target.value);
-                        },
-                        onKeyPress: evt => {
-                            this.handleKeyPress(evt);
-                        }
-                    }}
-                    onChange={evt => this.handleChange(evt.target.value)}
-                    classes={{ input: styles.selectionInput }}
-                />
-            </div>
+            <Input
+                type="text"
+                fullWidth={true}
+                value={yearStr}
+                error={this.error}
+                onBlur={evt => {
+                    this.handleBlur(evt.target.value);
+                }}
+                inputProps={{
+                    onKeyPress: evt => {
+                        this.handleKeyPress(evt);
+                    }
+                }}
+                onChange={evt => this.handleChange(evt.target.value)}
+                classes={{ root: containerClasses, input: styles.selectionInput }}
+            />
         );
     }
 }
@@ -90,4 +84,4 @@ YearPicker.propTypes = {
     className: PropTypes.string
 };
 
-export default connect()(YearPicker);
+export default YearPicker;
