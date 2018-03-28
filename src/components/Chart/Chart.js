@@ -60,7 +60,7 @@ export class Chart extends Component {
                 typeof this.refs.chartWrapper !== "undefined"
                     ? this.refs.chartWrapper
                     : document.getElementById(this.props.chart.get("nodeId"));
-            if (prevProps.chart.get("data") !== this.props.chart.get("data")) {
+            if (prevProps.chart !== this.props.chart) {
                 ChartUtil.updateData({
                     node: node,
                     data: this.props.chart.get("data"),
