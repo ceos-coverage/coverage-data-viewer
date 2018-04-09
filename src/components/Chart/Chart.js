@@ -80,9 +80,7 @@ export class Chart extends Component {
                     node: node,
                     date: this.props.mapDate
                 });
-            }
-
-            if (prevProps.mapDate !== this.props.mapDate) {
+            } else if (prevProps.mapDate !== this.props.mapDate) {
                 ChartUtil.setDateIndicator({
                     node: node,
                     date: this.props.mapDate

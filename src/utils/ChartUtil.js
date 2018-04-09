@@ -212,6 +212,9 @@ export default class ChartUtil {
                         spacingBottom: 10,
                         marginTop: 58,
                         marginRight: 90,
+                        style: {
+                            fontFamily: "'Roboto', Helvetica, Arial, sans-serif"
+                        },
                         resetZoomButton: {
                             relativeTo: "plot",
                             position: {
@@ -223,7 +226,6 @@ export default class ChartUtil {
                             theme: {
                                 style: {
                                     fontSize: "1.2rem",
-                                    fontFamily: "'Roboto', Helvetica, Arial, sans-serif",
                                     fontWeight: 500,
                                     textTransform: "uppercase"
                                 }
@@ -267,7 +269,6 @@ export default class ChartUtil {
                         title: {
                             text: keys.xKey,
                             style: {
-                                fontFamily: "'Roboto', Helvetica, Arial, sans-serif",
                                 fontSize: "1.4rem"
                             }
                         },
@@ -283,7 +284,6 @@ export default class ChartUtil {
                         },
                         labels: {
                             style: {
-                                fontFamily: "'Roboto', Helvetica, Arial, sans-serif",
                                 textAlign: "center"
                             },
                             formatter: this.getTickFormatter()
@@ -317,15 +317,11 @@ export default class ChartUtil {
                             title: {
                                 text: keys.yKey,
                                 style: {
-                                    fontFamily: "'Roboto', Helvetica, Arial, sans-serif",
                                     fontSize: "1.4rem"
                                 }
                             },
                             labels: {
-                                x: -4,
-                                style: {
-                                    fontFamily: "'Roboto', Helvetica, Arial, sans-serif"
-                                }
+                                x: -4
                             }
                         },
                         {
@@ -339,7 +335,6 @@ export default class ChartUtil {
                                 rotation: -90,
                                 margin: 30,
                                 style: {
-                                    fontFamily: "'Roboto', Helvetica, Arial, sans-serif",
                                     fontSize: "1.4rem"
                                 }
                             },
@@ -354,12 +349,16 @@ export default class ChartUtil {
                         reversed: false,
                         min: dataExtremes.min,
                         max: dataExtremes.max,
-                        minColor: PRIMARY_COLOR,
-                        maxColor: SECONDARY_COLOR,
+                        stops: [
+                            [0, PRIMARY_COLOR],
+                            [0.1, PRIMARY_COLOR],
+                            [0.5, "#fffbbc"],
+                            [0.8, SECONDARY_COLOR],
+                            [1, SECONDARY_COLOR]
+                        ],
                         title: {
                             text: keys.zKey,
                             style: {
-                                fontFamily: "'Roboto', Helvetica, Arial, sans-serif",
                                 fontSize: "1.4rem"
                             }
                         },
@@ -373,8 +372,7 @@ export default class ChartUtil {
                         align: "left",
                         style: {
                             fontSize: "1.5rem",
-                            fontWeight: "500",
-                            fontFamily: "'Roboto', Helvetica, Arial, sans-serif"
+                            fontWeight: "500"
                         }
                     },
 
@@ -385,7 +383,6 @@ export default class ChartUtil {
                         y: 0,
                         x: -10,
                         style: {
-                            fontFamily: "'Roboto', Helvetica, Arial, sans-serif",
                             fontSize: "1.2rem",
                             fontWeight: "300",
                             fontStyle: "italic"
@@ -436,7 +433,6 @@ export default class ChartUtil {
                             return { x: 6, y: 28 };
                         },
                         style: {
-                            fontFamily: "'Roboto', Helvetica, Arial, sans-serif",
                             fontSize: "1.2rem"
                         },
                         useHTML: true,

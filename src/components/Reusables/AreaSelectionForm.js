@@ -57,6 +57,7 @@ export class AreaSelectionForm extends Component {
                             defaultValue={north}
                             label="North"
                             margin="dense"
+                            fullWidth={true}
                             inputProps={{
                                 type: "number"
                             }}
@@ -70,6 +71,7 @@ export class AreaSelectionForm extends Component {
                             defaultValue={west}
                             label="West"
                             margin="dense"
+                            fullWidth={true}
                             inputProps={{
                                 type: "number"
                             }}
@@ -81,6 +83,7 @@ export class AreaSelectionForm extends Component {
                             defaultValue={east}
                             label="East"
                             margin="dense"
+                            fullWidth={true}
                             inputProps={{
                                 type: "number"
                             }}
@@ -94,6 +97,7 @@ export class AreaSelectionForm extends Component {
                             defaultValue={south}
                             label="South"
                             margin="dense"
+                            fullWidth={true}
                             inputProps={{
                                 type: "number"
                             }}
