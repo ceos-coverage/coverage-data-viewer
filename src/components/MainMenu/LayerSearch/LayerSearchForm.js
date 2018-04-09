@@ -57,23 +57,33 @@ export class LayerSearchForm extends Component {
                     <LabelPopover label="Variable" subtitle="Any" className={styles.facet}>
                         <FormGroup>
                             <FormControlLabel
-                                control={<Checkbox checked={false} value="tuna_a304" />}
+                                control={
+                                    <Checkbox color="primary" checked={false} value="tuna_a304" />
+                                }
                                 label="depth"
                             />
                             <FormControlLabel
-                                control={<Checkbox checked={false} value="tuna_a303" />}
+                                control={
+                                    <Checkbox color="primary" checked={false} value="tuna_a303" />
+                                }
                                 label="ext_temp"
                             />
                             <FormControlLabel
-                                control={<Checkbox checked={false} value="tuna_a303" />}
+                                control={
+                                    <Checkbox color="primary" checked={false} value="tuna_a303" />
+                                }
                                 label="light"
                             />
                             <FormControlLabel
-                                control={<Checkbox checked={false} value="tuna_a304" />}
+                                control={
+                                    <Checkbox color="primary" checked={false} value="tuna_a304" />
+                                }
                                 label="pressure"
                             />
                             <FormControlLabel
-                                control={<Checkbox checked={false} value="tuna_a304" />}
+                                control={
+                                    <Checkbox color="primary" checked={false} value="tuna_a304" />
+                                }
                                 label="salinity"
                             />
                         </FormGroup>
@@ -81,23 +91,33 @@ export class LayerSearchForm extends Component {
                     <LabelPopover label="Platform" subtitle="Tuna" className={styles.facet}>
                         <FormGroup>
                             <FormControlLabel
-                                control={<Checkbox checked={false} value="tuna_a304" />}
+                                control={
+                                    <Checkbox color="primary" checked={false} value="tuna_a304" />
+                                }
                                 label="Buoy"
                             />
                             <FormControlLabel
-                                control={<Checkbox checked={false} value="tuna_a303" />}
+                                control={
+                                    <Checkbox color="primary" checked={false} value="tuna_a303" />
+                                }
                                 label="Dolphin"
                             />
                             <FormControlLabel
-                                control={<Checkbox checked={false} value="tuna_a304" />}
+                                control={
+                                    <Checkbox color="primary" checked={false} value="tuna_a304" />
+                                }
                                 label="Shark"
                             />
                             <FormControlLabel
-                                control={<Checkbox checked={false} value="tuna_a304" />}
+                                control={
+                                    <Checkbox color="primary" checked={false} value="tuna_a304" />
+                                }
                                 label="Ship"
                             />
                             <FormControlLabel
-                                control={<Checkbox checked={true} value="tuna_a303" />}
+                                control={
+                                    <Checkbox color="primary" checked={true} value="tuna_a303" />
+                                }
                                 label="Tuna"
                             />
                         </FormGroup>
@@ -105,15 +125,21 @@ export class LayerSearchForm extends Component {
                     <LabelPopover label="Sensor" subtitle="Any" className={styles.facet}>
                         <FormGroup>
                             <FormControlLabel
-                                control={<Checkbox checked={false} value="tuna_a303" />}
+                                control={
+                                    <Checkbox color="primary" checked={false} value="tuna_a303" />
+                                }
                                 label="Animal Tag X3K"
                             />
                             <FormControlLabel
-                                control={<Checkbox checked={false} value="tuna_a304" />}
+                                control={
+                                    <Checkbox color="primary" checked={false} value="tuna_a304" />
+                                }
                                 label="Buoy 44Z"
                             />
                             <FormControlLabel
-                                control={<Checkbox checked={false} value="tuna_a304" />}
+                                control={
+                                    <Checkbox color="primary" checked={false} value="tuna_a304" />
+                                }
                                 label="Ship Sensor Line"
                             />
                         </FormGroup>
@@ -121,15 +147,21 @@ export class LayerSearchForm extends Component {
                     <LabelPopover label="Project" subtitle="2 Selected" className={styles.facet}>
                         <FormGroup>
                             <FormControlLabel
-                                control={<Checkbox checked={true} value="tuna_a303" />}
+                                control={
+                                    <Checkbox color="primary" checked={true} value="tuna_a303" />
+                                }
                                 label="PO.DAAC"
                             />
                             <FormControlLabel
-                                control={<Checkbox checked={false} value="tuna_a304" />}
+                                control={
+                                    <Checkbox color="primary" checked={false} value="tuna_a304" />
+                                }
                                 label="Project Name"
                             />
                             <FormControlLabel
-                                control={<Checkbox checked={true} value="tuna_a304" />}
+                                control={
+                                    <Checkbox color="primary" checked={true} value="tuna_a304" />
+                                }
                                 label="SPURS"
                             />
                         </FormGroup>

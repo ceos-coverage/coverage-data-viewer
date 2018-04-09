@@ -57,7 +57,11 @@ export class SettingsContainer extends Component {
                         this.props.appActionsCore.setAutoUpdateUrl(!this.props.autoUpdateUrlEnabled)
                     }
                 >
-                    <Checkbox disableRipple checked={this.props.autoUpdateUrlEnabled} />
+                    <Checkbox
+                        color="primary"
+                        disableRipple
+                        checked={this.props.autoUpdateUrlEnabled}
+                    />
                     <ListItemText
                         primary="Auto-Update Url"
                         secondary="Automatically update the url in this window to be shareable"

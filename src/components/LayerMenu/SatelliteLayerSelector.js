@@ -47,7 +47,7 @@ export class SatelliteLayerSelector extends Component {
                 <FormControlLabel
                     key={layer.get("id") + "-satellite-select-option"}
                     value={layer.get("id")}
-                    control={<Radio />}
+                    control={<Radio color="primary" />}
                     label={layer.get("title")}
                 />
             );
@@ -57,7 +57,7 @@ export class SatelliteLayerSelector extends Component {
             <FormControlLabel
                 key={"none-satellite-select-option"}
                 value={appStrings.NO_DATA}
-                control={<Radio />}
+                control={<Radio color="primary" />}
                 label={"None"}
             />
         );

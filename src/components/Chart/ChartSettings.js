@@ -73,6 +73,7 @@ export class ChartSettings extends Component {
                             </FormGroup>
                             <FormGroup className={styles.formGroup}>
                                 <Checkbox
+                                    color="primary"
                                     label="Invert Y-Axis"
                                     checked={this.props.displayOptions.get("yAxisReversed")}
                                     onChange={checked => {

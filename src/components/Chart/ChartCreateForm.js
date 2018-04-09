@@ -35,11 +35,15 @@ export class ChartCreateForm extends Component {
                     >
                         <FormGroup>
                             <FormControlLabel
-                                control={<Checkbox checked={true} value="tuna_a303" />}
+                                control={
+                                    <Checkbox color="primary" checked={true} value="tuna_a303" />
+                                }
                                 label="Tuna A303"
                             />
                             <FormControlLabel
-                                control={<Checkbox checked={false} value="tuna_a304" />}
+                                control={
+                                    <Checkbox color="primary" checked={false} value="tuna_a304" />
+                                }
                                 label="Tuna A304"
                             />
                         </FormGroup>
@@ -48,13 +52,21 @@ export class ChartCreateForm extends Component {
                         <FormLabel component="legend">Shared Variables</FormLabel>
                         <FormGroup>
                             <RadioGroup aria-label="xaxis" name="xaxis" value="time">
-                                <FormControlLabel value="time" control={<Radio />} label="Time" />
+                                <FormControlLabel
+                                    value="time"
+                                    control={<Radio color="primary" />}
+                                    label="Time"
+                                />
                                 <FormControlLabel
                                     value="ext_temp"
-                                    control={<Radio />}
+                                    control={<Radio color="primary" />}
                                     label="Ext_Temp"
                                 />
-                                <FormControlLabel value="Depth" control={<Radio />} label="Depth" />
+                                <FormControlLabel
+                                    value="Depth"
+                                    control={<Radio color="primary" />}
+                                    label="Depth"
+                                />
                             </RadioGroup>
                         </FormGroup>
                         <FormLabel component="legend">Non-Shared Variables</FormLabel>
@@ -72,13 +84,21 @@ export class ChartCreateForm extends Component {
                         <FormLabel component="legend">Shared Variables</FormLabel>
                         <FormGroup>
                             <RadioGroup aria-label="yaxis" name="yaxis" value="depth">
-                                <FormControlLabel value="time" control={<Radio />} label="Time" />
+                                <FormControlLabel
+                                    value="time"
+                                    control={<Radio color="primary" />}
+                                    label="Time"
+                                />
                                 <FormControlLabel
                                     value="ext_temp"
-                                    control={<Radio />}
+                                    control={<Radio color="primary" />}
                                     label="Ext_Temp"
                                 />
-                                <FormControlLabel value="depth" control={<Radio />} label="Depth" />
+                                <FormControlLabel
+                                    value="depth"
+                                    control={<Radio color="primary" />}
+                                    label="Depth"
+                                />
                             </RadioGroup>
                         </FormGroup>
                         <FormLabel component="legend">Non-Shared Variables</FormLabel>
@@ -96,13 +116,21 @@ export class ChartCreateForm extends Component {
                         <FormLabel component="legend">Shared Variables</FormLabel>
                         <FormGroup>
                             <RadioGroup aria-label="zaxis" name="zaxis" value="ext_temp">
-                                <FormControlLabel value="time" control={<Radio />} label="Time" />
+                                <FormControlLabel
+                                    value="time"
+                                    control={<Radio color="primary" />}
+                                    label="Time"
+                                />
                                 <FormControlLabel
                                     value="ext_temp"
-                                    control={<Radio />}
+                                    control={<Radio color="primary" />}
                                     label="Ext_Temp"
                                 />
-                                <FormControlLabel value="Depth" control={<Radio />} label="Depth" />
+                                <FormControlLabel
+                                    value="Depth"
+                                    control={<Radio color="primary" />}
+                                    label="Depth"
+                                />
                             </RadioGroup>
                         </FormGroup>
                         <FormLabel component="legend">Non-Shared Variables</FormLabel>

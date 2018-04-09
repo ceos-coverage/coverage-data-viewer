@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { connect } from "react-redux";
 import CheckboxMui from "material-ui/Checkbox";
 import { FormControlLabel } from "material-ui/Form";
 import styles from "components/Chart/ChartSettings.scss";
@@ -12,22 +11,24 @@ export class Checkbox extends Component {
         }
     }
     render() {
+        let { label, checked, onChange, ...other } = this.props;
         return (
             <FormControlLabel
                 control={
                     <CheckboxMui
-                        value={this.props.checked.toString()}
-                        checked={this.props.checked}
+                        value={checked.toString()}
+                        checked={checked}
                         onChange={(evt, checked) => {
                             this.handleChange(checked);
                         }}
                         onClick={evt => {
                             this.handleChange(!(evt.target.value === "true"));
                         }}
+                        {...other}
                         tabIndex="-1"
                     />
                 }
-                label={this.props.label}
+                label={label}
             />
         );
     }
@@ -39,4 +40,4 @@ Checkbox.propTypes = {
     onChange: PropTypes.func
 };
 
-export default connect()(Checkbox);
+export default Checkbox;

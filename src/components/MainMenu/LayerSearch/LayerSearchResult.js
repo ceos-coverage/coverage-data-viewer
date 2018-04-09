@@ -22,7 +22,12 @@ export class LayerSearchResult extends Component {
                     )
                 }
             >
-                <Checkbox checked={this.props.layer.get("isActive")} tabIndex={-1} disableRipple />
+                <Checkbox
+                    color="primary"
+                    checked={this.props.layer.get("isActive")}
+                    tabIndex={-1}
+                    disableRipple
+                />
                 <ListItemText primary={this.props.layer.get("title")} />
                 <ListItemSecondaryAction>
                     <IconButton aria-label="info">
