@@ -11,7 +11,7 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import * as appStrings from "_core/constants/appStrings";
 import * as mapActions from "_core/actions/mapActions";
-import { MapContainer2D } from "_core/components/Map";
+import { MapContainer2D } from "components/Map";
 import styles from "_core/components/Map/MapContainer.scss";
 
 export class MapContainer extends Component {

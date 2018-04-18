@@ -15,6 +15,7 @@ import {
 import Paper from "material-ui/Paper";
 import EarthIcon from "material-ui-icons/Public";
 import EditIcon from "material-ui-icons/ModeEdit";
+import CloseIcon from "material-ui-icons/Close";
 import TodayIcon from "material-ui-icons/Today";
 import ArrowForward from "material-ui-icons/ArrowForward";
 import Typography from "material-ui/Typography";
@@ -22,7 +23,8 @@ import {
     LabelPopover,
     SearchInput,
     DateRangePicker,
-    AreaSelectionForm
+    AreaSelectionForm,
+    AreaSelectionInput
 } from "components/Reusables";
 import * as appActions from "actions/appActions";
 import styles from "components/MainMenu/LayerSearch/LayerSearchForm.scss";
@@ -31,22 +33,10 @@ export class LayerSearchForm extends Component {
     render() {
         return (
             <Paper elevation={3} className={styles.root}>
-                <SearchInput
-                    label="Select Area"
-                    placeholder="placeholder"
+                <AreaSelectionInput
                     className={styles.topField}
-                    leftAction={{
-                        icon: <EarthIcon />
-                    }}
-                    rightAction={{
-                        icon: <EditIcon />,
-                        onClick: () => {
-                            console.log("BOO");
-                        }
-                    }}
-                >
-                    <AreaSelectionForm />
-                </SearchInput>
+                    selectedArea={this.props.layerSearch.get("selectedArea")}
+                />
                 <DateRangePicker
                     className={styles.topField}
                     startDate={this.props.layerSearch.get("startDate")}

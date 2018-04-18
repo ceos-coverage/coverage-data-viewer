@@ -30,6 +30,7 @@ import Ol_Overlay from "ol/overlay";
 import Ol_Format_GeoJSON from "ol/format/geojson";
 import Ol_Geom_LineString from "ol/geom/linestring";
 import Ol_Geom_Point from "ol/geom/point";
+import OL_Geom_GeometryType from "ol/geom/geometrytype";
 import Ol_TileGrid from "ol/tilegrid";
 import Ol_Filter from "ol/format/filter";
 import Ol_Extent from "ol/extent";
@@ -69,7 +70,24 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
 
     createMap(container, options) {
         let map = MapWrapperOpenlayersCore.prototype.createMap.call(this, container, options);
+
         if (map) {
+            // create area display layer
+            let areaDisplayNormalSource = new Ol_Source_Vector({ wrapX: true });
+            let areaDisplayNormalLayer = new Ol_Layer_Vector({
+                source: areaDisplayNormalSource,
+                extent: appConfig.DEFAULT_MAP_EXTENT,
+                style: this.areaDisplayNormalStyle
+            });
+            let areaDisplayLayer = new Ol_Layer_Group({
+                extent: appConfig.DEFAULT_MAP_EXTENT,
+                layers: [areaDisplayNormalLayer],
+                visible: true
+            });
+            areaDisplayLayer.set("_layerId", "_area_display_layer");
+            areaDisplayLayer.set("_layerType", appStringsCore.LAYER_GROUP_TYPE_REFERENCE);
+            map.addLayer(areaDisplayLayer);
+
             map.on("precompose", function(evt) {
                 evt.context.imageSmoothingEnabled = false;
                 evt.context.webkitImageSmoothingEnabled = false;
@@ -82,51 +100,15 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
 
     configureStyles(container, options) {
         MapWrapperOpenlayersCore.prototype.configureStyles.call(this, container, options);
+        let defaultDrawingStyleCore = this.defaultDrawingStyle;
 
-        this.defaultGeometryStyle = new Ol_Style({
-            fill: new Ol_Style_Fill({
-                color: appConfig.GEOMETRY_FILL_COLOR
-            }),
-            stroke: new Ol_Style_Stroke({
-                color: appConfig.GEOMETRY_STROKE_COLOR,
-                width: appConfig.GEOMETRY_STROKE_WEIGHT
-            }),
-            image: new Ol_Style_Circle({
-                radius: 7,
-                fill: new Ol_Style_Fill({
-                    color: appConfig.GEOMETRY_STROKE_COLOR
-                })
-            })
-        });
-
-        this.areaDisplayInnerStyle = new Ol_Style({
-            fill: new Ol_Style_Fill({
-                color: "rgba(255, 255, 255, 0)"
-            }),
-            stroke: new Ol_Style_Stroke({
-                color: "rgba(255, 255, 255, 1)",
-                width: 3
-            })
-        });
-        this.areaDisplayOuterStyle = new Ol_Style({
-            fill: new Ol_Style_Fill({
-                color: "rgba(255, 255, 255, 0)"
-            }),
-            stroke: new Ol_Style_Stroke({
-                color: appConfig.GEOMETRY_STROKE_COLOR,
-                width: 4
-            })
-        });
-
-        this.areaDisplayHighlightStyle = new Ol_Style({
-            fill: new Ol_Style_Fill({
-                color: "rgba(255, 255, 255, 0)"
-            }),
-            stroke: new Ol_Style_Stroke({
-                color: "rgba(2, 136, 209, 1)",
-                width: 3
-            })
-        });
+        this.defaultDrawingStyle = (
+            feature,
+            resolution,
+            measureType = appStringsCore.MEASURE_DISTANCE
+        ) => {
+            return defaultDrawingStyleCore(feature, resolution, measureType);
+        };
     }
 
     setExtent(extent, padView = false) {
@@ -846,26 +828,30 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                         "_vector_drawings"
                     );
                     if (mapLayer) {
+                        let shapeType = appStringsCore.SHAPE_AREA;
+                        let drawStyle = (feature, resolution) => {
+                            return this.defaultDrawingStyle(feature, resolution, shapeType);
+                        };
                         let drawInteraction = new Ol_Interaction_Draw({
                             source: mapLayer.getSource(),
                             type: "Circle",
                             geometryFunction: Ol_Interaction_Draw.createBox(),
-                            style: this.defaultMeasureStyle,
+                            style: drawStyle,
                             wrapX: true
                         });
 
-                        if (appConfig.DEFAULT_MAP_EXTENT) {
-                            // Override creation of overlay_ so we can pass in an extent
-                            // since OL doesn't let you do this via options
-                            drawInteraction.overlay_ = new Ol_Layer_Vector({
-                                extent: appConfig.DEFAULT_MAP_EXTENT,
-                                source: new Ol_Source_Vector({
-                                    useSpatialIndex: false,
-                                    wrapX: true
-                                }),
-                                style: this.defaultGeometryStyle
-                            });
-                        }
+                        // if (appConfig.DEFAULT_MAP_EXTENT) {
+                        //     // Override creation of overlay_ so we can pass in an extent
+                        //     // since OL doesn't let you do this via options
+                        //     drawInteraction.overlay_ = new Ol_Layer_Vector({
+                        //         extent: appConfig.DEFAULT_MAP_EXTENT,
+                        //         source: new Ol_Source_Vector({
+                        //             useSpatialIndex: false,
+                        //             wrapX: true
+                        //         }),
+                        //         style: this.defaultGeometryStyle
+                        //     });
+                        // }
 
                         // Set callback
                         drawInteraction.on("drawend", event => {
@@ -1146,39 +1132,6 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                 }
             }
             return false;
-        } else if (interactionType === appStrings.INTERACTION_AREA_HIGHLIGHT) {
-            let mapLayers = this.map.getLayers().getArray();
-            let mapLayer = this.miscUtil.findObjectInArray(
-                mapLayers,
-                "_layerId",
-                "_area_display_layer"
-            );
-            if (!mapLayer) {
-                console.warn("could not find area display layer in openlayers map");
-                return false;
-            }
-
-            let feature = mapLayer
-                .getLayers()
-                .item(0)
-                .getSource()
-                .getFeatureById(geometry.id)
-                .clone();
-            feature.setId(geometry.id);
-
-            if (typeof feature === "undefined") {
-                console.warn("could not feature with id: ", geometry.id);
-                return true;
-            }
-
-            let source = mapLayer
-                .getLayers()
-                .item(2)
-                .getSource();
-            source.clear();
-            source.addFeature(feature);
-
-            return true;
         } else {
             return MapWrapperOpenlayersCore.prototype.addGeometry.call(
                 this,
@@ -1241,36 +1194,6 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
 
             outerSource.removeFeature(outerFeature);
             innerSource.removeFeature(innerFeature);
-
-            return true;
-        } else if (interactionType === appStrings.INTERACTION_AREA_HIGHLIGHT) {
-            let mapLayers = this.map.getLayers().getArray();
-            let mapLayer = this.miscUtil.findObjectInArray(
-                mapLayers,
-                "_layerId",
-                "_area_display_layer"
-            );
-            if (!mapLayer) {
-                console.warn("could not find area display layer in openlayers map");
-                return false;
-            }
-
-            let source = mapLayer
-                .getLayers()
-                .item(2)
-                .getSource();
-
-            if (typeof geometry.id !== "undefined") {
-                let feature = source.getFeatureById(geometry.id);
-                if (typeof feature === "undefined") {
-                    console.warn("could not feature with id: ", geometry.id);
-                    return true;
-                }
-
-                source.removeFeature(feature);
-            } else {
-                source.clear();
-            }
 
             return true;
         } else {

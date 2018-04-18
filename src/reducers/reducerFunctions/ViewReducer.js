@@ -23,6 +23,10 @@ export default class ViewReducer extends ViewReducerCore {
             .setIn(["layerSearch", "endDate"], action.endDate);
     }
 
+    static setSearchSelectedArea(state, action) {
+        return state.setIn(["layerSearch", "selectedArea"], Immutable.List(action.selectedArea));
+    }
+
     static resetApplicationState(state, action) {
         state = this.setMainMenutabIndex(state, { tabIndex: 0 });
         state = this.setMainMenuOpen(state, { isOpen: true });

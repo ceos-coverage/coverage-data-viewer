@@ -5,6 +5,7 @@
     display: inline-block;
     vertical-align: middle;
 }
+
 .button {
     display: flex;
     flex-flow: row nowrap;
@@ -32,27 +33,27 @@
     }
 }
 
-.padRight {
-    padding-right: 3rem;
+.rightActions {
+    position: absolute;
+    top: 6px;
+    right: 0px;
 }
 
 .actionBtn {
-    width: 2.2rem;
-    height: 2.2rem;
+    width: 2rem;
+    height: 2rem;
+    min-width: 2rem;
+    min-height: 2rem;
+    max-width: 2rem;
+    max-height: 2rem;
     font-size: 1.7rem;
     margin-right: 5px;
     color: rgba(0, 0, 0, 0.5);
+    display: inline-block;
     svg {
         width: 100%;
         height: 100%;
     }
-}
-
-.actionBtnRight {
-    composes: actionBtn;
-    position: absolute;
-    top: 5px;
-    right: 0px;
 }
 
 .label {
@@ -60,6 +61,8 @@
     height: 2.4rem;
     line-height: 2.4rem;
     text-align: left;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 .content {

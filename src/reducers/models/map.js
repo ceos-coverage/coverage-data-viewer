@@ -13,6 +13,10 @@ export const mapState = mapStateCore.mergeDeep(
                 data: [],
                 showData: true
             }
+        },
+        areaSelection: {
+            isAreaSelectionEnabled: false,
+            geometryType: ""
         }
     })
 );

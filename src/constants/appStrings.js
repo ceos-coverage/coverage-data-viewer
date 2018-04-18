@@ -1,10 +1,5 @@
-export const WORKER_TASK_COMPLETE = "WORKER_TASK_COMPLETE";
-export const WORKER_TASK_COMPLETE_ERROR = "WORKER_TASK_COMPLETE_ERROR";
-export const WORKER_TASK_CLOSE = "WORKER_TASK_CLOSE";
 export const WORKER_TASK_RETRIEVE_DATA = "WORKER_TASK_RETRIEVE_DATA";
-export const WORKER_TASK_DECIMATE_POINTS_RDP = "WORKER_TASK_DECIMATE_POINTS_RDP";
 export const WORKER_TASK_DECIMATE_POINTS_LTTB = "WORKER_TASK_DECIMATE_POINTS_LTTB";
-export const WORKER_TASK_DECIMATE_POINTS_LTTB_BUF = "WORKER_TASK_DECIMATE_POINTS_LTTB_BUF";
 
 export const PLOT_STYLES = {
     TIME_SERIES: {
@@ -32,3 +27,7 @@ export const CURRENTS_VECTOR_COLOR = "oscar_l4_oc_third_deg___oceancurrent_dir_c
 export const CURRENTS_VECTOR_BLACK = "oscar_l4_oc_third_deg___oceancurrent_dir_black";
 
 export const NO_DATA = "No Data";
+
+export const INTERACTION_AREA_SELECTION = "SelectArea";
+export const INTERACTION_AREA_DISPLAY = "DisplayArea";
+export const GEOMETRY_BOX = "Box";

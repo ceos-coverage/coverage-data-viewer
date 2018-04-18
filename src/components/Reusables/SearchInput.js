@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { findDOMNode } from "react-dom";
 import PropTypes from "prop-types";
-import { connect } from "react-redux";
 import ButtonBase from "material-ui/ButtonBase";
 import Paper from "material-ui/Paper";
 import ArrowDropDown from "material-ui-icons/ArrowDropDown";
@@ -79,26 +78,43 @@ export class LabelPopover extends Component {
 
     renderRightAction() {
         if (typeof this.props.rightAction !== "undefined") {
-            let action = this.props.rightAction;
-            if (typeof action.onClick !== "undefined") {
-                return (
-                    <IconButtonSmall
-                        color="inherit"
-                        className={styles.actionBtnRight}
-                        onClick={this.props.rightAction.onClick}
-                    >
-                        {this.props.rightAction.icon}
-                    </IconButtonSmall>
-                );
+            if (typeof this.props.rightAction.map === "function") {
+                return this.props.rightAction.map((actionEntry, i) => {
+                    return this.renderIconButton(
+                        actionEntry.icon,
+                        actionEntry.onClick,
+                        "search-input-btn-" + i
+                    );
+                });
             } else {
-                return (
-                    <IconButtonSmall color="inherit" className={styles.actionBtnRight}>
-                        {this.props.rightAction.icon}
-                    </IconButtonSmall>
+                return this.renderIconButton(
+                    this.props.rightAction.icon,
+                    this.props.rightAction.onClick
                 );
             }
         } else {
             return <div className={displayStyles.hidden} />;
+        }
+    }
+
+    renderIconButton(icon, onClick, key) {
+        if (typeof onClick !== "undefined") {
+            return (
+                <IconButtonSmall
+                    key={key}
+                    color="inherit"
+                    className={styles.actionBtn}
+                    onClick={onClick}
+                >
+                    {icon}
+                </IconButtonSmall>
+            );
+        } else {
+            return (
+                <IconButtonSmall key={key} color="inherit" className={styles.actionBtn}>
+                    {icon}
+                </IconButtonSmall>
+            );
         }
     }
 
@@ -112,9 +128,16 @@ export class LabelPopover extends Component {
 
         let btnClasses = MiscUtil.generateStringFromSet({
             [styles.button]: true,
-            [styles.padRight]: typeof this.props.rightAction !== "undefined",
             [styles.active]: open
         });
+
+        let rightPad = 0;
+        if (typeof this.props.rightAction !== "undefined") {
+            rightPad = 3;
+            if (typeof this.props.rightAction.map === "function") {
+                rightPad = rightPad * this.props.rightAction.length;
+            }
+        }
 
         // if we've found the width before, use that
         if (typeof this.width !== "number") {
@@ -133,6 +156,9 @@ export class LabelPopover extends Component {
                     disableRipple={true}
                     onClick={() => this.handleClickButton()}
                     className={btnClasses}
+                    style={{
+                        paddingRight: rightPad + "rem"
+                    }}
                     ref={node => {
                         this.button = node;
                     }}
@@ -142,7 +168,7 @@ export class LabelPopover extends Component {
                         {this.props.label}
                     </Typography>
                 </ButtonBase>
-                {this.renderRightAction()}
+                <div className={styles.rightActions}>{this.renderRightAction()}</div>
                 <Popover
                     open={open}
                     anchorEl={this.button}
@@ -170,7 +196,8 @@ LabelPopover.propTypes = {
     label: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
     placeholder: PropTypes.string,
     leftAction: PropTypes.object,
-    rightAction: PropTypes.object,
+    rightAction: PropTypes.oneOfType([PropTypes.array, PropTypes.object]),
+    rightActions: PropTypes.oneOfType([PropTypes.array, PropTypes.node]),
     error: PropTypes.string,
     className: PropTypes.string,
     onOpen: PropTypes.func,
@@ -179,4 +206,4 @@ LabelPopover.propTypes = {
     children: PropTypes.oneOfType([PropTypes.object, PropTypes.array, PropTypes.node])
 };
 
-export default connect()(LabelPopover);
+export default LabelPopover;

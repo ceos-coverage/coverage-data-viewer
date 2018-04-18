@@ -18,3 +18,7 @@ export function setMainMenuOpen(isOpen) {
 export function setSearchDateRange(startDate, endDate) {
     return { type: types.SET_SEARCH_DATE_RANGE, startDate, endDate };
 }
+
+export function setSearchSelectedArea(selectedArea, geometryType) {
+    return { type: types.SET_SEARCH_SELECTED_AREA, selectedArea, geometryType };
+}
