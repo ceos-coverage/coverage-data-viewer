@@ -7,9 +7,7 @@ import Typography from "material-ui/Typography";
 import TextField from "material-ui/TextField";
 import Button from "material-ui/Button";
 import * as appStrings from "constants/appStrings";
-import * as appStringsCore from "_core/constants/appStrings";
 import * as mapActions from "actions/mapActions";
-import * as mapActionsCore from "_core/actions/mapActions";
 import appConfig from "constants/appConfig";
 import styles from "components/Reusables/AreaSelectionForm.scss";
 
@@ -22,12 +20,7 @@ export class AreaSelectionForm extends Component {
             south: -90,
             east: 180,
             west: -180,
-            errors: {
-                north: false,
-                south: false,
-                east: false,
-                west: false
-            }
+            errors: {}
         };
     }
 
@@ -51,10 +44,10 @@ export class AreaSelectionForm extends Component {
         let east = this.inputBounds.east;
         let west = this.inputBounds.west;
 
-        this.inputBounds.errors.north = false;
-        this.inputBounds.errors.south = false;
-        this.inputBounds.errors.east = false;
-        this.inputBounds.errors.west = false;
+        this.inputBounds.errors.north = undefined;
+        this.inputBounds.errors.south = undefined;
+        this.inputBounds.errors.east = undefined;
+        this.inputBounds.errors.west = undefined;
 
         this.inputBounds.errors.north = north < south ? true : this.inputBounds.errors.north;
         this.inputBounds.errors.south = north < south ? true : this.inputBounds.errors.south;
@@ -69,35 +62,29 @@ export class AreaSelectionForm extends Component {
 
     startDrawing() {
         this.props.enableAreaSelection(appStrings.GEOMETRY_BOX);
+        if (typeof this.props.onDraw === "function") {
+            this.props.onDraw();
+        }
     }
 
     updateBound(key, val) {
         this.inputBounds[key] = parseFloat(val);
     }
 
-    submitArea() {
-        let area = [
+    clearBounds() {
+        this.submitArea([]);
+    }
+
+    submitArea(area) {
+        area = area || [
             this.inputBounds.west,
             this.inputBounds.south,
             this.inputBounds.east,
             this.inputBounds.north
         ];
-        this.props.setSelectedArea(area, appStrings.GEOMETRY_BOX);
-
-        this.props.addGeometryToMap(
-            {
-                type: appStrings.GEOMETRY_BOX,
-                id: "area-selection_" + Math.random(),
-                proj: appConfig.DEFAULT_PROJECTION,
-                coordinates: area,
-                coordinateType: appStringsCore.COORDINATE_TYPE_CARTOGRAPHIC
-            },
-            appStrings.INTERACTION_AREA_SELECTION,
-            false
-        );
 
         if (typeof this.props.onSubmit === "function") {
-            this.props.onSubmit();
+            this.props.onSubmit(area);
         }
     }
 
@@ -174,7 +161,7 @@ export class AreaSelectionForm extends Component {
                         variant="flat"
                         size="small"
                         color="default"
-                        onClick={() => console.log("Tower")}
+                        onClick={() => this.clearBounds()}
                     >
                         Clear
                     </Button>
@@ -204,23 +191,16 @@ AreaSelectionForm.propTypes = {
     selectedArea: PropTypes.object,
     onSubmit: PropTypes.func,
     onClear: PropTypes.func,
+    onDraw: PropTypes.func,
     className: PropTypes.string,
     enableAreaSelection: PropTypes.func.isRequired,
-    disableAreaSelection: PropTypes.func.isRequired,
-    addGeometryToMap: PropTypes.func.isRequired,
-    removeAllAreaSelections: PropTypes.func.isRequired,
-    setMapView: PropTypes.func.isRequired,
-    setSelectedArea: PropTypes.func.isRequired
+    disableAreaSelection: PropTypes.func.isRequired
 };
 
 function mapDisatchToProps(dispatch) {
     return {
         enableAreaSelection: bindActionCreators(mapActions.enableAreaSelection, dispatch),
-        disableAreaSelection: bindActionCreators(mapActions.disableAreaSelection, dispatch),
-        removeAllAreaSelections: bindActionCreators(mapActions.removeAllAreaSelections, dispatch),
-        addGeometryToMap: bindActionCreators(mapActionsCore.addGeometryToMap, dispatch),
-        setMapView: bindActionCreators(mapActionsCore.setMapView, dispatch),
-        setSelectedArea: bindActionCreators(mapActions.setSelectedArea, dispatch)
+        disableAreaSelection: bindActionCreators(mapActions.disableAreaSelection, dispatch)
     };
 }
 
