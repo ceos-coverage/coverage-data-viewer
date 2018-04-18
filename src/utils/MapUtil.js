@@ -63,4 +63,19 @@ export default class MapUtil extends MapUtilCore {
 
         return newCoords;
     }
+
+    static deconstrainLongitude(lon, preconstrain = true) {
+        lon = preconstrain ? MapUtilCore.constrainCoordinates([lon, 0], false)[0] : lon;
+        if (lon < 0) {
+            return lon + 360;
+        } else {
+            return lon - 360;
+        }
+    }
+
+    static constrainExtent(extent, limitY = true) {
+        let ul = MapUtilCore.constrainCoordinates([extent[0], extent[3]], limitY);
+        let br = MapUtilCore.constrainCoordinates([extent[2], extent[1]], limitY);
+        return [ul[0], br[1], br[0], ul[1]];
+    }
 }

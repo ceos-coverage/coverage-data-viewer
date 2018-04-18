@@ -915,6 +915,9 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                     maxY = c[1];
                 }
             }
+
+            let extent = MapUtil.constrainExtent([minX, minY, maxX, maxY], false);
+
             return {
                 type: appStrings.GEOMETRY_BOX,
                 id: Math.random(),
@@ -922,12 +925,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                     .getView()
                     .getProjection()
                     .getCode(),
-                coordinates: [
-                    parseFloat(minX.toFixed(3)),
-                    parseFloat(minY.toFixed(3)),
-                    parseFloat(maxX.toFixed(3)),
-                    parseFloat(maxY.toFixed(3))
-                ],
+                coordinates: extent.map(x => parseFloat(x.toFixed(3))),
                 coordinateType: appStringsCore.COORDINATE_TYPE_CARTOGRAPHIC
             };
         } else {
@@ -1051,36 +1049,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                 console.warn("could not find drawing layer in openlayers map");
                 return false;
             }
-            if (geometry.type === appStrings.GEOMETRY_BOX) {
-                if (geometry.coordinateType === appStringsCore.COORDINATE_TYPE_CARTOGRAPHIC) {
-                    let ulCoord = [geometry.coordinates[0], geometry.coordinates[3]];
-                    let urCoord = [geometry.coordinates[2], geometry.coordinates[3]];
-                    let blCoord = [geometry.coordinates[0], geometry.coordinates[1]];
-                    let brCoord = [geometry.coordinates[2], geometry.coordinates[1]];
-
-                    // // generate geodesic arcs from points
-                    // if (geodesic) {
-                    //     geomCoords = this.mapUtil.generateGeodesicArcsForLineString(geomCoords);
-                    // }
-
-                    let lineStringFeature = new Ol_Feature({
-                        geometry: new Ol_Geom_Polygon([[ulCoord, urCoord, brCoord, blCoord]])
-                    });
-
-                    lineStringFeature.set("interactionType", interactionType);
-                    lineStringFeature.setId(geometry.id);
-                    mapLayer.getSource().addFeature(lineStringFeature);
-                    return true;
-                } else {
-                    console.warn(
-                        "Unsupported geometry coordinateType ",
-                        geometry.coordinateType,
-                        " for openlayers lineString"
-                    );
-                    return false;
-                }
-            }
-            return false;
+            return this.addGeometryToMapLayer(geometry, interactionType, mapLayer);
         } else if (interactionType === appStrings.INTERACTION_AREA_DISPLAY) {
             let mapLayers = this.map.getLayers().getArray();
             let mapLayer = this.miscUtil.findObjectInArray(
@@ -1092,46 +1061,11 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                 console.warn("could not find area display layer in openlayers map");
                 return false;
             }
-            if (geometry.type === appStrings.GEOMETRY_BOX) {
-                if (geometry.coordinateType === appStringsCore.COORDINATE_TYPE_CARTOGRAPHIC) {
-                    let ulCoord = [geometry.coordinates[0], geometry.coordinates[3]];
-                    let urCoord = [geometry.coordinates[2], geometry.coordinates[3]];
-                    let blCoord = [geometry.coordinates[0], geometry.coordinates[1]];
-                    let brCoord = [geometry.coordinates[2], geometry.coordinates[1]];
-
-                    // // generate geodesic arcs from points
-                    // if (geodesic) {
-                    //     geomCoords = this.mapUtil.generateGeodesicArcsForLineString(geomCoords);
-                    // }
-
-                    let lineStringFeature = new Ol_Feature({
-                        geometry: new Ol_Geom_Polygon([[ulCoord, urCoord, brCoord, blCoord]])
-                    });
-
-                    lineStringFeature.set("interactionType", interactionType);
-                    lineStringFeature.setId(geometry.id);
-                    // mapLayer.getSource().addFeature(lineStringFeature);
-                    mapLayer
-                        .getLayers()
-                        .item(0)
-                        .getSource()
-                        .addFeature(lineStringFeature);
-                    mapLayer
-                        .getLayers()
-                        .item(1)
-                        .getSource()
-                        .addFeature(lineStringFeature);
-                    return true;
-                } else {
-                    console.warn(
-                        "Unsupported geometry coordinateType ",
-                        geometry.coordinateType,
-                        " for openlayers lineString"
-                    );
-                    return false;
-                }
-            }
-            return false;
+            return this.addGeometryToMapLayer(
+                geometry,
+                interactionType,
+                mapLayer.getLayers().item(0)
+            );
         } else {
             return MapWrapperOpenlayersCore.prototype.addGeometry.call(
                 this,
@@ -1140,6 +1074,46 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                 geodesic
             );
         }
+    }
+
+    addGeometryToMapLayer(geometry, interactionType, mapLayer) {
+        if (geometry.type === appStrings.GEOMETRY_BOX) {
+            if (geometry.coordinateType === appStringsCore.COORDINATE_TYPE_CARTOGRAPHIC) {
+                let minLon = geometry.coordinates[0];
+                let maxLon = geometry.coordinates[2];
+                let minLat = geometry.coordinates[1];
+                let maxLat = geometry.coordinates[3];
+
+                // deal with wrap
+                minLon = MapUtil.constrainCoordinates([minLon, 0], false)[0];
+                maxLon = MapUtil.constrainCoordinates([maxLon, 0], false)[0];
+                if (minLon > maxLon) {
+                    minLon = MapUtil.deconstrainLongitude(minLon);
+                }
+
+                let ulCoord = [minLon, maxLat];
+                let urCoord = [maxLon, maxLat];
+                let blCoord = [minLon, minLat];
+                let brCoord = [maxLon, minLat];
+
+                let lineStringFeature = new Ol_Feature({
+                    geometry: new Ol_Geom_Polygon([[ulCoord, urCoord, brCoord, blCoord]])
+                });
+
+                lineStringFeature.set("interactionType", interactionType);
+                lineStringFeature.setId(geometry.id);
+                mapLayer.getSource().addFeature(lineStringFeature);
+                return true;
+            } else {
+                console.warn(
+                    "Unsupported geometry coordinateType ",
+                    geometry.coordinateType,
+                    " for openlayers lineString"
+                );
+                return false;
+            }
+        }
+        return false;
     }
 
     removeGeometry(geometry, interactionType) {
