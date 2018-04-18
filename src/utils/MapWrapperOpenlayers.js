@@ -840,19 +840,6 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                             wrapX: true
                         });
 
-                        // if (appConfig.DEFAULT_MAP_EXTENT) {
-                        //     // Override creation of overlay_ so we can pass in an extent
-                        //     // since OL doesn't let you do this via options
-                        //     drawInteraction.overlay_ = new Ol_Layer_Vector({
-                        //         extent: appConfig.DEFAULT_MAP_EXTENT,
-                        //         source: new Ol_Source_Vector({
-                        //             useSpatialIndex: false,
-                        //             wrapX: true
-                        //         }),
-                        //         style: this.defaultGeometryStyle
-                        //     });
-                        // }
-
                         // Set callback
                         drawInteraction.on("drawend", event => {
                             if (typeof onDrawEnd === "function") {
@@ -1039,6 +1026,11 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
     addGeometry(geometry, interactionType, geodesic = false) {
         if (interactionType === appStrings.INTERACTION_AREA_SELECTION) {
             this.removeAllAreaSelections();
+
+            if (geometry.coordinates.length !== 4) {
+                return true;
+            }
+
             let mapLayers = this.map.getLayers().getArray();
             let mapLayer = this.miscUtil.findObjectInArray(
                 mapLayers,
@@ -1051,6 +1043,9 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
             }
             return this.addGeometryToMapLayer(geometry, interactionType, mapLayer);
         } else if (interactionType === appStrings.INTERACTION_AREA_DISPLAY) {
+            if (geometry.coordinates.length !== 4) {
+                return true;
+            }
             let mapLayers = this.map.getLayers().getArray();
             let mapLayer = this.miscUtil.findObjectInArray(
                 mapLayers,
