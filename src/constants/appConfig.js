@@ -38,10 +38,16 @@ const APP_CONFIG = Immutable.fromJS({
                 type: "wmts/xml"
             }
         ],
-        paletteConfig: "default-data/palettes_oiip.json"
+        paletteConfig: "default-data/palettes_oiip.json",
+        layerSearch: {
+            solrBase: "https://oiip.jpl.nasa.gov/solr/",
+            defaultFacetSearch:
+                "https://oiip.jpl.nasa.gov/solr/?facet.field=measurement_name&facet.field=category&facet.field=project&facet=on&indent=on&q=*:*&rows=0&wt=json"
+        }
     },
     DEFAULT_WEB_WORKER_NUM: 1,
     DEFAULT_MAP_EXTENT: [-180 * 2, -90, 180 * 2, 90],
+    DEFAULT_DECIMATION_RATE: 20000,
     INSITU_VECTOR_COLORS: [
         "#F44336", // red
         "#E91E63", // pink

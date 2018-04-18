@@ -4,10 +4,6 @@ import DataStore from "utils/DataStore";
 import ChartUtil from "utils/ChartUtil";
 
 const url = "http://localhost:3000/default-data/albacoreTunaData.csv";
-const xKey = "Time";
-const yKey = "Depth";
-const zKey = "Ext_Temp";
-const targetPointNum = 20000;
 
 export function setSelectedDatasets(ids) {
     return { type: types.SET_PRIMARY_DATASET_ID, ids };
@@ -54,6 +50,13 @@ export function createChart(formOptions) {
         dispatch(initializeChart(chartId, formOptions, dataStore));
         dispatch(setChartLoading(chartId, true));
 
+        state = getState();
+        let chart = state.chart.getIn(["charts", chartId]);
+        let decimationRate = chart.getIn(["displayOptions", "decimationRate"]);
+        let xKey = chart.getIn(["formOptions", "xAxis"]);
+        let yKey = chart.getIn(["formOptions", "yAxis"]);
+        let zKey = chart.getIn(["formOptions", "zAxis"]);
+
         dataStore
             .getData(
                 {
@@ -61,8 +64,8 @@ export function createChart(formOptions) {
                     processMeta: true
                 },
                 {
-                    keys: { xKey: xKey, yKey: yKey, zKey: zKey },
-                    target: targetPointNum,
+                    keys: { xKey, yKey, zKey },
+                    target: decimationRate,
                     format: "array"
                 }
             )
@@ -87,18 +90,24 @@ export function createChart(formOptions) {
 export function zoomChartData(chartId, bounds) {
     return (dispatch, getState) => {
         let state = getState();
-        let chart = state.chart.getIn(["charts", chartId]);
 
-        let dataStore = chart.get("dataStore");
         dispatch(setChartLoading(chartId, true));
+        dispatch(setChartDisplayOptions(chartId, { bounds: bounds }));
+
+        let chart = state.chart.getIn(["charts", chartId]);
+        let dataStore = chart.get("dataStore");
+        let decimationRate = chart.getIn(["displayOptions", "decimationRate"]);
+        let xKey = chart.getIn(["formOptions", "xAxis"]);
+        let yKey = chart.getIn(["formOptions", "yAxis"]);
+        let zKey = chart.getIn(["formOptions", "zAxis"]);
         dataStore
             .getData(
                 {
                     url: url
                 },
                 {
-                    keys: { xKey: xKey, yKey: yKey, zKey: zKey },
-                    target: targetPointNum,
+                    keys: { xKey, yKey, zKey },
+                    target: decimationRate,
                     xRange: bounds,
                     format: "array"
                 }
@@ -118,6 +127,21 @@ export function zoomChartData(chartId, bounds) {
                     dispatch(setChartLoading(chartId, false));
                 }
             );
+    };
+}
+
+export function setChartDecimationRate(chartId, decimationRate) {
+    return (dispatch, getState) => {
+        dispatch(setChartDisplayOptions(chartId, { decimationRate: decimationRate }));
+
+        let state = getState();
+        let chart = state.chart.getIn(["charts", chartId]);
+        let bounds =
+            typeof chart.getIn(["displayOptions", "bounds"]) === "object"
+                ? chart.getIn(["displayOptions", "bounds"]).toJS()
+                : undefined;
+
+        dispatch(zoomChartData(chartId, bounds));
     };
 }
 

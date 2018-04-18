@@ -1,4 +1,5 @@
 import Immutable from "immutable";
+import appConfig from "constants/appConfig";
 import * as appStrings from "constants/appStrings";
 
 export const chartModel = Immutable.fromJS({
@@ -12,7 +13,7 @@ export const chartModel = Immutable.fromJS({
         error: false,
         message: ""
     },
-    chartType: appStrings.CHART_TYPES.SINGLE_SERIES_WITH_COLOR,
+    chartType: appStrings.CHART_TYPES.SINGLE_SERIES,
     formOptions: {
         datasets: [],
         xAxis: "",
@@ -22,7 +23,9 @@ export const chartModel = Immutable.fromJS({
     displayOptions: {
         isOpen: false,
         yAxisReversed: true,
-        markerType: appStrings.PLOT_STYLES.TIME_SERIES.DOTS
+        bounds: [],
+        markerType: appStrings.PLOT_STYLES.TIME_SERIES.DOTS,
+        decimationRate: appConfig.DEFAULT_DECIMATION_RATE
     }
 });
 

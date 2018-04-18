@@ -21,7 +21,12 @@ import * as chartActions from "actions/chartActions";
 export class ChartCreateForm extends Component {
     submitChartOptions() {
         // this.props.chartActions.createChart(this.props.formOptions);
-        this.props.chartActions.createChart({ xAxis: "Time", yAxis: "Depth", zAxis: "Ext_Temp" });
+        this.props.chartActions.createChart({
+            datasets: ["fakeDataSet"],
+            xAxis: "Time",
+            yAxis: "Depth",
+            zAxis: "Ext_Temp"
+        });
     }
 
     render() {

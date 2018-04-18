@@ -6,6 +6,7 @@ import { InputLabel } from "material-ui/Input";
 import { MenuItem } from "material-ui/Menu";
 import Select from "material-ui/Select";
 import { FormControl, FormGroup } from "material-ui/Form";
+import TextField from "material-ui/TextField";
 import Button from "material-ui/Button";
 import Typography from "material-ui/Typography";
 import Paper from "material-ui/Paper";
@@ -18,11 +19,34 @@ import { Checkbox } from "components/Reusables";
 import styles from "components/Chart/ChartSettings.scss";
 
 export class ChartSettings extends Component {
-    closeSettings() {
-        this.props.chartActions.setChartDisplayOptions(this.props.chartId, {
-            isOpen: false
-        });
+    constructor(props) {
+        super(props);
+
+        this.displayOptions = {};
     }
+
+    componentDidUpdate(prevProps) {
+        this.displayOptions.decimationRate = this.props.displayOptions.get("decimationRate");
+    }
+
+    closeSettings() {
+        if (this.props.displayOptions.get("isOpen")) {
+            if (
+                this.displayOptions.decimationRate !==
+                this.props.displayOptions.get("decimationRate")
+            ) {
+                this.props.chartActions.setChartDecimationRate(
+                    this.props.chartId,
+                    this.displayOptions.decimationRate
+                );
+            }
+
+            this.props.chartActions.setChartDisplayOptions(this.props.chartId, {
+                isOpen: false
+            });
+        }
+    }
+
     render() {
         return (
             <ClickAwayListener
@@ -70,6 +94,25 @@ export class ChartSettings extends Component {
                                         )}
                                     </Select>
                                 </FormControl>
+                            </FormGroup>
+                            <FormGroup className={styles.formGroup}>
+                                <TextField
+                                    id={this.props.chartId + "_dec_rate"}
+                                    defaultValue={this.props.displayOptions
+                                        .get("decimationRate")
+                                        .toString()}
+                                    label="Decimation Target"
+                                    margin="dense"
+                                    fullWidth={true}
+                                    onChange={evt =>
+                                        (this.displayOptions.decimationRate = parseFloat(
+                                            evt.target.value
+                                        ))
+                                    }
+                                    inputProps={{
+                                        type: "number"
+                                    }}
+                                />
                             </FormGroup>
                             <FormGroup className={styles.formGroup}>
                                 <Checkbox

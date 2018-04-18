@@ -122,7 +122,7 @@ export default class WebWorker extends WebWorkerCore {
             let zFunc = this._getReadFuncForKey(eventData.keys.zKey);
             let target = eventData.target;
             let range = eventData.xRange;
-            if (range) {
+            if (range && range.length == 2) {
                 let startIndex = Math.max(
                     this._binaryIndexOf(dataRows, range[0], index => {
                         return xFunc(dataRows[index]);
@@ -146,10 +146,20 @@ export default class WebWorker extends WebWorkerCore {
 
             // attempt to find a good bucket number
             let buckets = 1;
-            let base = target;
-            let numRows = dataRows.length;
-            if (numRows > base) {
-                buckets = Math.round(numRows / base);
+
+            if (target <= 1) {
+                // assume target is percentage
+                let numRows = dataRows.length;
+                target = numRows * target;
+                if (numRows > target) {
+                    buckets = Math.round(numRows / target);
+                }
+            } else {
+                // assume target is actual count
+                let numRows = dataRows.length;
+                if (numRows > target) {
+                    buckets = Math.round(numRows / target);
+                }
             }
 
             // Configure the size of the buckets used to downsample the data.

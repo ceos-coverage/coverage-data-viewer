@@ -6,6 +6,7 @@ import * as appStrings from "constants/appStrings";
 
 const PRIMARY_COLOR = "#0288d1";
 const SECONDARY_COLOR = "#d14702";
+const INDICATOR_COLOR = "rgba(0, 0, 0, 0.5)";
 const CHART_WIDTH = 510;
 const CHART_HEIGHT = 298;
 
@@ -46,29 +47,36 @@ export default class ChartUtil {
         let node = options.node;
         let date = options.date;
 
-        if (typeof node !== "undefined") {
+        if (typeof node !== "undefined" && typeof date !== "undefined") {
             let chart = nodeChartMap.get(node.id);
             if (typeof chart !== "undefined") {
                 let xAxis = chart.xAxis[0];
-                let dateIndicator = chart.annotations[0];
-                if (
-                    xAxis.options.type === "datetime" &&
-                    typeof dateIndicator !== "undefined" &&
-                    typeof date !== "undefined"
-                ) {
-                    dateIndicator.setVisible(true);
-                    dateIndicator.shapes[0].points[0].plotX = xAxis.toPixels(date, true);
-                    dateIndicator.shapes[0].points[1].plotX = xAxis.toPixels(date, true);
-                    chart.drawAnnotations();
+                if (xAxis.options.type === "datetime") {
+                    let x = xAxis.toPixels(date, true);
+                    if (chart.isInsidePlot(x, 10, false)) {
+                        let newIndicator = ChartUtil.getDateIndicatorOptions(chart);
+                        newIndicator.labels[0].point.x = x;
+                        newIndicator.shapes[0].points = newIndicator.shapes[0].points.map(p => {
+                            p.x = x;
+                            return p;
+                        });
+                        newIndicator.visible = true;
+
+                        chart.removeAnnotation("date-indicator");
+                        chart.addAnnotation(newIndicator);
+                    } else {
+                        chart.annotations[0].setVisible(false);
+                    }
                 }
             }
         }
     }
 
-    static updateSingleSeries(options) {
+    static updateSingleSeries(options, colorByPoint = false) {
         let node = options.node;
         let data = options.data;
         let displayOptions = options.displayOptions;
+        let note = options.note;
 
         // check if we have data a place to render to
         if (typeof node !== "undefined") {
@@ -116,8 +124,8 @@ export default class ChartUtil {
                         series.update(
                             {
                                 type: displayOptions.get("markerType") || "scatter",
-                                colorByPoint: true,
-                                color: "PRIMARY_COLOR",
+                                colorByPoint: colorByPoint,
+                                color: PRIMARY_COLOR,
                                 showInLegend: false,
                                 data: data
                             },
@@ -128,6 +136,10 @@ export default class ChartUtil {
                             "Error in ChartUtil.updateSingleSeries: could not find existing series"
                         );
                         return false;
+                    }
+
+                    if (typeof note !== "undefined") {
+                        chart.subtitle.update({ text: note });
                     }
                 }
                 chart.redraw();
@@ -146,7 +158,6 @@ export default class ChartUtil {
     static updateSingleSeriesWithColor(options) {
         let node = options.node;
         let dataExtremes = options.dataExtremes;
-        let note = options.note;
 
         if (typeof node !== "undefined") {
             let chart = nodeChartMap.get(node.id);
@@ -162,11 +173,8 @@ export default class ChartUtil {
                         caxis.setExtremes(dataExtremes.min, dataExtremes.max, false);
                     }
                 }
-                if (typeof note !== "undefined") {
-                    chart.subtitle.update({ text: note });
-                }
             }
-            return this.updateSingleSeries(options);
+            return this.updateSingleSeries(options, true);
         } else {
             console.warn("Error in ChartUtil.updateSingleSeries: Missing chart options", options);
             return false;
@@ -178,8 +186,222 @@ export default class ChartUtil {
 
     static plotSingleSeries(options) {
         try {
-            console.log("Attempting single series...");
-            return false;
+            let node = options.node;
+            let data = options.data;
+            let dataExtremes = options.dataExtremes || {};
+            let keys = options.keys;
+            let displayOptions = options.displayOptions;
+            let onZoom = options.onZoom;
+            let note = options.note || "";
+
+            let hoveredPoint = undefined;
+
+            // check if we have data a place to render to
+            if (typeof node !== "undefined" && typeof data !== "undefined") {
+                if (data.length === 0) {
+                    data.push([new Date() - 0, 0, 0]);
+                }
+                let chart = Highcharts.chart(options.node, {
+                    chart: {
+                        zoomType: "x",
+                        animation: false,
+                        width: CHART_WIDTH,
+                        height: CHART_HEIGHT,
+                        spacingBottom: 10,
+                        marginTop: 58,
+                        style: {
+                            fontFamily: "'Roboto', Helvetica, Arial, sans-serif"
+                        },
+                        resetZoomButton: {
+                            relativeTo: "plot",
+                            position: {
+                                align: "left",
+                                verticalAlign: "bottom",
+                                x: -57,
+                                y: 20
+                            },
+                            theme: {
+                                style: {
+                                    fontSize: "1.2rem",
+                                    fontWeight: 500,
+                                    textTransform: "uppercase"
+                                }
+                            }
+                        },
+                        events: {
+                            click: function(e) {
+                                if (typeof options.onClick === "function") {
+                                    options.onClick(hoveredPoint);
+                                }
+                            }
+                        }
+                    },
+
+                    annotations: [ChartUtil.getDateIndicatorOptions()],
+
+                    boost: {
+                        usePreallocated: false,
+                        useGPUTranslations: false,
+                        seriesThreshold: "1" // always use boost for consistency
+                    },
+
+                    xAxis: {
+                        id: "x-axis",
+                        type: "datetime",
+                        gridLineWidth: 1,
+                        lineWidth: 2,
+                        title: {
+                            text: keys.xKey,
+                            style: {
+                                fontSize: "1.4rem"
+                            }
+                        },
+                        dateTimeLabelFormats: {
+                            millisecond: "%H:%M:%S.%L",
+                            second: "%H:%M:%S",
+                            minute: "%H:%M",
+                            hour: "%H:%M",
+                            day: "%b %e",
+                            week: "%b %e",
+                            month: "%b, %Y",
+                            year: "%Y"
+                        },
+                        labels: {
+                            style: {
+                                textAlign: "center"
+                            },
+                            formatter: this.getTickFormatter()
+                        },
+                        events: {
+                            afterSetExtremes: zoomEvent => {
+                                if (zoomEvent.type === "setExtremes") {
+                                    if (
+                                        typeof zoomEvent.userMin === "undefined" &&
+                                        typeof zoomEvent.userMax === "undefined"
+                                    ) {
+                                        onZoom();
+                                    } else {
+                                        onZoom([zoomEvent.userMin, zoomEvent.userMax]);
+                                    }
+                                }
+                            }
+                        }
+                    },
+
+                    yAxis: [
+                        {
+                            id: "y-axis",
+                            minPadding: 0,
+                            maxPadding: 0,
+                            reversed: displayOptions.get("yAxisReversed"),
+                            startOnTick: false,
+                            endOnTick: false,
+                            tickPixelInterval: 50,
+                            lineWidth: 2,
+                            title: {
+                                text: keys.yKey,
+                                style: {
+                                    fontSize: "1.4rem"
+                                }
+                            },
+                            labels: {
+                                x: -4
+                            }
+                        }
+                    ],
+
+                    title: {
+                        text: "Albacore Tuna",
+                        align: "left",
+                        style: {
+                            fontSize: "1.5rem",
+                            fontWeight: "500"
+                        }
+                    },
+
+                    subtitle: {
+                        text: note,
+                        align: "right",
+                        verticalAlign: "bottom",
+                        y: 0,
+                        x: -10,
+                        style: {
+                            fontSize: "1.2rem",
+                            fontWeight: "300",
+                            fontStyle: "italic"
+                        }
+                    },
+
+                    credits: {
+                        enabled: false
+                    },
+
+                    legend: {
+                        enabled: false
+                    },
+
+                    exporting: {
+                        buttons: {
+                            contextButton: {
+                                enabled: false
+                            }
+                        }
+                    },
+
+                    plotOptions: {
+                        series: {
+                            findNearestPointBy: "xy",
+                            marker: {
+                                radius: 4
+                            }
+                        }
+                    },
+
+                    tooltip: {
+                        crosshairs: false,
+                        followPointer: false,
+                        shadow: false,
+                        animation: false,
+                        hideDelay: 0,
+                        shared: false,
+                        borderRadius: 2,
+                        padding: 0,
+                        backgroundColor: "rgba(247,247,247,0)",
+                        borderWidth: 0,
+                        positioner: function() {
+                            return { x: 6, y: 28 };
+                        },
+                        style: {
+                            fontSize: "1.2rem"
+                        },
+                        useHTML: true,
+                        formatter: this.getTooltipFormatter(keys)
+                    },
+
+                    series: [
+                        {
+                            type: displayOptions.get("markerType") || "scatter",
+                            color: PRIMARY_COLOR,
+                            showInLegend: false,
+                            data: data,
+                            point: {
+                                events: {
+                                    mouseOver: function(e) {
+                                        hoveredPoint = e.target;
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                });
+                nodeChartMap = nodeChartMap.set(options.node.id, chart);
+            } else {
+                console.warn(
+                    "Error in ChartUtil.plotSingleSeriesWithColor: Missing chart options",
+                    options
+                );
+                return false;
+            }
         } catch (err) {
             console.warn("Error in ChartUtil.plotSingleSeries: ", err);
             return false;
@@ -240,20 +462,7 @@ export default class ChartUtil {
                         }
                     },
 
-                    annotations: [
-                        {
-                            shapes: [
-                                {
-                                    points: [{ x: 0, y: 0 }, { x: 0, y: 200 }],
-                                    type: "path",
-                                    fill: "none",
-                                    stroke: "#00bcd4",
-                                    strokeWidth: 2
-                                }
-                            ],
-                            visible: false
-                        }
-                    ],
+                    annotations: [ChartUtil.getDateIndicatorOptions()],
 
                     boost: {
                         usePreallocated: false,
@@ -443,7 +652,7 @@ export default class ChartUtil {
                         {
                             type: displayOptions.get("markerType") || "scatter",
                             colorByPoint: true,
-                            color: "PRIMARY_COLOR",
+                            color: PRIMARY_COLOR,
                             showInLegend: false,
                             data: data,
                             point: {
@@ -527,6 +736,18 @@ export default class ChartUtil {
                 let x = point.x;
                 let y = point.y;
                 let z = point.value;
+
+                let zText =
+                    typeof keys.zKey !== "undefined"
+                        ? "<div class='tooltip-table-row'>" +
+                          "<span class='tooltip-key'>" +
+                          keys.zKey +
+                          ": </span>" +
+                          "<span class='tooltip-value'>" +
+                          parseFloat(parseFloat(z).toFixed(4)) +
+                          "</span>" +
+                          "</div>"
+                        : "";
                 return (
                     "<div class='tooltip-table'>" +
                     "<div class='tooltip-table-row'>" +
@@ -542,17 +763,10 @@ export default class ChartUtil {
                     keys.yKey +
                     ": </span>" +
                     "<span class='tooltip-value'>" +
-                    parseFloat(y).toFixed(4) +
+                    parseFloat(parseFloat(y).toFixed(4)) +
                     "</span>" +
                     "</div>" +
-                    "<div class='tooltip-table-row'>" +
-                    "<span class='tooltip-key'>" +
-                    keys.zKey +
-                    ": </span>" +
-                    "<span class='tooltip-value'>" +
-                    parseFloat(z).toFixed(4) +
-                    "</span>" +
-                    "</div>" +
+                    zText +
                     "</div>"
                 );
             }
@@ -583,6 +797,46 @@ export default class ChartUtil {
                 }
             }
             return this.axis.defaultLabelFormatter.call(this);
+        };
+    }
+
+    static getDateIndicatorOptions(chart) {
+        let lPoint = { x: 0, y: 0 };
+        let sPoints = [{ x: 0, y: 0 }, { x: 0, y: 250 }];
+        if (typeof chart !== "undefined") {
+            let bbox = chart.plotBoxClip.renderer.plotBox;
+            if (chart.options.chart.inverted) {
+                lPoint = { x: 0, y: bbox.width };
+                sPoints = [{ x: 0, y: 0 }, { x: 0, y: bbox.width }];
+            } else {
+                sPoints = [{ x: 0, y: 0 }, { x: 0, y: bbox.height }];
+            }
+        }
+        return {
+            id: "date-indicator",
+            labels: [
+                {
+                    point: lPoint,
+                    verticalAlign: "bottom",
+                    useHTML: true,
+                    borderWidth: 0,
+                    borderRadius: 0,
+                    distance: 0,
+                    shape: "diamond",
+                    backgroundColor: INDICATOR_COLOR,
+                    text: " "
+                }
+            ],
+            shapes: [
+                {
+                    points: sPoints,
+                    type: "path",
+                    fill: "none",
+                    stroke: INDICATOR_COLOR,
+                    strokeWidth: 2
+                }
+            ],
+            visible: false
         };
     }
 }

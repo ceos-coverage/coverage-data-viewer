@@ -1,5 +1,7 @@
 import Immutable from "immutable";
 import { chartModel } from "reducers/models/chart";
+import appConfig from "constants/appConfig";
+import * as appStrings from "constants/appStrings";
 
 //IMPORTANT: Note that with Redux, state should NEVER be changed.
 //State is considered immutable. Instead,
@@ -23,11 +25,23 @@ export default class ChartReducer {
     }
 
     static initializeChart(state, action) {
+        let chartType = appStrings.CHART_TYPES.SINGLE_SERIES;
+        if (typeof action.formOptions.zAxis !== "undefined") {
+            if (action.formOptions.datasets.length !== 1) {
+                chartType = appStrings.CHART_TYPES.MULTI_SERIES_WITH_COLOR;
+            } else {
+                chartType = appStrings.CHART_TYPES.SINGLE_SERIES_WITH_COLOR;
+            }
+        } else if (action.formOptions.datasets.length !== 1) {
+            chartType = appStrings.CHART_TYPES.MULTI_SERIES;
+        }
+
         let chart = chartModel
             .set("id", action.id)
             .set("nodeId", "chartWrapper_" + action.id)
             .set("data", [])
             .set("dataStore", action.dataStore)
+            .set("chartType", chartType)
             .setIn(["dataError", "error"], false)
             .setIn(["dataError", "message"], "")
             .setIn(["formOptions", "datasets"], Immutable.List(action.formOptions.datasets))
