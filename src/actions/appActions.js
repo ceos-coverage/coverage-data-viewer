@@ -5,9 +5,12 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
+import Immutable from "immutable";
 import * as types from "constants/actionTypes";
-import * as mapActionsCore from "_core/actions/mapActions";
+import * as mapActions from "actions/mapActions";
+import * as appStrings from "constants/appStrings";
 import SearchUtil from "utils/SearchUtil";
+import GeoServerUtil from "utils/GeoServerUtil";
 
 export function setMainMenuTabIndex(tabIndex) {
     return { type: types.SET_MAIN_MENU_TAB_INDEX, tabIndex };
@@ -36,7 +39,29 @@ export function setSearchResults(results) {
 export function setTrackSelected(trackId, isSelected) {
     return (dispatch, getState) => {
         dispatch({ type: types.SET_TRACK_SELECTED, trackId, isSelected });
-        // dispatch(mapActionsCore.setLayerActive(trackId, isSelected));
+        if (isSelected) {
+            let state = getState();
+            let track = state.view.getIn(["layerSearch", "searchResults", "results", trackId]);
+            dispatch(
+                mapActions.addLayer({
+                    id: track.get("id"),
+                    title: track.get("title"),
+                    type: appStrings.LAYER_GROUP_TYPE_INSITU_DATA,
+                    handleAs: appStrings.LAYER_VECTOR_TILE_TRACK,
+                    url: GeoServerUtil.getUrlForTrack(track),
+                    timeFormat: "YYYY-MM-DDTHH:mm:ssZ"
+                })
+            );
+        } else {
+            dispatch(
+                mapActions.removeLayer(
+                    Immutable.Map({
+                        id: trackId,
+                        type: appStrings.LAYER_GROUP_TYPE_INSITU_DATA
+                    })
+                )
+            );
+        }
     };
 }
 

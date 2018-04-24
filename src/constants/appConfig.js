@@ -25,10 +25,6 @@ const APP_CONFIG = Immutable.fromJS({
                 type: "json"
             },
             {
-                url: "default-data/layers_insitu_oiip.json",
-                type: "json"
-            },
-            {
                 url:
                     "https://podaac-tools.jpl.nasa.gov/onearth/wmts/wmts.cgi?Service=WMTS&Request=GetCapabilities",
                 type: "wmts/xml"
@@ -39,6 +35,9 @@ const APP_CONFIG = Immutable.fromJS({
             }
         ],
         paletteConfig: "default-data/palettes_oiip.json",
+        trackGeometry: {
+            geoserverBase: "https://oiip.jpl.nasa.gov/geoserver/ows"
+        },
         layerSearch: {
             solrBase: "https://oiip.jpl.nasa.gov/solr/",
             defaultFacetSearch:

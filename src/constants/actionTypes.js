@@ -15,6 +15,8 @@ export const CLOSE_CHART = "CLOSE_CHART";
 export const SET_CHART_FORM_ERROR = "SET_CHART_FORM_ERROR";
 
 // Layer Actions
+export const ADD_LAYER = "ADD_LAYER";
+export const REMOVE_LAYER = "REMOVE_LAYER";
 export const SET_INSITU_LAYER_COLOR = "SET_INSITU_LAYER_COLOR";
 export const ZOOM_TO_LAYER = "ZOOM_TO_LAYER";
 export const SET_TRACK_SELECTED = "SET_TRACK_SELECTED";

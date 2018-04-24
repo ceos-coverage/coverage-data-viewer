@@ -10,7 +10,7 @@ export const viewState = viewStateCore.mergeDeep(
         layerSearch: {
             formOptions: {
                 startDate: moment(appConfig.DEFAULT_DATE)
-                    .subtract(2, "months")
+                    .subtract(10, "years")
                     .toDate(),
                 endDate: appConfig.DEFAULT_DATE,
                 selectedArea: [],

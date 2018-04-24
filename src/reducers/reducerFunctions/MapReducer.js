@@ -138,9 +138,7 @@ export default class MapReducer extends MapReducerCore {
                             .set("showData", data.size > 0)
                             .set("isValid", true);
 
-                        let dateStr = data.getIn([0, "properties", "time"]);
-                        let dateStrAlt = data.getIn([0, "properties", "datetimestamp"]);
-                        dateStr = typeof dateStr === "undefined" ? dateStrAlt : dateStr;
+                        let dateStr = data.getIn([0, "properties", "position_date_time"]);
                         if (typeof dateStr !== "undefined") {
                             let date = moment(dateStr, data.getIn([0, "layer", "timeFormat"]));
                             state = MapReducerCore.setMapDate(state, { date: date.toDate() });
@@ -154,6 +152,39 @@ export default class MapReducer extends MapReducerCore {
         });
 
         return state.setIn(["view", "pixelClickCoordinate"], pixelCoordinate);
+    }
+
+    static addLayer(state, action) {
+        if (typeof action.layer !== "undefined") {
+            let mergedLayer = this.getLayerModel().mergeDeep(action.layer);
+            if (
+                typeof mergedLayer.get("id") !== "undefined" &&
+                typeof state.getIn(["layers", mergedLayer.get("type")]) !== "undefined"
+            ) {
+                state = state.setIn(
+                    ["layers", mergedLayer.get("type"), mergedLayer.get("id")],
+                    mergedLayer
+                );
+            }
+
+            return this.setLayerActive(state, {
+                layer: mergedLayer.get("id"),
+                active: action.setActive
+            });
+        }
+
+        return state;
+    }
+
+    static removeLayer(state, action) {
+        if (state.hasIn(["layers", action.layer.get("type"), action.layer.get("id")])) {
+            state = this.setLayerActive(state, {
+                layer: action.layer.get("id"),
+                active: false
+            });
+            return state.deleteIn(["layers", action.layer.get("type"), action.layer.get("id")]);
+        }
+        return state;
     }
 
     static setInsituVectorLayerColor(state, action) {

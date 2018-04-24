@@ -1228,7 +1228,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
         let lastFeature = features[0];
         for (let i = 0; i < features.length; ++i) {
             let feature = features[i];
-            let featureTime = feature.get("time") || feature.get("datetimestamp") || undefined;
+            let featureTime = feature.get("position_date_time") || undefined;
             if (
                 feature.getGeometry() instanceof Ol_Geom_Point &&
                 typeof featureTime !== "undefined"
@@ -1240,10 +1240,8 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                     feature.setStyle(null);
                 }
 
-                let firstFeatureTime =
-                    firstFeature.get("time") || firstFeature.get("datetimestamp") || undefined;
-                let lastFeatureTime =
-                    lastFeature.get("time") || lastFeature.get("datetimestamp") || undefined;
+                let firstFeatureTime = firstFeature.get("position_date_time") || undefined;
+                let lastFeatureTime = lastFeature.get("position_date_time") || undefined;
                 if (
                     typeof firstFeatureTime !== "undefined" &&
                     typeof lastFeatureTime !== "undefined"
@@ -1259,8 +1257,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
         }
 
         if (typeof firstFeature !== "undefined") {
-            let firstFeatureTime =
-                firstFeature.get("time") || firstFeature.get("datetimestamp") || undefined;
+            let firstFeatureTime = firstFeature.get("position_date_time") || undefined;
             let highlight = moment(firstFeatureTime, timeFormat).isBetween(
                 date,
                 nextDate,
@@ -1270,8 +1267,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
             firstFeature.setStyle(this.createPointFirstStyle(color, highlight));
         }
         if (typeof lastFeature !== "undefined") {
-            let lastFeatureTime =
-                lastFeature.get("time") || lastFeature.get("datetimestamp") || undefined;
+            let lastFeatureTime = lastFeature.get("position_date_time") || undefined;
             let highlight = moment(lastFeatureTime, timeFormat).isBetween(
                 date,
                 nextDate,

@@ -9,7 +9,7 @@
             "url": "default-data/_core_default-data/layer-metadata/us_state_outline_topojson.json",
             "handleAs": "json"
         },
-        "timeFormat": "YYYY-MM-DDTHH:mm:ss",
+        "timeFormat": "YYYY-MM-DDTHH:mm:ssZ",
         "thumbnailImage": "img/us_state_outline_topojson.png"
     },{
         "id": "bigEyeTuna",

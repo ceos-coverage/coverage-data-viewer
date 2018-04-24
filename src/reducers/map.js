@@ -5,6 +5,12 @@ import MapReducer from "reducers/reducerFunctions/MapReducer";
 
 export default function map(state = mapState, action, opt_reducer = MapReducer) {
     switch (action.type) {
+        case actionTypes.ADD_LAYER:
+            return opt_reducer.addLayer(state, action);
+
+        case actionTypes.REMOVE_LAYER:
+            return opt_reducer.removeLayer(state, action);
+
         case actionTypes.SET_INSITU_LAYER_COLOR:
             return opt_reducer.setInsituVectorLayerColor(state, action);
 

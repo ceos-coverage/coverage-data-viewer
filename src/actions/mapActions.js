@@ -2,6 +2,14 @@ import * as types from "constants/actionTypes";
 import * as appStrings from "constants/appStrings";
 import * as appActions from "actions/appActions";
 
+export function addLayer(layer, setActive = true) {
+    return { type: types.ADD_LAYER, layer, setActive };
+}
+
+export function removeLayer(layer) {
+    return { type: types.REMOVE_LAYER, layer };
+}
+
 export function setInsituLayerColor(layer, color) {
     return { type: types.SET_INSITU_LAYER_COLOR, layer, color };
 }
