@@ -1,30 +1,22 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { bindActionCreators } from "redux";
-import { connect } from "react-redux";
 import { ListItem, ListItemSecondaryAction, ListItemText } from "material-ui/List";
 import InfoIcon from "material-ui-icons/InfoOutline";
 import Checkbox from "material-ui/Checkbox";
 import IconButton from "material-ui/IconButton";
-import * as mapActions from "_core/actions/mapActions";
-import MiscUtil from "utils/MiscUtil";
 
 export class LayerSearchResult extends Component {
+    handleSelect() {
+        if (typeof this.props.onSelect === "function") {
+            this.props.onSelect(this.props.layer.get("id"), !this.props.selected);
+        }
+    }
     render() {
         return (
-            <ListItem
-                dense
-                button
-                onClick={() =>
-                    this.props.mapActions.setLayerActive(
-                        this.props.layer.get("id"),
-                        !this.props.layer.get("isActive")
-                    )
-                }
-            >
+            <ListItem dense button onClick={() => this.handleSelect()}>
                 <Checkbox
                     color="primary"
-                    checked={this.props.layer.get("isActive")}
+                    checked={this.props.selected}
                     tabIndex={-1}
                     disableRipple
                 />
@@ -41,13 +33,8 @@ export class LayerSearchResult extends Component {
 
 LayerSearchResult.propTypes = {
     layer: PropTypes.object.isRequired,
-    mapActions: PropTypes.object.isRequired
+    selected: PropTypes.bool.isRequired,
+    onSelect: PropTypes.func
 };
 
-function mapDispatchToProps(dispatch) {
-    return {
-        mapActions: bindActionCreators(mapActions, dispatch)
-    };
-}
-
-export default connect(null, mapDispatchToProps)(LayerSearchResult);
+export default LayerSearchResult;

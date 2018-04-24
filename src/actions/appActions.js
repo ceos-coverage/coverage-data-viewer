@@ -6,6 +6,7 @@
  */
 
 import * as types from "constants/actionTypes";
+import * as mapActionsCore from "_core/actions/mapActions";
 import SearchUtil from "utils/SearchUtil";
 
 export function setMainMenuTabIndex(tabIndex) {
@@ -30,6 +31,13 @@ export function setSearchLoading(isLoading) {
 
 export function setSearchResults(results) {
     return { type: types.SET_SEARCH_RESULTS, results };
+}
+
+export function setTrackSelected(trackId, isSelected) {
+    return (dispatch, getState) => {
+        dispatch({ type: types.SET_TRACK_SELECTED, trackId, isSelected });
+        // dispatch(mapActionsCore.setLayerActive(trackId, isSelected));
+    };
 }
 
 export function runLayerSearch() {

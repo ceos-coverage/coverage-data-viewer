@@ -18,8 +18,14 @@ export const viewState = viewStateCore.mergeDeep(
             },
             searchResults: {
                 isLoading: false,
-                results: []
-            }
+                results: Immutable.OrderedMap()
+            },
+            selectedTracks: Immutable.Set()
         }
     })
 );
+
+export const trackModel = Immutable.fromJS({
+    id: "",
+    title: ""
+});

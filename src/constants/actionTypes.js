@@ -17,6 +17,7 @@ export const SET_CHART_FORM_ERROR = "SET_CHART_FORM_ERROR";
 // Layer Actions
 export const SET_INSITU_LAYER_COLOR = "SET_INSITU_LAYER_COLOR";
 export const ZOOM_TO_LAYER = "ZOOM_TO_LAYER";
+export const SET_TRACK_SELECTED = "SET_TRACK_SELECTED";
 
 // Search Actions
 export const SET_SEARCH_DATE_RANGE = "SET_SEARCH_DATE_RANGE";

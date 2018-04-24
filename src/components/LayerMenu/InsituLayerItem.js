@@ -10,8 +10,8 @@ import MiscUtil from "utils/MiscUtil";
 import { IconButtonSmall } from "_core/components/Reusables";
 import { SingleColorSelector } from "components/Reusables";
 import appConfig from "constants/appConfig";
+import * as appActions from "actions/appActions";
 import * as mapActions from "actions/mapActions";
-import * as mapActionsCore from "_core/actions/mapActions";
 import * as appStrings from "constants/appStrings";
 import styles from "components/LayerMenu/InsituLayerItem.scss";
 
@@ -55,7 +55,7 @@ export class InsituLayerItem extends Component {
                     color="inherit"
                     className={styles.actionBtn}
                     onClick={() =>
-                        this.props.mapActionsCore.setLayerActive(this.props.layer.get("id"), false)
+                        this.props.appActions.setTrackSelected(this.props.layer.get("id"), false)
                     }
                 >
                     <RemoveIcon />
@@ -67,14 +67,14 @@ export class InsituLayerItem extends Component {
 
 InsituLayerItem.propTypes = {
     layer: PropTypes.object.isRequired,
-    mapActions: PropTypes.object.isRequired,
-    mapActionsCore: PropTypes.object.isRequired
+    appActions: PropTypes.object.isRequired,
+    mapActions: PropTypes.object.isRequired
 };
 
 function mapDispatchToProps(dispatch) {
     return {
-        mapActions: bindActionCreators(mapActions, dispatch),
-        mapActionsCore: bindActionCreators(mapActionsCore, dispatch)
+        appActions: bindActionCreators(appActions, dispatch),
+        mapActions: bindActionCreators(mapActions, dispatch)
     };
 }
 

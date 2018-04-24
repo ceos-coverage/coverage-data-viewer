@@ -3,3 +3,22 @@
     overflow: hidden;
     overflow-y: scroll;
 }
+
+.loading {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: white;
+    z-index: 1;
+}
+.spinner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 15rem;
+    height: 15rem;
+    &:global(.loadingSpinnerWrapper .loadingSpinner .loadingSpinnerCircle) {
+        border-width: 3px;
+    }
+}

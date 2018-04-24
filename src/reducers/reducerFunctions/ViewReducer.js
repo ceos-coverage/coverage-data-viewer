@@ -3,6 +3,7 @@ import moment from "moment";
 import appConfig from "constants/appConfig";
 import ViewReducerCore from "_core/reducers/reducerFunctions/ViewReducer";
 import { alert as alertCore } from "_core/reducers/models/alert";
+import { trackModel } from "reducers/models/view";
 
 //IMPORTANT: Note that with Redux, state should NEVER be changed.
 //State is considered immutable. Instead,
@@ -35,7 +36,22 @@ export default class ViewReducer extends ViewReducerCore {
     }
 
     static setSearchResults(state, action) {
-        return state.setIn(["layerSearch", "searchResults", "results"], action.results);
+        let results = action.results.reduce((acc, entry) => {
+            let track = trackModel.mergeDeep(entry);
+            return acc.set(track.get("id"), track);
+        }, Immutable.OrderedMap());
+
+        return state.setIn(["layerSearch", "searchResults", "results"], results);
+    }
+
+    static setTrackSelected(state, action) {
+        let selected = state.getIn(["layerSearch", "selectedTracks"]);
+        if (action.isSelected) {
+            selected = selected.add(action.trackId);
+        } else {
+            selected = selected.delete(action.trackId);
+        }
+        return state.setIn(["layerSearch", "selectedTracks"], selected);
     }
 
     static resetApplicationState(state, action) {

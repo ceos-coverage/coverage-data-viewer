@@ -60,9 +60,9 @@ export default class SearchUtil {
             for (let i = 0; i < groups.length; ++i) {
                 let entry = groups[i].doclist.docs[0];
                 entry.title = entry.title || entry.id;
-                results = results.push(Immutable.fromJS(groups[i].doclist.docs[0]));
+                results.push(Immutable.fromJS(groups[i].doclist.docs[0]));
             }
             return results;
-        }, Immutable.List());
+        }, []);
     }
 }
