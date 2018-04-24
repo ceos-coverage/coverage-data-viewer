@@ -8,12 +8,18 @@ export const viewState = viewStateCore.mergeDeep(
         mainMenuTabIndex: 0,
         isMainMenuOpen: true,
         layerSearch: {
-            startDate: moment(appConfig.DEFAULT_DATE)
-                .subtract(2, "months")
-                .toDate(),
-            endDate: appConfig.DEFAULT_DATE,
-            selectedArea: [],
-            searchFacets: []
+            formOptions: {
+                startDate: moment(appConfig.DEFAULT_DATE)
+                    .subtract(2, "months")
+                    .toDate(),
+                endDate: appConfig.DEFAULT_DATE,
+                selectedArea: [],
+                searchFacets: []
+            },
+            searchResults: {
+                isLoading: false,
+                results: []
+            }
         }
     })
 );

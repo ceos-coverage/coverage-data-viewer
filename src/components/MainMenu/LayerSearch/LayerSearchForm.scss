@@ -11,27 +11,6 @@
     margin: 0px 1rem;
 }
 
-.dateRange {
-    display: flex;
-    flex-flow: row nowrap;
-    align-items: center;
-
-    svg {
-        width: 1.6rem;
-        height: 1.6rem;
-        font-size: 1.7rem;
-        color: rgba(0, 0, 0, 0.5);
-        margin: 0px 0.7rem;
-    }
-}
-
 .facetRow {
-    padding: 1rem 1rem 0px 1rem;
-}
-
-.facet {
-    margin-right: 1rem;
-    &:last-of-type {
-        margin-right: 0px;
-    }
+    margin-top: 0.7rem;
 }

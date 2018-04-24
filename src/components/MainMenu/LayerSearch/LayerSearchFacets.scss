@@ -1,0 +1,10 @@
+.root {
+    padding: 0px 1rem 0px 1rem;
+}
+
+.facet {
+    margin-right: 1rem;
+    &:last-of-type {
+        margin-right: 0px;
+    }
+}

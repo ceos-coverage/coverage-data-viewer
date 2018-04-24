@@ -2,30 +2,11 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import moment from "moment";
-import Radio, { RadioGroup } from "material-ui/Radio";
-import Checkbox from "material-ui/Checkbox";
-import {
-    FormLabel,
-    FormControl,
-    FormGroup,
-    FormControlLabel,
-    FormHelperText
-} from "material-ui/Form";
 import Paper from "material-ui/Paper";
-import EarthIcon from "material-ui-icons/Public";
-import EditIcon from "material-ui-icons/ModeEdit";
-import CloseIcon from "material-ui-icons/Close";
-import TodayIcon from "material-ui-icons/Today";
-import ArrowForward from "material-ui-icons/ArrowForward";
-import Typography from "material-ui/Typography";
-import {
-    LabelPopover,
-    SearchInput,
-    DateRangePicker,
-    AreaSelectionForm,
-    AreaSelectionInput
-} from "components/Reusables";
+import Grid from "material-ui/Grid";
+import Button from "material-ui/Button";
+import { DateRangePicker, AreaSelectionInput } from "components/Reusables";
+import { LayerSearchFacets } from "components/MainMenu/LayerSearch";
 import * as appActions from "actions/appActions";
 import styles from "components/MainMenu/LayerSearch/LayerSearchForm.scss";
 
@@ -35,141 +16,42 @@ export class LayerSearchForm extends Component {
             <Paper elevation={3} className={styles.root}>
                 <AreaSelectionInput
                     className={styles.topField}
-                    selectedArea={this.props.layerSearch.get("selectedArea")}
+                    selectedArea={this.props.searchOptions.get("selectedArea")}
                 />
                 <DateRangePicker
                     className={styles.topField}
-                    startDate={this.props.layerSearch.get("startDate")}
-                    endDate={this.props.layerSearch.get("endDate")}
+                    startDate={this.props.searchOptions.get("startDate")}
+                    endDate={this.props.searchOptions.get("endDate")}
                     onUpdate={this.props.appActions.setSearchDateRange}
                 />
-                <div className={styles.facetRow}>
-                    <LabelPopover label="Variable" subtitle="Any" className={styles.facet}>
-                        <FormGroup>
-                            <FormControlLabel
-                                control={
-                                    <Checkbox color="primary" checked={false} value="tuna_a304" />
-                                }
-                                label="depth"
-                            />
-                            <FormControlLabel
-                                control={
-                                    <Checkbox color="primary" checked={false} value="tuna_a303" />
-                                }
-                                label="ext_temp"
-                            />
-                            <FormControlLabel
-                                control={
-                                    <Checkbox color="primary" checked={false} value="tuna_a303" />
-                                }
-                                label="light"
-                            />
-                            <FormControlLabel
-                                control={
-                                    <Checkbox color="primary" checked={false} value="tuna_a304" />
-                                }
-                                label="pressure"
-                            />
-                            <FormControlLabel
-                                control={
-                                    <Checkbox color="primary" checked={false} value="tuna_a304" />
-                                }
-                                label="salinity"
-                            />
-                        </FormGroup>
-                    </LabelPopover>
-                    <LabelPopover label="Platform" subtitle="Tuna" className={styles.facet}>
-                        <FormGroup>
-                            <FormControlLabel
-                                control={
-                                    <Checkbox color="primary" checked={false} value="tuna_a304" />
-                                }
-                                label="Buoy"
-                            />
-                            <FormControlLabel
-                                control={
-                                    <Checkbox color="primary" checked={false} value="tuna_a303" />
-                                }
-                                label="Dolphin"
-                            />
-                            <FormControlLabel
-                                control={
-                                    <Checkbox color="primary" checked={false} value="tuna_a304" />
-                                }
-                                label="Shark"
-                            />
-                            <FormControlLabel
-                                control={
-                                    <Checkbox color="primary" checked={false} value="tuna_a304" />
-                                }
-                                label="Ship"
-                            />
-                            <FormControlLabel
-                                control={
-                                    <Checkbox color="primary" checked={true} value="tuna_a303" />
-                                }
-                                label="Tuna"
-                            />
-                        </FormGroup>
-                    </LabelPopover>
-                    <LabelPopover label="Sensor" subtitle="Any" className={styles.facet}>
-                        <FormGroup>
-                            <FormControlLabel
-                                control={
-                                    <Checkbox color="primary" checked={false} value="tuna_a303" />
-                                }
-                                label="Animal Tag X3K"
-                            />
-                            <FormControlLabel
-                                control={
-                                    <Checkbox color="primary" checked={false} value="tuna_a304" />
-                                }
-                                label="Buoy 44Z"
-                            />
-                            <FormControlLabel
-                                control={
-                                    <Checkbox color="primary" checked={false} value="tuna_a304" />
-                                }
-                                label="Ship Sensor Line"
-                            />
-                        </FormGroup>
-                    </LabelPopover>
-                    <LabelPopover label="Project" subtitle="2 Selected" className={styles.facet}>
-                        <FormGroup>
-                            <FormControlLabel
-                                control={
-                                    <Checkbox color="primary" checked={true} value="tuna_a303" />
-                                }
-                                label="PO.DAAC"
-                            />
-                            <FormControlLabel
-                                control={
-                                    <Checkbox color="primary" checked={false} value="tuna_a304" />
-                                }
-                                label="Project Name"
-                            />
-                            <FormControlLabel
-                                control={
-                                    <Checkbox color="primary" checked={true} value="tuna_a304" />
-                                }
-                                label="SPURS"
-                            />
-                        </FormGroup>
-                    </LabelPopover>
-                </div>
+                <Grid container alignItems="center" className={styles.facetRow}>
+                    <Grid item xs={10}>
+                        <LayerSearchFacets />
+                    </Grid>
+                    <Grid item xs={2}>
+                        <Button
+                            size="small"
+                            variant="raised"
+                            color="primary"
+                            onClick={this.props.appActions.runLayerSearch}
+                        >
+                            Search
+                        </Button>
+                    </Grid>
+                </Grid>
             </Paper>
         );
     }
 }
 
 LayerSearchForm.propTypes = {
-    layerSearch: PropTypes.object.isRequired,
+    searchOptions: PropTypes.object.isRequired,
     appActions: PropTypes.object.isRequired
 };
 
 function mapStateToProps(state) {
     return {
-        layerSearch: state.view.get("layerSearch")
+        searchOptions: state.view.getIn(["layerSearch", "formOptions"])
     };
 }
 

@@ -7,7 +7,9 @@ export class LayerSearchMenu extends Component {
     render() {
         return (
             <div className={styles.root}>
-                <LayerSearchForm />
+                <div className={styles.form}>
+                    <LayerSearchForm />
+                </div>
                 <div className={styles.list}>
                     <LayerSearchList />
                 </div>

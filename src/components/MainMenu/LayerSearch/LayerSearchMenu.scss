@@ -1,7 +1,15 @@
 .root {
+    display: flex;
+    flex-flow: column nowrap;
+    width: 100%;
+    height: 100%;
+}
+.form {
     display: block;
 }
-
 .list {
-    display: block;
+    flex: 1 1;
+    position: relative;
+    display: flex;
+    flex-flow: column nowrap;
 }

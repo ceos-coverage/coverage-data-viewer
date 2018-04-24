@@ -19,12 +19,23 @@ export default class ViewReducer extends ViewReducerCore {
 
     static setSearchDateRange(state, action) {
         return state
-            .setIn(["layerSearch", "startDate"], action.startDate)
-            .setIn(["layerSearch", "endDate"], action.endDate);
+            .setIn(["layerSearch", "formOptions", "startDate"], action.startDate)
+            .setIn(["layerSearch", "formOptions", "endDate"], action.endDate);
     }
 
     static setSearchSelectedArea(state, action) {
-        return state.setIn(["layerSearch", "selectedArea"], Immutable.List(action.selectedArea));
+        return state.setIn(
+            ["layerSearch", "formOptions", "selectedArea"],
+            Immutable.List(action.selectedArea)
+        );
+    }
+
+    static setSearchLoading(state, action) {
+        return state.setIn(["layerSearch", "searchResults", "isLoading"], action.isLoading);
+    }
+
+    static setSearchResults(state, action) {
+        return state.setIn(["layerSearch", "searchResults", "results"], action.results);
     }
 
     static resetApplicationState(state, action) {
