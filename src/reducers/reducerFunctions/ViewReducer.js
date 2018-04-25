@@ -58,7 +58,7 @@ export default class ViewReducer extends ViewReducerCore {
         state = this.setMainMenutabIndex(state, { tabIndex: 0 });
         state = this.setMainMenuOpen(state, { isOpen: true });
         state = this.setSearchDateRange(state, {
-            startDate: moment(appConfig.DEFAULT_DATE).subtract(2, "months").toDate,
+            startDate: moment.utc(appConfig.DEFAULT_DATE).subtract(2, "months").toDate,
             endDate: appConfig.DEFAULT_DATE
         });
 

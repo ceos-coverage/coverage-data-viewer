@@ -140,7 +140,7 @@ export default class MapReducer extends MapReducerCore {
 
                         let dateStr = data.getIn([0, "properties", "position_date_time"]);
                         if (typeof dateStr !== "undefined") {
-                            let date = moment(dateStr, data.getIn([0, "layer", "timeFormat"]));
+                            let date = moment.utc(dateStr, data.getIn([0, "layer", "timeFormat"]));
                             state = MapReducerCore.setMapDate(state, { date: date.toDate() });
                         }
                     } else {

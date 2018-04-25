@@ -9,7 +9,8 @@ export const viewState = viewStateCore.mergeDeep(
         isMainMenuOpen: true,
         layerSearch: {
             formOptions: {
-                startDate: moment(appConfig.DEFAULT_DATE)
+                startDate: moment
+                    .utc(appConfig.DEFAULT_DATE)
                     .subtract(10, "years")
                     .toDate(),
                 endDate: appConfig.DEFAULT_DATE,

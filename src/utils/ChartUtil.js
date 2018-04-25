@@ -755,7 +755,7 @@ export default class ChartUtil {
                     keys.xKey +
                     ": </span>" +
                     "<span class='tooltip-value'>" +
-                    moment(x).format("MMM DD, YYYY · HH:mm") +
+                    moment.utc(x).format("MMM DD, YYYY · HH:mm") +
                     "</span>" +
                     "</div>" +
                     "<div class='tooltip-table-row'>" +

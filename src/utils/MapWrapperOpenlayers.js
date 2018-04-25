@@ -171,11 +171,14 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
             mapLayer.set("_layerType", layer.get("type"));
             mapLayer.set("_layerRef", layer);
             if (date) {
-                mapLayer.set("_layerTime", moment(date).format(layer.get("timeFormat")));
+                mapLayer.set("_layerTime", moment.utc(date).format(layer.get("timeFormat")));
                 mapLayer.set("_layerCacheHash", this.getCacheHash(layer, date));
             } else {
                 mapLayer.set("_layerCacheHash", this.getCacheHash(layer));
-                mapLayer.set("_layerTime", moment(this.mapDate).format(layer.get("timeFormat")));
+                mapLayer.set(
+                    "_layerTime",
+                    moment.utc(this.mapDate).format(layer.get("timeFormat"))
+                );
             }
         }
 
@@ -300,7 +303,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
             let timeStr =
                 typeof mapLayer.get("_layerTime") !== "undefined"
                     ? mapLayer.get("_layerTime")
-                    : moment(this.mapDate).format(layer.get("timeFormat"));
+                    : moment.utc(this.mapDate).format(layer.get("timeFormat"));
 
             // construct the vector layers in view
             let baseUrl = layer.get("url");
@@ -1222,8 +1225,8 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
     }
 
     highlightTrackPoints(features, timeFormat = "YYYY-MM-DD", color = "#000") {
-        let date = moment(this.mapDate).startOf("d");
-        let nextDate = moment(date).add(1, "d");
+        let date = moment.utc(this.mapDate).startOf("d");
+        let nextDate = moment.utc(date).add(1, "d");
         let firstFeature = features[0];
         let lastFeature = features[0];
         for (let i = 0; i < features.length; ++i) {
@@ -1233,7 +1236,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                 feature.getGeometry() instanceof Ol_Geom_Point &&
                 typeof featureTime !== "undefined"
             ) {
-                featureTime = moment(featureTime, timeFormat);
+                featureTime = moment.utc(featureTime, timeFormat);
                 if (featureTime.isBetween(date, nextDate, null, "[)")) {
                     feature.setStyle(this.createPointHighlightStyle(color));
                 } else {
@@ -1246,10 +1249,10 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                     typeof firstFeatureTime !== "undefined" &&
                     typeof lastFeatureTime !== "undefined"
                 ) {
-                    if (featureTime.isBefore(moment(firstFeatureTime, timeFormat))) {
+                    if (featureTime.isBefore(moment.utc(firstFeatureTime, timeFormat))) {
                         firstFeature = feature;
                     }
-                    if (featureTime.isAfter(moment(lastFeatureTime, timeFormat))) {
+                    if (featureTime.isAfter(moment.utc(lastFeatureTime, timeFormat))) {
                         lastFeature = feature;
                     }
                 }
@@ -1258,22 +1261,16 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
 
         if (typeof firstFeature !== "undefined") {
             let firstFeatureTime = firstFeature.get("position_date_time") || undefined;
-            let highlight = moment(firstFeatureTime, timeFormat).isBetween(
-                date,
-                nextDate,
-                null,
-                "[)"
-            );
+            let highlight = moment
+                .utc(firstFeatureTime, timeFormat)
+                .isBetween(date, nextDate, null, "[)");
             firstFeature.setStyle(this.createPointFirstStyle(color, highlight));
         }
         if (typeof lastFeature !== "undefined") {
             let lastFeatureTime = lastFeature.get("position_date_time") || undefined;
-            let highlight = moment(lastFeatureTime, timeFormat).isBetween(
-                date,
-                nextDate,
-                null,
-                "[)"
-            );
+            let highlight = moment
+                .utc(lastFeatureTime, timeFormat)
+                .isBetween(date, nextDate, null, "[)");
             lastFeature.setStyle(this.createPointLastStyle(color, highlight));
         }
     }
@@ -1593,9 +1590,9 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
 
     getCacheHash(layer, date = false) {
         if (date) {
-            return layer.get("id") + moment(date).format(layer.get("timeFormat"));
+            return layer.get("id") + moment.utc(date).format(layer.get("timeFormat"));
         } else {
-            return layer.get("id") + moment(this.mapDate).format(layer.get("timeFormat"));
+            return layer.get("id") + moment.utc(this.mapDate).format(layer.get("timeFormat"));
         }
     }
 

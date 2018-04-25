@@ -25,13 +25,13 @@ export class LayerSearchForm extends Component {
     handleDatePickerUpdate(value) {
         if (typeof this.props.onUpdate === "function") {
             if (this.selectsStart) {
-                let endDate = value.isAfter(moment(this.props.endDate))
+                let endDate = value.isAfter(moment.utc(this.props.endDate))
                     ? value.toDate()
                     : this.props.endDate;
                 this.props.onUpdate(value.toDate(), endDate);
                 this.toggleSelectStartEnd();
             } else {
-                let startDate = value.isBefore(moment(this.props.startDate))
+                let startDate = value.isBefore(moment.utc(this.props.startDate))
                     ? value.toDate()
                     : this.props.startDate;
                 this.props.onUpdate(startDate, value.toDate());
@@ -79,8 +79,8 @@ export class LayerSearchForm extends Component {
             [this.props.className]: typeof this.props.className !== "undefined"
         });
 
-        let startDate = moment(this.props.startDate);
-        let endDate = moment(this.props.endDate);
+        let startDate = moment.utc(this.props.startDate);
+        let endDate = moment.utc(this.props.endDate);
 
         return (
             <SearchInput
@@ -101,8 +101,8 @@ export class LayerSearchForm extends Component {
                     showYearDropdown
                     disabledKeyboardNavigation
                     dropdownMode="select"
-                    minDate={moment(appConfig.MIN_DATE)}
-                    maxDate={moment(appConfig.MAX_DATE)}
+                    minDate={moment.utc(appConfig.MIN_DATE)}
+                    maxDate={moment.utc(appConfig.MAX_DATE)}
                     selectsStart={this.selectsStart}
                     selectsEnd={!this.selectsStart}
                     selected={this.selectsStart ? startDate : endDate}

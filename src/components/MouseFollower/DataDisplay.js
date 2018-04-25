@@ -17,8 +17,8 @@ export class DataDisplay extends Component {
         });
 
         let timeStr = this.props.data.getIn(["properties", "position_date_time"]);
-        let time = moment(timeStr, this.props.data.getIn(["layer", "timeFormat"]));
-        timeStr = time.format("MMM DD, YYYY · HH:mm");
+        let time = moment.utc(timeStr, this.props.data.getIn(["layer", "timeFormat"]));
+        timeStr = time.format("MMM DD, YYYY · HH:mm UTC");
 
         let coords = this.props.data.get("coords");
 

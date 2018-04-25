@@ -41,7 +41,7 @@ export class Chart extends Component {
                         .toLocaleLowerCase()
                         .indexOf("time") !== -1;
                 if (axisIsTime) {
-                    let date = moment(evt.x);
+                    let date = moment.utc(evt.x);
                     // set the map date, if found
                     if (date.isValid()) {
                         this.props.mapActionsCore.setDate(date.toDate());

@@ -34,14 +34,14 @@ export default class AnimationBuffer {
         this.clear();
 
         // set the endpoints
-        let iterDate = moment(startDate);
-        endDate = moment(endDate);
+        let iterDate = moment.utc(startDate);
+        endDate = moment.utc(endDate);
 
         // iterate through all the dates and build the buffer list
         while (iterDate.isBefore(endDate) || iterDate.isSame(endDate)) {
             this._bufferList = this._bufferList.push(
                 Immutable.Map({
-                    date: moment(iterDate).toDate(),
+                    date: moment.utc(iterDate).toDate(),
                     layers: this.initializeLayersForDate(layers, iterDate.toDate())
                 })
             );

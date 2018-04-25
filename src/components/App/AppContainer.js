@@ -21,7 +21,7 @@ import { MainMenu } from "components/MainMenu";
 import { LayerInfoContainer } from "_core/components/LayerInfo";
 import { LoadingContainer } from "_core/components/Loading";
 import { AlertsContainer } from "_core/components/Alerts";
-import { DatePickerContainer } from "_core/components/DatePicker";
+import { DatePickerContainer } from "components/DatePicker";
 import { MouseFollowerContainer } from "components/MouseFollower";
 import { KeyboardControlsContainer } from "_core/components/KeyboardControls";
 import { SatelliteLayerSelector, InsituLayerMenu } from "components/LayerMenu";
