@@ -59,6 +59,7 @@ export default class SearchUtil {
             let groups = projGroup.grouped.source_id.groups;
             for (let i = 0; i < groups.length; ++i) {
                 let entry = groups[i].doclist.docs[0];
+                entry.id = entry.project + "_" + entry.source_id;
                 entry.title = entry.title || entry.id;
                 results.push(Immutable.fromJS(groups[i].doclist.docs[0]));
             }
