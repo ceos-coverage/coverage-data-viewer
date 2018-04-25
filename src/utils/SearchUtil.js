@@ -9,7 +9,7 @@ export default class SearchUtil {
         return new Promise((resolve, reject) => {
             let { area, dateRange, facets } = options;
 
-            let baseUrl = appConfig.URLS.layerSearch.solrBase;
+            let baseUrl = appConfig.URLS.solrBase;
 
             let sDateStr = moment.utc(dateRange[0]).toISOString();
             let eDateStr = moment.utc(dateRange[1]).toISOString();

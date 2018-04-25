@@ -2,7 +2,7 @@ import appConfig from "constants/appConfig";
 
 export default class GeoServerUtil {
     static getUrlForTrack(track) {
-        let baseUrl = appConfig.URLS.trackGeometry.geoserverBase;
+        let baseUrl = appConfig.URLS.geoserverBase;
 
         let query = [
             "service=WFS",

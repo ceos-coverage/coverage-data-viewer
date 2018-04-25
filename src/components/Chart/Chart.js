@@ -36,7 +36,10 @@ export class Chart extends Component {
             },
             onClick: evt => {
                 let axisIsTime =
-                    this.props.chart.getIn(["formOptions", "xAxis"]).toLocaleLowerCase() === "time";
+                    this.props.chart
+                        .getIn(["formOptions", "xAxis"])
+                        .toLocaleLowerCase()
+                        .indexOf("time") !== -1;
                 if (axisIsTime) {
                     let date = moment(evt.x);
                     // set the map date, if found

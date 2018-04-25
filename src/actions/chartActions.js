@@ -2,11 +2,12 @@ import * as appStrings from "constants/appStrings";
 import * as types from "constants/actionTypes";
 import DataStore from "utils/DataStore";
 import ChartUtil from "utils/ChartUtil";
+import TrackDataUtil from "utils/TrackDataUtil";
 
-const url = "http://localhost:3000/default-data/albacoreTunaData.csv";
+const sample_url = "http://localhost:3000/default-data/albacoreTunaData.csv";
 
-export function setSelectedDatasets(ids) {
-    return { type: types.SET_PRIMARY_DATASET_ID, ids };
+export function setTrackSelected(trackId, isSelected) {
+    return { type: types.SET_CHART_TRACK_SELECTED, trackId, isSelected };
 }
 
 export function setXAxisVariable(variable) {
@@ -26,10 +27,7 @@ export function setChartFormError(key, value) {
 }
 
 export function closeChart(id) {
-    return {
-        type: types.CLOSE_CHART,
-        id
-    };
+    return { type: types.CLOSE_CHART, id };
 }
 
 export function setChartDisplayOptions(id, displayOptions) {
@@ -40,14 +38,31 @@ export function setChartLoading(id, isLoading) {
     return { type: types.SET_CHART_LOADING, id, isLoading };
 }
 
-export function createChart(formOptions) {
+export function createChart() {
     return (dispatch, getState) => {
         let state = getState();
 
+        let formOptions = state.chart.get("formOptions").toJS();
+        formOptions.selectedTracks = formOptions.selectedTracks.reduce((acc, trackId) => {
+            let layer = state.map.getIn([
+                "layers",
+                appStrings.LAYER_GROUP_TYPE_INSITU_DATA,
+                trackId
+            ]);
+            acc.push({
+                id: trackId,
+                title: layer.get("title"),
+                project: layer.getIn(["metadata", "project"]),
+                source_id: layer.getIn(["metadata", "source_id"])
+            });
+            return acc;
+        }, []);
+
+        let urls = TrackDataUtil.getUrlsForQuery(formOptions);
         let dataStore = new DataStore({ workerManager: state.webWorker.get("workerManager") });
         let chartId = "chart_" + new Date().getTime();
 
-        dispatch(initializeChart(chartId, formOptions, dataStore));
+        dispatch(initializeChart(chartId, formOptions, urls, dataStore));
         dispatch(setChartLoading(chartId, true));
 
         state = getState();
@@ -56,9 +71,8 @@ export function createChart(formOptions) {
         let xKey = chart.getIn(["formOptions", "xAxis"]);
         let yKey = chart.getIn(["formOptions", "yAxis"]);
         let zKey = chart.getIn(["formOptions", "zAxis"]);
-
-        dataStore
-            .getData(
+        let dataPromises = urls.map(url => {
+            return dataStore.getData(
                 {
                     url: url,
                     processMeta: true
@@ -68,40 +82,45 @@ export function createChart(formOptions) {
                     target: decimationRate,
                     format: "array"
                 }
-            )
-            .then(
-                data => {
-                    dispatch(updateChartData(chartId, data[0], data[1]));
-                    dispatch(setChartLoading(chartId, false));
-                },
-                err => {
-                    dispatch(
-                        updateChartData(chartId, {
-                            error: true,
-                            message: "Failed to get chart data"
-                        })
-                    );
-                    dispatch(setChartLoading(chartId, false));
-                }
             );
+        });
+
+        Promise.all(dataPromises).then(
+            dataArrs => {
+                let data = dataArrs[0];
+                console.log(data);
+                dispatch(updateChartData(chartId, data[0], data[1]));
+                dispatch(setChartLoading(chartId, false));
+            },
+            err => {
+                dispatch(
+                    updateChartData(chartId, {
+                        error: true,
+                        message: "Failed to get chart data"
+                    })
+                );
+                dispatch(setChartLoading(chartId, false));
+            }
+        );
     };
 }
 
 export function zoomChartData(chartId, bounds) {
     return (dispatch, getState) => {
-        let state = getState();
-
         dispatch(setChartLoading(chartId, true));
         dispatch(setChartDisplayOptions(chartId, { bounds: bounds }));
 
+        let state = getState();
         let chart = state.chart.getIn(["charts", chartId]);
         let dataStore = chart.get("dataStore");
+        let urls = chart.get("urls");
         let decimationRate = chart.getIn(["displayOptions", "decimationRate"]);
         let xKey = chart.getIn(["formOptions", "xAxis"]);
         let yKey = chart.getIn(["formOptions", "yAxis"]);
         let zKey = chart.getIn(["formOptions", "zAxis"]);
-        dataStore
-            .getData(
+
+        let dataPromises = urls.map(url => {
+            return dataStore.getData(
                 {
                     url: url
                 },
@@ -111,22 +130,24 @@ export function zoomChartData(chartId, bounds) {
                     xRange: bounds,
                     format: "array"
                 }
-            )
-            .then(
-                data => {
-                    dispatch(updateChartData(chart.get("id"), data[0], data[1]));
-                    dispatch(setChartLoading(chartId, false));
-                },
-                err => {
-                    dispatch(
-                        updateChartData(chart.get("id"), {
-                            error: true,
-                            message: "Failed to get chart data"
-                        })
-                    );
-                    dispatch(setChartLoading(chartId, false));
-                }
             );
+        });
+        Promise.all(dataPromises).then(
+            dataArrs => {
+                let data = dataArrs[0];
+                dispatch(updateChartData(chart.get("id"), data[0], data[1]));
+                dispatch(setChartLoading(chartId, false));
+            },
+            err => {
+                dispatch(
+                    updateChartData(chart.get("id"), {
+                        error: true,
+                        message: "Failed to get chart data"
+                    })
+                );
+                dispatch(setChartLoading(chartId, false));
+            }
+        );
     };
 }
 
@@ -162,6 +183,6 @@ export function exportChart(chartId) {
     };
 }
 
-function initializeChart(id, formOptions, dataStore) {
-    return { type: types.INITIALIZE_CHART, id, formOptions, dataStore };
+function initializeChart(id, formOptions, urls, dataStore) {
+    return { type: types.INITIALIZE_CHART, id, formOptions, urls, dataStore };
 }

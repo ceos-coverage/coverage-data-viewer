@@ -16,9 +16,9 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 15rem;
-    height: 15rem;
+    width: 8rem;
+    height: 8rem;
     &:global(.loadingSpinnerWrapper .loadingSpinner .loadingSpinnerCircle) {
-        border-width: 3px;
+        border-width: 4px;
     }
 }

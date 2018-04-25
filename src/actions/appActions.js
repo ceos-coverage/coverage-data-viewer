@@ -8,6 +8,7 @@
 import Immutable from "immutable";
 import * as types from "constants/actionTypes";
 import * as mapActions from "actions/mapActions";
+import * as chartActions from "actions/chartActions";
 import * as appStrings from "constants/appStrings";
 import SearchUtil from "utils/SearchUtil";
 import GeoServerUtil from "utils/GeoServerUtil";
@@ -49,6 +50,10 @@ export function setTrackSelected(trackId, isSelected) {
                     type: appStrings.LAYER_GROUP_TYPE_INSITU_DATA,
                     handleAs: appStrings.LAYER_VECTOR_TILE_TRACK,
                     url: GeoServerUtil.getUrlForTrack(track),
+                    metadata: {
+                        project: track.get("project"),
+                        source_id: track.get("source_id")
+                    },
                     timeFormat: "YYYY-MM-DDTHH:mm:ssZ"
                 })
             );
@@ -61,6 +66,7 @@ export function setTrackSelected(trackId, isSelected) {
                     })
                 )
             );
+            dispatch(chartActions.setTrackSelected(trackId, isSelected));
         }
     };
 }

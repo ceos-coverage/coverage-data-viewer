@@ -3,7 +3,6 @@ import PropTypes from "prop-types";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import Radio, { RadioGroup } from "material-ui/Radio";
-import Checkbox from "material-ui/Checkbox";
 import {
     FormLabel,
     FormControl,
@@ -14,19 +13,33 @@ import {
 import Paper from "material-ui/Paper";
 import Typography from "material-ui/Typography";
 import Button from "material-ui/Button";
-import { LabelPopover } from "components/Reusables";
+import { LabelPopover, Checkbox } from "components/Reusables";
 import styles from "components/Chart/ChartCreateForm.scss";
 import * as chartActions from "actions/chartActions";
+import * as appStrings from "constants/appStrings";
+import MiscUtil from "utils/MiscUtil";
 
 export class ChartCreateForm extends Component {
-    submitChartOptions() {
-        // this.props.chartActions.createChart(this.props.formOptions);
-        this.props.chartActions.createChart({
-            datasets: ["fakeDataSet"],
-            xAxis: "Time",
-            yAxis: "Depth",
-            zAxis: "Ext_Temp"
-        });
+    renderTrackList() {
+        let trackList = this.props.availableTracks
+            .filter(track => !track.get("isDisabled") && track.get("isActive"))
+            .toList()
+            .sort(MiscUtil.getImmutableObjectSort("title"));
+
+        if (trackList.size > 0) {
+            return trackList.map(track => (
+                <Checkbox
+                    key={track.get("id") + "_chart_checkbox"}
+                    label={track.get("title")}
+                    checked={this.props.formOptions.get("selectedTracks").includes(track.get("id"))}
+                    onChange={isSelected =>
+                        this.props.chartActions.setTrackSelected(track.get("id"), isSelected)
+                    }
+                />
+            ));
+        } else {
+            return "No datasets selected";
+        }
     }
 
     render() {
@@ -35,23 +48,10 @@ export class ChartCreateForm extends Component {
                 <div className={styles.options}>
                     <LabelPopover
                         label="Datasets"
-                        subtitle="1 Selected"
+                        subtitle={this.props.formOptions.get("selectedTracks").size + " Selected"}
                         className={styles.chartOption}
                     >
-                        <FormGroup>
-                            <FormControlLabel
-                                control={
-                                    <Checkbox color="primary" checked={true} value="tuna_a303" />
-                                }
-                                label="Tuna A303"
-                            />
-                            <FormControlLabel
-                                control={
-                                    <Checkbox color="primary" checked={false} value="tuna_a304" />
-                                }
-                                label="Tuna A304"
-                            />
-                        </FormGroup>
+                        <FormGroup>{this.renderTrackList()}</FormGroup>
                     </LabelPopover>
                     <LabelPopover label="X-Axis" subtitle="Time" className={styles.chartOption}>
                         <FormLabel component="legend">Shared Variables</FormLabel>
@@ -154,7 +154,7 @@ export class ChartCreateForm extends Component {
                     variant="raised"
                     size="small"
                     color="primary"
-                    onClick={() => this.submitChartOptions()}
+                    onClick={this.props.chartActions.createChart}
                 >
                     Create Chart
                 </Button>
@@ -165,12 +165,14 @@ export class ChartCreateForm extends Component {
 
 ChartCreateForm.propTypes = {
     chartActions: PropTypes.object.isRequired,
-    formOptions: PropTypes.object.isRequired
+    formOptions: PropTypes.object.isRequired,
+    availableTracks: PropTypes.object.isRequired
 };
 
 function mapStateToProps(state) {
     return {
-        formOptions: state.chart.get("formOptions")
+        formOptions: state.chart.get("formOptions"),
+        availableTracks: state.map.getIn(["layers", appStrings.LAYER_GROUP_TYPE_INSITU_DATA])
     };
 }
 
@@ -180,5 +182,4 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-// export default connect()(ChartCreateForm);
 export default connect(mapStateToProps, mapDispatchToProps)(ChartCreateForm);

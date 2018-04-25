@@ -35,11 +35,9 @@ const APP_CONFIG = Immutable.fromJS({
             }
         ],
         paletteConfig: "default-data/palettes_oiip.json",
-        trackGeometry: {
-            geoserverBase: "https://oiip.jpl.nasa.gov/geoserver/ows"
-        },
+        geoserverBase: "https://oiip.jpl.nasa.gov/geoserver/ows",
+        solrBase: "https://oiip.jpl.nasa.gov/solr/",
         layerSearch: {
-            solrBase: "https://oiip.jpl.nasa.gov/solr/",
             defaultFacetSearch:
                 "https://oiip.jpl.nasa.gov/solr/?facet.field=measurement_name&facet.field=category&facet.field=project&facet=on&indent=on&q=*:*&rows=0&wt=json"
         }

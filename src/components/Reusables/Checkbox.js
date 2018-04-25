@@ -11,7 +11,7 @@ export class Checkbox extends Component {
         }
     }
     render() {
-        let { label, checked, onChange, ...other } = this.props;
+        let { label, checked, onChange, color, ...other } = this.props;
         return (
             <FormControlLabel
                 control={
@@ -24,6 +24,7 @@ export class Checkbox extends Component {
                         onClick={evt => {
                             this.handleChange(!(evt.target.value === "true"));
                         }}
+                        color={color || "primary"}
                         {...other}
                         tabIndex="-1"
                     />
@@ -37,6 +38,7 @@ export class Checkbox extends Component {
 Checkbox.propTypes = {
     label: PropTypes.string.isRequired,
     checked: PropTypes.bool.isRequired,
+    color: PropTypes.string,
     onChange: PropTypes.func
 };
 

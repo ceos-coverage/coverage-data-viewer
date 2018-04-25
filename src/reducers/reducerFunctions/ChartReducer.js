@@ -8,8 +8,14 @@ import * as appStrings from "constants/appStrings";
 //create a copy of the state passed and set new values on the copy.
 
 export default class ChartReducer {
-    static setSelectedDatasets(state, action) {
-        return state;
+    static setTrackSelected(state, action) {
+        let selected = state.getIn(["formOptions", "selectedTracks"]);
+        if (action.isSelected) {
+            selected = selected.add(action.trackId);
+        } else {
+            selected = selected.delete(action.trackId);
+        }
+        return state.setIn(["formOptions", "selectedTracks"], selected);
     }
 
     static setXAxisVariable(state, action) {
@@ -27,12 +33,12 @@ export default class ChartReducer {
     static initializeChart(state, action) {
         let chartType = appStrings.CHART_TYPES.SINGLE_SERIES;
         if (typeof action.formOptions.zAxis !== "undefined") {
-            if (action.formOptions.datasets.length !== 1) {
+            if (action.formOptions.selectedTracks.length !== 1) {
                 chartType = appStrings.CHART_TYPES.MULTI_SERIES_WITH_COLOR;
             } else {
                 chartType = appStrings.CHART_TYPES.SINGLE_SERIES_WITH_COLOR;
             }
-        } else if (action.formOptions.datasets.length !== 1) {
+        } else if (action.formOptions.selectedTracks.length !== 1) {
             chartType = appStrings.CHART_TYPES.MULTI_SERIES;
         }
 
@@ -41,10 +47,14 @@ export default class ChartReducer {
             .set("nodeId", "chartWrapper_" + action.id)
             .set("data", [])
             .set("dataStore", action.dataStore)
+            .set("urls", action.urls)
             .set("chartType", chartType)
             .setIn(["dataError", "error"], false)
             .setIn(["dataError", "message"], "")
-            .setIn(["formOptions", "datasets"], Immutable.List(action.formOptions.datasets))
+            .setIn(
+                ["formOptions", "selectedTracks"],
+                Immutable.List(action.formOptions.selectedTracks)
+            )
             .setIn(["formOptions", "xAxis"], action.formOptions.xAxis)
             .setIn(["formOptions", "yAxis"], action.formOptions.yAxis)
             .setIn(["formOptions", "zAxis"], action.formOptions.zAxis);

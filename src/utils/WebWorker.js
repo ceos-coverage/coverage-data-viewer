@@ -59,6 +59,7 @@ export default class WebWorker extends WebWorkerCore {
                     fastMode: true,
                     complete: results => {
                         console.timeEnd("parsing");
+                        results.data.splice(-1, 1); // wtf is with this werid parse
                         this._remoteData[url] = { data: results.data, meta: {} };
                         if (options.processMeta) {
                             console.time("process meta");
@@ -212,17 +213,25 @@ export default class WebWorker extends WebWorkerCore {
             return undefined;
         }
 
-        switch (key) {
-            case "Time":
-                return this._readTime();
+        switch (key.toLowerCase()) {
+            case "time":
+            // falls through
+            case "datetime":
+            // falls through
+            case "date_time":
+            // falls through
+            case "measurement_date_time":
+            // falls through
+            case "position_date_time":
+                return this._readTime(key);
             default:
                 return this._readFloat(key);
         }
     }
 
-    _readTime() {
+    _readTime(key) {
         return entry => {
-            return new Date(entry["Time"]).getTime();
+            return new Date(entry[key]).getTime();
         };
     }
 

@@ -7,6 +7,7 @@ export const chartModel = Immutable.fromJS({
     nodeId: "",
     dataStore: null,
     data: [],
+    urls: [],
     dataMeta: {},
     dataLoading: false,
     dataError: {
@@ -15,10 +16,10 @@ export const chartModel = Immutable.fromJS({
     },
     chartType: appStrings.CHART_TYPES.SINGLE_SERIES,
     formOptions: {
-        datasets: [],
-        xAxis: "",
-        yAxis: "",
-        zAxis: ""
+        selectedTracks: Immutable.Set(),
+        xAxis: "measurement_date_time",
+        yAxis: "depth",
+        zAxis: "measurement_value"
     },
     displayOptions: {
         isOpen: false,
@@ -30,14 +31,11 @@ export const chartModel = Immutable.fromJS({
 });
 
 export const chartState = Immutable.fromJS({
-    formOptions: chartModel
-        .get("formOptions")
-        .set("formErrors", {
-            datasets: "",
-            xAxis: "",
-            yAxis: "",
-            zAxis: ""
-        })
-        .toJS(),
+    formOptions: chartModel.get("formOptions").set("formErrors", {
+        selectedTracks: "",
+        xAxis: "",
+        yAxis: "",
+        zAxis: ""
+    }),
     charts: Immutable.OrderedMap()
 });
