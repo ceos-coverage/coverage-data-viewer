@@ -107,6 +107,11 @@ export function createChart() {
 
 export function zoomChartData(chartId, bounds) {
     return (dispatch, getState) => {
+        // if(typeof bounds !== "undefined") {
+        //     bounds[0] = Math.floor(bounds[0] * 1000);
+        //     bounds[1] = Math.round(bounds[1] * 1000);
+        // }
+
         dispatch(setChartLoading(chartId, true));
         dispatch(setChartDisplayOptions(chartId, { bounds: bounds }));
 
@@ -120,14 +125,17 @@ export function zoomChartData(chartId, bounds) {
         let zKey = chart.getIn(["formOptions", "zAxis"]);
 
         let dataPromises = urls.map(url => {
+            url = typeof bounds !== "undefined" ? url + "&bounds=" + bounds.join(",") : url;
             return dataStore.getData(
                 {
-                    url: url
+                    url: url,
+                    no_cache: typeof bounds !== "undefined",
+                    processMeta: true
                 },
                 {
                     keys: { xKey, yKey, zKey },
                     target: decimationRate,
-                    xRange: bounds,
+                    // xRange: bounds,
                     format: "array"
                 }
             );

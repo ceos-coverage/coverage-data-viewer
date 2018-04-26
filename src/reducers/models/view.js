@@ -11,7 +11,7 @@ export const viewState = viewStateCore.mergeDeep(
             formOptions: {
                 startDate: moment
                     .utc(appConfig.DEFAULT_DATE)
-                    .subtract(10, "years")
+                    .subtract(20, "years")
                     .toDate(),
                 endDate: appConfig.DEFAULT_DATE,
                 selectedArea: [],

@@ -37,6 +37,8 @@ export default class WebWorker extends WebWorkerCore {
                 return this._retrieveRemoteData(message);
             case appStrings.WORKER_TASK_DECIMATE_POINTS_LTTB:
                 return this._decimateLTTB(message);
+            case appStrings.WORKER_TASK_CLEAR_CACHE_ENTRY:
+                return this._clearCacheEntry(message);
             default:
                 return WebWorkerCore.prototype.handleMessage.call(this, message, workerRef);
         }
@@ -73,6 +75,19 @@ export default class WebWorker extends WebWorkerCore {
                         reject(err);
                     }
                 });
+            }
+        });
+    }
+
+    _clearCacheEntry(eventData) {
+        return new Promise((resolve, reject) => {
+            try {
+                if (typeof eventData.url !== "undefined") {
+                    this._remoteData[eventData.url] = undefined;
+                }
+                resolve("success");
+            } catch (err) {
+                reject(err);
             }
         });
     }
@@ -231,7 +246,15 @@ export default class WebWorker extends WebWorkerCore {
 
     _readTime(key) {
         return entry => {
-            return new Date(entry[key]).getTime();
+            let time = Date.parse(entry[key]);
+            if (isNaN(time)) {
+                time = parseFloat(entry[key]);
+                let mag = Math.floor(Math.log10(time));
+                if (Math.floor(Math.log10(time)) === 9) {
+                    time *= 1000;
+                }
+            }
+            return time;
         };
     }
 

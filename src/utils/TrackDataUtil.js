@@ -4,27 +4,39 @@ export default class TrackDataUtil {
     static getUrlsForQuery(options) {
         let { selectedTracks, xAxis, yAxis, zAxis } = options;
 
-        let baseUrl = appConfig.URLS.solrBase;
+        // let baseUrl = appConfig.URLS.solrBase;
+        let baseUrl = appConfig.URLS.decimatorMiddleware;
 
-        let query = [
-            "facet=on",
-            "wt=csv",
-            "rows=3000000",
-            "sort=measurement_date_time asc",
-            "fl=measurement_date_time,depth,measurement_value"
-        ];
+        // let query = [
+        //     "facet=on",
+        //     "wt=csv",
+        //     "rows=3000000",
+        //     "sort=measurement_date_time asc",
+        //     "fl=measurement_date_time,depth,measurement_value"
+        // ];
+        // return selectedTracks.map(track => {
+        //     return encodeURI(
+        //         baseUrl +
+        //             "?" +
+        //             query
+        //                 .concat([
+        //                     "q=project:" +
+        //                         track.project +
+        //                         " AND source_id:" +
+        //                         track.source_id +
+        //                         " AND measurement_name:temperature"
+        //                 ])
+        //                 .join("&")
+        //     );
+        // });
+
+        let query = [];
         return selectedTracks.map(track => {
             return encodeURI(
                 baseUrl +
                     "?" +
                     query
-                        .concat([
-                            "q=project:" +
-                                track.project +
-                                " AND source_id:" +
-                                track.source_id +
-                                " AND measurement_name:temperature"
-                        ])
+                        .concat(["project=" + track.project, "source_id=" + track.source_id])
                         .join("&")
             );
         });

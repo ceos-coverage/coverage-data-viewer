@@ -213,12 +213,12 @@ export default class ChartUtil {
                             fontFamily: "'Roboto', Helvetica, Arial, sans-serif"
                         },
                         resetZoomButton: {
-                            relativeTo: "plot",
+                            relativeTo: "chart",
                             position: {
                                 align: "left",
                                 verticalAlign: "bottom",
-                                x: -57,
-                                y: 20
+                                x: 10,
+                                y: -30
                             },
                             theme: {
                                 style: {
@@ -438,12 +438,12 @@ export default class ChartUtil {
                             fontFamily: "'Roboto', Helvetica, Arial, sans-serif"
                         },
                         resetZoomButton: {
-                            relativeTo: "plot",
+                            relativeTo: "chart",
                             position: {
                                 align: "left",
                                 verticalAlign: "bottom",
-                                x: -57,
-                                y: 20
+                                x: 10,
+                                y: -30
                             },
                             theme: {
                                 style: {

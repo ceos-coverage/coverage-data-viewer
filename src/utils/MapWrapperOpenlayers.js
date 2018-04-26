@@ -29,6 +29,7 @@ import Ol_FeatureLoader from "ol/featureloader";
 import Ol_Overlay from "ol/overlay";
 import Ol_Format_GeoJSON from "ol/format/geojson";
 import Ol_Geom_LineString from "ol/geom/linestring";
+import Ol_Geom_MultiLineString from "ol/geom/multilinestring";
 import Ol_Geom_Point from "ol/geom/point";
 import OL_Geom_GeometryType from "ol/geom/geometrytype";
 import Ol_TileGrid from "ol/tilegrid";
@@ -524,29 +525,56 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                 }).then(
                     dataStr => {
                         let data = geojsonFormat.readFeatures(dataStr);
-                        let firstFeature = data[0];
-                        let lastFeature = data[data.length - 1];
-                        for (let i = 0; i < data.length - 1; ++i) {
+                        let validPoints = [];
+                        let linePoints = [];
+
+                        // we'll do this dumb but easy for now
+                        // TODO - collapse this into a single pass
+
+                        // remove bad points
+                        for (let i = 0; i < data.length; ++i) {
                             let feature = data[i];
-                            feature.set("_layerId", layer.get("id"));
                             let geom = feature.getGeometry();
                             let coords = geom.getCoordinates();
-
-                            // get next point
                             let nextFeature = data[i + 1];
+                            let nextGeom = nextFeature ? nextFeature.getGeometry() : undefined;
+                            let nextCoords = nextFeature ? nextGeom.getCoordinates() : [];
+
+                            if (
+                                Math.abs(coords[0]) <= 180 &&
+                                Math.abs(coords[1]) <= 90 &&
+                                (coords[0] !== nextCoords[0] || coords[1] !== nextCoords[1])
+                            ) {
+                                // get next point
+                                feature.set("_layerId", layer.get("id"));
+                                this.addFeature(feature);
+                                validPoints.push(feature);
+                            }
+                        }
+
+                        validPoints.sort((a, b) => {
+                            return (
+                                new Date(a.get("position_date_time")) -
+                                new Date(b.get("position_date_time"))
+                            );
+                        });
+
+                        for (let i = 0; i < validPoints.length - 1; ++i) {
+                            let feature = validPoints[i];
+                            let geom = feature.getGeometry();
+                            let coords = geom.getCoordinates();
+                            let nextFeature = validPoints[i + 1];
                             let nextGeom = nextFeature.getGeometry();
                             let nextCoords = nextGeom.getCoordinates();
 
-                            // create new feature
-                            let newFeature = feature.clone();
-                            newFeature.setGeometry(new Ol_Geom_LineString([coords, nextCoords]));
-                            this.addFeature(newFeature);
-                            this.addFeature(feature);
+                            linePoints.push([coords, nextCoords]);
                         }
 
                         // catch the last feature
-                        if (data.length > 0) {
-                            this.addFeature(data[data.length - 1]);
+                        if (validPoints.length > 0) {
+                            let linestring = validPoints[0].clone();
+                            linestring.setGeometry(new Ol_Geom_MultiLineString(linePoints));
+                            this.addFeature(linestring);
                         }
 
                         _context.highlightTrackPoints(
@@ -731,32 +759,37 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
     }
 
     zoomToLayer(layer, extraPad = false) {
-        let mapLayers = this.map.getLayers().getArray();
-        let mapLayer = this.miscUtil.findObjectInArray(mapLayers, "_layerId", layer.get("id"));
-        if (!mapLayer) {
-            console.warn(
-                "Error in MapWrapperOpenLayers.zoomToLayer: Could not find corresponding map layer",
-                layer
-            );
+        try {
+            let mapLayers = this.map.getLayers().getArray();
+            let mapLayer = this.miscUtil.findObjectInArray(mapLayers, "_layerId", layer.get("id"));
+            if (!mapLayer) {
+                console.warn(
+                    "Error in MapWrapperOpenLayers.zoomToLayer: Could not find corresponding map layer",
+                    layer
+                );
+                return false;
+            }
+
+            let source = mapLayer.getSource();
+            if (typeof source.getExtent === "function") {
+                let extent = source.getExtent();
+                let padding = [60, 60, 60, 60];
+                if (extraPad) {
+                    padding[1] = padding[1] + 600;
+                }
+                this.map.getView().fit(extent, {
+                    size: this.map.getSize() || [],
+                    padding: padding,
+                    duration: 350,
+                    constrainResolution: false
+                });
+            }
+
+            return true;
+        } catch (err) {
+            console.warn("Error in MapWrapperOpenlayers.zoomToLayer: ", err);
             return false;
         }
-
-        let source = mapLayer.getSource();
-        if (typeof source.getExtent === "function") {
-            let extent = source.getExtent();
-            let padding = [60, 60, 60, 60];
-            if (extraPad) {
-                padding[1] = padding[1] + 600;
-            }
-            this.map.getView().fit(extent, {
-                size: this.map.getSize() || [],
-                padding: padding,
-                duration: 350,
-                constrainResolution: false
-            });
-        }
-
-        return true;
     }
 
     getDataAtPoint(coords, pixel, palettes) {

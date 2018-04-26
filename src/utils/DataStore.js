@@ -49,6 +49,26 @@ export default class DataStore {
                                 })
                                 .then(
                                     result => {
+                                        if (fetchOptions.no_cache) {
+                                            this._workerManager
+                                                .queueJob({
+                                                    operation:
+                                                        appStrings.WORKER_TASK_CLEAR_CACHE_ENTRY,
+                                                    url: fetchOptions.url
+                                                })
+                                                .then(
+                                                    success => {
+                                                        console.log("cleared entry");
+                                                    },
+                                                    err => {
+                                                        console.warn(
+                                                            "Failed to clear entry: ",
+                                                            fetchOptions.url,
+                                                            err
+                                                        );
+                                                    }
+                                                );
+                                        }
                                         resolve(result.data);
                                     },
                                     err => {
