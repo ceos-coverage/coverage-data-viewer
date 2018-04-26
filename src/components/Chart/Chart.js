@@ -25,6 +25,7 @@ export class Chart extends Component {
             data: this.props.chart.get("data"),
             displayOptions: this.props.chart.get("displayOptions"),
             chartType: this.props.chart.get("chartType"),
+            title: this.props.chart.get("title"),
             note: "decimation unknown",
             keys: {
                 xKey: this.props.chart.getIn(["formOptions", "xAxis"]),

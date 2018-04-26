@@ -42,8 +42,10 @@ export default class ChartReducer {
             chartType = appStrings.CHART_TYPES.MULTI_SERIES;
         }
 
+        let title = action.formOptions.selectedTracks.map(track => track.title).join(", ");
         let chart = chartModel
             .set("id", action.id)
+            .set("title", title)
             .set("nodeId", "chartWrapper_" + action.id)
             .set("data", [])
             .set("dataStore", action.dataStore)

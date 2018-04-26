@@ -5,6 +5,7 @@ import * as appStrings from "constants/appStrings";
 export const chartModel = Immutable.fromJS({
     id: "",
     nodeId: "",
+    title: "",
     dataStore: null,
     data: [],
     urls: [],

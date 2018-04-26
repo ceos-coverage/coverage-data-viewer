@@ -192,6 +192,7 @@ export default class ChartUtil {
             let keys = options.keys;
             let displayOptions = options.displayOptions;
             let onZoom = options.onZoom;
+            let title = options.title || "Untitled";
             let note = options.note || "";
 
             let hoveredPoint = undefined;
@@ -311,7 +312,7 @@ export default class ChartUtil {
                     ],
 
                     title: {
-                        text: "Albacore Tuna",
+                        text: title,
                         align: "left",
                         style: {
                             fontSize: "1.5rem",
@@ -416,6 +417,7 @@ export default class ChartUtil {
             let keys = options.keys;
             let displayOptions = options.displayOptions;
             let onZoom = options.onZoom;
+            let title = options.title || "Untitled";
             let note = options.note || "";
 
             let hoveredPoint = undefined;
@@ -577,7 +579,7 @@ export default class ChartUtil {
                     },
 
                     title: {
-                        text: "Albacore Tuna",
+                        text: title,
                         align: "left",
                         style: {
                             fontSize: "1.5rem",
