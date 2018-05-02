@@ -25,7 +25,10 @@ export class Chart extends Component {
             data: this.props.chart.get("data"),
             displayOptions: this.props.chart.get("displayOptions"),
             chartType: this.props.chart.get("chartType"),
-            title: this.props.chart.get("title"),
+            seriesTitles: this.props.chart
+                .getIn(["formOptions", "selectedTracks"])
+                .map(track => track.title)
+                .toJS(),
             seriesNum: this.props.chart.getIn(["formOptions", "selectedTracks"]).size,
             note: "decimation unknown",
             keys: {

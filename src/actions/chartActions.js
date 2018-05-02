@@ -59,6 +59,7 @@ export function createChart() {
                         source_id: track.getIn(["metadata", "source_id"])
                     };
                 })
+                .sortBy(track => track.title)
         );
 
         let urls = TrackDataUtil.getUrlsForQuery(
@@ -76,19 +77,6 @@ export function createChart() {
         let xKey = chart.getIn(["formOptions", "xAxis"]);
         let yKey = chart.getIn(["formOptions", "yAxis"]);
         let zKey = chart.getIn(["formOptions", "zAxis"]);
-        // let dataPromises = urls.map(url => {
-        //     return dataStore.getData(
-        //         {
-        //             url: url,
-        //             processMeta: true
-        //         },
-        //         {
-        //             keys: { xKey, yKey, zKey },
-        //             target: decimationRate,
-        //             format: "array"
-        //         }
-        //     );
-        // });
 
         Promise.all(
             urls.map(url => {
@@ -124,26 +112,20 @@ export function createChart() {
 
 export function zoomChartData(chartId, bounds) {
     return (dispatch, getState) => {
-        // if(typeof bounds !== "undefined") {
-        //     bounds[0] = Math.floor(bounds[0] * 1000);
-        //     bounds[1] = Math.round(bounds[1] * 1000);
-        // }
-
         dispatch(setChartLoading(chartId, true));
         dispatch(setChartDisplayOptions(chartId, { bounds: bounds }));
 
         let state = getState();
         let chart = state.chart.getIn(["charts", chartId]);
         let dataStore = chart.get("dataStore");
-        // let urls = chart.get("urls");
         let decimationRate = chart.getIn(["displayOptions", "decimationRate"]);
-        let selectedTracs = chart.getIn(["formOptions", "selectedTracks"]);
+        let selectedTracks = chart.getIn(["formOptions", "selectedTracks"]);
         let xKey = chart.getIn(["formOptions", "xAxis"]);
         let yKey = chart.getIn(["formOptions", "yAxis"]);
         let zKey = chart.getIn(["formOptions", "zAxis"]);
 
         let urls = TrackDataUtil.getUrlsForQuery({
-            selectedTracks: selectedTracs.toJS(),
+            selectedTracks: selectedTracks.toJS(),
             xAxis: xKey,
             yAxis: yKey,
             zAxis: zKey,
@@ -153,7 +135,6 @@ export function zoomChartData(chartId, bounds) {
 
         Promise.all(
             urls.map(url => {
-                // url = typeof bounds !== "undefined" ? url + "&bounds=" + bounds.join(",") : url;
                 return dataStore.getData(
                     {
                         url: url,
@@ -163,7 +144,6 @@ export function zoomChartData(chartId, bounds) {
                     {
                         keys: { xKey, yKey, zKey },
                         target: -1,
-                        // xRange: bounds,
                         format: "array"
                     }
                 );

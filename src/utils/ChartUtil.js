@@ -67,20 +67,22 @@ export default class ChartUtil {
         }
     }
 
-    static updateSingleSeries(options, colorByPoint = false) {
-        return this.updateSeries(options, colorByPoint);
+    static updateSingleSeries(options) {
+        return this.updateSeries(options);
     }
 
-    static updateMultiSeries(options, colorByPoint = false) {
-        return this.updateSeries(options, colorByPoint);
+    static updateMultiSeries(options) {
+        return this.updateSeries(options);
     }
 
-    static updateSeries(options, colorByPoint = false) {
+    static updateSeries(options) {
         let node = options.node;
         let data = options.data;
         let displayOptions = options.displayOptions;
         let extremes = options.dataExtremes;
         let note = options.note;
+
+        console.log(data);
 
         // check if we have data a place to render to
         if (typeof node !== "undefined") {
@@ -119,13 +121,10 @@ export default class ChartUtil {
                 chart.series.map((series, i) => {
                     series.update(
                         {
-                            type: displayOptions.get("markerType") || "scatter",
-                            colorByPoint: colorByPoint,
-                            color:
-                                appConfig.CHART_SERIES_COLORS[
-                                    i % appConfig.CHART_SERIES_COLORS.length
-                                ],
-                            showInLegend: false,
+                            type: displayOptions.get("markerType") || series.options.type,
+                            colorByPoint: series.options.colorByPoint,
+                            color: series.options.color,
+                            showInLegend: series.options.showInLegend,
                             data: data[i]
                         },
                         false
@@ -187,11 +186,9 @@ export default class ChartUtil {
         try {
             let node = options.node;
             let data = options.data;
-            let keys = options.keys;
             let displayOptions = options.displayOptions;
-            let title = options.title || "Untitled";
-            let note = options.note || "";
             let seriesNum = options.seriesNum || 0;
+            let seriesTitles = options.seriesTitles || [];
 
             let hoveredPoint = undefined;
 
@@ -210,6 +207,7 @@ export default class ChartUtil {
                 chartConfig.series = [];
                 for (let i = 0; i < seriesNum; ++i) {
                     chartConfig.series.push({
+                        name: seriesTitles[i],
                         type: displayOptions.get("markerType") || "scatter",
                         color: appConfig.CHART_SERIES_COLORS[i],
                         showInLegend: false,
@@ -244,9 +242,8 @@ export default class ChartUtil {
             let dataExtremes = options.dataExtremes || { z: {} };
             let keys = options.keys;
             let displayOptions = options.displayOptions;
-            let title = options.title || "Untitled";
-            let note = options.note || "";
             let seriesNum = options.seriesNum || 0;
+            let seriesTitles = options.seriesTitles || [];
 
             let hoveredPoint = undefined;
 
@@ -315,6 +312,7 @@ export default class ChartUtil {
                 chartConfig.series = [];
                 for (let i = 0; i < seriesNum; ++i) {
                     chartConfig.series.push({
+                        name: seriesTitles[i],
                         type: displayOptions.get("markerType") || "scatter",
                         colorByPoint: true,
                         color: appConfig.CHART_SERIES_COLORS[i],
@@ -350,11 +348,9 @@ export default class ChartUtil {
         try {
             let node = options.node;
             let data = options.data;
-            let keys = options.keys;
             let displayOptions = options.displayOptions;
-            let title = options.title || "Untitled";
-            let note = options.note || "";
             let seriesNum = options.seriesNum || 0;
+            let seriesTitles = options.seriesTitles || [];
 
             let hoveredPoint = undefined;
 
@@ -370,12 +366,32 @@ export default class ChartUtil {
                     }
                 };
 
+                chartConfig.title.text = "";
+
+                chartConfig.legend = {
+                    enabled: true,
+                    floating: true,
+                    align: "left",
+                    verticalAlign: "top",
+                    y: -5,
+                    x: -12,
+                    labelFormatter: function() {
+                        return (
+                            "<span style='font-size:1.4rem;font-weight:500;'>" +
+                            this.name +
+                            "</span>"
+                        );
+                    },
+                    useHTML: true
+                };
+
                 chartConfig.series = [];
                 for (let i = 0; i < seriesNum; ++i) {
                     chartConfig.series.push({
+                        name: seriesTitles[i],
                         type: displayOptions.get("markerType") || "scatter",
                         color: appConfig.CHART_SERIES_COLORS[i],
-                        showInLegend: false,
+                        showInLegend: true,
                         data: data,
                         point: {
                             events: {
@@ -407,9 +423,8 @@ export default class ChartUtil {
             let dataExtremes = options.dataExtremes || { z: {} };
             let keys = options.keys;
             let displayOptions = options.displayOptions;
-            let title = options.title || "Untitled";
-            let note = options.note || "";
             let seriesNum = options.seriesNum || 0;
+            let seriesTitles = options.seriesTitles || [];
 
             let hoveredPoint = undefined;
 
@@ -478,6 +493,7 @@ export default class ChartUtil {
                 chartConfig.series = [];
                 for (let i = 0; i < seriesNum; ++i) {
                     chartConfig.series.push({
+                        name: seriesTitles[i],
                         type: displayOptions.get("markerType") || "scatter",
                         colorByPoint: true,
                         color: appConfig.CHART_SERIES_COLORS[i],
@@ -514,7 +530,8 @@ export default class ChartUtil {
         let keys = options.keys;
         let displayOptions = options.displayOptions;
         let onZoom = options.onZoom;
-        let title = options.title || "Untitled";
+        let seriesTitles = options.seriesTitles || [];
+        let title = options.title || seriesTitles.join(", ") || "Untitled";
         let note = options.note || "";
 
         return {
@@ -623,7 +640,7 @@ export default class ChartUtil {
                 text: title,
                 align: "left",
                 style: {
-                    fontSize: "1.5rem",
+                    fontSize: "1.4rem",
                     fontWeight: "500"
                 }
             },
@@ -661,7 +678,8 @@ export default class ChartUtil {
                 series: {
                     findNearestPointBy: "xy",
                     marker: {
-                        radius: 4
+                        radius: 4,
+                        symbol: "circle"
                     }
                 }
             },

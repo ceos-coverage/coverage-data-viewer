@@ -16,10 +16,10 @@ export const chartModel = Immutable.fromJS({
     },
     chartType: appStrings.CHART_TYPES.SINGLE_SERIES,
     formOptions: {
-        selectedTracks: Immutable.Set(),
+        selectedTracks: [],
         xAxis: "time",
         yAxis: "depth",
-        zAxis: "temp"
+        zAxis: undefined
     },
     displayOptions: {
         isOpen: false,
@@ -31,11 +31,14 @@ export const chartModel = Immutable.fromJS({
 });
 
 export const chartState = Immutable.fromJS({
-    formOptions: chartModel.get("formOptions").set("formErrors", {
-        selectedTracks: "",
-        xAxis: "",
-        yAxis: "",
-        zAxis: ""
-    }),
+    formOptions: chartModel
+        .get("formOptions")
+        .set("formErrors", {
+            selectedTracks: "",
+            xAxis: "",
+            yAxis: "",
+            zAxis: ""
+        })
+        .set("selectedTracks", Immutable.Set()),
     charts: Immutable.OrderedMap()
 });

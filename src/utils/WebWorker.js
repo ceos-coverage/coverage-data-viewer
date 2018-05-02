@@ -64,21 +64,21 @@ export default class WebWorker extends WebWorkerCore {
                 }).then(data => {
                     console.timeEnd("fetching");
 
-                    console.time("formatting");
+                    // console.time("formatting");
                     let dataArr = data.data.map(row => {
                         return data.meta.columns.reduce((acc, col, i) => {
                             acc[col] = row[i];
                             return acc;
                         }, {});
                     });
-                    console.timeEnd("formatting");
+                    // console.timeEnd("formatting");
 
                     this._remoteData[url] = { data: dataArr, meta: data.meta };
 
                     if (options.processMeta) {
-                        console.time("process meta");
+                        // console.time("process meta");
                         this._processExtremes(url);
-                        console.timeEnd("process meta");
+                        // console.timeEnd("process meta");
                     }
 
                     resolve("success");
@@ -158,7 +158,7 @@ export default class WebWorker extends WebWorkerCore {
 
     _decimateLTTB(eventData) {
         return new Promise((resolve, reject) => {
-            console.time("decimating");
+            // console.time("decimating");
             let dataRows = eventData.dataRows
                 ? eventData.dataRows
                 : eventData.url ? this._remoteData[eventData.url].data : [];
@@ -218,7 +218,7 @@ export default class WebWorker extends WebWorkerCore {
             // format the downsampled data
             let data = this._transformRowData(decData, eventData.format, xFunc, yFunc, zFunc);
 
-            console.timeEnd("decimating");
+            // console.timeEnd("decimating");
 
             // resolve([data, this._remoteData[eventData.url].meta]);
             resolve({ data, meta: this._remoteData[eventData.url].meta });

@@ -80,7 +80,7 @@ const APP_CONFIG = Immutable.fromJS({
     ],
     CHART_COLORBAR_COLORS: ["#0288d1", "#fffbbc", "#d14702"],
     CHART_DATE_INDICATOR_COLOR: "rgba(0, 0, 0, 0.5)",
-    CHART_WIDTH: 510,
+    CHART_WIDTH: 515,
     CHART_HEIGHT: 298,
     CHART_DISPLAY_TYPES: {
         TIME_SERIES: [
