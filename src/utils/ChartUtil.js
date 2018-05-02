@@ -189,18 +189,14 @@ export default class ChartUtil {
             let data = options.data;
             let keys = options.keys;
             let displayOptions = options.displayOptions;
-            let onZoom = options.onZoom;
             let title = options.title || "Untitled";
             let note = options.note || "";
+            let seriesNum = options.seriesNum || 0;
 
             let hoveredPoint = undefined;
 
             // check if we have data a place to render to
             if (typeof node !== "undefined" && typeof data !== "undefined") {
-                if (data.length === 0) {
-                    data.push([new Date() - 0, 0, 0]);
-                }
-
                 let chartConfig = this.getBaseChartConfig(options);
 
                 chartConfig.chart.events = {
@@ -211,10 +207,11 @@ export default class ChartUtil {
                     }
                 };
 
-                chartConfig.series = [
-                    {
+                chartConfig.series = [];
+                for (let i = 0; i < seriesNum; ++i) {
+                    chartConfig.series.push({
                         type: displayOptions.get("markerType") || "scatter",
-                        color: appConfig.CHART_SERIES_COLORS[0],
+                        color: appConfig.CHART_SERIES_COLORS[i],
                         showInLegend: false,
                         data: data,
                         point: {
@@ -224,16 +221,14 @@ export default class ChartUtil {
                                 }
                             }
                         }
-                    }
-                ];
+                    });
+                }
 
                 let chart = Highcharts.chart(options.node, chartConfig);
                 nodeChartMap = nodeChartMap.set(options.node.id, chart);
+                return true;
             } else {
-                console.warn(
-                    "Error in ChartUtil.plotSingleSeriesWithColor: Missing chart options",
-                    options
-                );
+                console.warn("Error in ChartUtil.plotSingleSeries: Missing chart options", options);
                 return false;
             }
         } catch (err) {
@@ -249,18 +244,14 @@ export default class ChartUtil {
             let dataExtremes = options.dataExtremes || { z: {} };
             let keys = options.keys;
             let displayOptions = options.displayOptions;
-            let onZoom = options.onZoom;
             let title = options.title || "Untitled";
             let note = options.note || "";
+            let seriesNum = options.seriesNum || 0;
 
             let hoveredPoint = undefined;
 
             // check if we have data a place to render to
             if (typeof node !== "undefined" && typeof data !== "undefined") {
-                if (data.length === 0) {
-                    data.push([new Date() - 0, 0, 0]);
-                }
-
                 let chartConfig = this.getBaseChartConfig(options);
 
                 chartConfig.chart.marginRight = 90;
@@ -321,11 +312,12 @@ export default class ChartUtil {
                     x: 15
                 };
 
-                chartConfig.series = [
-                    {
+                chartConfig.series = [];
+                for (let i = 0; i < seriesNum; ++i) {
+                    chartConfig.series.push({
                         type: displayOptions.get("markerType") || "scatter",
                         colorByPoint: true,
-                        color: appConfig.CHART_SERIES_COLORS[0],
+                        color: appConfig.CHART_SERIES_COLORS[i],
                         showInLegend: false,
                         data: data,
                         point: {
@@ -335,11 +327,12 @@ export default class ChartUtil {
                                 }
                             }
                         }
-                    }
-                ];
+                    });
+                }
 
                 let chart = Highcharts.chart(options.node, chartConfig);
                 nodeChartMap = nodeChartMap.set(options.node.id, chart);
+                return true;
             } else {
                 console.warn(
                     "Error in ChartUtil.plotSingleSeriesWithColor: Missing chart options",
@@ -355,8 +348,52 @@ export default class ChartUtil {
 
     static plotMultiSeries(options) {
         try {
-            console.log("Attempting multi series...");
-            return false;
+            let node = options.node;
+            let data = options.data;
+            let keys = options.keys;
+            let displayOptions = options.displayOptions;
+            let title = options.title || "Untitled";
+            let note = options.note || "";
+            let seriesNum = options.seriesNum || 0;
+
+            let hoveredPoint = undefined;
+
+            // check if we have data a place to render to
+            if (typeof node !== "undefined" && typeof data !== "undefined") {
+                let chartConfig = this.getBaseChartConfig(options);
+
+                chartConfig.chart.events = {
+                    click: function(e) {
+                        if (typeof options.onClick === "function") {
+                            options.onClick(hoveredPoint);
+                        }
+                    }
+                };
+
+                chartConfig.series = [];
+                for (let i = 0; i < seriesNum; ++i) {
+                    chartConfig.series.push({
+                        type: displayOptions.get("markerType") || "scatter",
+                        color: appConfig.CHART_SERIES_COLORS[i],
+                        showInLegend: false,
+                        data: data,
+                        point: {
+                            events: {
+                                mouseOver: function(e) {
+                                    hoveredPoint = e.target;
+                                }
+                            }
+                        }
+                    });
+                }
+
+                let chart = Highcharts.chart(options.node, chartConfig);
+                nodeChartMap = nodeChartMap.set(options.node.id, chart);
+                return true;
+            } else {
+                console.warn("Error in ChartUtil.plotMultiSeries: Missing chart options", options);
+                return false;
+            }
         } catch (err) {
             console.warn("Error in ChartUtil.plotMultiSeries: ", err);
             return false;
@@ -365,8 +402,107 @@ export default class ChartUtil {
 
     static plotMultiSeriesWithColor(options) {
         try {
-            console.log("Attempting multi series with color...");
-            return false;
+            let node = options.node;
+            let data = options.data;
+            let dataExtremes = options.dataExtremes || { z: {} };
+            let keys = options.keys;
+            let displayOptions = options.displayOptions;
+            let title = options.title || "Untitled";
+            let note = options.note || "";
+            let seriesNum = options.seriesNum || 0;
+
+            let hoveredPoint = undefined;
+
+            // check if we have data a place to render to
+            if (typeof node !== "undefined" && typeof data !== "undefined") {
+                let chartConfig = this.getBaseChartConfig(options);
+
+                chartConfig.chart.marginRight = 90;
+                chartConfig.chart.events = {
+                    click: function(e) {
+                        if (typeof options.onClick === "function") {
+                            options.onClick(hoveredPoint);
+                        }
+                    }
+                };
+
+                chartConfig.yAxis.push({
+                    id: "z-axis-label",
+                    gridLineWidth: 0,
+                    opposite: true,
+                    tickLength: 0,
+                    title: {
+                        text: keys.zKey,
+                        rotation: -90,
+                        margin: 30,
+                        style: {
+                            fontSize: "1.4rem"
+                        }
+                    },
+                    labels: {
+                        enabled: false
+                    }
+                });
+
+                chartConfig.colorAxis = {
+                    id: "z-axis",
+                    reversed: false,
+                    min: dataExtremes.z.min,
+                    max: dataExtremes.z.max,
+                    stops: [
+                        [0, appConfig.CHART_COLORBAR_COLORS[0]],
+                        [0.1, appConfig.CHART_COLORBAR_COLORS[0]],
+                        [0.5, appConfig.CHART_COLORBAR_COLORS[1]],
+                        [0.9, appConfig.CHART_COLORBAR_COLORS[2]],
+                        [1, appConfig.CHART_COLORBAR_COLORS[2]]
+                    ],
+                    title: {
+                        text: keys.zKey,
+                        style: {
+                            fontSize: "1.4rem"
+                        }
+                    },
+                    labels: {
+                        x: 2
+                    }
+                };
+
+                chartConfig.legend = {
+                    enabled: true,
+                    layout: "vertical",
+                    align: "right",
+                    verticalAlign: "middle",
+                    x: 15
+                };
+
+                chartConfig.series = [];
+                for (let i = 0; i < seriesNum; ++i) {
+                    chartConfig.series.push({
+                        type: displayOptions.get("markerType") || "scatter",
+                        colorByPoint: true,
+                        color: appConfig.CHART_SERIES_COLORS[i],
+                        showInLegend: false,
+                        data: data,
+                        point: {
+                            events: {
+                                mouseOver: function(e) {
+                                    hoveredPoint = e.target;
+                                }
+                            }
+                        }
+                    });
+                }
+
+                let chart = Highcharts.chart(options.node, chartConfig);
+                nodeChartMap = nodeChartMap.set(options.node.id, chart);
+                return true;
+            } else {
+                console.warn(
+                    "Error in ChartUtil.plotMultiSeriesWithColor: Missing chart options",
+                    options
+                );
+                return false;
+            }
         } catch (err) {
             console.warn("Error in ChartUtil.plotMultiSeriesWithColor: ", err);
             return false;

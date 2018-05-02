@@ -66,11 +66,10 @@ export default class WebWorker extends WebWorkerCore {
 
                     console.time("formatting");
                     let dataArr = data.data.map(row => {
-                        return {
-                            [data.meta.columns[0]]: row[0],
-                            [data.meta.columns[1]]: row[1],
-                            [data.meta.columns[2]]: row[2]
-                        };
+                        return data.meta.columns.reduce((acc, col, i) => {
+                            acc[col] = row[i];
+                            return acc;
+                        }, {});
                     });
                     console.timeEnd("formatting");
 
@@ -128,37 +127,33 @@ export default class WebWorker extends WebWorkerCore {
 
     _processExtremes(url) {
         let dataRows = this._remoteData[url].data;
-        let extremes = {};
-        if (dataRows.length > 0) {
-            let seed = dataRows[0];
-            let keys = Object.keys(seed);
+        let meta = this._remoteData[url].meta;
+        let keys = meta.columns;
 
-            // get the read functions
-            let readFuncs = keys.reduce((acc, key) => {
-                acc[key] = this._getReadFuncForKey(key);
-                return acc;
-            }, {});
+        // seed the extremes
+        let extremes = keys.reduce((acc, key) => {
+            acc[key] = { min: Number.MAX_VALUE, max: -Number.MAX_VALUE };
+            return acc;
+        }, {});
 
-            // seed the extremes
-            extremes = keys.reduce((acc, key) => {
-                acc[key] = { min: readFuncs[key](seed), max: readFuncs[key](seed) };
-                return acc;
-            }, {});
+        // get the read functions
+        let readFuncs = keys.reduce((acc, key) => {
+            acc[key] = this._getReadFuncForKey(key);
+            return acc;
+        }, {});
 
-            // find the min/max for each key
-            extremes = dataRows.reduce((acc, row) => {
-                for (let i = 0; i < keys.length; i++) {
-                    let key = keys[i];
-                    let keyVal = readFuncs[key](row);
-                    acc[key].min = Math.min(acc[key].min, keyVal);
-                    acc[key].max = Math.max(acc[key].max, keyVal);
-                }
-                return acc;
-            }, extremes);
-        }
+        // find the min/max for each key
+        extremes = dataRows.reduce((acc, row) => {
+            for (let i = 0; i < keys.length; i++) {
+                let key = keys[i];
+                let keyVal = readFuncs[key](row);
+                acc[key].min = Math.min(acc[key].min, keyVal);
+                acc[key].max = Math.max(acc[key].max, keyVal);
+            }
+            return acc;
+        }, extremes);
 
         this._remoteData[url].meta.extremes = extremes;
-        this._remoteData[url].meta.size = dataRows.length;
     }
 
     _decimateLTTB(eventData) {
@@ -222,9 +217,6 @@ export default class WebWorker extends WebWorkerCore {
 
             // format the downsampled data
             let data = this._transformRowData(decData, eventData.format, xFunc, yFunc, zFunc);
-
-            // store decimation size
-            // this._remoteData[eventData.url].meta.lastSize = dataRows.length;
 
             console.timeEnd("decimating");
 
