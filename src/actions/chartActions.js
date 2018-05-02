@@ -3,6 +3,7 @@ import * as types from "constants/actionTypes";
 import DataStore from "utils/DataStore";
 import ChartUtil from "utils/ChartUtil";
 import TrackDataUtil from "utils/TrackDataUtil";
+import appConfig from "constants/appConfig";
 
 const sample_url = "http://localhost:3000/default-data/albacoreTunaData.csv";
 
@@ -42,27 +43,31 @@ export function createChart() {
     return (dispatch, getState) => {
         let state = getState();
 
-        let formOptions = state.chart.get("formOptions").toJS();
-        formOptions.selectedTracks = formOptions.selectedTracks.reduce((acc, trackId) => {
-            let layer = state.map.getIn([
-                "layers",
-                appStrings.LAYER_GROUP_TYPE_INSITU_DATA,
-                trackId
-            ]);
-            acc.push({
-                id: trackId,
-                title: layer.get("title"),
-                project: layer.getIn(["metadata", "project"]),
-                source_id: layer.getIn(["metadata", "source_id"])
-            });
-            return acc;
-        }, []);
+        let formOptions = state.chart.get("formOptions");
+        let trackIds = formOptions.get("selectedTracks");
+        formOptions = formOptions.set(
+            "selectedTracks",
+            state.map
+                .getIn(["layers", appStrings.LAYER_GROUP_TYPE_INSITU_DATA])
+                .filter(track => trackIds.contains(track.get("id")))
+                .toList()
+                .map(track => {
+                    return {
+                        id: track.get("id"),
+                        title: track.get("title"),
+                        project: track.getIn(["metadata", "project"]),
+                        source_id: track.getIn(["metadata", "source_id"])
+                    };
+                })
+        );
 
-        let urls = TrackDataUtil.getUrlsForQuery(formOptions);
+        let urls = TrackDataUtil.getUrlsForQuery(
+            formOptions.set("target", appConfig.DEFAULT_DECIMATION_RATE).toJS()
+        );
         let dataStore = new DataStore({ workerManager: state.webWorker.get("workerManager") });
         let chartId = "chart_" + new Date().getTime();
 
-        dispatch(initializeChart(chartId, formOptions, urls, dataStore));
+        dispatch(initializeChart(chartId, formOptions.toJS(), urls, dataStore));
         dispatch(setChartLoading(chartId, true));
 
         state = getState();
@@ -118,14 +123,24 @@ export function zoomChartData(chartId, bounds) {
         let state = getState();
         let chart = state.chart.getIn(["charts", chartId]);
         let dataStore = chart.get("dataStore");
-        let urls = chart.get("urls");
+        // let urls = chart.get("urls");
         let decimationRate = chart.getIn(["displayOptions", "decimationRate"]);
+        let selectedTracs = chart.getIn(["formOptions", "selectedTracks"]);
         let xKey = chart.getIn(["formOptions", "xAxis"]);
         let yKey = chart.getIn(["formOptions", "yAxis"]);
         let zKey = chart.getIn(["formOptions", "zAxis"]);
 
+        let urls = TrackDataUtil.getUrlsForQuery({
+            selectedTracks: selectedTracs.toJS(),
+            xAxis: xKey,
+            yAxis: yKey,
+            zAxis: zKey,
+            target: decimationRate,
+            bounds: bounds
+        });
+
         let dataPromises = urls.map(url => {
-            url = typeof bounds !== "undefined" ? url + "&bounds=" + bounds.join(",") : url;
+            // url = typeof bounds !== "undefined" ? url + "&bounds=" + bounds.join(",") : url;
             return dataStore.getData(
                 {
                     url: url,
@@ -134,7 +149,7 @@ export function zoomChartData(chartId, bounds) {
                 },
                 {
                     keys: { xKey, yKey, zKey },
-                    target: decimationRate,
+                    target: -1,
                     // xRange: bounds,
                     format: "array"
                 }

@@ -564,7 +564,7 @@ export default class ChartUtil {
                             [0, PRIMARY_COLOR],
                             [0.1, PRIMARY_COLOR],
                             [0.5, "#fffbbc"],
-                            [0.8, SECONDARY_COLOR],
+                            [0.9, SECONDARY_COLOR],
                             [1, SECONDARY_COLOR]
                         ],
                         title: {

@@ -7,8 +7,12 @@
 
 import WebWorkerCore from "_core/utils/WebWorker";
 import * as appStrings from "constants/appStrings";
+import * as appStringsCore from "_core/constants/appStrings";
 import { largestTriangleThreeBucket } from "d3fc-sample";
 import Papa from "papaparse";
+import MiscUtil from "utils/MiscUtil";
+
+const NO_DECIMATION_TARGET = -1;
 
 export default class WebWorker extends WebWorkerCore {
     constructor(options) {
@@ -53,28 +57,58 @@ export default class WebWorker extends WebWorkerCore {
             if (!options.force && typeof this._remoteData[url] !== "undefined") {
                 resolve("success");
             } else {
-                console.time("parsing");
-                Papa.parse(url, {
-                    download: true,
-                    delimiter: ",",
-                    header: true,
-                    fastMode: true,
-                    complete: results => {
-                        console.timeEnd("parsing");
-                        results.data.splice(-1, 1); // wtf is with this werid parse
-                        this._remoteData[url] = { data: results.data, meta: {} };
-                        if (options.processMeta) {
-                            console.time("process meta");
-                            this._processExtremes(url);
-                            console.timeEnd("process meta");
-                        }
-                        resolve("success");
-                    },
-                    error: err => {
-                        console.warn("Error in _retrieveRemoteData: ", err);
-                        reject(err);
+                console.time("fetching");
+                MiscUtil.asyncFetch({
+                    url: url,
+                    handleAs: appStringsCore.FILE_TYPE_JSON
+                }).then(data => {
+                    console.timeEnd("fetching");
+
+                    console.time("formatting");
+                    let dataArr = data.data.map(row => {
+                        return {
+                            [data.meta.columns[0]]: row[0],
+                            [data.meta.columns[1]]: row[1],
+                            [data.meta.columns[2]]: row[2]
+                        };
+                    });
+                    console.timeEnd("formatting");
+
+                    this._remoteData[url] = { data: dataArr, meta: data.meta };
+
+                    if (options.processMeta) {
+                        console.time("process meta");
+                        this._processExtremes(url);
+                        console.timeEnd("process meta");
                     }
+
+                    resolve("success");
                 });
+
+                // Papa.parse(url, {
+                //     download: true,
+                //     delimiter: ",",
+                //     header: true,
+                //     fastMode: true,
+                //     skipEmptyLines: true,
+                //     complete: results => {
+                //         console.timeEnd("fetching");
+                //         if (isNaN(results.data[results.data.length - 1][0])) {
+                //             results.data.splice(-1, 1); // wtf is with this werid parse
+                //         }
+                //         this._remoteData[url] = { data: results.data, meta: {} };
+                //         if (options.processMeta) {
+                //             console.time("process meta");
+                //             this._processExtremes(url);
+                //             console.timeEnd("process meta");
+                //         }
+                //         resolve("success");
+                //     },
+                //     error: err => {
+                //         console.warn("Error in _retrieveRemoteData: ", err);
+                //         reject(err);
+                //     }
+                // });
             }
         });
     }
@@ -136,8 +170,8 @@ export default class WebWorker extends WebWorkerCore {
             let xFunc = this._getReadFuncForKey(eventData.keys.xKey);
             let yFunc = this._getReadFuncForKey(eventData.keys.yKey);
             let zFunc = this._getReadFuncForKey(eventData.keys.zKey);
-            let target = eventData.target;
-            let range = eventData.xRange;
+            let target = eventData.target || NO_DECIMATION_TARGET;
+            let range = eventData.xRange || [];
             if (range && range.length == 2) {
                 let startIndex = Math.max(
                     this._binaryIndexOf(dataRows, range[0], index => {
@@ -160,29 +194,31 @@ export default class WebWorker extends WebWorkerCore {
             // Configure the x / y value accessors
             sampler.x(xFunc).y(yFunc);
 
-            // attempt to find a good bucket number
-            let buckets = 1;
+            let decData = dataRows;
+            if (target !== NO_DECIMATION_TARGET) {
+                // attempt to find a good bucket number
+                let buckets = 1;
+                if (target <= 1) {
+                    // assume target is percentage
+                    let numRows = dataRows.length;
+                    target = numRows * target;
+                    if (numRows > target) {
+                        buckets = Math.round(numRows / target);
+                    }
+                } else {
+                    // assume target is actual count
+                    let numRows = dataRows.length;
+                    if (numRows > target) {
+                        buckets = Math.round(numRows / target);
+                    }
+                }
 
-            if (target <= 1) {
-                // assume target is percentage
-                let numRows = dataRows.length;
-                target = numRows * target;
-                if (numRows > target) {
-                    buckets = Math.round(numRows / target);
-                }
-            } else {
-                // assume target is actual count
-                let numRows = dataRows.length;
-                if (numRows > target) {
-                    buckets = Math.round(numRows / target);
-                }
+                // Configure the size of the buckets used to downsample the data.
+                sampler.bucketSize(buckets);
+
+                // Run the sampler
+                decData = sampler(dataRows);
             }
-
-            // Configure the size of the buckets used to downsample the data.
-            sampler.bucketSize(buckets);
-
-            // Run the sampler
-            let decData = sampler(dataRows);
 
             // format the downsampled data
             let data = this._transformRowData(decData, eventData.format, xFunc, yFunc, zFunc);

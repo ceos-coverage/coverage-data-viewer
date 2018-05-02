@@ -73,8 +73,8 @@ export class Chart extends Component {
                     ],
                     note:
                         Math.round(
-                            this.props.chart.get("data").length /
-                                this.props.chart.get("dataMeta").lastSize *
+                            this.props.chart.get("dataMeta").dec_size /
+                                this.props.chart.get("dataMeta").sub_size *
                                 100
                         ) + "% of points shown",
                     chartType: this.props.chart.get("chartType"),

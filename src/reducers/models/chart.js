@@ -18,9 +18,9 @@ export const chartModel = Immutable.fromJS({
     chartType: appStrings.CHART_TYPES.SINGLE_SERIES,
     formOptions: {
         selectedTracks: Immutable.Set(),
-        xAxis: "measurement_date_time",
+        xAxis: "time",
         yAxis: "depth",
-        zAxis: "measurement_value"
+        zAxis: "temp"
     },
     displayOptions: {
         isOpen: false,

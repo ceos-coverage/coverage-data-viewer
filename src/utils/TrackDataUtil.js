@@ -7,14 +7,20 @@ export default class TrackDataUtil {
     }
 
     static getDecimationQuery(options) {
-        let { selectedTracks, xAxis, yAxis, zAxis } = options;
+        let { selectedTracks, xAxis, yAxis, zAxis, target, bounds } = options;
         let baseUrl = appConfig.URLS.decimatorMiddleware;
         return selectedTracks.map(track => {
-            return encodeURI(
-                baseUrl +
-                    "?" +
-                    ["project=" + track.project, "source_id=" + track.source_id].join("&")
-            );
+            let query = ["format=json", "project=" + track.project, "source_id=" + track.source_id];
+
+            if (typeof target !== "undefined") {
+                query.push("target=" + target);
+            }
+
+            if (typeof bounds !== "undefined" && bounds.length === 2) {
+                query.push("bounds=" + bounds.join(","));
+            }
+
+            return encodeURI(baseUrl + "?" + query.join("&"));
         });
     }
 
