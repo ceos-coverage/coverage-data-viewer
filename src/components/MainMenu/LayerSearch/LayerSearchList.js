@@ -51,7 +51,7 @@ export class LayerSearchList extends Component {
         let trackList = this.props.searchResults
             .get("results")
             .toList()
-            .sort(MiscUtil.getImmutableObjectSort("id"));
+            .sort(MiscUtil.getImmutableObjectSort("title"));
         let totalNum = trackList.size;
         let isLoading = this.props.searchResults.get("isLoading");
 
