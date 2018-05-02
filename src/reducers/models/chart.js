@@ -9,7 +9,6 @@ export const chartModel = Immutable.fromJS({
     dataStore: null,
     data: [],
     urls: [],
-    dataMeta: {},
     dataLoading: false,
     dataError: {
         error: false,

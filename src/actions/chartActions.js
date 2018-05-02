@@ -76,25 +76,37 @@ export function createChart() {
         let xKey = chart.getIn(["formOptions", "xAxis"]);
         let yKey = chart.getIn(["formOptions", "yAxis"]);
         let zKey = chart.getIn(["formOptions", "zAxis"]);
-        let dataPromises = urls.map(url => {
-            return dataStore.getData(
-                {
-                    url: url,
-                    processMeta: true
-                },
-                {
-                    keys: { xKey, yKey, zKey },
-                    target: decimationRate,
-                    format: "array"
-                }
-            );
-        });
+        // let dataPromises = urls.map(url => {
+        //     return dataStore.getData(
+        //         {
+        //             url: url,
+        //             processMeta: true
+        //         },
+        //         {
+        //             keys: { xKey, yKey, zKey },
+        //             target: decimationRate,
+        //             format: "array"
+        //         }
+        //     );
+        // });
 
-        Promise.all(dataPromises).then(
+        Promise.all(
+            urls.map(url => {
+                return dataStore.getData(
+                    {
+                        url: url,
+                        processMeta: true
+                    },
+                    {
+                        keys: { xKey, yKey, zKey },
+                        target: -1,
+                        format: "array"
+                    }
+                );
+            })
+        ).then(
             dataArrs => {
-                let data = dataArrs[0];
-                console.log(data);
-                dispatch(updateChartData(chartId, data[0], data[1]));
+                dispatch(updateChartData(chartId, dataArrs));
                 dispatch(setChartLoading(chartId, false));
             },
             err => {
@@ -139,26 +151,26 @@ export function zoomChartData(chartId, bounds) {
             bounds: bounds
         });
 
-        let dataPromises = urls.map(url => {
-            // url = typeof bounds !== "undefined" ? url + "&bounds=" + bounds.join(",") : url;
-            return dataStore.getData(
-                {
-                    url: url,
-                    no_cache: typeof bounds !== "undefined",
-                    processMeta: true
-                },
-                {
-                    keys: { xKey, yKey, zKey },
-                    target: -1,
-                    // xRange: bounds,
-                    format: "array"
-                }
-            );
-        });
-        Promise.all(dataPromises).then(
+        Promise.all(
+            urls.map(url => {
+                // url = typeof bounds !== "undefined" ? url + "&bounds=" + bounds.join(",") : url;
+                return dataStore.getData(
+                    {
+                        url: url,
+                        no_cache: typeof bounds !== "undefined",
+                        processMeta: true
+                    },
+                    {
+                        keys: { xKey, yKey, zKey },
+                        target: -1,
+                        // xRange: bounds,
+                        format: "array"
+                    }
+                );
+            })
+        ).then(
             dataArrs => {
-                let data = dataArrs[0];
-                dispatch(updateChartData(chart.get("id"), data[0], data[1]));
+                dispatch(updateChartData(chart.get("id"), dataArrs));
                 dispatch(setChartLoading(chartId, false));
             },
             err => {
@@ -189,8 +201,8 @@ export function setChartDecimationRate(chartId, decimationRate) {
     };
 }
 
-export function updateChartData(id, data, meta) {
-    return { type: types.UPDATE_CHART_DATA, id, data, meta };
+export function updateChartData(id, data) {
+    return { type: types.UPDATE_CHART_DATA, id, data };
 }
 
 export function exportChart(chartId) {

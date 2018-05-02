@@ -68,6 +68,20 @@ const APP_CONFIG = Immutable.fromJS({
         "#3e2723", // brown
         "#000000" // black,
     ],
+    CHART_SERIES_COLORS: [
+        "#00BCD4", // cyan
+        "#F44336", // red
+        "#673AB7", // deep purple
+        "#607D8B", // blue grey
+        "#4CAF50", // green
+        "#FF5722", // deep orange
+        "#2196F3", // blue
+        "#000000" // black,
+    ],
+    CHART_COLORBAR_COLORS: ["#0288d1", "#fffbbc", "#d14702"],
+    CHART_DATE_INDICATOR_COLOR: "rgba(0, 0, 0, 0.5)",
+    CHART_WIDTH: 510,
+    CHART_HEIGHT: 298,
     CHART_DISPLAY_TYPES: {
         TIME_SERIES: [
             { value: appStrings.PLOT_STYLES.TIME_SERIES.LINES_AND_DOTS, label: "Lines and Dots" },

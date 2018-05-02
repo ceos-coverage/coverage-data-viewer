@@ -3,12 +3,7 @@ import Highcharts from "utils/HighchartsLoader";
 import moment from "moment";
 import MiscUtil from "utils/MiscUtil";
 import * as appStrings from "constants/appStrings";
-
-const PRIMARY_COLOR = "#0288d1";
-const SECONDARY_COLOR = "#d14702";
-const INDICATOR_COLOR = "rgba(0, 0, 0, 0.5)";
-const CHART_WIDTH = 510;
-const CHART_HEIGHT = 298;
+import appConfig from "constants/appConfig";
 
 let nodeChartMap = Immutable.Map();
 
@@ -73,76 +68,113 @@ export default class ChartUtil {
     }
 
     static updateSingleSeries(options, colorByPoint = false) {
+        return this.updateSeries(options, colorByPoint);
+    }
+
+    static updateMultiSeries(options, colorByPoint = false) {
+        return this.updateSeries(options, colorByPoint);
+    }
+
+    static updateSeries(options, colorByPoint = false) {
         let node = options.node;
         let data = options.data;
         let displayOptions = options.displayOptions;
+        let extremes = options.dataExtremes;
         let note = options.note;
 
         // check if we have data a place to render to
         if (typeof node !== "undefined") {
             let chart = nodeChartMap.get(node.id);
-            if (typeof chart !== "undefined") {
-                if (typeof data !== "undefined") {
-                    let series = chart.series[0];
-                    if (series) {
-                        // update the yaxis direction
-                        let yaxis = chart.axes.reduce((acc, a) => {
-                            if (a.side === 3) {
-                                // left side of plot
-                                return a;
-                            }
-                            return acc;
-                        }, undefined);
-                        if (typeof yaxis !== "undefined") {
-                            // calculate data min/max for yaxis
-                            let extremes = data.reduce(
-                                (acc, entry) => {
-                                    if (entry[1] < acc[0]) {
-                                        acc[0] = entry[1];
-                                    }
-                                    if (entry[1] > acc[1]) {
-                                        acc[1] = entry[1];
-                                    }
-
-                                    return acc;
-                                },
-                                [Number.MAX_VALUE, -Number.MAX_VALUE]
-                            );
-                            let range = extremes[1] - extremes[0];
-                            let scale = range * 0.1;
-
-                            yaxis.update(
-                                {
-                                    min: extremes[0] - scale,
-                                    max: extremes[1] + scale,
-                                    reversed: displayOptions.get("yAxisReversed")
-                                },
-                                false
-                            );
+            if (typeof chart !== "undefined" && typeof data !== "undefined") {
+                // update the yaxis direction/bounds
+                if (typeof extremes !== "undefined") {
+                    let yaxis = chart.axes.reduce((acc, a) => {
+                        // left side of plot
+                        if (a.side === 3) {
+                            return a;
                         }
+                        return acc;
+                    }, undefined);
+                    if (typeof yaxis !== "undefined") {
+                        let range = extremes.y.max - extremes.y.min;
+                        let scale = range * 0.1;
 
-                        series.update(
+                        yaxis.update(
                             {
-                                type: displayOptions.get("markerType") || "scatter",
-                                colorByPoint: colorByPoint,
-                                color: PRIMARY_COLOR,
-                                showInLegend: false,
-                                data: data
+                                min: extremes.y.min - scale,
+                                max: extremes.y.max + scale,
+                                reversed: displayOptions.get("yAxisReversed")
                             },
                             false
                         );
-                    } else {
-                        console.warn(
-                            "Error in ChartUtil.updateSingleSeries: could not find existing series"
-                        );
-                        return false;
-                    }
-
-                    if (typeof note !== "undefined") {
-                        chart.subtitle.update({ text: note });
                     }
                 }
+
+                // update the chart note
+                if (typeof note !== "undefined") {
+                    chart.subtitle.update({ text: note });
+                }
+
+                // update each series
+                chart.series.map((series, i) => {
+                    series.update(
+                        {
+                            type: displayOptions.get("markerType") || "scatter",
+                            colorByPoint: colorByPoint,
+                            color:
+                                appConfig.CHART_SERIES_COLORS[
+                                    i % appConfig.CHART_SERIES_COLORS.length
+                                ],
+                            showInLegend: false,
+                            data: data[i]
+                        },
+                        false
+                    );
+                });
+
                 chart.redraw();
+
+                return true;
+            }
+            return false;
+        } else {
+            console.warn("Error in ChartUtil.updateSingleSeries: Missing chart options", options);
+            return false;
+        }
+    }
+
+    static updateSingleSeriesWithColor(options) {
+        if (this.updateSeriesWithColor(options)) {
+            return this.updateSingleSeries(options, true);
+        }
+        return false;
+    }
+
+    static updateMultiSeriesWithColor(options) {
+        if (this.updateSeriesWithColor(options)) {
+            return this.updateMultiSeries(options, true);
+        }
+        return false;
+    }
+
+    static updateSeriesWithColor(options, redraw = false) {
+        let node = options.node;
+        let extremes = options.dataExtremes;
+
+        if (typeof node !== "undefined") {
+            let chart = nodeChartMap.get(node.id);
+            if (typeof chart !== "undefined") {
+                if (typeof extremes !== "undefined") {
+                    let caxis = chart.axes.reduce((acc, a) => {
+                        if (a instanceof Highcharts.ColorAxis) {
+                            return a;
+                        }
+                        return acc;
+                    }, undefined);
+                    if (typeof caxis !== "undefined") {
+                        caxis.setExtremes(extremes.z.min, extremes.z.max, redraw);
+                    }
+                }
             }
             return true;
         } else {
@@ -151,44 +183,10 @@ export default class ChartUtil {
         }
     }
 
-    static updateMultiSeries(options) {
-        return false;
-    }
-
-    static updateSingleSeriesWithColor(options) {
-        let node = options.node;
-        let dataExtremes = options.dataExtremes;
-
-        if (typeof node !== "undefined") {
-            let chart = nodeChartMap.get(node.id);
-            if (typeof chart !== "undefined") {
-                if (typeof dataExtremes !== "undefined") {
-                    let caxis = chart.axes.reduce((acc, a) => {
-                        if (a instanceof Highcharts.ColorAxis) {
-                            return a;
-                        }
-                        return acc;
-                    }, undefined);
-                    if (typeof caxis !== "undefined") {
-                        caxis.setExtremes(dataExtremes.min, dataExtremes.max, false);
-                    }
-                }
-            }
-            return this.updateSingleSeries(options, true);
-        } else {
-            console.warn("Error in ChartUtil.updateSingleSeries: Missing chart options", options);
-            return false;
-        }
-    }
-    static updateMultiSeriesWithColor(options) {
-        return false;
-    }
-
     static plotSingleSeries(options) {
         try {
             let node = options.node;
             let data = options.data;
-            let dataExtremes = options.dataExtremes || {};
             let keys = options.keys;
             let displayOptions = options.displayOptions;
             let onZoom = options.onZoom;
@@ -202,199 +200,34 @@ export default class ChartUtil {
                 if (data.length === 0) {
                     data.push([new Date() - 0, 0, 0]);
                 }
-                let chart = Highcharts.chart(options.node, {
-                    chart: {
-                        zoomType: "x",
-                        animation: false,
-                        width: CHART_WIDTH,
-                        height: CHART_HEIGHT,
-                        spacingBottom: 10,
-                        marginTop: 58,
-                        style: {
-                            fontFamily: "'Roboto', Helvetica, Arial, sans-serif"
-                        },
-                        resetZoomButton: {
-                            relativeTo: "chart",
-                            position: {
-                                align: "left",
-                                verticalAlign: "bottom",
-                                x: 10,
-                                y: -30
-                            },
-                            theme: {
-                                style: {
-                                    fontSize: "1.2rem",
-                                    fontWeight: 500,
-                                    textTransform: "uppercase"
-                                }
-                            }
-                        },
-                        events: {
-                            click: function(e) {
-                                if (typeof options.onClick === "function") {
-                                    options.onClick(hoveredPoint);
+
+                let chartConfig = this.getBaseChartConfig(options);
+
+                chartConfig.chart.events = {
+                    click: function(e) {
+                        if (typeof options.onClick === "function") {
+                            options.onClick(hoveredPoint);
+                        }
+                    }
+                };
+
+                chartConfig.series = [
+                    {
+                        type: displayOptions.get("markerType") || "scatter",
+                        color: appConfig.CHART_SERIES_COLORS[0],
+                        showInLegend: false,
+                        data: data,
+                        point: {
+                            events: {
+                                mouseOver: function(e) {
+                                    hoveredPoint = e.target;
                                 }
                             }
                         }
-                    },
+                    }
+                ];
 
-                    annotations: [ChartUtil.getDateIndicatorOptions()],
-
-                    boost: {
-                        usePreallocated: false,
-                        useGPUTranslations: false,
-                        seriesThreshold: "1" // always use boost for consistency
-                    },
-
-                    xAxis: {
-                        id: "x-axis",
-                        type: "datetime",
-                        gridLineWidth: 1,
-                        lineWidth: 2,
-                        title: {
-                            text: keys.xKey,
-                            style: {
-                                fontSize: "1.4rem"
-                            }
-                        },
-                        dateTimeLabelFormats: {
-                            millisecond: "%H:%M:%S.%L",
-                            second: "%H:%M:%S",
-                            minute: "%H:%M",
-                            hour: "%H:%M",
-                            day: "%b %e",
-                            week: "%b %e",
-                            month: "%b, %Y",
-                            year: "%Y"
-                        },
-                        labels: {
-                            style: {
-                                textAlign: "center"
-                            },
-                            formatter: this.getTickFormatter()
-                        },
-                        events: {
-                            afterSetExtremes: zoomEvent => {
-                                if (zoomEvent.type === "setExtremes") {
-                                    if (
-                                        typeof zoomEvent.userMin === "undefined" &&
-                                        typeof zoomEvent.userMax === "undefined"
-                                    ) {
-                                        onZoom();
-                                    } else {
-                                        onZoom([zoomEvent.userMin, zoomEvent.userMax]);
-                                    }
-                                }
-                            }
-                        }
-                    },
-
-                    yAxis: [
-                        {
-                            id: "y-axis",
-                            minPadding: 0,
-                            maxPadding: 0,
-                            reversed: displayOptions.get("yAxisReversed"),
-                            startOnTick: false,
-                            endOnTick: false,
-                            tickPixelInterval: 50,
-                            lineWidth: 2,
-                            title: {
-                                text: keys.yKey,
-                                style: {
-                                    fontSize: "1.4rem"
-                                }
-                            },
-                            labels: {
-                                x: -4
-                            }
-                        }
-                    ],
-
-                    title: {
-                        text: title,
-                        align: "left",
-                        style: {
-                            fontSize: "1.5rem",
-                            fontWeight: "500"
-                        }
-                    },
-
-                    subtitle: {
-                        text: note,
-                        align: "right",
-                        verticalAlign: "bottom",
-                        y: 0,
-                        x: -10,
-                        style: {
-                            fontSize: "1.2rem",
-                            fontWeight: "300",
-                            fontStyle: "italic"
-                        }
-                    },
-
-                    credits: {
-                        enabled: false
-                    },
-
-                    legend: {
-                        enabled: false
-                    },
-
-                    exporting: {
-                        buttons: {
-                            contextButton: {
-                                enabled: false
-                            }
-                        }
-                    },
-
-                    plotOptions: {
-                        series: {
-                            findNearestPointBy: "xy",
-                            marker: {
-                                radius: 4
-                            }
-                        }
-                    },
-
-                    tooltip: {
-                        crosshairs: false,
-                        followPointer: false,
-                        shadow: false,
-                        animation: false,
-                        hideDelay: 0,
-                        shared: false,
-                        borderRadius: 2,
-                        padding: 0,
-                        backgroundColor: "rgba(247,247,247,0)",
-                        borderWidth: 0,
-                        positioner: function() {
-                            return { x: 6, y: 28 };
-                        },
-                        style: {
-                            fontSize: "1.2rem"
-                        },
-                        useHTML: true,
-                        formatter: this.getTooltipFormatter(keys)
-                    },
-
-                    series: [
-                        {
-                            type: displayOptions.get("markerType") || "scatter",
-                            color: PRIMARY_COLOR,
-                            showInLegend: false,
-                            data: data,
-                            point: {
-                                events: {
-                                    mouseOver: function(e) {
-                                        hoveredPoint = e.target;
-                                    }
-                                }
-                            }
-                        }
-                    ]
-                });
+                let chart = Highcharts.chart(options.node, chartConfig);
                 nodeChartMap = nodeChartMap.set(options.node.id, chart);
             } else {
                 console.warn(
@@ -413,7 +246,7 @@ export default class ChartUtil {
         try {
             let node = options.node;
             let data = options.data;
-            let dataExtremes = options.dataExtremes || {};
+            let dataExtremes = options.dataExtremes || { z: {} };
             let keys = options.keys;
             let displayOptions = options.displayOptions;
             let onZoom = options.onZoom;
@@ -427,246 +260,85 @@ export default class ChartUtil {
                 if (data.length === 0) {
                     data.push([new Date() - 0, 0, 0]);
                 }
-                let chart = Highcharts.chart(options.node, {
-                    chart: {
-                        zoomType: "x",
-                        animation: false,
-                        width: CHART_WIDTH,
-                        height: CHART_HEIGHT,
-                        spacingBottom: 10,
-                        marginTop: 58,
-                        marginRight: 90,
-                        style: {
-                            fontFamily: "'Roboto', Helvetica, Arial, sans-serif"
-                        },
-                        resetZoomButton: {
-                            relativeTo: "chart",
-                            position: {
-                                align: "left",
-                                verticalAlign: "bottom",
-                                x: 10,
-                                y: -30
-                            },
-                            theme: {
-                                style: {
-                                    fontSize: "1.2rem",
-                                    fontWeight: 500,
-                                    textTransform: "uppercase"
-                                }
-                            }
-                        },
-                        events: {
-                            click: function(e) {
-                                if (typeof options.onClick === "function") {
-                                    options.onClick(hoveredPoint);
-                                }
-                            }
+
+                let chartConfig = this.getBaseChartConfig(options);
+
+                chartConfig.chart.marginRight = 90;
+                chartConfig.chart.events = {
+                    click: function(e) {
+                        if (typeof options.onClick === "function") {
+                            options.onClick(hoveredPoint);
                         }
-                    },
+                    }
+                };
 
-                    annotations: [ChartUtil.getDateIndicatorOptions()],
-
-                    boost: {
-                        usePreallocated: false,
-                        useGPUTranslations: false,
-                        seriesThreshold: "1" // always use boost for consistency
-                    },
-
-                    xAxis: {
-                        id: "x-axis",
-                        type: "datetime",
-                        gridLineWidth: 1,
-                        lineWidth: 2,
-                        title: {
-                            text: keys.xKey,
-                            style: {
-                                fontSize: "1.4rem"
-                            }
-                        },
-                        dateTimeLabelFormats: {
-                            millisecond: "%H:%M:%S.%L",
-                            second: "%H:%M:%S",
-                            minute: "%H:%M",
-                            hour: "%H:%M",
-                            day: "%b %e",
-                            week: "%b %e",
-                            month: "%b, %Y",
-                            year: "%Y"
-                        },
-                        labels: {
-                            style: {
-                                textAlign: "center"
-                            },
-                            formatter: this.getTickFormatter()
-                        },
-                        events: {
-                            afterSetExtremes: zoomEvent => {
-                                if (zoomEvent.type === "setExtremes") {
-                                    if (
-                                        typeof zoomEvent.userMin === "undefined" &&
-                                        typeof zoomEvent.userMax === "undefined"
-                                    ) {
-                                        onZoom();
-                                    } else {
-                                        onZoom([zoomEvent.userMin, zoomEvent.userMax]);
-                                    }
-                                }
-                            }
-                        }
-                    },
-
-                    yAxis: [
-                        {
-                            id: "y-axis",
-                            minPadding: 0,
-                            maxPadding: 0,
-                            reversed: displayOptions.get("yAxisReversed"),
-                            startOnTick: false,
-                            endOnTick: false,
-                            tickPixelInterval: 50,
-                            lineWidth: 2,
-                            title: {
-                                text: keys.yKey,
-                                style: {
-                                    fontSize: "1.4rem"
-                                }
-                            },
-                            labels: {
-                                x: -4
-                            }
-                        },
-                        {
-                            // hacky color axis label yAxis
-                            id: "z-axis-label",
-                            gridLineWidth: 0,
-                            opposite: true,
-                            tickLength: 0,
-                            title: {
-                                text: keys.zKey,
-                                rotation: -90,
-                                margin: 30,
-                                style: {
-                                    fontSize: "1.4rem"
-                                }
-                            },
-                            labels: {
-                                enabled: false
-                            }
-                        }
-                    ],
-
-                    colorAxis: {
-                        id: "z-axis",
-                        reversed: false,
-                        min: dataExtremes.min,
-                        max: dataExtremes.max,
-                        stops: [
-                            [0, PRIMARY_COLOR],
-                            [0.1, PRIMARY_COLOR],
-                            [0.5, "#fffbbc"],
-                            [0.9, SECONDARY_COLOR],
-                            [1, SECONDARY_COLOR]
-                        ],
-                        title: {
-                            text: keys.zKey,
-                            style: {
-                                fontSize: "1.4rem"
-                            }
-                        },
-                        labels: {
-                            x: 2
-                        }
-                    },
-
+                chartConfig.yAxis.push({
+                    id: "z-axis-label",
+                    gridLineWidth: 0,
+                    opposite: true,
+                    tickLength: 0,
                     title: {
-                        text: title,
-                        align: "left",
+                        text: keys.zKey,
+                        rotation: -90,
+                        margin: 30,
                         style: {
-                            fontSize: "1.5rem",
-                            fontWeight: "500"
+                            fontSize: "1.4rem"
                         }
                     },
-
-                    subtitle: {
-                        text: note,
-                        align: "right",
-                        verticalAlign: "bottom",
-                        y: 0,
-                        x: -10,
-                        style: {
-                            fontSize: "1.2rem",
-                            fontWeight: "300",
-                            fontStyle: "italic"
-                        }
-                    },
-
-                    credits: {
+                    labels: {
                         enabled: false
-                    },
+                    }
+                });
 
-                    legend: {
-                        enabled: true,
-                        layout: "vertical",
-                        align: "right",
-                        verticalAlign: "middle",
-                        x: 15
-                    },
-
-                    exporting: {
-                        buttons: {
-                            contextButton: {
-                                enabled: false
-                            }
-                        }
-                    },
-
-                    plotOptions: {
-                        series: {
-                            findNearestPointBy: "xy",
-                            marker: {
-                                radius: 4
-                            }
-                        }
-                    },
-
-                    tooltip: {
-                        crosshairs: false,
-                        followPointer: false,
-                        shadow: false,
-                        animation: false,
-                        hideDelay: 0,
-                        shared: false,
-                        borderRadius: 2,
-                        padding: 0,
-                        backgroundColor: "rgba(247,247,247,0)",
-                        borderWidth: 0,
-                        positioner: function() {
-                            return { x: 6, y: 28 };
-                        },
+                chartConfig.colorAxis = {
+                    id: "z-axis",
+                    reversed: false,
+                    min: dataExtremes.z.min,
+                    max: dataExtremes.z.max,
+                    stops: [
+                        [0, appConfig.CHART_COLORBAR_COLORS[0]],
+                        [0.1, appConfig.CHART_COLORBAR_COLORS[0]],
+                        [0.5, appConfig.CHART_COLORBAR_COLORS[1]],
+                        [0.9, appConfig.CHART_COLORBAR_COLORS[2]],
+                        [1, appConfig.CHART_COLORBAR_COLORS[2]]
+                    ],
+                    title: {
+                        text: keys.zKey,
                         style: {
-                            fontSize: "1.2rem"
-                        },
-                        useHTML: true,
-                        formatter: this.getTooltipFormatter(keys)
+                            fontSize: "1.4rem"
+                        }
                     },
+                    labels: {
+                        x: 2
+                    }
+                };
 
-                    series: [
-                        {
-                            type: displayOptions.get("markerType") || "scatter",
-                            colorByPoint: true,
-                            color: PRIMARY_COLOR,
-                            showInLegend: false,
-                            data: data,
-                            point: {
-                                events: {
-                                    mouseOver: function(e) {
-                                        hoveredPoint = e.target;
-                                    }
+                chartConfig.legend = {
+                    enabled: true,
+                    layout: "vertical",
+                    align: "right",
+                    verticalAlign: "middle",
+                    x: 15
+                };
+
+                chartConfig.series = [
+                    {
+                        type: displayOptions.get("markerType") || "scatter",
+                        colorByPoint: true,
+                        color: appConfig.CHART_SERIES_COLORS[0],
+                        showInLegend: false,
+                        data: data,
+                        point: {
+                            events: {
+                                mouseOver: function(e) {
+                                    hoveredPoint = e.target;
                                 }
                             }
                         }
-                    ]
-                });
+                    }
+                ];
+
+                let chart = Highcharts.chart(options.node, chartConfig);
                 nodeChartMap = nodeChartMap.set(options.node.id, chart);
             } else {
                 console.warn(
@@ -701,6 +373,186 @@ export default class ChartUtil {
         }
     }
 
+    static getBaseChartConfig(options) {
+        let data = options.data;
+        let keys = options.keys;
+        let displayOptions = options.displayOptions;
+        let onZoom = options.onZoom;
+        let title = options.title || "Untitled";
+        let note = options.note || "";
+
+        return {
+            chart: {
+                zoomType: "x",
+                animation: false,
+                width: appConfig.CHART_WIDTH,
+                height: appConfig.CHART_HEIGHT,
+                spacingBottom: 10,
+                marginTop: 58,
+                style: {
+                    fontFamily: "'Roboto', Helvetica, Arial, sans-serif"
+                },
+                resetZoomButton: {
+                    relativeTo: "chart",
+                    position: {
+                        align: "left",
+                        verticalAlign: "bottom",
+                        x: 10,
+                        y: -30
+                    },
+                    theme: {
+                        style: {
+                            fontSize: "1.2rem",
+                            fontWeight: 500,
+                            textTransform: "uppercase"
+                        }
+                    }
+                }
+            },
+
+            annotations: [ChartUtil.getDateIndicatorOptions()],
+
+            boost: {
+                usePreallocated: false,
+                useGPUTranslations: false,
+                seriesThreshold: "1" // always use boost for consistency
+            },
+
+            xAxis: {
+                id: "x-axis",
+                type: "datetime",
+                gridLineWidth: 1,
+                lineWidth: 2,
+                title: {
+                    text: keys.xKey,
+                    style: {
+                        fontSize: "1.4rem"
+                    }
+                },
+                dateTimeLabelFormats: {
+                    millisecond: "%H:%M:%S.%L",
+                    second: "%H:%M:%S",
+                    minute: "%H:%M",
+                    hour: "%H:%M",
+                    day: "%b %e",
+                    week: "%b %e",
+                    month: "%b, %Y",
+                    year: "%Y"
+                },
+                labels: {
+                    style: {
+                        textAlign: "center"
+                    },
+                    formatter: this.getTickFormatter()
+                },
+                events: {
+                    afterSetExtremes: zoomEvent => {
+                        if (zoomEvent.type === "setExtremes") {
+                            if (
+                                typeof zoomEvent.userMin === "undefined" &&
+                                typeof zoomEvent.userMax === "undefined"
+                            ) {
+                                onZoom();
+                            } else {
+                                onZoom([zoomEvent.userMin, zoomEvent.userMax]);
+                            }
+                        }
+                    }
+                }
+            },
+
+            yAxis: [
+                {
+                    id: "y-axis",
+                    minPadding: 0,
+                    maxPadding: 0,
+                    reversed: displayOptions.get("yAxisReversed"),
+                    startOnTick: false,
+                    endOnTick: false,
+                    tickPixelInterval: 50,
+                    lineWidth: 2,
+                    title: {
+                        text: keys.yKey,
+                        style: {
+                            fontSize: "1.4rem"
+                        }
+                    },
+                    labels: {
+                        x: -4
+                    }
+                }
+            ],
+
+            title: {
+                text: title,
+                align: "left",
+                style: {
+                    fontSize: "1.5rem",
+                    fontWeight: "500"
+                }
+            },
+
+            subtitle: {
+                text: note,
+                align: "right",
+                verticalAlign: "bottom",
+                y: 0,
+                x: -10,
+                style: {
+                    fontSize: "1.2rem",
+                    fontWeight: "300",
+                    fontStyle: "italic"
+                }
+            },
+
+            credits: {
+                enabled: false
+            },
+
+            legend: {
+                enabled: false
+            },
+
+            exporting: {
+                buttons: {
+                    contextButton: {
+                        enabled: false
+                    }
+                }
+            },
+
+            plotOptions: {
+                series: {
+                    findNearestPointBy: "xy",
+                    marker: {
+                        radius: 4
+                    }
+                }
+            },
+
+            tooltip: {
+                crosshairs: false,
+                followPointer: false,
+                shadow: false,
+                animation: false,
+                hideDelay: 0,
+                shared: false,
+                borderRadius: 2,
+                padding: 0,
+                backgroundColor: "rgba(247,247,247,0)",
+                borderWidth: 0,
+                positioner: function() {
+                    return { x: 6, y: 28 };
+                },
+                style: {
+                    fontSize: "1.2rem"
+                },
+                useHTML: true,
+                formatter: this.getTooltipFormatter(keys)
+            }
+        };
+    }
+
     static clearPlot(node) {
         if (typeof nodeChartMap.get(node.id) !== "undefined") {
             nodeChartMap.get(node.id).destroy();
@@ -720,8 +572,8 @@ export default class ChartUtil {
                 filename: options.filename,
                 type: options.format,
                 width: options.width,
-                sourceWidth: CHART_WIDTH,
-                sourceHeight: CHART_HEIGHT
+                sourceWidth: appConfig.CHART_WIDTH,
+                sourceHeight: appConfig.CHART_HEIGHT
             });
         } else {
             console.warn(
@@ -825,7 +677,7 @@ export default class ChartUtil {
                     borderRadius: 0,
                     distance: 0,
                     shape: "diamond",
-                    backgroundColor: INDICATOR_COLOR,
+                    backgroundColor: appConfig.CHART_DATE_INDICATOR_COLOR,
                     text: " "
                 }
             ],
@@ -834,7 +686,7 @@ export default class ChartUtil {
                     points: sPoints,
                     type: "path",
                     fill: "none",
-                    stroke: INDICATOR_COLOR,
+                    stroke: appConfig.CHART_DATE_INDICATOR_COLOR,
                     strokeWidth: 2
                 }
             ],

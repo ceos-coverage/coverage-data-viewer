@@ -71,9 +71,9 @@ export default class ChartReducer {
                 .setIn(["charts", action.id, "dataError", "message"], action.data.message);
         } else {
             state = state.setIn(["charts", action.id, "data"], action.data);
-            if (typeof action.meta !== "undefined") {
-                state = state.setIn(["charts", action.id, "dataMeta"], action.meta);
-            }
+            // if (typeof action.meta !== "undefined") {
+            //     state = state.setIn(["charts", action.id, "dataMeta"], action.meta);
+            // }
             return state;
         }
     }

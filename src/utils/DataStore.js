@@ -56,18 +56,13 @@ export default class DataStore {
                                                         appStrings.WORKER_TASK_CLEAR_CACHE_ENTRY,
                                                     url: fetchOptions.url
                                                 })
-                                                .then(
-                                                    success => {
-                                                        console.log("cleared entry");
-                                                    },
-                                                    err => {
-                                                        console.warn(
-                                                            "Failed to clear entry: ",
-                                                            fetchOptions.url,
-                                                            err
-                                                        );
-                                                    }
-                                                );
+                                                .catch(err => {
+                                                    console.warn(
+                                                        "Failed to clear entry: ",
+                                                        fetchOptions.url,
+                                                        err
+                                                    );
+                                                });
                                         }
                                         resolve(result.data);
                                     },

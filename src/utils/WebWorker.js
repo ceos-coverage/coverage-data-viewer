@@ -224,11 +224,12 @@ export default class WebWorker extends WebWorkerCore {
             let data = this._transformRowData(decData, eventData.format, xFunc, yFunc, zFunc);
 
             // store decimation size
-            this._remoteData[eventData.url].meta.lastSize = dataRows.length;
+            // this._remoteData[eventData.url].meta.lastSize = dataRows.length;
 
             console.timeEnd("decimating");
 
-            resolve([data, this._remoteData[eventData.url].meta]);
+            // resolve([data, this._remoteData[eventData.url].meta]);
+            resolve({ data, meta: this._remoteData[eventData.url].meta });
         });
     }
 

@@ -65,18 +65,52 @@ export class Chart extends Component {
                     ? this.refs.chartWrapper
                     : document.getElementById(this.props.chart.get("nodeId"));
             if (prevProps.chart !== this.props.chart) {
+                let dec_size = this.props.chart.get("data").reduce((acc, data) => {
+                    return acc + data.meta.dec_size;
+                }, 0);
+                let sub_size = this.props.chart.get("data").reduce((acc, data) => {
+                    return acc + data.meta.sub_size;
+                }, 0);
+
+                let xKey = this.props.chart.getIn(["formOptions", "xAxis"]);
+                let yKey = this.props.chart.getIn(["formOptions", "yAxis"]);
+                let zKey = this.props.chart.getIn(["formOptions", "zAxis"]);
+                let extremes = {
+                    x: { min: Number.MAX_VALUE, max: -Number.MAX_VALUE },
+                    y: { min: Number.MAX_VALUE, max: -Number.MAX_VALUE },
+                    z: { min: Number.MAX_VALUE, max: -Number.MAX_VALUE }
+                };
+                extremes = this.props.chart.get("data").reduce((acc, data) => {
+                    if (data.meta.extremes[xKey].min < acc.x.min) {
+                        acc.x.min = data.meta.extremes[xKey].min;
+                    }
+                    if (data.meta.extremes[xKey].max > acc.x.max) {
+                        acc.x.max = data.meta.extremes[xKey].max;
+                    }
+                    if (data.meta.extremes[yKey].min < acc.y.min) {
+                        acc.y.min = data.meta.extremes[yKey].min;
+                    }
+                    if (data.meta.extremes[yKey].max > acc.y.max) {
+                        acc.y.max = data.meta.extremes[yKey].max;
+                    }
+                    if (typeof zKey !== "undefined") {
+                        if (data.meta.extremes[zKey].min < acc.z.min) {
+                            acc.z.min = data.meta.extremes[zKey].min;
+                        }
+                        if (data.meta.extremes[zKey].max > acc.z.max) {
+                            acc.z.max = data.meta.extremes[zKey].max;
+                        }
+                    }
+                    return acc;
+                }, extremes);
+
+                let data = this.props.chart.get("data").map(data => data.data);
+
                 ChartUtil.updateData({
                     node: node,
-                    data: this.props.chart.get("data"),
-                    dataExtremes: this.props.chart.get("dataMeta").extremes[
-                        this.props.chart.getIn(["formOptions", "zAxis"])
-                    ],
-                    note:
-                        Math.round(
-                            this.props.chart.get("dataMeta").dec_size /
-                                this.props.chart.get("dataMeta").sub_size *
-                                100
-                        ) + "% of points shown",
+                    data: data,
+                    dataExtremes: extremes,
+                    note: (dec_size / sub_size * 100).toFixed(1) + "% of points shown",
                     chartType: this.props.chart.get("chartType"),
                     displayOptions: this.props.chart.get("displayOptions")
                 });
