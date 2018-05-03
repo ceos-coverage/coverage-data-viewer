@@ -24,7 +24,7 @@ export const mapState = mapStateCore.mergeDeep(
 export const layerModel = layerModelCore.mergeDeep(
     Immutable.fromJS({
         insituMeta: {
-            variables: []
+            variables: Immutable.Set(["time", "depth", "temperature"])
         },
         vectorColor: appConfig.INSITU_VECTOR_COLORS[0]
     })

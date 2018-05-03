@@ -18,16 +18,8 @@ export default class ChartReducer {
         return state.setIn(["formOptions", "selectedTracks"], selected);
     }
 
-    static setXAxisVariable(state, action) {
-        return state;
-    }
-
-    static setYAxisVariable(state, action) {
-        return state;
-    }
-
-    static setZAxisVariable(state, action) {
-        return state;
+    static setAxisVariable(state, action) {
+        return state.setIn(["formOptions", action.axis], action.variable);
     }
 
     static initializeChart(state, action) {

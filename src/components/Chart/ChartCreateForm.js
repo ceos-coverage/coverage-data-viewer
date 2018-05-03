@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
+import Immutable from "immutable";
 import Radio, { RadioGroup } from "material-ui/Radio";
 import {
     FormLabel,
@@ -20,12 +21,12 @@ import * as appStrings from "constants/appStrings";
 import MiscUtil from "utils/MiscUtil";
 
 export class ChartCreateForm extends Component {
-    renderTrackList() {
-        let trackList = this.props.availableTracks
-            .filter(track => !track.get("isDisabled") && track.get("isActive"))
-            .toList()
-            .sort(MiscUtil.getImmutableObjectSort("title"));
+    selectAxisVariable(axis, variable) {
+        variable = variable !== appStrings.NO_DATA ? variable : undefined;
+        this.props.chartActions.setAxisVariable(axis, variable);
+    }
 
+    renderTrackList(trackList) {
         if (trackList.size > 0) {
             return trackList.map(track => (
                 <Checkbox
@@ -37,12 +38,93 @@ export class ChartCreateForm extends Component {
                     }
                 />
             ));
-        } else {
-            return "No datasets selected";
         }
+        return "No datasets selected";
+    }
+
+    renderVariableSelect(sharedVariableSet, nonSharedVariableSet, axis) {
+        if (sharedVariableSet.size > 0) {
+            return (
+                <RadioGroup
+                    aria-label={axis}
+                    name={axis}
+                    value={this.props.formOptions.get(axis) || appStrings.NO_DATA}
+                    onClick={evt => {
+                        this.selectAxisVariable(axis, evt.target.value);
+                    }}
+                    onChange={evt => this.selectAxisVariable(axis, evt.target.value)}
+                >
+                    {sharedVariableSet.map(variable => (
+                        <FormControlLabel
+                            key={"shared_var_" + variable}
+                            value={variable}
+                            control={<Radio color="primary" />}
+                            label={variable}
+                        />
+                    ))}
+                    <FormControlLabel
+                        value={appStrings.NO_DATA}
+                        control={<Radio color="primary" />}
+                        label={"None"}
+                    />
+                </RadioGroup>
+            );
+        }
+        return "No shared variables available";
+    }
+
+    renderVariableSelections(sharedVariableSet, nonSharedVariableSet) {
+        let selectorList = [
+            { label: "X-Axis", val: "xAxis" },
+            { label: "Y-Axis", val: "yAxis" },
+            { label: "Z-Axis", val: "zAxis" }
+        ];
+        return selectorList.map(x => {
+            return (
+                <LabelPopover
+                    key={"variable_selector_" + x.val}
+                    label={x.label}
+                    subtitle={this.props.formOptions.get(x.val) || "None"}
+                    className={styles.chartOption}
+                >
+                    {this.renderVariableSelect(sharedVariableSet, nonSharedVariableSet, x.val)}
+                </LabelPopover>
+            );
+        });
     }
 
     render() {
+        let trackList = this.props.availableTracks
+            .filter(track => !track.get("isDisabled") && track.get("isActive"))
+            .toList()
+            .sort(MiscUtil.getImmutableObjectSort("title"));
+
+        let sharedVariableSet =
+            trackList.size > 0
+                ? trackList
+                      .reduce((acc, track) => {
+                          if (typeof acc === "undefined") {
+                              return track.getIn(["insituMeta", "variables"]);
+                          }
+                          return acc.intersect(track.getIn(["insituMeta", "variables"]));
+                      }, undefined)
+                      .toList()
+                      .sort()
+                : [];
+
+        let nonSharedVariableSet =
+            trackList.size > 0
+                ? trackList
+                      .reduce((acc, track) => {
+                          if (typeof acc === "undefined") {
+                              return track.getIn(["insituMeta", "variables"]);
+                          }
+                          return acc.subtract(track.getIn(["insituMeta", "variables"]));
+                      }, undefined)
+                      .toList()
+                      .sort()
+                : [];
+
         return (
             <Paper elevation={3} className={styles.root}>
                 <div className={styles.options}>
@@ -51,104 +133,9 @@ export class ChartCreateForm extends Component {
                         subtitle={this.props.formOptions.get("selectedTracks").size + " Selected"}
                         className={styles.chartOption}
                     >
-                        <FormGroup>{this.renderTrackList()}</FormGroup>
+                        <FormGroup>{this.renderTrackList(trackList)}</FormGroup>
                     </LabelPopover>
-                    <LabelPopover label="X-Axis" subtitle="Time" className={styles.chartOption}>
-                        <FormLabel component="legend">Shared Variables</FormLabel>
-                        <FormGroup>
-                            <RadioGroup aria-label="xaxis" name="xaxis" value="time">
-                                <FormControlLabel
-                                    value="time"
-                                    control={<Radio color="primary" />}
-                                    label="Time"
-                                />
-                                <FormControlLabel
-                                    value="ext_temp"
-                                    control={<Radio color="primary" />}
-                                    label="Ext_Temp"
-                                />
-                                <FormControlLabel
-                                    value="Depth"
-                                    control={<Radio color="primary" />}
-                                    label="Depth"
-                                />
-                            </RadioGroup>
-                        </FormGroup>
-                        <FormLabel component="legend">Non-Shared Variables</FormLabel>
-                        <FormGroup>
-                            <Typography
-                                variant="body1"
-                                component="span"
-                                className={styles.nonShared}
-                            >
-                                Salinity, Pressure, Light
-                            </Typography>
-                        </FormGroup>
-                    </LabelPopover>
-                    <LabelPopover label="Y-Axis" subtitle="Depth" className={styles.chartOption}>
-                        <FormLabel component="legend">Shared Variables</FormLabel>
-                        <FormGroup>
-                            <RadioGroup aria-label="yaxis" name="yaxis" value="depth">
-                                <FormControlLabel
-                                    value="time"
-                                    control={<Radio color="primary" />}
-                                    label="Time"
-                                />
-                                <FormControlLabel
-                                    value="ext_temp"
-                                    control={<Radio color="primary" />}
-                                    label="Ext_Temp"
-                                />
-                                <FormControlLabel
-                                    value="depth"
-                                    control={<Radio color="primary" />}
-                                    label="Depth"
-                                />
-                            </RadioGroup>
-                        </FormGroup>
-                        <FormLabel component="legend">Non-Shared Variables</FormLabel>
-                        <FormGroup>
-                            <Typography
-                                variant="body1"
-                                component="span"
-                                className={styles.nonShared}
-                            >
-                                Salinity, Pressure, Light
-                            </Typography>
-                        </FormGroup>
-                    </LabelPopover>
-                    <LabelPopover label="Z-Axis" subtitle="Ext_Temp" className={styles.chartOption}>
-                        <FormLabel component="legend">Shared Variables</FormLabel>
-                        <FormGroup>
-                            <RadioGroup aria-label="zaxis" name="zaxis" value="ext_temp">
-                                <FormControlLabel
-                                    value="time"
-                                    control={<Radio color="primary" />}
-                                    label="Time"
-                                />
-                                <FormControlLabel
-                                    value="ext_temp"
-                                    control={<Radio color="primary" />}
-                                    label="Ext_Temp"
-                                />
-                                <FormControlLabel
-                                    value="Depth"
-                                    control={<Radio color="primary" />}
-                                    label="Depth"
-                                />
-                            </RadioGroup>
-                        </FormGroup>
-                        <FormLabel component="legend">Non-Shared Variables</FormLabel>
-                        <FormGroup>
-                            <Typography
-                                variant="body1"
-                                component="span"
-                                className={styles.nonShared}
-                            >
-                                Salinity, Pressure, Light
-                            </Typography>
-                        </FormGroup>
-                    </LabelPopover>
+                    {this.renderVariableSelections(sharedVariableSet, nonSharedVariableSet)}
                 </div>
                 <Button
                     variant="raised"

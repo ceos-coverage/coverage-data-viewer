@@ -11,16 +11,8 @@ export function setTrackSelected(trackId, isSelected) {
     return { type: types.SET_CHART_TRACK_SELECTED, trackId, isSelected };
 }
 
-export function setXAxisVariable(variable) {
-    return { type: types.SET_X_AXIS_VARIABLE, variable };
-}
-
-export function setYAxisVariable(variable) {
-    return { type: types.SET_Y_AXIS_VARIABLE, variable };
-}
-
-export function setZAxisVariable(variable) {
-    return { type: types.SET_Z_AXIS_VARIABLE, variable };
+export function setAxisVariable(axis, variable) {
+    return { type: types.SET_AXIS_VARIABLE, axis, variable };
 }
 
 export function setChartFormError(key, value) {

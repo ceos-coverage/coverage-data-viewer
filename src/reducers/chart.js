@@ -7,14 +7,8 @@ export default function chart(state = chartState, action, opt_reducer = ChartRed
         case actionTypes.SET_CHART_TRACK_SELECTED:
             return opt_reducer.setTrackSelected(state, action);
 
-        case actionTypes.SET_X_AXIS_VARIABLE:
-            return opt_reducer.setXAxisVariable(state, action);
-
-        case actionTypes.SET_Y_AXIS_VARIABLE:
-            return opt_reducer.setYAxisVariable(state, action);
-
-        case actionTypes.SET_Z_AXIS_VARIABLE:
-            return opt_reducer.setZAxisVariable(state, action);
+        case actionTypes.SET_AXIS_VARIABLE:
+            return opt_reducer.setAxisVariable(state, action);
 
         case actionTypes.INITIALIZE_CHART:
             return opt_reducer.initializeChart(state, action);

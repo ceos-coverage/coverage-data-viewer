@@ -1,10 +1,13 @@
 .root {
     display: inline-block;
+    position: relative;
 }
 
 .button {
     padding: 0px 0.5rem;
     display: block;
+    width: 100%;
+    position: relative;
 }
 .label {
     display: flex;
@@ -17,6 +20,9 @@
 .subtitle {
     display: block;
     text-align: left;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 .content {
     padding: 1rem;

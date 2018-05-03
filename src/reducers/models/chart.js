@@ -19,7 +19,7 @@ export const chartModel = Immutable.fromJS({
         selectedTracks: [],
         xAxis: "time",
         yAxis: "depth",
-        zAxis: undefined
+        zAxis: "temperature"
     },
     displayOptions: {
         isOpen: false,
