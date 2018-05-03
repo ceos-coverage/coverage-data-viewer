@@ -11,11 +11,11 @@
 SOURCE_BRANCH=${GIT_BRANCH#*/}
 
 BUILD_VERSION=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g' | tr -d '[[:space:]]')
-PROJECT_NAME="common-mapping-client/cmc-core"
-CONTAINER_NAME="common-mapping-client_cmc-core"
+PROJECT_NAME="oiip-data-viewer"
+CONTAINER_NAME="oiip-data-viewer"
 IMAGE_NAME="${PROJECT_NAME}:latest"
 IMAGE_NAME_TAG="${PROJECT_NAME}:${BUILD_VERSION}-${BUILD_NUMBER}"
-BUNDLE_NAME="cmc-core-${BUILD_VERSION}-${BUILD_NUMBER}"
+BUNDLE_NAME="oiip-${BUILD_VERSION}-${BUILD_NUMBER}"
 
 if [[ -z "${SOURCE_BRANCH// }" ]]; then
   echo "Could not resolve branch. Exiting."
@@ -32,13 +32,13 @@ if [ ! $? -eq 0 ]; then
   exit 1
 fi
 
-echo "Testing..."
-npm run test --nowebgl --includecoretests
+# echo "Testing..."
+# npm run test --nowebgl --includecoretests
 
-if [ ! $? -eq 0 ]; then
-  echo "Test failed."
-  exit 1
-fi
+# if [ ! $? -eq 0 ]; then
+#   echo "Test failed."
+#   exit 1
+# fi
 
 echo "Building..."
 npm run build
@@ -49,14 +49,14 @@ if [ ! -d "dist" ]; then
   exit 1
 fi
 
-echo "Checking test results..."
-if [ ! -d "test-results" ]; then
-  echo "No test-results available."
-  exit 1
-fi
+# echo "Checking test results..."
+# if [ ! -d "test-results" ]; then
+#   echo "No test-results available."
+#   exit 1
+# fi
 
-echo "Moving test results..."
-mv test-results dist/
+# echo "Moving test results..."
+# mv test-results dist/
 
 echo "Checking branches dir..."
 if [ ! -d "branches" ]; then
@@ -81,7 +81,7 @@ echo "Building docker image..."
 sudo docker build -t ${PROJECT_NAME} -f scripts/deployAssets/Dockerfile .
 
 echo "Starting container..."
-sudo docker run -d -p 49160:80 --name ${CONTAINER_NAME} ${PROJECT_NAME}
+sudo docker run -d -p 49180:80 --name ${CONTAINER_NAME} ${PROJECT_NAME}
 
 echo "Moving dist back to branches..."
 mv dist branches
