@@ -82,8 +82,6 @@ export default class ChartUtil {
         let extremes = options.dataExtremes;
         let note = options.note;
 
-        console.log(data);
-
         // check if we have data a place to render to
         if (typeof node !== "undefined") {
             let chart = nodeChartMap.get(node.id);
@@ -122,7 +120,6 @@ export default class ChartUtil {
                     series.update(
                         {
                             type: displayOptions.get("markerType") || series.options.type,
-                            colorByPoint: series.options.colorByPoint,
                             color: series.options.color,
                             showInLegend: series.options.showInLegend,
                             data: data[i]
@@ -314,7 +311,6 @@ export default class ChartUtil {
                     chartConfig.series.push({
                         name: seriesTitles[i],
                         type: displayOptions.get("markerType") || "scatter",
-                        colorByPoint: true,
                         color: appConfig.CHART_SERIES_COLORS[i],
                         showInLegend: false,
                         data: data,
@@ -495,7 +491,6 @@ export default class ChartUtil {
                     chartConfig.series.push({
                         name: seriesTitles[i],
                         type: displayOptions.get("markerType") || "scatter",
-                        colorByPoint: true,
                         color: appConfig.CHART_SERIES_COLORS[i],
                         showInLegend: false,
                         data: data,
