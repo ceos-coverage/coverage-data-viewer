@@ -488,6 +488,13 @@ export default class ChartUtil {
                     verticalAlign: "middle",
                     x: 15
                 };
+                // chartConfig.legend = {
+                //     enabled: true,
+                //     floating: true,
+                //     layout: "horizontal",
+                //     align: "left",
+                //     verticalAlign: "top",
+                // };
 
                 chartConfig.series = [];
                 for (let i = 0; i < seriesNum; ++i) {
@@ -676,7 +683,8 @@ export default class ChartUtil {
                     marker: {
                         radius: 3,
                         symbol: "circle"
-                    }
+                    },
+                    lineWidth: 3
                 }
             },
 
