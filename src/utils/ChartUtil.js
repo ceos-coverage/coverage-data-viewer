@@ -134,21 +134,21 @@ export default class ChartUtil {
             }
             return false;
         } else {
-            console.warn("Error in ChartUtil.updateSingleSeries: Missing chart options", options);
+            console.warn("Error in ChartUtil.updateSeries: Missing chart options", options);
             return false;
         }
     }
 
     static updateSingleSeriesWithColor(options) {
         if (this.updateSeriesWithColor(options)) {
-            return this.updateSingleSeries(options, true);
+            return this.updateSingleSeries(options);
         }
         return false;
     }
 
     static updateMultiSeriesWithColor(options) {
         if (this.updateSeriesWithColor(options)) {
-            return this.updateMultiSeries(options, true);
+            return this.updateMultiSeries(options);
         }
         return false;
     }
@@ -174,7 +174,10 @@ export default class ChartUtil {
             }
             return true;
         } else {
-            console.warn("Error in ChartUtil.updateSingleSeries: Missing chart options", options);
+            console.warn(
+                "Error in ChartUtil.updateSeriesWithColor: Missing chart options",
+                options
+            );
             return false;
         }
     }
@@ -208,7 +211,7 @@ export default class ChartUtil {
                         type: displayOptions.get("markerType") || "scatter",
                         color: appConfig.CHART_SERIES_COLORS[i],
                         showInLegend: false,
-                        data: data,
+                        data: data[i],
                         point: {
                             events: {
                                 mouseOver: function(e) {
@@ -313,7 +316,7 @@ export default class ChartUtil {
                         type: displayOptions.get("markerType") || "scatter",
                         color: appConfig.CHART_SERIES_COLORS[i],
                         showInLegend: false,
-                        data: data,
+                        data: data[i],
                         point: {
                             events: {
                                 mouseOver: function(e) {
@@ -388,7 +391,7 @@ export default class ChartUtil {
                         type: displayOptions.get("markerType") || "scatter",
                         color: appConfig.CHART_SERIES_COLORS[i],
                         showInLegend: true,
-                        data: data,
+                        data: data[i],
                         point: {
                             events: {
                                 mouseOver: function(e) {
@@ -493,7 +496,7 @@ export default class ChartUtil {
                         type: displayOptions.get("markerType") || "scatter",
                         color: appConfig.CHART_SERIES_COLORS[i],
                         showInLegend: false,
-                        data: data,
+                        data: data[i],
                         point: {
                             events: {
                                 mouseOver: function(e) {
@@ -561,9 +564,7 @@ export default class ChartUtil {
             annotations: [ChartUtil.getDateIndicatorOptions()],
 
             boost: {
-                usePreallocated: false,
-                useGPUTranslations: false,
-                seriesThreshold: "1" // always use boost for consistency
+                seriesThreshold: 1 // always use boost for consistency
             },
 
             xAxis: {
@@ -673,7 +674,7 @@ export default class ChartUtil {
                 series: {
                     findNearestPointBy: "xy",
                     marker: {
-                        radius: 4,
+                        radius: 3,
                         symbol: "circle"
                     }
                 }
