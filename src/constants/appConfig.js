@@ -37,7 +37,8 @@ const APP_CONFIG = Immutable.fromJS({
         paletteConfig: "default-data/palettes_oiip.json",
         geoserverBase: "https://oiip.jpl.nasa.gov/geoserver/ows",
         solrBase: "https://oiip.jpl.nasa.gov/solr/",
-        decimatorMiddleware: "http://localhost:8080/getData",
+        decimatorMiddleware: "http://icewhale.jpl.nasa.gov:49181/getData",
+        // decimatorMiddleware: "http://localhost:49181/getData",
         layerSearch: {
             defaultFacetSearch:
                 "https://oiip.jpl.nasa.gov/solr/?facet.field=measurement_name&facet.field=category&facet.field=project&facet=on&indent=on&q=*:*&rows=0&wt=json"
