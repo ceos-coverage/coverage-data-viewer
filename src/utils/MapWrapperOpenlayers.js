@@ -593,21 +593,41 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
     }
 
     createVectorTileTrackLayerStyles(color = false) {
-        return new Ol_Style({
-            fill: new Ol_Style_Fill({
-                color: color
-            }),
-            stroke: new Ol_Style_Stroke({
-                color: color,
-                width: 1
-            }),
-            image: new Ol_Style_Circle({
-                radius: 4,
-                fill: new Ol_Style_Fill({
-                    color: color
-                })
-            })
-        });
+        return (feature, resolution) => {
+            if (resolution > 0.017578125) {
+                return new Ol_Style({
+                    fill: new Ol_Style_Fill({
+                        color: color
+                    }),
+                    stroke: new Ol_Style_Stroke({
+                        color: color,
+                        width: 2
+                    }),
+                    image: new Ol_Style_Circle({
+                        radius: 0.5,
+                        fill: new Ol_Style_Fill({
+                            color: color
+                        })
+                    })
+                });
+            } else {
+                return new Ol_Style({
+                    fill: new Ol_Style_Fill({
+                        color: color
+                    }),
+                    stroke: new Ol_Style_Stroke({
+                        color: color,
+                        width: 1
+                    }),
+                    image: new Ol_Style_Circle({
+                        radius: 4,
+                        fill: new Ol_Style_Fill({
+                            color: color
+                        })
+                    })
+                });
+            }
+        };
     }
 
     createPointHighlightStyle(color = false) {
@@ -619,7 +639,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                         color: "#000",
                         width: 1.25
                     }),
-                    radius: 9
+                    radius: 7
                 }),
                 zIndex: 2
             }),
@@ -632,7 +652,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                         color: "#000",
                         width: 1.25
                     }),
-                    radius: 6
+                    radius: 4
                 }),
                 zIndex: 2
             })
@@ -810,12 +830,14 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                         }
                     }
                 },
-                undefined,
-                mapLayer => {
-                    return (
-                        mapLayer.getVisible() &&
-                        mapLayer.get("_layerType") === appStrings.LAYER_GROUP_TYPE_INSITU_DATA
-                    );
+                {
+                    layerFilter: mapLayer => {
+                        return (
+                            mapLayer.getVisible() &&
+                            mapLayer.get("_layerType") === appStrings.LAYER_GROUP_TYPE_INSITU_DATA
+                        );
+                    },
+                    hitTolerance: 3
                 }
             );
 
