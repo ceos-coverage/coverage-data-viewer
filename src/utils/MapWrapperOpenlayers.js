@@ -602,12 +602,6 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                     stroke: new Ol_Style_Stroke({
                         color: color,
                         width: 2
-                    }),
-                    image: new Ol_Style_Circle({
-                        radius: 0.5,
-                        fill: new Ol_Style_Fill({
-                            color: color
-                        })
                     })
                 });
             } else {
@@ -816,10 +810,16 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
         try {
             let data = []; // the collection of pixel data to return
             let mapLayers = this.map.getLayers(); // the layers to search
-            this.map.forEachFeatureAtPixel(
+            let coord = this.map.getCoordinateFromPixel(pixel);
+            this.map.forEachLayerAtPixel(
                 pixel,
-                (feature, mapLayer) => {
+                mapLayer => {
                     if (mapLayer) {
+                        let feature = mapLayer
+                            .getSource()
+                            .getClosestFeatureToCoordinate(coord, feature => {
+                                return feature.getGeometry() instanceof Ol_Geom_Point;
+                            });
                         if (feature.getGeometry() instanceof Ol_Geom_Point) {
                             data.push({
                                 layerId: mapLayer.get("_layerId"),
@@ -830,14 +830,12 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                         }
                     }
                 },
-                {
-                    layerFilter: mapLayer => {
-                        return (
-                            mapLayer.getVisible() &&
-                            mapLayer.get("_layerType") === appStrings.LAYER_GROUP_TYPE_INSITU_DATA
-                        );
-                    },
-                    hitTolerance: 3
+                undefined,
+                mapLayer => {
+                    return (
+                        mapLayer.getVisible() &&
+                        mapLayer.get("_layerType") === appStrings.LAYER_GROUP_TYPE_INSITU_DATA
+                    );
                 }
             );
 
