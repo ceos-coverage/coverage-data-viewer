@@ -158,10 +158,8 @@ export function zoomChartData(chartId, bounds) {
     };
 }
 
-export function setChartDecimationRate(chartId, decimationRate) {
+export function refreshChart(chartId) {
     return (dispatch, getState) => {
-        dispatch(setChartDisplayOptions(chartId, { decimationRate: decimationRate }));
-
         let state = getState();
         let chart = state.chart.getIn(["charts", chartId]);
         let bounds =

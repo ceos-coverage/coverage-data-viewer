@@ -2,10 +2,12 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
+import Immutable from "immutable";
 import { InputLabel } from "material-ui/Input";
 import { MenuItem } from "material-ui/Menu";
 import Select from "material-ui/Select";
 import { FormControl, FormGroup } from "material-ui/Form";
+import Grid from "material-ui/Grid";
 import TextField from "material-ui/TextField";
 import Button from "material-ui/Button";
 import Typography from "material-ui/Typography";
@@ -22,28 +24,105 @@ export class ChartSettings extends Component {
     constructor(props) {
         super(props);
 
-        this.displayOptions = {};
+        this.displayOptions = Immutable.Map();
+        this.updateTimeout = undefined;
     }
 
     componentDidUpdate(prevProps) {
-        this.displayOptions.decimationRate = this.props.displayOptions.get("decimationRate");
+        if (!prevProps.displayOptions.get("isOpen") && this.props.displayOptions.get("isOpen")) {
+            this.displayOptions = Immutable.Map();
+        }
+    }
+
+    bufferDisplayOptionsUpdate(options) {
+        this.displayOptions = this.displayOptions.mergeDeep(options);
+        if (typeof this.updateTimeout !== "undefined") {
+            clearTimeout(this.updateTimeout);
+            this.updateTimeout = undefined;
+        }
+        this.updateTimeout = setTimeout(() => {
+            this.props.chartActions.setChartDisplayOptions(
+                this.props.chartId,
+                this.displayOptions.toJS()
+            );
+
+            if (typeof this.displayOptions.get("decimationRate") !== "undefined") {
+                this.props.chartActions.refreshChart(this.props.chartId);
+            }
+            this.displayOptions = this.displayOptions.clear();
+            clearTimeout(this.updateTimeout);
+            this.updateTimeout = undefined;
+        }, 500);
     }
 
     closeSettings() {
         if (this.props.displayOptions.get("isOpen")) {
-            if (
-                this.displayOptions.decimationRate !==
-                this.props.displayOptions.get("decimationRate")
-            ) {
-                this.props.chartActions.setChartDecimationRate(
-                    this.props.chartId,
-                    this.displayOptions.decimationRate
-                );
-            }
-
             this.props.chartActions.setChartDisplayOptions(this.props.chartId, {
                 isOpen: false
             });
+        }
+    }
+
+    renderMinMaxInput() {
+        if (typeof this.props.formOptions.get("zAxis") !== "undefined") {
+            return (
+                <FormGroup>
+                    <Grid container justify="space-between">
+                        <Grid item xs={5}>
+                            <TextField
+                                id="min_bound"
+                                defaultValue={this.props.displayOptions
+                                    .get("customZMin")
+                                    .toString()}
+                                disabled={!this.props.displayOptions.get("useCustomZAxisBounds")}
+                                label="Z-Axis Min"
+                                margin="dense"
+                                fullWidth={true}
+                                onChange={evt =>
+                                    this.bufferDisplayOptionsUpdate({
+                                        customZMin: parseFloat(evt.target.value) || 0.0
+                                    })
+                                }
+                                inputProps={{
+                                    type: "number"
+                                }}
+                            />
+                        </Grid>
+                        <Grid item xs={5}>
+                            <TextField
+                                id="max_bound"
+                                defaultValue={this.props.displayOptions
+                                    .get("customZMax")
+                                    .toString()}
+                                disabled={!this.props.displayOptions.get("useCustomZAxisBounds")}
+                                label="Z-Axis Max"
+                                margin="dense"
+                                fullWidth={true}
+                                onChange={evt =>
+                                    this.bufferDisplayOptionsUpdate({
+                                        customZMax: parseFloat(evt.target.value) || 0.0
+                                    })
+                                }
+                                inputProps={{
+                                    type: "number"
+                                }}
+                            />
+                        </Grid>
+                    </Grid>
+                    <Checkbox
+                        color="primary"
+                        label="Use Custom Z-Axis Bounds"
+                        checked={this.props.displayOptions.get("useCustomZAxisBounds")}
+                        onChange={checked => {
+                            this.bufferDisplayOptionsUpdate({
+                                useCustomZAxisBounds: checked
+                            });
+                        }}
+                    />
+                </FormGroup>
+            );
+        } else {
+            return "";
         }
     }
 
@@ -56,23 +135,66 @@ export class ChartSettings extends Component {
             >
                 <Slide direction="left" in={this.props.displayOptions.get("isOpen")}>
                     <Paper elevation={2} className={styles.root}>
-                        <Typography variant="subheading" className={styles.label}>
-                            Chart Settings
-                        </Typography>
+                        <Paper elevation={1} className={styles.header}>
+                            <Typography variant="subheading" className={styles.label}>
+                                Chart Settings
+                            </Typography>
+                            <Button
+                                size="small"
+                                color="primary"
+                                className={styles.doneBtn}
+                                onClick={() => {
+                                    this.closeSettings();
+                                }}
+                            >
+                                Done
+                            </Button>
+                        </Paper>
                         <div className={styles.content}>
-                            <FormGroup className={styles.formGroup}>
+                            {this.renderMinMaxInput()}
+                            <FormGroup className={styles.formMargin}>
+                                <Checkbox
+                                    color="primary"
+                                    label="Invert Y-Axis"
+                                    checked={this.props.displayOptions.get("yAxisReversed")}
+                                    onChange={checked => {
+                                        this.bufferDisplayOptionsUpdate({
+                                            yAxisReversed: checked
+                                        });
+                                    }}
+                                />
+                            </FormGroup>
+                            <FormGroup className={styles.formMargin}>
+                                <TextField
+                                    id={this.props.chartId + "_dec_rate"}
+                                    defaultValue={this.props.displayOptions
+                                        .get("decimationRate")
+                                        .toString()}
+                                    label="Decimation Target"
+                                    margin="dense"
+                                    fullWidth={true}
+                                    onChange={evt =>
+                                        this.bufferDisplayOptionsUpdate({
+                                            decimationRate:
+                                                parseFloat(evt.target.value) ||
+                                                appConfig.DEFAULT_DECIMATION_RATE
+                                        })
+                                    }
+                                    inputProps={{
+                                        type: "number"
+                                    }}
+                                />
+                            </FormGroup>
+                            <FormGroup className={styles.formMargin}>
                                 <FormControl>
                                     <InputLabel htmlFor="markerType">Display Style</InputLabel>
                                     <Select
                                         native={true}
                                         value={this.props.displayOptions.get("markerType")}
                                         onChange={evt => {
-                                            this.props.chartActions.setChartDisplayOptions(
-                                                this.props.chartId,
-                                                {
-                                                    markerType: evt.target.value
-                                                }
-                                            );
+                                            this.bufferDisplayOptionsUpdate({
+                                                markerType: evt.target.value
+                                            });
                                         }}
                                         inputProps={{
                                             name: "markerType",
@@ -95,50 +217,6 @@ export class ChartSettings extends Component {
                                     </Select>
                                 </FormControl>
                             </FormGroup>
-                            <FormGroup className={styles.formGroup}>
-                                <TextField
-                                    id={this.props.chartId + "_dec_rate"}
-                                    defaultValue={this.props.displayOptions
-                                        .get("decimationRate")
-                                        .toString()}
-                                    label="Decimation Target"
-                                    margin="dense"
-                                    fullWidth={true}
-                                    onChange={evt =>
-                                        (this.displayOptions.decimationRate = parseFloat(
-                                            evt.target.value
-                                        ))
-                                    }
-                                    inputProps={{
-                                        type: "number"
-                                    }}
-                                />
-                            </FormGroup>
-                            <FormGroup className={styles.formGroup}>
-                                <Checkbox
-                                    color="primary"
-                                    label="Invert Y-Axis"
-                                    checked={this.props.displayOptions.get("yAxisReversed")}
-                                    onChange={checked => {
-                                        this.props.chartActions.setChartDisplayOptions(
-                                            this.props.chartId,
-                                            {
-                                                yAxisReversed: checked
-                                            }
-                                        );
-                                    }}
-                                />
-                            </FormGroup>
-                            <Button
-                                size="small"
-                                color="primary"
-                                className={styles.doneBtn}
-                                onClick={() => {
-                                    this.closeSettings();
-                                }}
-                            >
-                                Done
-                            </Button>
                         </div>
                     </Paper>
                 </Slide>
@@ -150,6 +228,7 @@ export class ChartSettings extends Component {
 ChartSettings.propTypes = {
     chartId: PropTypes.string.isRequired,
     displayOptions: PropTypes.object.isRequired,
+    formOptions: PropTypes.object.isRequired,
     chartActions: PropTypes.object.isRequired
 };
 

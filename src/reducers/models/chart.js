@@ -26,7 +26,10 @@ export const chartModel = Immutable.fromJS({
         yAxisReversed: true,
         bounds: [],
         markerType: appStrings.PLOT_STYLES.TIME_SERIES.LINES_AND_DOTS,
-        decimationRate: appConfig.DEFAULT_DECIMATION_RATE
+        decimationRate: appConfig.DEFAULT_DECIMATION_RATE,
+        useCustomZAxisBounds: false,
+        customZMin: 0,
+        customZMax: 0
     }
 });
 

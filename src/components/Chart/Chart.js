@@ -76,6 +76,7 @@ export class Chart extends Component {
                     return acc + data.meta.sub_size;
                 }, 0);
 
+                // calculate extremes across all available data
                 let xKey = this.props.chart.getIn(["formOptions", "xAxis"]);
                 let yKey = this.props.chart.getIn(["formOptions", "yAxis"]);
                 let zKey = this.props.chart.getIn(["formOptions", "zAxis"]);
@@ -107,6 +108,15 @@ export class Chart extends Component {
                     }
                     return acc;
                 }, extremes);
+
+                // override extremes
+                if (
+                    typeof zKey !== "undefined" &&
+                    this.props.chart.getIn(["displayOptions", "useCustomZAxisBounds"])
+                ) {
+                    extremes.z.min = this.props.chart.getIn(["displayOptions", "customZMin"]);
+                    extremes.z.max = this.props.chart.getIn(["displayOptions", "customZMax"]);
+                }
 
                 let data = this.props.chart.get("data").map(data => data.data);
 
@@ -155,6 +165,7 @@ export class Chart extends Component {
                 <ChartSettings
                     chartId={this.props.chart.get("id")}
                     displayOptions={this.props.chart.get("displayOptions")}
+                    formOptions={this.props.chart.get("formOptions")}
                 />
             </Paper>
         );
@@ -165,12 +176,14 @@ Chart.propTypes = {
     chart: PropTypes.object.isRequired,
     mapDate: PropTypes.object.isRequired,
     chartActions: PropTypes.object.isRequired,
-    mapActionsCore: PropTypes.object.isRequired
+    mapActionsCore: PropTypes.object.isRequired,
+    mapIntervalDate: PropTypes.object.isRequired
 };
 
 function mapStateToProps(state) {
     return {
-        mapDate: state.map.get("date")
+        mapDate: state.map.get("date"),
+        mapIntervalDate: state.map.get("intervalDate")
     };
 }
 
