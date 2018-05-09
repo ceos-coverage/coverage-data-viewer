@@ -125,6 +125,11 @@ export class ChartCreateForm extends Component {
                       .sort()
                 : [];
 
+        let couldCreateChart =
+            this.props.formOptions.get("selectedTracks").size > 0 &&
+            typeof this.props.formOptions.get("xAxis") !== "undefined" &&
+            typeof this.props.formOptions.get("yAxis") !== "undefined";
+
         return (
             <Paper elevation={3} className={styles.root}>
                 <div className={styles.options}>
@@ -141,6 +146,7 @@ export class ChartCreateForm extends Component {
                     variant="raised"
                     size="small"
                     color="primary"
+                    disabled={!couldCreateChart}
                     onClick={this.props.chartActions.createChart}
                 >
                     Create Chart
