@@ -527,6 +527,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                         let data = geojsonFormat.readFeatures(dataStr);
                         let validPoints = [];
                         let linePoints = [];
+                        let locationMap = {};
 
                         // we'll do this dumb but easy for now
                         // TODO - collapse this into a single pass
@@ -547,7 +548,6 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                             ) {
                                 // get next point
                                 feature.set("_layerId", layer.get("id"));
-                                this.addFeature(feature);
                                 validPoints.push(feature);
                             }
                         }
@@ -559,22 +559,42 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                             );
                         });
 
-                        for (let i = 0; i < validPoints.length - 1; ++i) {
+                        for (let i = 0; i < validPoints.length; ++i) {
                             let feature = validPoints[i];
                             let geom = feature.getGeometry();
                             let coords = geom.getCoordinates();
-                            let nextFeature = validPoints[i + 1];
-                            let nextGeom = nextFeature.getGeometry();
-                            let nextCoords = nextGeom.getCoordinates();
 
-                            linePoints.push([coords, nextCoords]);
+                            if (i < validPoints.length - 1) {
+                                let nextFeature = validPoints[i + 1];
+                                let nextGeom = nextFeature.getGeometry();
+                                let nextCoords = nextGeom.getCoordinates();
+
+                                linePoints.push([coords, nextCoords]);
+                            }
+
+                            let coordStr = coords.join(",");
+                            let dateStr = feature.get("position_date_time");
+                            let combinedFeature = locationMap[coordStr];
+                            if (typeof combinedFeature === "undefined") {
+                                combinedFeature = feature;
+                                combinedFeature.set("position_date_time", [dateStr]);
+                                locationMap[coordStr] = combinedFeature;
+                                this.addFeature(combinedFeature);
+                            } else {
+                                combinedFeature.set(
+                                    "position_date_time",
+                                    combinedFeature.get("position_date_time").concat(dateStr)
+                                );
+                            }
                         }
 
                         // catch the last feature
                         if (validPoints.length > 0) {
-                            let linestring = validPoints[0].clone();
-                            linestring.setGeometry(new Ol_Geom_MultiLineString(linePoints));
-                            this.addFeature(linestring);
+                            this.addFeature(
+                                new Ol_Feature({
+                                    geometry: new Ol_Geom_MultiLineString(linePoints)
+                                })
+                            );
                         }
 
                         _context.highlightTrackPoints(
@@ -1280,52 +1300,52 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
     highlightTrackPoints(features, timeFormat = "YYYY-MM-DD", color = "#000") {
         let date = moment.utc(this.mapDate).startOf("d");
         let nextDate = moment.utc(date).add(1, "d");
-        let firstFeature = features[0];
-        let lastFeature = features[0];
+        let firstPoint = features[0];
+        let lastPoint = features[0];
         for (let i = 0; i < features.length; ++i) {
             let feature = features[i];
-            let featureTime = feature.get("position_date_time") || undefined;
-            if (
-                feature.getGeometry() instanceof Ol_Geom_Point &&
-                typeof featureTime !== "undefined"
-            ) {
-                featureTime = moment.utc(featureTime, timeFormat);
-                if (featureTime.isBetween(date, nextDate, null, "[)")) {
-                    feature.setStyle(this.createPointHighlightStyle(color));
-                } else {
-                    feature.setStyle(null);
-                }
-
-                let firstFeatureTime = firstFeature.get("position_date_time") || undefined;
-                let lastFeatureTime = lastFeature.get("position_date_time") || undefined;
-                if (
-                    typeof firstFeatureTime !== "undefined" &&
-                    typeof lastFeatureTime !== "undefined"
-                ) {
-                    if (featureTime.isBefore(moment.utc(firstFeatureTime, timeFormat))) {
-                        firstFeature = feature;
+            if (feature.getGeometry() instanceof Ol_Geom_Point) {
+                let featureTimeArr = feature.get("position_date_time") || [];
+                feature.setStyle(null);
+                for (let i = 0; i < featureTimeArr.length; ++i) {
+                    let featureTime = moment.utc(featureTimeArr[i], timeFormat);
+                    if (featureTime.isBetween(date, nextDate, null, "[)")) {
+                        feature.setStyle(this.createPointHighlightStyle(color));
                     }
-                    if (featureTime.isAfter(moment.utc(lastFeatureTime, timeFormat))) {
-                        lastFeature = feature;
+
+                    let firstTime = firstPoint.get("position_date_time");
+                    let lastTime = lastPoint.get("position_date_time");
+                    firstTime = firstTime[0];
+                    lastTime = lastTime[lastTime.length - 1];
+                    if (featureTime.isBefore(moment.utc(firstTime, timeFormat))) {
+                        firstPoint = feature;
+                    }
+                    if (featureTime.isAfter(moment.utc(lastTime, timeFormat))) {
+                        lastPoint = feature;
                     }
                 }
             }
         }
 
-        if (typeof firstFeature !== "undefined") {
-            let firstFeatureTime = firstFeature.get("position_date_time") || undefined;
-            let highlight = moment
-                .utc(firstFeatureTime, timeFormat)
-                .isBetween(date, nextDate, null, "[)");
-            firstFeature.setStyle(this.createPointFirstStyle(color, highlight));
-        }
-        if (typeof lastFeature !== "undefined") {
-            let lastFeatureTime = lastFeature.get("position_date_time") || undefined;
-            let highlight = moment
-                .utc(lastFeatureTime, timeFormat)
-                .isBetween(date, nextDate, null, "[)");
-            lastFeature.setStyle(this.createPointLastStyle(color, highlight));
-        }
+        // style first point
+        let featureTimeArr = firstPoint.get("position_date_time");
+        let highlight = featureTimeArr.reduce((acc, timeStr) => {
+            if (moment.utc(timeStr, timeFormat).isBetween(date, nextDate, null, "[)")) {
+                return true;
+            }
+            return acc;
+        }, false);
+        firstPoint.setStyle(this.createPointFirstStyle(color, highlight));
+
+        // style last point
+        featureTimeArr = lastPoint.get("position_date_time");
+        highlight = featureTimeArr.reduce((acc, timeStr) => {
+            if (moment.utc(timeStr, timeFormat).isBetween(date, nextDate, null, "[)")) {
+                return true;
+            }
+            return acc;
+        }, false);
+        lastPoint.setStyle(this.createPointLastStyle(color, highlight));
     }
 
     clearCacheForLayer(layerId) {

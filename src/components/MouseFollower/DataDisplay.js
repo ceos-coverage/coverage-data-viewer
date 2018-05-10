@@ -16,9 +16,13 @@ export class DataDisplay extends Component {
             "no-data": this.props.data.get("value") === appStrings.NO_DATA
         });
 
-        let timeStr = this.props.data.getIn(["properties", "position_date_time"]);
-        let time = moment.utc(timeStr, this.props.data.getIn(["layer", "timeFormat"]));
-        timeStr = time.format("MMM DD, YYYY · HH:mm UTC");
+        let timeStrList = this.props.data
+            .getIn(["properties", "position_date_time"])
+            .map(timeStr =>
+                moment
+                    .utc(timeStr, this.props.data.getIn(["layer", "timeFormat"]))
+                    .format("MMM DD, YYYY · HH:mm UTC")
+            );
 
         let coords = this.props.data.get("coords");
 
@@ -36,18 +40,6 @@ export class DataDisplay extends Component {
                 <Grid container spacing={0}>
                     <Grid item xs={4}>
                         <Typography variant="caption" className={styles.paramLabel}>
-                            Time:
-                        </Typography>
-                    </Grid>
-                    <Grid item>
-                        <Typography variant="caption" className={styles.dateLabel}>
-                            {timeStr}
-                        </Typography>
-                    </Grid>
-                </Grid>
-                <Grid container spacing={0}>
-                    <Grid item xs={4}>
-                        <Typography variant="caption" className={styles.paramLabel}>
                             Location:
                         </Typography>
                     </Grid>
@@ -58,6 +50,24 @@ export class DataDisplay extends Component {
                             lat={coords.get(0)}
                             invalid={false}
                         />
+                    </Grid>
+                </Grid>
+                <Grid container spacing={0}>
+                    <Grid item xs={4}>
+                        <Typography variant="caption" className={styles.paramLabel}>
+                            Time:
+                        </Typography>
+                    </Grid>
+                    <Grid item>
+                        {timeStrList.map((timeStr, i) => (
+                            <Typography
+                                key={"time_" + i}
+                                variant="caption"
+                                className={styles.dateLabel}
+                            >
+                                {timeStr}
+                            </Typography>
+                        ))}
                     </Grid>
                 </Grid>
             </div>
