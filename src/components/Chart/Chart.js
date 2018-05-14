@@ -111,6 +111,13 @@ export class Chart extends Component {
 
                 // override extremes
                 if (
+                    typeof yKey !== "undefined" &&
+                    this.props.chart.getIn(["displayOptions", "useCustomYAxisBounds"])
+                ) {
+                    extremes.y.min = this.props.chart.getIn(["displayOptions", "customYMin"]);
+                    extremes.y.max = this.props.chart.getIn(["displayOptions", "customYMax"]);
+                }
+                if (
                     typeof zKey !== "undefined" &&
                     this.props.chart.getIn(["displayOptions", "useCustomZAxisBounds"])
                 ) {

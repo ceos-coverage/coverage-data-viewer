@@ -12,6 +12,7 @@ import TextField from "material-ui/TextField";
 import Button from "material-ui/Button";
 import Typography from "material-ui/Typography";
 import Paper from "material-ui/Paper";
+import Divider from "material-ui/Divider";
 import ClickAwayListener from "material-ui/utils/ClickAwayListener";
 import Slide from "material-ui/transitions/Slide";
 import appConfig from "constants/appConfig";
@@ -63,11 +64,23 @@ export class ChartSettings extends Component {
         }
     }
 
-    renderMinMaxInput() {
+    renderZMinMaxInput() {
         if (typeof this.props.formOptions.get("zAxis") !== "undefined") {
             return (
-                <FormGroup>
-                    <Grid container justify="space-between">
+                <FormGroup className={styles.formMargin}>
+                    <Typography variant="caption">Set Z-Axis Bounds</Typography>
+                    <Grid container justify="space-between" alignItems="center">
+                        <Grid item xs={2}>
+                            <Checkbox
+                                color="primary"
+                                checked={this.props.displayOptions.get("useCustomZAxisBounds")}
+                                onChange={checked => {
+                                    this.bufferDisplayOptionsUpdate({
+                                        useCustomZAxisBounds: checked
+                                    });
+                                }}
+                            />
+                        </Grid>
                         <Grid item xs={5}>
                             <TextField
                                 id="min_bound"
@@ -109,16 +122,6 @@ export class ChartSettings extends Component {
                             />
                         </Grid>
                     </Grid>
-                    <Checkbox
-                        color="primary"
-                        label="Use Custom Z-Axis Bounds"
-                        checked={this.props.displayOptions.get("useCustomZAxisBounds")}
-                        onChange={checked => {
-                            this.bufferDisplayOptionsUpdate({
-                                useCustomZAxisBounds: checked
-                            });
-                        }}
-                    />
                 </FormGroup>
             );
         } else {
@@ -146,8 +149,71 @@ export class ChartSettings extends Component {
                         </Button>
                     </Paper>
                     <div className={styles.content}>
-                        {this.renderMinMaxInput()}
                         <FormGroup className={styles.formMargin}>
+                            <Typography variant="caption">Set Y-Axis Bounds</Typography>
+                            <Grid container justify="left" alignItems="center">
+                                <Grid item xs={2}>
+                                    <Checkbox
+                                        color="primary"
+                                        checked={this.props.displayOptions.get(
+                                            "useCustomYAxisBounds"
+                                        )}
+                                        onChange={checked => {
+                                            this.bufferDisplayOptionsUpdate({
+                                                useCustomYAxisBounds: checked
+                                            });
+                                        }}
+                                    />
+                                </Grid>
+                                <Grid item xs={5}>
+                                    <TextField
+                                        id="min_bound"
+                                        defaultValue={this.props.displayOptions
+                                            .get("customYMin")
+                                            .toString()}
+                                        disabled={
+                                            !this.props.displayOptions.get("useCustomYAxisBounds")
+                                        }
+                                        label="Y-Axis Min"
+                                        margin="dense"
+                                        fullWidth={true}
+                                        onChange={evt =>
+                                            this.bufferDisplayOptionsUpdate({
+                                                customYMin: parseFloat(evt.target.value) || 0.0
+                                            })
+                                        }
+                                        inputProps={{
+                                            type: "number"
+                                        }}
+                                    />
+                                </Grid>
+                                <Grid item xs={5}>
+                                    <TextField
+                                        id="max_bound"
+                                        defaultValue={this.props.displayOptions
+                                            .get("customYMax")
+                                            .toString()}
+                                        disabled={
+                                            !this.props.displayOptions.get("useCustomYAxisBounds")
+                                        }
+                                        label="Y-Axis Max"
+                                        margin="dense"
+                                        fullWidth={true}
+                                        onChange={evt =>
+                                            this.bufferDisplayOptionsUpdate({
+                                                customYMax: parseFloat(evt.target.value) || 0.0
+                                            })
+                                        }
+                                        inputProps={{
+                                            type: "number"
+                                        }}
+                                    />
+                                </Grid>
+                            </Grid>
+                        </FormGroup>
+                        {this.renderZMinMaxInput()}
+                        <Divider />
+                        <FormGroup>
                             <Checkbox
                                 color="primary"
                                 label="Invert Y-Axis"
@@ -159,6 +225,7 @@ export class ChartSettings extends Component {
                                 }}
                             />
                         </FormGroup>
+                        <Divider />
                         <FormGroup className={styles.formMargin}>
                             <TextField
                                 id={this.props.chartId + "_dec_rate"}

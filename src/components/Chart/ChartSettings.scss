@@ -22,7 +22,7 @@
 }
 
 .label {
-    padding: 1rem 0px;
+    padding: 0.5rem 0px;
     flex: 1 1;
 }
 
@@ -33,7 +33,7 @@
 }
 
 .content {
-    flex-grow: 1;
+    flex: 1 1;
     overflow: hidden;
     overflow-y: auto;
     padding: 2rem 1rem 1rem 1rem;

@@ -36,8 +36,8 @@ export class Checkbox extends Component {
 }
 
 Checkbox.propTypes = {
-    label: PropTypes.string.isRequired,
     checked: PropTypes.bool.isRequired,
+    label: PropTypes.string,
     color: PropTypes.string,
     onChange: PropTypes.func
 };

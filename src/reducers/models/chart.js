@@ -27,6 +27,9 @@ export const chartModel = Immutable.fromJS({
         bounds: [],
         markerType: appStrings.PLOT_STYLES.TIME_SERIES.DOTS,
         decimationRate: appConfig.DEFAULT_DECIMATION_RATE,
+        useCustomYAxisBounds: false,
+        customYMin: 0,
+        customYMax: 0,
         useCustomZAxisBounds: false,
         customZMin: 0,
         customZMax: 0
