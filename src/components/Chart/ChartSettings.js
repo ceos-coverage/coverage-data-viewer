@@ -128,99 +128,91 @@ export class ChartSettings extends Component {
 
     render() {
         return (
-            <ClickAwayListener
-                onClickAway={() => {
-                    this.closeSettings();
-                }}
-            >
-                <Slide direction="left" in={this.props.displayOptions.get("isOpen")}>
-                    <Paper elevation={2} className={styles.root}>
-                        <Paper elevation={1} className={styles.header}>
-                            <Typography variant="subheading" className={styles.label}>
-                                Chart Settings
-                            </Typography>
-                            <Button
-                                size="small"
+            <Slide direction="left" in={this.props.displayOptions.get("isOpen")}>
+                <Paper elevation={2} className={styles.root}>
+                    <Paper elevation={1} className={styles.header}>
+                        <Typography variant="subheading" className={styles.label}>
+                            Chart Settings
+                        </Typography>
+                        <Button
+                            size="small"
+                            color="primary"
+                            className={styles.doneBtn}
+                            onClick={() => {
+                                this.closeSettings();
+                            }}
+                        >
+                            Done
+                        </Button>
+                    </Paper>
+                    <div className={styles.content}>
+                        {this.renderMinMaxInput()}
+                        <FormGroup className={styles.formMargin}>
+                            <Checkbox
                                 color="primary"
-                                className={styles.doneBtn}
-                                onClick={() => {
-                                    this.closeSettings();
+                                label="Invert Y-Axis"
+                                checked={this.props.displayOptions.get("yAxisReversed")}
+                                onChange={checked => {
+                                    this.bufferDisplayOptionsUpdate({
+                                        yAxisReversed: checked
+                                    });
                                 }}
-                            >
-                                Done
-                            </Button>
-                        </Paper>
-                        <div className={styles.content}>
-                            {this.renderMinMaxInput()}
-                            <FormGroup className={styles.formMargin}>
-                                <Checkbox
-                                    color="primary"
-                                    label="Invert Y-Axis"
-                                    checked={this.props.displayOptions.get("yAxisReversed")}
-                                    onChange={checked => {
+                            />
+                        </FormGroup>
+                        <FormGroup className={styles.formMargin}>
+                            <TextField
+                                id={this.props.chartId + "_dec_rate"}
+                                defaultValue={this.props.displayOptions
+                                    .get("decimationRate")
+                                    .toString()}
+                                label="Decimation Target"
+                                margin="dense"
+                                fullWidth={true}
+                                onChange={evt =>
+                                    this.bufferDisplayOptionsUpdate({
+                                        decimationRate:
+                                            parseFloat(evt.target.value) ||
+                                            appConfig.DEFAULT_DECIMATION_RATE
+                                    })
+                                }
+                                inputProps={{
+                                    type: "number"
+                                }}
+                            />
+                        </FormGroup>
+                        <FormGroup className={styles.formMargin}>
+                            <FormControl>
+                                <InputLabel htmlFor="markerType">Display Style</InputLabel>
+                                <Select
+                                    native={true}
+                                    value={this.props.displayOptions.get("markerType")}
+                                    onChange={evt => {
                                         this.bufferDisplayOptionsUpdate({
-                                            yAxisReversed: checked
+                                            markerType: evt.target.value
                                         });
                                     }}
-                                />
-                            </FormGroup>
-                            <FormGroup className={styles.formMargin}>
-                                <TextField
-                                    id={this.props.chartId + "_dec_rate"}
-                                    defaultValue={this.props.displayOptions
-                                        .get("decimationRate")
-                                        .toString()}
-                                    label="Decimation Target"
-                                    margin="dense"
-                                    fullWidth={true}
-                                    onChange={evt =>
-                                        this.bufferDisplayOptionsUpdate({
-                                            decimationRate:
-                                                parseFloat(evt.target.value) ||
-                                                appConfig.DEFAULT_DECIMATION_RATE
-                                        })
-                                    }
                                     inputProps={{
-                                        type: "number"
+                                        name: "markerType",
+                                        id: "markerType"
                                     }}
-                                />
-                            </FormGroup>
-                            <FormGroup className={styles.formMargin}>
-                                <FormControl>
-                                    <InputLabel htmlFor="markerType">Display Style</InputLabel>
-                                    <Select
-                                        native={true}
-                                        value={this.props.displayOptions.get("markerType")}
-                                        onChange={evt => {
-                                            this.bufferDisplayOptionsUpdate({
-                                                markerType: evt.target.value
-                                            });
-                                        }}
-                                        inputProps={{
-                                            name: "markerType",
-                                            id: "markerType"
-                                        }}
-                                    >
-                                        {appConfig.CHART_DISPLAY_TYPES.TIME_SERIES.map(
-                                            (entry, i) => {
-                                                return (
-                                                    <option
-                                                        key={"chart-display-" + i}
-                                                        value={entry.value}
-                                                        tabIndex="-1"
-                                                    >
-                                                        {entry.label}
-                                                    </option>
-                                                );
-                                            }
-                                        )}
-                                    </Select>
-                                </FormControl>
-                            </FormGroup>
-                        </div>
-                    </Paper>
-                </Slide>
-            </ClickAwayListener>
+                                >
+                                    {appConfig.CHART_DISPLAY_TYPES.TIME_SERIES.map((entry, i) => {
+                                        return (
+                                            <option
+                                                key={"chart-display-" + i}
+                                                value={entry.value}
+                                                tabIndex="-1"
+                                            >
+                                                {entry.label}
+                                            </option>
+                                        );
+                                    })}
+                                </Select>
+                            </FormControl>
+                        </FormGroup>
+                    </div>
+                </Paper>
+            </Slide>
         );
     }
 }

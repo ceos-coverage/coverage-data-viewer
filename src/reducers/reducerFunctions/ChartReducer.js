@@ -35,6 +35,16 @@ export default class ChartReducer {
         }
 
         let title = action.formOptions.selectedTracks.map(track => track.title).join(", ");
+
+        // try to be clever with defaults
+        let cleverOptions = {};
+        if (action.formOptions.xAxis.indexOf("time") !== -1) {
+            cleverOptions.markerType = appStrings.PLOT_STYLES.TIME_SERIES.LINES_AND_DOTS;
+        }
+        if (action.formOptions.yAxis.indexOf("depth") !== -1) {
+            cleverOptions.yAxisReversed = true;
+        }
+
         let chart = chartModel
             .set("id", action.id)
             .set("title", title)
@@ -51,7 +61,8 @@ export default class ChartReducer {
             )
             .setIn(["formOptions", "xAxis"], action.formOptions.xAxis)
             .setIn(["formOptions", "yAxis"], action.formOptions.yAxis)
-            .setIn(["formOptions", "zAxis"], action.formOptions.zAxis);
+            .setIn(["formOptions", "zAxis"], action.formOptions.zAxis)
+            .set("displayOptions", chartModel.get("displayOptions").mergeDeep(cleverOptions));
         return state.setIn(["charts", action.id], chart);
     }
 
@@ -63,9 +74,6 @@ export default class ChartReducer {
                 .setIn(["charts", action.id, "dataError", "message"], action.data.message);
         } else {
             state = state.setIn(["charts", action.id, "data"], action.data);
-            // if (typeof action.meta !== "undefined") {
-            //     state = state.setIn(["charts", action.id, "dataMeta"], action.meta);
-            // }
             return state;
         }
     }

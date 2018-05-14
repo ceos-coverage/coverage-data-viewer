@@ -576,7 +576,7 @@ export default class ChartUtil {
 
             xAxis: {
                 id: "x-axis",
-                type: "datetime",
+                type: keys.xKey.indexOf("time") !== -1 ? "datetime" : undefined,
                 gridLineWidth: 1,
                 lineWidth: 2,
                 title: {
@@ -599,7 +599,7 @@ export default class ChartUtil {
                     style: {
                         textAlign: "center"
                     },
-                    formatter: this.getTickFormatter()
+                    formatter: this.getTickFormatter(keys.xKey.indexOf("time") !== -1)
                 },
                 events: {
                     afterSetExtremes: zoomEvent => {
@@ -767,7 +767,9 @@ export default class ChartUtil {
                     keys.xKey +
                     ": </span>" +
                     "<span class='tooltip-value'>" +
-                    moment.utc(x).format("MMM DD, YYYY · HH:mm") +
+                    (keys.xKey.indexOf("time") !== -1
+                        ? moment.utc(x).format("MMM DD, YYYY · HH:mm")
+                        : parseFloat(parseFloat(x).toFixed(4))) +
                     "</span>" +
                     "</div>" +
                     "<div class='tooltip-table-row'>" +
@@ -785,9 +787,9 @@ export default class ChartUtil {
         };
     }
 
-    static getTickFormatter() {
+    static getTickFormatter(isTimeAxis = false) {
         return function() {
-            if (this.isFirst) {
+            if (this.isFirst && isTimeAxis) {
                 let timeDiff = this.axis.paddedTicks[1] - this.axis.paddedTicks[0];
                 if (timeDiff >= 1.577e10) {
                     // 6 months

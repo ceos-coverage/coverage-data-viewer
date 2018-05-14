@@ -23,9 +23,9 @@ export const chartModel = Immutable.fromJS({
     },
     displayOptions: {
         isOpen: false,
-        yAxisReversed: true,
+        yAxisReversed: false,
         bounds: [],
-        markerType: appStrings.PLOT_STYLES.TIME_SERIES.LINES_AND_DOTS,
+        markerType: appStrings.PLOT_STYLES.TIME_SERIES.DOTS,
         decimationRate: appConfig.DEFAULT_DECIMATION_RATE,
         useCustomZAxisBounds: false,
         customZMin: 0,

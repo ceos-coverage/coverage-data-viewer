@@ -43,6 +43,10 @@ export class ChartCreateForm extends Component {
     }
 
     renderVariableSelect(sharedVariableSet, nonSharedVariableSet, axis) {
+        if (axis !== "xAxis") {
+            sharedVariableSet = sharedVariableSet.filter(key => key.indexOf("time") === -1);
+        }
+
         if (sharedVariableSet.size > 0) {
             return (
                 <RadioGroup
@@ -79,15 +83,19 @@ export class ChartCreateForm extends Component {
             { label: "Y-Axis", val: "yAxis" },
             { label: "Z-Axis", val: "zAxis" }
         ];
-        return selectorList.map(x => {
+        return selectorList.map(selector => {
             return (
                 <LabelPopover
-                    key={"variable_selector_" + x.val}
-                    label={x.label}
-                    subtitle={this.props.formOptions.get(x.val) || "None"}
+                    key={"variable_selector_" + selector.val}
+                    label={selector.label}
+                    subtitle={this.props.formOptions.get(selector.val) || "None"}
                     className={styles.chartOption}
                 >
-                    {this.renderVariableSelect(sharedVariableSet, nonSharedVariableSet, x.val)}
+                    {this.renderVariableSelect(
+                        sharedVariableSet,
+                        nonSharedVariableSet,
+                        selector.val
+                    )}
                 </LabelPopover>
             );
         });

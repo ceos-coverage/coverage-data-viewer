@@ -9,8 +9,16 @@ export default class TrackDataUtil {
     static getDecimationQuery(options) {
         let { selectedTracks, xAxis, yAxis, zAxis, target, bounds } = options;
         let baseUrl = appConfig.URLS.decimatorMiddleware;
+
+        let keys = typeof zAxis !== "undefined" ? [xAxis, yAxis, zAxis] : [xAxis, yAxis];
+
         return selectedTracks.map(track => {
-            let query = ["format=json", "project=" + track.project, "source_id=" + track.source_id];
+            let query = [
+                "format=json",
+                "project=" + track.project,
+                "source_id=" + track.source_id,
+                "keys=" + keys.join(",")
+            ];
 
             if (typeof target !== "undefined") {
                 query.push("target=" + target);
