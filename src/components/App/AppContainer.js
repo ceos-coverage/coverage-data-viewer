@@ -23,7 +23,7 @@ import { LoadingContainer } from "_core/components/Loading";
 import { AlertsContainer } from "_core/components/Alerts";
 import { DatePickerContainer } from "components/DatePicker";
 import { MouseFollowerContainer } from "components/MouseFollower";
-import { KeyboardControlsContainer } from "_core/components/KeyboardControls";
+import { KeyboardControlsContainer } from "components/KeyboardControls";
 import { SatelliteLayerSelector, InsituLayerMenu } from "components/LayerMenu";
 import styles from "components/App/AppContainer.scss";
 import stylesCore from "_core/components/App/AppContainer.scss";
