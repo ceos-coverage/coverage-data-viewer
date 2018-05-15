@@ -23,6 +23,7 @@ export class ChartButtons extends Component {
                     <IconButtonSmall
                         color="inherit"
                         className={styles.btn}
+                        disabled={this.props.error}
                         onClick={() => {
                             this.props.chartActions.setChartDisplayOptions(this.props.chartId, {
                                 isOpen: true
@@ -54,6 +55,7 @@ export class ChartButtons extends Component {
 ChartButtons.propTypes = {
     chartId: PropTypes.string.isRequired,
     nodeId: PropTypes.string.isRequired,
+    error: PropTypes.bool,
     chartActions: PropTypes.object.isRequired
 };
 

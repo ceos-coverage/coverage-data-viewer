@@ -5,9 +5,11 @@ import { connect } from "react-redux";
 import moment from "moment";
 import Paper from "material-ui/Paper";
 import Typography from "material-ui/Typography";
+import ErrorIcon from "material-ui-icons/ErrorOutline";
 import * as mapActionsCore from "_core/actions/mapActions";
 import * as chartActions from "actions/chartActions";
 import { ChartButtons, ChartSettings } from "components/Chart";
+import { AreaDefaultMessage } from "components/Reusables";
 import MiscUtil from "utils/MiscUtil";
 import ChartUtil from "utils/ChartUtil";
 import styles from "components/Chart/Chart.scss";
@@ -148,6 +150,19 @@ export class Chart extends Component {
         }
     }
 
+    renderChart() {
+        if (!this.props.chart.getIn(["dataError", "error"])) {
+            return (
+                <div
+                    id={this.props.chart.get("nodeId")}
+                    ref="chartWrapper"
+                    className={styles.chart}
+                />
+            );
+        }
+        return "";
+    }
+
     render() {
         let loadingClasses = MiscUtil.generateStringFromSet({
             [styles.loadingWrapper]: true,
@@ -155,14 +170,11 @@ export class Chart extends Component {
         });
         return (
             <Paper className={styles.root} elevation={2}>
-                <div
-                    id={this.props.chart.get("nodeId")}
-                    ref="chartWrapper"
-                    className={styles.chart}
-                />
+                {this.renderChart()}
                 <ChartButtons
                     chartId={this.props.chart.get("id")}
                     nodeId={this.props.chart.get("nodeId")}
+                    error={this.props.chart.getIn(["dataError", "error"])}
                 />
                 <div className={loadingClasses}>
                     <Typography variant="title" component="div" className={styles.loading}>
@@ -173,6 +185,13 @@ export class Chart extends Component {
                     chartId={this.props.chart.get("id")}
                     displayOptions={this.props.chart.get("displayOptions")}
                     formOptions={this.props.chart.get("formOptions")}
+                />
+                <AreaDefaultMessage
+                    active={this.props.chart.getIn(["dataError", "error"])}
+                    label="Failed to Generate Chart"
+                    sublabel="try selecting a new track or different axis variables"
+                    icon={<ErrorIcon />}
+                    className={styles.error}
                 />
             </Paper>
         );

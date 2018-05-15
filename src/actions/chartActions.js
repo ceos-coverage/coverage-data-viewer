@@ -140,12 +140,12 @@ export function zoomChartData(chartId, bounds) {
                     }
                 );
             })
-        ).then(
-            dataArrs => {
+        )
+            .then(dataArrs => {
                 dispatch(updateChartData(chart.get("id"), dataArrs));
                 dispatch(setChartLoading(chartId, false));
-            },
-            err => {
+            })
+            .catch(err => {
                 dispatch(
                     updateChartData(chart.get("id"), {
                         error: true,
@@ -153,8 +153,7 @@ export function zoomChartData(chartId, bounds) {
                     })
                 );
                 dispatch(setChartLoading(chartId, false));
-            }
-        );
+            });
     };
 }
 

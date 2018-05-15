@@ -61,28 +61,31 @@ export default class WebWorker extends WebWorkerCore {
                 MiscUtil.asyncFetch({
                     url: url,
                     handleAs: appStringsCore.FILE_TYPE_JSON
-                }).then(data => {
-                    console.timeEnd("fetching");
+                }).then(
+                    data => {
+                        console.timeEnd("fetching");
 
-                    // console.time("formatting");
-                    let dataArr = data.data.map(row => {
-                        return data.meta.columns.reduce((acc, col, i) => {
-                            acc[col] = row[i];
-                            return acc;
-                        }, {});
-                    });
-                    // console.timeEnd("formatting");
+                        // console.time("formatting");
+                        let dataArr = data.data.map(row => {
+                            return data.meta.columns.reduce((acc, col, i) => {
+                                acc[col] = row[i];
+                                return acc;
+                            }, {});
+                        });
+                        // console.timeEnd("formatting");
 
-                    this._remoteData[url] = { data: dataArr, meta: data.meta };
+                        this._remoteData[url] = { data: dataArr, meta: data.meta };
 
-                    if (options.processMeta) {
-                        // console.time("process meta");
-                        this._processExtremes(url);
-                        // console.timeEnd("process meta");
-                    }
+                        if (options.processMeta) {
+                            // console.time("process meta");
+                            this._processExtremes(url);
+                            // console.timeEnd("process meta");
+                        }
 
-                    resolve("success");
-                });
+                        resolve("success");
+                    },
+                    err => reject(err)
+                );
 
                 // Papa.parse(url, {
                 //     download: true,
