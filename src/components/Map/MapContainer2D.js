@@ -17,6 +17,12 @@ import * as appStrings from "constants/appStrings";
 import * as appStringsCore from "_core/constants/appStrings";
 
 export class MapContainer2D extends MapContainer2DCore {
+    constructor(props) {
+        super(props);
+
+        // this.drawTimeout = undefined;
+    }
+
     initializeMapListeners() {
         MapContainer2DCore.prototype.initializeMapListeners.call(this);
 
@@ -28,6 +34,11 @@ export class MapContainer2D extends MapContainer2DCore {
                 geometry => this.handleAreaSelectionEnd(geometry, appStrings.GEOMETRY_BOX),
                 appStrings.INTERACTION_AREA_SELECTION
             );
+
+            // add layer load callback
+            map.setLayerLoadCallback(layer => {
+                this.props.setLayerLoading(layer.get("id"), false);
+            });
         } else {
             console.error("Cannot initialize event listeners: 2D MAP NOT AVAILABLE");
         }
@@ -44,13 +55,35 @@ export class MapContainer2D extends MapContainer2DCore {
         );
         // Update the selected area in state
         this.props.setSelectedArea(geometry.coordinates, shapeType);
+
+        // if (typeof this.drawTimeout !== "undefined") {
+        //     clearTimeout(this.drawTimeout);
+        //     this.drawTimeout = undefined;
+        // }
+
+        // this.drawTimeout = setTimeout(() => {
+        //     // Disable area selection
+        //     this.props.disableAreaSelection();
+        //     // Add geometry to other maps
+        //     this.props.mapActions.addGeometryToMap(
+        //         geometry,
+        //         appStrings.INTERACTION_AREA_SELECTION,
+        //         false
+        //     );
+        //     // Update the selected area in state
+        //     this.props.setSelectedArea(geometry.coordinates, shapeType);
+
+        //     clearTimeout(this.drawTimeout);
+        //     this.drawTimeout = undefined;
+        // }, 250);
     }
 }
 
 MapContainer2D.propTypes = Immutable.Map(MapContainer2DCore.propTypes)
     .merge({
         disableAreaSelection: PropTypes.func.isRequired,
-        setSelectedArea: PropTypes.func.isRequired
+        setSelectedArea: PropTypes.func.isRequired,
+        setLayerLoading: PropTypes.func.isRequired
     })
     .toJS();
 
@@ -67,7 +100,8 @@ function mapDispatchToProps(dispatch) {
     return {
         mapActions: bindActionCreators(mapActionsCore, dispatch),
         disableAreaSelection: bindActionCreators(mapActions.disableAreaSelection, dispatch),
-        setSelectedArea: bindActionCreators(mapActions.setSelectedArea, dispatch)
+        setSelectedArea: bindActionCreators(mapActions.setSelectedArea, dispatch),
+        setLayerLoading: bindActionCreators(mapActions.setLayerLoading, dispatch)
     };
 }
 

@@ -17,6 +17,30 @@ export default class MapReducer extends MapReducerCore {
         return layerModel;
     }
 
+    // static setMapDate(state, action) {
+    //     state = MapReducerCore.setMapDate(state, action);
+
+    //     let size = state.get("dateIntervalSize");
+    //     let scale = state.get("dateIntervalScale");
+    //     let date = moment.utc(state.get("date"));
+
+    //     return state.set("intervalDate", date.add(size, scale).toDate());
+    // }
+
+    static setLayerLoading(state, action) {
+        let actionLayer = action.layer;
+        if (typeof actionLayer === "string") {
+            actionLayer = this.findLayerById(state, actionLayer);
+        }
+        if (typeof actionLayer !== "undefined") {
+            state = state.setIn(
+                ["layers", actionLayer.get("type"), actionLayer.get("id"), "isLoading"],
+                action.isLoading
+            );
+        }
+        return state;
+    }
+
     static setLayerActive(state, action) {
         // turn off the other data layers first
         if (action.active) {
@@ -56,15 +80,25 @@ export default class MapReducer extends MapReducerCore {
                         appConfig.INSITU_VECTOR_COLORS.length
                     );
                     let color = appConfig.INSITU_VECTOR_COLORS[colorIndex];
-                    state = state.setIn(
-                        [
-                            "layers",
-                            appStrings.LAYER_GROUP_TYPE_INSITU_DATA,
-                            actionLayer.get("id"),
-                            "vectorColor"
-                        ],
-                        color
-                    );
+                    state = state
+                        .setIn(
+                            [
+                                "layers",
+                                appStrings.LAYER_GROUP_TYPE_INSITU_DATA,
+                                actionLayer.get("id"),
+                                "vectorColor"
+                            ],
+                            color
+                        )
+                        .setIn(
+                            [
+                                "layers",
+                                appStrings.LAYER_GROUP_TYPE_INSITU_DATA,
+                                actionLayer.get("id"),
+                                "isLoading"
+                            ],
+                            true
+                        );
                 }
             }
         }
@@ -141,7 +175,7 @@ export default class MapReducer extends MapReducerCore {
                         let dateStr = data.getIn([0, "properties", "position_date_time"]);
                         if (typeof dateStr !== "undefined") {
                             let date = moment.utc(dateStr, data.getIn([0, "layer", "timeFormat"]));
-                            state = MapReducerCore.setMapDate(state, { date: date.toDate() });
+                            state = MapReducer.setMapDate(state, { date: date.toDate() });
                         }
                     } else {
                         pixelCoordinate = pixelCoordinate.set("isValid", false);

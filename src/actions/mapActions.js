@@ -10,6 +10,10 @@ export function removeLayer(layer) {
     return { type: types.REMOVE_LAYER, layer };
 }
 
+export function setLayerLoading(layer, isLoading) {
+    return { type: types.SET_LAYER_LOADING, layer, isLoading };
+}
+
 export function setInsituLayerColor(layer, color) {
     return { type: types.SET_INSITU_LAYER_COLOR, layer, color };
 }

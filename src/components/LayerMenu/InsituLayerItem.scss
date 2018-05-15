@@ -24,4 +24,13 @@
     height: 1.8rem;
     line-height: 1.6rem;
     font-size: 1.6rem;
+    &[disabled] {
+        color: darken(white, 50%);
+    }
+}
+
+.loader {
+    width: 1.2rem;
+    height: 1.2rem;
+    margin-right: 0.5rem;
 }

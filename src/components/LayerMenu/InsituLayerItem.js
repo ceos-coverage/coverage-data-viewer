@@ -7,7 +7,7 @@ import TargetIcon from "mdi-material-ui/Target";
 import PointErrorIcon from "mdi-material-ui/ImageFilterTiltShift";
 import Typography from "material-ui/Typography";
 import MiscUtil from "utils/MiscUtil";
-import { IconButtonSmall } from "_core/components/Reusables";
+import { IconButtonSmall, LoadingSpinner } from "_core/components/Reusables";
 import { SingleColorSelector } from "components/Reusables";
 import appConfig from "constants/appConfig";
 import * as appActions from "actions/appActions";
@@ -16,9 +16,11 @@ import * as appStrings from "constants/appStrings";
 import styles from "components/LayerMenu/InsituLayerItem.scss";
 
 export class InsituLayerItem extends Component {
-    render() {
-        return (
-            <div key={this.props.layer.get("id") + "-insitu-menu-item"} className={styles.root}>
+    renderLeftAction() {
+        if (this.props.layer.get("isLoading")) {
+            return <LoadingSpinner className={styles.loader} />;
+        } else {
+            return (
                 <SingleColorSelector
                     color={this.props.layer.get("vectorColor")}
                     className={styles.color}
@@ -29,6 +31,13 @@ export class InsituLayerItem extends Component {
                         )
                     }
                 />
+            );
+        }
+    }
+    render() {
+        return (
+            <div key={this.props.layer.get("id") + "-insitu-menu-item"} className={styles.root}>
+                {this.renderLeftAction()}
                 <Typography
                     variant="body1"
                     color="inherit"
@@ -40,6 +49,7 @@ export class InsituLayerItem extends Component {
                 <IconButtonSmall
                     color="inherit"
                     className={styles.actionBtn}
+                    disabled={this.props.layer.get("isLoading")}
                     onClick={() => this.props.mapActions.zoomToLayer(this.props.layer.get("id"))}
                 >
                     <TargetIcon />
@@ -47,6 +57,7 @@ export class InsituLayerItem extends Component {
                 <IconButtonSmall
                     color="inherit"
                     className={styles.actionBtn}
+                    disabled={this.props.layer.get("isLoading")}
                     onClick={() => this.props.mapActions.zoomToLayer(this.props.layer.get("id"))}
                 >
                     <PointErrorIcon />
@@ -54,6 +65,7 @@ export class InsituLayerItem extends Component {
                 <IconButtonSmall
                     color="inherit"
                     className={styles.actionBtn}
+                    disabled={this.props.layer.get("isLoading")}
                     onClick={() =>
                         this.props.appActions.setTrackSelected(this.props.layer.get("id"), false)
                     }

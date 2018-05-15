@@ -5,6 +5,9 @@ import { mapState as mapStateCore, layerModel as layerModelCore } from "_core/re
 
 export const mapState = mapStateCore.mergeDeep(
     Immutable.fromJS({
+        dateIntervalScale: "day",
+        dateIntervalSize: 1,
+        intervalDate: appConfig.DEFAULT_DATE,
         layers: {
             insitu_data: {}
         },
@@ -26,6 +29,7 @@ export const layerModel = layerModelCore.mergeDeep(
         insituMeta: {
             variables: Immutable.Set(["time", "depth", "temperature"])
         },
+        isLoading: false,
         vectorColor: appConfig.INSITU_VECTOR_COLORS[0]
     })
 );

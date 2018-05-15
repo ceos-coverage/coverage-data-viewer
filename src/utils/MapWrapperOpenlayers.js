@@ -3,6 +3,7 @@ import Ol_View from "ol/view";
 import Ol_Has from "ol/has";
 import Ol_Interaction from "ol/interaction";
 import Ol_Interaction_Draw from "ol/interaction/draw";
+import Ol_Interaction_Extent from "ol/interaction/extent";
 import Ol_Layer_Vector from "ol/layer/vector";
 import Ol_Layer_Group from "ol/layer/group";
 import Ol_Layer_Image from "ol/layer/image";
@@ -67,6 +68,13 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
         MapWrapperOpenlayersCore.prototype.initObjects.call(this, container, options);
         this.animationBuffer = new AnimationBuffer(22);
         this.tileLoadingQueue = new TileLoadingQueue();
+        this.layerLoadCallback = undefined;
+    }
+
+    setLayerLoadCallback(callback) {
+        if (typeof callback === "function") {
+            this.layerLoadCallback = callback;
+        }
     }
 
     createMap(container, options) {
@@ -602,6 +610,10 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                             layer.get("timeFormat"),
                             layer.get("vectorColor")
                         );
+
+                        if (typeof _context.layerLoadCallback === "function") {
+                            _context.layerLoadCallback(layer);
+                        }
                     },
                     err => {
                         console.warn("Error fetching vector data", err);
@@ -908,6 +920,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                         let drawStyle = (feature, resolution) => {
                             return this.defaultDrawingStyle(feature, resolution, shapeType);
                         };
+
                         let drawInteraction = new Ol_Interaction_Draw({
                             source: mapLayer.getSource(),
                             type: "Circle",
@@ -915,6 +928,26 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                             style: drawStyle,
                             wrapX: true
                         });
+                        // let drawInteraction = new Ol_Interaction_Extent({
+                        //     // source: mapLayer.getSource(),
+                        //     boxStyle: [
+                        //         new Ol_Style({
+                        //             stroke: new Ol_Style_Stroke({
+                        //                 lineDash: [15, 10],
+                        //                 color: appConfig.GEOMETRY_OUTLINE_COLOR,
+                        //                 width: appConfig.GEOMETRY_STROKE_WEIGHT + 1
+                        //             })
+                        //         }),
+                        //         new Ol_Style({
+                        //             stroke: new Ol_Style_Stroke({
+                        //                 lineDash: [15, 10],
+                        //                 color: appConfig.GEOMETRY_STROKE_COLOR,
+                        //                 width: appConfig.GEOMETRY_STROKE_WEIGHT
+                        //             })
+                        //         })
+                        //     ],
+                        //     wrapX: true
+                        // });
 
                         // Set callback
                         drawInteraction.on("drawend", event => {
@@ -926,6 +959,26 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                                 onDrawEnd(geometry, event);
                             }
                         });
+
+                        // drawInteraction.on("extentchanged", event => {
+                        //     if (typeof onDrawEnd === "function" && event.extent) {
+                        //         // store type of feature and id for later reference
+                        //         // let geometry = this.retrieveGeometryFromEvent(event, geometryType);
+                        //         let geometry = {
+                        //             type: appStrings.GEOMETRY_BOX,
+                        //             id: Math.random(),
+                        //             proj: this.map
+                        //                 .getView()
+                        //                 .getProjection()
+                        //                 .getCode(),
+                        //             coordinates: event.extent.map(x => parseFloat(x.toFixed(3))),
+                        //             coordinateType: appStringsCore.COORDINATE_TYPE_CARTOGRAPHIC
+                        //         };
+                        //         // event.feature.set("interactionType", interactionType);
+                        //         // event.feature.setId(geometry.id);
+                        //         onDrawEnd(geometry, event);
+                        //     }
+                        // });
 
                         // Disable
                         drawInteraction.setActive(false);

@@ -11,6 +11,9 @@ export default function map(state = mapState, action, opt_reducer = MapReducer) 
         case actionTypes.REMOVE_LAYER:
             return opt_reducer.removeLayer(state, action);
 
+        case actionTypes.SET_LAYER_LOADING:
+            return opt_reducer.setLayerLoading(state, action);
+
         case actionTypes.SET_INSITU_LAYER_COLOR:
             return opt_reducer.setInsituVectorLayerColor(state, action);
 
