@@ -151,7 +151,7 @@ export class ChartSettings extends Component {
                     <div className={styles.content}>
                         <FormGroup className={styles.formMargin}>
                             <Typography variant="caption">Set Y-Axis Bounds</Typography>
-                            <Grid container justify="left" alignItems="center">
+                            <Grid container alignItems="center">
                                 <Grid item xs={2}>
                                     <Checkbox
                                         color="primary"
