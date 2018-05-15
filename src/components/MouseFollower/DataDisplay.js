@@ -6,6 +6,7 @@ import Grid from "material-ui/Grid";
 import Typography from "material-ui/Typography";
 import { LonLatCoordinates } from "_core/components/Reusables";
 import MiscUtil from "utils/MiscUtil";
+import MapUtil from "utils/MapUtil";
 import * as appStrings from "constants/appStrings";
 import styles from "components/MouseFollower/DataDisplay.scss";
 
@@ -16,15 +17,28 @@ export class DataDisplay extends Component {
             "no-data": this.props.data.get("value") === appStrings.NO_DATA
         });
 
-        let timeStrList = this.props.data
-            .getIn(["properties", "position_date_time"])
-            .map(timeStr =>
-                moment
-                    .utc(timeStr, this.props.data.getIn(["layer", "timeFormat"]))
-                    .format("MMM DD, YYYY · HH:mm UTC")
-            );
+        let timeStrList = this.props.data.getIn(["properties", "position_date_time"]);
+        let firstTime = moment
+            .utc(timeStrList.get(0), this.props.data.getIn(["layer", "timeFormat"]))
+            .format("MMM DD, YYYY");
+        let lastTime = moment
+            .utc(
+                timeStrList.get(timeStrList.size - 1),
+                this.props.data.getIn(["layer", "timeFormat"])
+            )
+            .format("MMM DD, YYYY");
+
+        let isSameTime = firstTime === lastTime;
+        let timeStr = !isSameTime ? firstTime + " – " + lastTime : firstTime;
+        let connectStr = isSameTime ? "on" : "between";
+        // .map(timeStr =>
+        //     moment
+        //         .utc(timeStr, this.props.data.getIn(["layer", "timeFormat"]))
+        //         .format("MMM DD, YYYY · HH:mm UTC")
+        // );
 
         let coords = this.props.data.get("coords");
+        let displayCoords = MapUtil.formatLatLon(coords.get(0), coords.get(1), true, "");
 
         return (
             <div className={containerClasses}>
@@ -43,31 +57,29 @@ export class DataDisplay extends Component {
                             Location:
                         </Typography>
                     </Grid>
-                    <Grid item>
-                        <LonLatCoordinates
+                    <Grid item xs={8}>
+                        <Typography
+                            variant="body1"
+                            color="inherit"
                             className={styles.mouseCoordinatesRoot}
-                            lon={coords.get(1)}
-                            lat={coords.get(0)}
-                            invalid={false}
+                            // eslint-disable-next-line react/no-danger
+                            dangerouslySetInnerHTML={{ __html: displayCoords }}
                         />
                     </Grid>
                 </Grid>
                 <Grid container spacing={0}>
                     <Grid item xs={4}>
                         <Typography variant="caption" className={styles.paramLabel}>
-                            Time:
+                            Sampled:
                         </Typography>
                     </Grid>
-                    <Grid item>
-                        {timeStrList.map((timeStr, i) => (
-                            <Typography
-                                key={"time_" + i}
-                                variant="caption"
-                                className={styles.dateLabel}
-                            >
-                                {timeStr}
-                            </Typography>
-                        ))}
+                    <Grid item xs={8}>
+                        <Typography variant="caption" className={styles.dateLabel}>
+                            {timeStrList.size} time{timeStrList.size > 1 ? "s" : ""} {connectStr}
+                        </Typography>
+                        <Typography variant="caption" className={styles.dateLabel}>
+                            {timeStr}
+                        </Typography>
                     </Grid>
                 </Grid>
             </div>

@@ -1,4 +1,5 @@
 import MapUtilCore from "_core/utils/MapUtil";
+import MiscUtil from "utils/MiscUtil";
 
 export default class MapUtil extends MapUtilCore {
     static extentsIntersect(extent1, extent2) {
@@ -8,6 +9,20 @@ export default class MapUtil extends MapUtilCore {
             extent1[1] <= extent2[3] &&
             extent1[3] >= extent2[1]
         );
+    }
+
+    static formatLatLon(lat, lon, isValid, padChar = "&nbsp;") {
+        let latUnit = lat >= 0 ? "°E" : "°W";
+        let lonUnit = lon >= 0 ? "°N" : "°S";
+
+        let currCoord =
+            MiscUtil.padNumber(Math.abs(lon).toFixed(3), 5, padChar) +
+            lonUnit +
+            "," +
+            MiscUtil.padNumber(Math.abs(lat).toFixed(3), 6, padChar) +
+            latUnit;
+
+        return isValid ? currCoord : " ------" + lonUnit + ", ------" + latUnit;
     }
 
     static findTileExtentsInView(extentsList, extent, zoom) {

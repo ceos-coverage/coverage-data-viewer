@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import Immutable from "immutable";
-import List from "material-ui/List";
+import List, { ListSubheader } from "material-ui/List";
 import SearchIcon from "material-ui-icons/Search";
 import { LayerSearchResult } from "components/MainMenu/LayerSearch";
 import { AreaDefaultMessage } from "components/Reusables";
@@ -14,15 +14,33 @@ import MiscUtil from "_core/utils/MiscUtil";
 
 export class LayerSearchList extends Component {
     renderList(trackList) {
+        let groups = trackList.reduce((acc, track) => {
+            let title = track.get("project");
+            if (acc.length === 0) {
+                acc.push({ title: title, tracks: [track] });
+                return acc;
+            } else if (acc[acc.length - 1].title !== title) {
+                acc.push({ title: title, tracks: [track] });
+            } else {
+                acc[acc.length - 1].tracks.push(track);
+            }
+
+            return acc;
+        }, []);
         return (
-            <List className={styles.list}>
-                {trackList.map(track => (
-                    <LayerSearchResult
-                        key={track.get("id") + "_layer_search_result"}
-                        layer={track}
-                        selected={this.props.selectedTracks.includes(track.get("id"))}
-                        onSelect={this.props.actions.setTrackSelected}
-                    />
+            <List className={styles.list} subheader={<li />}>
+                {groups.map((group, i) => (
+                    <ul key={"sublist_" + i} className={styles.dummyList}>
+                        <ListSubheader className={styles.subheader}>{group.title}</ListSubheader>
+                        {group.tracks.map(track => (
+                            <LayerSearchResult
+                                key={track.get("id") + "_layer_search_result"}
+                                layer={track}
+                                selected={this.props.selectedTracks.includes(track.get("id"))}
+                                onSelect={this.props.actions.setTrackSelected}
+                            />
+                        ))}
+                    </ul>
                 ))}
             </List>
         );

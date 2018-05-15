@@ -542,73 +542,89 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                         // TODO - collapse this into a single pass
 
                         // remove bad points
+                        // for (let i = 0; i < data.length; ++i) {
+                        //     let feature = data[i];
+                        //     let geom = feature.getGeometry();
+                        //     let coords = geom.getCoordinates();
+                        //     // let nextFeature = data[i + 1];
+                        //     // let nextGeom = nextFeature ? nextFeature.getGeometry() : undefined;
+                        //     // let nextCoords = nextFeature ? nextGeom.getCoordinates() : [];
+
+                        //     if (
+                        //         Math.abs(coords[0]) <= 180 &&
+                        //         Math.abs(coords[1]) <= 90
+                        //         // (coords[0] !== nextCoords[0] || coords[1] !== nextCoords[1])
+                        //     ) {
+                        //         // get next point
+                        //         feature.set("_layerId", layer.get("id"));
+                        //         validPoints.push(feature);
+                        //     }
+                        // }
+
+                        // // sort all the points in order of time
+                        // validPoints.sort((a, b) => {
+                        //     return (
+                        //         new Date(a.get("position_date_time")) -
+                        //         new Date(b.get("position_date_time"))
+                        //     );
+                        // });
+
+                        // combine repeat locations and build the points for the line
                         for (let i = 0; i < data.length; ++i) {
                             let feature = data[i];
                             let geom = feature.getGeometry();
                             let coords = geom.getCoordinates();
-                            // let nextFeature = data[i + 1];
-                            // let nextGeom = nextFeature ? nextFeature.getGeometry() : undefined;
-                            // let nextCoords = nextFeature ? nextGeom.getCoordinates() : [];
 
-                            if (
-                                Math.abs(coords[0]) <= 180 &&
-                                Math.abs(coords[1]) <= 90
-                                // (coords[0] !== nextCoords[0] || coords[1] !== nextCoords[1])
-                            ) {
-                                // get next point
-                                feature.set("_layerId", layer.get("id"));
-                                validPoints.push(feature);
-                            }
-                        }
+                            if (Math.abs(coords[0]) <= 180 && Math.abs(coords[1]) <= 90) {
+                                if (i < data.length - 1) {
+                                    let nextFeature = data[i + 1];
+                                    let nextGeom = nextFeature.getGeometry();
+                                    let nextCoords = nextGeom.getCoordinates();
 
-                        // sort all the points in order of time
-                        validPoints.sort((a, b) => {
-                            return (
-                                new Date(a.get("position_date_time")) -
-                                new Date(b.get("position_date_time"))
-                            );
-                        });
-
-                        // combine repeat locations and build the points for the line
-                        for (let i = 0; i < validPoints.length; ++i) {
-                            let feature = validPoints[i];
-                            let geom = feature.getGeometry();
-                            let coords = geom.getCoordinates();
-
-                            if (i < validPoints.length - 1) {
-                                let nextFeature = validPoints[i + 1];
-                                let nextGeom = nextFeature.getGeometry();
-                                let nextCoords = nextGeom.getCoordinates();
-
-                                if (coords[0] !== nextCoords[0] || coords[1] !== nextCoords[1]) {
-                                    linePoints.push([coords, nextCoords]);
+                                    if (
+                                        coords[0] !== nextCoords[0] ||
+                                        coords[1] !== nextCoords[1]
+                                    ) {
+                                        linePoints.push([coords, nextCoords]);
+                                    }
                                 }
-                            }
 
-                            let coordStr = coords.join(",");
-                            let dateStr = feature.get("position_date_time");
-                            let combinedFeature = featureMap[coordStr];
-                            if (typeof combinedFeature === "undefined") {
-                                combinedFeature = feature;
-                                combinedFeature.set("position_date_time", [dateStr]);
-                                featureMap[coordStr] = combinedFeature;
-                                featuresToAdd.push(combinedFeature);
-                            } else {
-                                combinedFeature.set(
-                                    "position_date_time",
-                                    combinedFeature.get("position_date_time").concat(dateStr)
-                                );
+                                let coordStr = coords.join(",");
+                                let dateStr = feature.get("position_date_time");
+                                let combinedFeature = featureMap[coordStr];
+                                if (typeof combinedFeature === "undefined") {
+                                    combinedFeature = feature;
+                                    combinedFeature.set("position_date_time", [dateStr]);
+                                    featureMap[coordStr] = combinedFeature;
+                                    featuresToAdd.push(combinedFeature);
+                                } else {
+                                    combinedFeature.set(
+                                        "position_date_time",
+                                        combinedFeature.get("position_date_time").concat(dateStr)
+                                    );
+                                    // let prevStr = combinedFeature.get("position_date_time")[
+                                    //     combinedFeature.get("position_date_time").length - 1
+                                    // ];
+                                    // if (prevStr !== dateStr) {
+                                    //     combinedFeature.set(
+                                    //         "position_date_time",
+                                    //         combinedFeature
+                                    //             .get("position_date_time")
+                                    //             .concat(dateStr)
+                                    //     );
+                                    // }
+                                }
                             }
                         }
 
                         // create the connecting line
-                        if (validPoints.length > 0) {
-                            featuresToAdd.push(
-                                new Ol_Feature({
-                                    geometry: new Ol_Geom_MultiLineString(linePoints)
-                                })
-                            );
-                        }
+                        // if (validPoints.length > 0) {
+                        featuresToAdd.push(
+                            new Ol_Feature({
+                                geometry: new Ol_Geom_MultiLineString(linePoints)
+                            })
+                        );
+                        // }
 
                         // highlight the points
                         _context.highlightTrackPoints(
@@ -616,6 +632,8 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                             layer.get("timeFormat"),
                             layer.get("vectorColor")
                         );
+
+                        console.log(data.length, featuresToAdd.length);
 
                         // add features to the layer
                         if (featuresToAdd.length > 0) {
