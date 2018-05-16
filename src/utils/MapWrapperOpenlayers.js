@@ -618,9 +618,13 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
             // );
             // return vectorLayer;
 
-            let layerSource = this.createVectorTileTrackSource(layer, {
-                url: layer.get("url")
-            });
+            let layerSource = this.createVectorTileTrackSource(
+                layer,
+                {
+                    url: layer.get("url")
+                },
+                fromCache
+            );
 
             return new Ol_Layer_Vector({
                 source: layerSource,
@@ -635,7 +639,29 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
         }
     }
 
-    createVectorTileTrackSource(layer, options) {
+    createVectorTileTrackSource(layer, options, fromCache = true) {
+        // try to pull from cache
+        let cacheHash = this.getCacheHash(layer) + "_source";
+        let cacheSource = this.layerCache.get(cacheHash);
+        if (fromCache && cacheSource) {
+            // highlight the points
+            this.highlightTrackPoints(
+                cacheSource.getFeatures(),
+                layer.get("timeFormat"),
+                layer.get("vectorColor")
+            );
+
+            // run async to avoid reducer block
+            window.requestAnimationFrame(() => {
+                // run the call back (if it exists)
+                if (typeof this.layerLoadCallback === "function") {
+                    this.layerLoadCallback(layer);
+                }
+            });
+
+            return cacheSource;
+        }
+
         // customize the layer url if needed
         if (
             typeof options.url !== "undefined" &&
@@ -652,16 +678,14 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
 
         let geojsonFormat = new Ol_Format_GeoJSON();
         let _context = this;
-        return new Ol_Source_Vector({
+        let source = new Ol_Source_Vector({
             url: options.url,
             loader: function(extent, resolution, projection) {
                 MiscUtil.asyncFetch({
                     url: options.url,
-                    handleAs: appStringsCore.FILE_TYPE_TEXT
+                    handleAs: appStringsCore.FILE_TYPE_JSON
                 }).then(
-                    dataStr => {
-                        let data = geojsonFormat.readFeatures(dataStr);
-                        let validPoints = [];
+                    data => {
                         let linePoints = [];
                         let featuresToAdd = [];
                         let featureMap = {};
@@ -670,39 +694,38 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                         // TODO - collapse this into a single pass
 
                         // combine repeat locations and build the points for the line
-                        for (let i = 0; i < data.length; ++i) {
-                            let feature = data[i];
-                            let geom = feature.getGeometry();
-                            let coords = geom.getCoordinates();
+                        let features = data.features;
+                        for (let i = 0; i < features.length; ++i) {
+                            let feature = features[i];
+                            let coords = feature.geometry.coordinates;
 
                             if (Math.abs(coords[0]) <= 180 && Math.abs(coords[1]) <= 90) {
-                                if (i < data.length - 1) {
-                                    let nextFeature = data[i + 1];
-                                    let nextGeom = nextFeature.getGeometry();
-                                    let nextCoords = nextGeom.getCoordinates();
+                                if (i < features.length - 1) {
+                                    let nextFeature = features[i + 1];
+                                    let nextCoords = nextFeature.geometry.coordinates;
 
                                     if (
-                                        coords[0] !== nextCoords[0] ||
-                                        coords[1] !== nextCoords[1]
+                                        Math.abs(nextCoords[0]) <= 180 &&
+                                        Math.abs(nextCoords[1]) <= 90 &&
+                                        (coords[0] !== nextCoords[0] || coords[1] !== nextCoords[1])
                                     ) {
                                         linePoints.push([coords, nextCoords]);
                                     }
                                 }
 
                                 let coordStr = coords.join(",");
-                                let dateStr = new Date(feature.get("position_date_time"));
+                                let dateStr = new Date(feature.properties["position_date_time"]);
                                 let combinedFeature = featureMap[coordStr];
                                 if (typeof combinedFeature === "undefined") {
-                                    combinedFeature = feature;
+                                    combinedFeature = new Ol_Feature({
+                                        geometry: new Ol_Geom_Point(coords)
+                                    });
                                     combinedFeature.set("_layerId", layer.get("id"));
                                     combinedFeature.set("position_date_time", [dateStr]);
                                     featureMap[coordStr] = combinedFeature;
                                     featuresToAdd.push(combinedFeature);
                                 } else {
-                                    combinedFeature.set(
-                                        "position_date_time",
-                                        combinedFeature.get("position_date_time").concat(dateStr)
-                                    );
+                                    combinedFeature.get("position_date_time").push(dateStr);
                                 }
                             }
                         }
@@ -730,7 +753,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                             layer.get("vectorColor")
                         );
 
-                        console.log("Point Reduction", data.length, featuresToAdd.length);
+                        console.log("Point Reduction", features.length, featuresToAdd.length);
 
                         // run the call back (if it exists)
                         if (typeof _context.layerLoadCallback === "function") {
@@ -744,6 +767,11 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
             },
             format: geojsonFormat
         });
+
+        // cache the source
+        this.layerCache.set(cacheHash, source);
+
+        return source;
     }
 
     createVectorTileTrackLayerStyles(color = false) {
