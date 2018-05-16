@@ -19,13 +19,15 @@ export class DataDisplay extends Component {
 
         let timeStrList = this.props.data.getIn(["properties", "position_date_time"]);
         let firstTime = moment
-            .utc(timeStrList.get(0), this.props.data.getIn(["layer", "timeFormat"]))
+            // .utc(timeStrList.get(0), this.props.data.getIn(["layer", "timeFormat"]))
+            .utc(timeStrList.get(0))
             .format("MMM DD, YYYY");
         let lastTime = moment
-            .utc(
-                timeStrList.get(timeStrList.size - 1),
-                this.props.data.getIn(["layer", "timeFormat"])
-            )
+            // .utc(
+            //     timeStrList.get(timeStrList.size - 1),
+            //     this.props.data.getIn(["layer", "timeFormat"])
+            // )
+            .utc(timeStrList.get(timeStrList.size - 1))
             .format("MMM DD, YYYY");
 
         let isSameTime = firstTime === lastTime;

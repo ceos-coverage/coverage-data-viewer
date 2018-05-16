@@ -172,9 +172,10 @@ export default class MapReducer extends MapReducerCore {
                             .set("showData", data.size > 0)
                             .set("isValid", true);
 
-                        let dateStr = data.getIn([0, "properties", "position_date_time"]);
+                        let dateStr = data.getIn([0, "properties", "position_date_time", 0]);
                         if (typeof dateStr !== "undefined") {
-                            let date = moment.utc(dateStr, data.getIn([0, "layer", "timeFormat"]));
+                            // let date = moment.utc(dateStr, data.getIn([0, "layer", "timeFormat"]));
+                            let date = moment.utc(dateStr);
                             state = MapReducer.setMapDate(state, { date: date.toDate() });
                         }
                     } else {
