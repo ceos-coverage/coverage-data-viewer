@@ -199,6 +199,20 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
             } else {
                 return [
                     new Ol_Style({
+                        stroke: new Ol_Style_Stroke({
+                            color: "#000",
+                            width: 9.75
+                        }),
+                        zIndex: 2
+                    }),
+                    new Ol_Style({
+                        stroke: new Ol_Style_Stroke({
+                            color: "#fff",
+                            width: 8.5
+                        }),
+                        zIndex: 2
+                    }),
+                    new Ol_Style({
                         image: new Ol_Style_Circle({
                             fill: new Ol_Style_Fill({ color: "#fff" }),
                             stroke: new Ol_Style_Stroke({
@@ -206,6 +220,10 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                                 width: 1.25
                             }),
                             radius: 7
+                        }),
+                        stroke: new Ol_Style_Stroke({
+                            color: "#000",
+                            width: 5.25
                         }),
                         zIndex: 2
                     }),
@@ -219,6 +237,10 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                                 width: 1.25
                             }),
                             radius: 4
+                        }),
+                        stroke: new Ol_Style_Stroke({
+                            color: color,
+                            width: 4
                         }),
                         zIndex: 2
                     })
@@ -1436,12 +1458,11 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                 if (feature.getGeometry() instanceof Ol_Geom_Point) {
                     let featureTimeArr = feature.get("position_date_time") || [];
                     for (let j = 0; j < featureTimeArr.length; ++j) {
-                        // let featureTime = moment.utc(featureTimeArr[i], timeFormat);
                         let featureTimeDiff = featureTimeArr[j] - date;
-                        // if (featureTime.isBetween(date, nextDate, null, "[)")) {
                         if (featureTimeDiff >= 0 && featureTimeDiff < msInDay) {
                             let highlightFeature = feature.clone();
                             highlightFeature.set("_color", color);
+                            highlightFeature.set("_matchIndex", j);
                             highlightFeatures.push(highlightFeature);
                             break;
                         }
@@ -1449,7 +1470,38 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                 }
             }
 
-            source.addFeatures(highlightFeatures);
+            // aggregate multiple points into a line
+            if (highlightFeatures.length > 1) {
+                highlightFeatures.sort((a, b) => {
+                    return (
+                        a.get("position_date_time")[a.get("_matchIndex")] -
+                        b.get("position_date_time")[b.get("_matchIndex")]
+                    );
+                });
+                let linePoints = highlightFeatures.map((feature, i) => {
+                    if (i < highlightFeatures.length - 1) {
+                        let nextFeature = highlightFeatures[i + 1];
+                        return [
+                            feature.getGeometry().getCoordinates(),
+                            nextFeature.getGeometry().getCoordinates()
+                        ];
+                    } else {
+                        return [
+                            feature.getGeometry().getCoordinates(),
+                            feature.getGeometry().getCoordinates()
+                        ];
+                    }
+                });
+
+                let lineFeature = new Ol_Feature({
+                    geometry: new Ol_Geom_MultiLineString(linePoints)
+                });
+                lineFeature.set("_color", highlightFeatures[0].get("_color"));
+                lineFeature.set("_layerId", highlightFeatures[0].get("_layerId"));
+                source.addFeature(lineFeature);
+            } else {
+                source.addFeatures(highlightFeatures);
+            }
         }
     }
 
