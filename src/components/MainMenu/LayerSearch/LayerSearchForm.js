@@ -5,8 +5,10 @@ import { connect } from "react-redux";
 import Paper from "material-ui/Paper";
 import Grid from "material-ui/Grid";
 import Button from "material-ui/Button";
-import { DateRangePicker, AreaSelectionInput } from "components/Reusables";
-import { LayerSearchFacets } from "components/MainMenu/LayerSearch";
+import { Typography, Divider } from "material-ui";
+import SortIcon from "mdi-material-ui/Sort";
+import { DateRangePicker, AreaSelectionInput, IconPopover } from "components/Reusables";
+import { LayerSearchFacets, LayerSearchResultsLabel } from "components/MainMenu/LayerSearch";
 import * as appActions from "actions/appActions";
 import styles from "components/MainMenu/LayerSearch/LayerSearchForm.scss";
 
@@ -25,10 +27,10 @@ export class LayerSearchForm extends Component {
                     onUpdate={this.props.appActions.setSearchDateRange}
                 />
                 <Grid container alignItems="center" className={styles.facetRow}>
-                    <Grid item xs={10}>
+                    <Grid item xs={10} className={styles.rowItem}>
                         <LayerSearchFacets />
                     </Grid>
-                    <Grid item xs={2}>
+                    <Grid item xs={2} className={styles.rowItem}>
                         <Button
                             size="small"
                             variant="raised"
@@ -37,6 +39,15 @@ export class LayerSearchForm extends Component {
                         >
                             Search
                         </Button>
+                    </Grid>
+                </Grid>
+                <Divider />
+                <Grid container alignItems="center" className={styles.resultsRow}>
+                    <Grid item xs={10} className={styles.rowItem}>
+                        <LayerSearchResultsLabel className={styles.resultLabel} />
+                    </Grid>
+                    <Grid item xs={2} className={styles.rowItem}>
+                        <IconPopover icon={<SortIcon />}>Sort Options</IconPopover>
                     </Grid>
                 </Grid>
             </Paper>
