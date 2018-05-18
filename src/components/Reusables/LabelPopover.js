@@ -35,6 +35,11 @@ export class LabelPopover extends Component {
             [this.props.className]: typeof this.props.className !== "undefined"
         });
 
+        let contentClasses = MiscUtil.generateStringFromSet({
+            [styles.content]: true,
+            [this.props.contentClass]: typeof this.props.contentClass !== "undefined"
+        });
+
         // if we've found the width before, use that
         if (typeof this.width !== "number") {
             if (
@@ -84,7 +89,7 @@ export class LabelPopover extends Component {
                         horizontal: "left"
                     }}
                     PaperProps={{ style: { minWidth: this.width } }}
-                    classes={{ paper: styles.content }}
+                    classes={{ paper: contentClasses }}
                 >
                     {this.props.children}
                 </Popover>
@@ -97,6 +102,7 @@ LabelPopover.propTypes = {
     label: PropTypes.oneOfType([PropTypes.string, PropTypes.node]).isRequired,
     subtitle: PropTypes.string,
     className: PropTypes.string,
+    contentClass: PropTypes.string,
     children: PropTypes.oneOfType([PropTypes.object, PropTypes.array, PropTypes.node])
 };
 

@@ -5,6 +5,7 @@ import { connect } from "react-redux";
 import Typography from "material-ui/Typography";
 import Paper from "material-ui/Paper";
 import Checkbox from "material-ui/Checkbox";
+import List, { ListSubheader } from "material-ui/List";
 import {
     FormLabel,
     FormControl,
@@ -63,18 +64,22 @@ export class SatelliteLayerSelector extends Component {
         );
 
         return (
-            <FormGroup>
-                <FormLabel component="legend">Satellite Overlay</FormLabel>
-                <RadioGroup
-                    aria-label="satellite_layer"
-                    name="satellite_layer"
-                    value={activeLayer ? activeLayer.get("id") : appStrings.NO_DATA}
-                    onChange={(evt, val) => this.handleLayerSelect(val)}
-                    onClick={evt => this.handleLayerSelect(evt.target.value)}
-                >
-                    {list}
-                </RadioGroup>
-            </FormGroup>
+            <List subheader={<li />}>
+                <ul className={styles.dummyList}>
+                    <ListSubheader className={styles.subheader}>Satellite Overlay</ListSubheader>
+                    <FormGroup className={styles.form}>
+                        <RadioGroup
+                            aria-label="satellite_layer"
+                            name="satellite_layer"
+                            value={activeLayer ? activeLayer.get("id") : appStrings.NO_DATA}
+                            onChange={(evt, val) => this.handleLayerSelect(val)}
+                            onClick={evt => this.handleLayerSelect(evt.target.value)}
+                        >
+                            {list}
+                        </RadioGroup>
+                    </FormGroup>
+                </ul>
+            </List>
         );
     }
 
@@ -127,8 +132,12 @@ export class SatelliteLayerSelector extends Component {
 
         return (
             <Paper elevation={2} className={styles.root}>
-                <LabelPopover label={this.renderLabel(activeLayer)} className={styles.label}>
-                    <div className={styles.listWrapper}>{this.renderLayerList(layerList)}</div>
+                <LabelPopover
+                    label={this.renderLabel(activeLayer)}
+                    className={styles.label}
+                    contentClass={styles.content}
+                >
+                    {this.renderLayerList(layerList)}
                 </LabelPopover>
                 <div className={colorbarClasses}>
                     {this.renderColorbar(activePalette, activeLayer)}

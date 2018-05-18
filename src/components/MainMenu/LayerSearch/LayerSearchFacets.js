@@ -34,7 +34,7 @@ export class LayerSearchFacets extends Component {
                         />
                     </FormGroup>
                 </LabelPopover>
-                <LabelPopover label="Platform" subtitle="Tuna" className={styles.facet}>
+                <LabelPopover label="Platform" subtitle="Any" className={styles.facet}>
                     <FormGroup>
                         <FormControlLabel
                             control={<Checkbox color="primary" checked={false} value="tuna_a304" />}
@@ -53,7 +53,7 @@ export class LayerSearchFacets extends Component {
                             label="Ship"
                         />
                         <FormControlLabel
-                            control={<Checkbox color="primary" checked={true} value="tuna_a303" />}
+                            control={<Checkbox color="primary" checked={false} value="tuna_a303" />}
                             label="Tuna"
                         />
                     </FormGroup>
@@ -74,10 +74,10 @@ export class LayerSearchFacets extends Component {
                         />
                     </FormGroup>
                 </LabelPopover>
-                <LabelPopover label="Project" subtitle="2 Selected" className={styles.facet}>
+                <LabelPopover label="Project" subtitle="Any" className={styles.facet}>
                     <FormGroup>
                         <FormControlLabel
-                            control={<Checkbox color="primary" checked={true} value="tuna_a303" />}
+                            control={<Checkbox color="primary" checked={false} value="tuna_a303" />}
                             label="PO.DAAC"
                         />
                         <FormControlLabel
@@ -85,7 +85,7 @@ export class LayerSearchFacets extends Component {
                             label="Project Name"
                         />
                         <FormControlLabel
-                            control={<Checkbox color="primary" checked={true} value="tuna_a304" />}
+                            control={<Checkbox color="primary" checked={false} value="tuna_a304" />}
                             label="SPURS"
                         />
                     </FormGroup>
