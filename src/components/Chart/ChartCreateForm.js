@@ -74,7 +74,7 @@ export class ChartCreateForm extends Component {
                 </RadioGroup>
             );
         }
-        return "No shared variables available";
+        return "No variables available";
     }
 
     renderVariableSelections(sharedVariableSet, nonSharedVariableSet) {
@@ -107,31 +107,41 @@ export class ChartCreateForm extends Component {
             .toList()
             .sort(MiscUtil.getImmutableObjectSort("title"));
 
-        let sharedVariableSet =
-            trackList.size > 0
-                ? trackList
-                      .reduce((acc, track) => {
-                          if (typeof acc === "undefined") {
-                              return track.getIn(["insituMeta", "variables"]);
-                          }
-                          return acc.intersect(track.getIn(["insituMeta", "variables"]));
-                      }, undefined)
-                      .toList()
-                      .sort()
-                : [];
+        // let sharedVariableSet =
+        //     trackList.size > 0
+        //         ? trackList
+        //               .reduce((acc, track) => {
+        //                   if (typeof acc === "undefined") {
+        //                       return track.getIn(["insituMeta", "variables"]);
+        //                   }
+        //                   return acc.intersect(track.getIn(["insituMeta", "variables"]));
+        //               }, undefined)
+        //               .toList()
+        //               .sort()
+        //         : [];
 
-        let nonSharedVariableSet =
-            trackList.size > 0
-                ? trackList
-                      .reduce((acc, track) => {
-                          if (typeof acc === "undefined") {
-                              return track.getIn(["insituMeta", "variables"]);
-                          }
-                          return acc.subtract(track.getIn(["insituMeta", "variables"]));
-                      }, undefined)
-                      .toList()
-                      .sort()
-                : [];
+        // let nonSharedVariableSet =
+        //     trackList.size > 0
+        //         ? trackList
+        //               .reduce((acc, track) => {
+        //                   if (typeof acc === "undefined") {
+        //                       return track.getIn(["insituMeta", "variables"]);
+        //                   }
+        //                   return acc.subtract(track.getIn(["insituMeta", "variables"]));
+        //               }, undefined)
+        //               .toList()
+        //               .sort()
+        //         : [];
+
+        let sharedVariableSet = this.props.formOptions
+            .getIn(["variables", "shared"])
+            .toList()
+            .sort();
+
+        let nonSharedVariableSet = this.props.formOptions
+            .getIn(["variables", "nonshared"])
+            .toList()
+            .sort();
 
         let couldCreateChart =
             this.props.formOptions.get("selectedTracks").size > 0 &&

@@ -1,3 +1,4 @@
+import Immutable from "immutable";
 import * as appStrings from "constants/appStrings";
 import * as types from "constants/actionTypes";
 import DataStore from "utils/DataStore";
@@ -184,6 +185,52 @@ export function exportChart(chartId) {
                 width: 640
             }
         );
+    };
+}
+
+export function updateAvailableVariables() {
+    return (dispatch, getState) => {
+        let state = getState();
+
+        let trackList = state.map
+            .getIn(["layers", appStrings.LAYER_GROUP_TYPE_INSITU_DATA])
+            .filter(track => !track.get("isDisabled") && track.get("isActive"))
+            .toList();
+
+        let sharedVariableSet =
+            trackList.size > 0
+                ? trackList.reduce((acc, track) => {
+                      if (typeof acc === "undefined") {
+                          return track.getIn(["insituMeta", "variables"]);
+                      }
+                      return acc.intersect(track.getIn(["insituMeta", "variables"]));
+                  }, undefined)
+                : Immutable.Set();
+
+        let nonsharedVariableSet =
+            trackList.size > 0
+                ? trackList.reduce((acc, track) => {
+                      if (typeof acc === "undefined") {
+                          return track.getIn(["insituMeta", "variables"]);
+                      }
+                      return acc.subtract(track.getIn(["insituMeta", "variables"]));
+                  }, undefined)
+                : Immutable.Set();
+
+        let currOptions = state.chart.get("formOptions");
+
+        ["xAxis", "yAxis", "zAxis"].map(axis => {
+            let currVal = currOptions.get(axis);
+            if (typeof currVal !== "undefined" && !sharedVariableSet.contains(currVal)) {
+                dispatch(setAxisVariable(axis, undefined));
+            }
+        });
+
+        dispatch({
+            type: types.SET_CHART_FORM_VARIABLE_OPTIONS,
+            sharedVariableSet,
+            nonsharedVariableSet
+        });
     };
 }
 

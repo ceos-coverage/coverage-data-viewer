@@ -17,9 +17,9 @@ export const chartModel = Immutable.fromJS({
     chartType: appStrings.CHART_TYPES.SINGLE_SERIES,
     formOptions: {
         selectedTracks: [],
-        xAxis: "time",
-        yAxis: "depth",
-        zAxis: "temperature"
+        xAxis: undefined,
+        yAxis: undefined,
+        zAxis: undefined
     },
     displayOptions: {
         isOpen: false,
@@ -45,6 +45,13 @@ export const chartState = Immutable.fromJS({
             yAxis: "",
             zAxis: ""
         })
-        .set("selectedTracks", Immutable.Set()),
+        .set("selectedTracks", Immutable.Set())
+        .set(
+            "variables",
+            Immutable.Map({
+                shared: Immutable.Set(),
+                nonshared: Immutable.Set()
+            })
+        ),
     charts: Immutable.OrderedMap()
 });

@@ -98,4 +98,10 @@ export default class ChartReducer {
     static setChartFormError(state, action) {
         return state;
     }
+
+    static setChartFormVariableOptions(state, action) {
+        return state
+            .setIn(["formOptions", "variables", "shared"], action.sharedVariableSet)
+            .setIn(["formOptions", "variables", "nonshared"], action.nonsharedVariableSet);
+    }
 }

@@ -28,6 +28,9 @@ export default function chart(state = chartState, action, opt_reducer = ChartRed
         case actionTypes.SET_CHART_LOADING:
             return opt_reducer.setChartLoading(state, action);
 
+        case actionTypes.SET_CHART_FORM_VARIABLE_OPTIONS:
+            return opt_reducer.setChartFormVariableOptions(state, action);
+
         default:
             return state;
     }
