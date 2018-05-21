@@ -14,6 +14,7 @@ import { cyan, grey } from "material-ui/colors";
 import * as appActionsCore from "_core/actions/appActions";
 import * as mapActionsCore from "_core/actions/mapActions";
 import * as appStringsCore from "_core/constants/appStrings";
+import * as appActions from "actions/appActions";
 import appConfig from "constants/appConfig";
 import MiscUtil from "_core/utils/MiscUtil";
 import { MapContainer, MapControlsContainer } from "components/Map";
@@ -100,6 +101,9 @@ export class AppContainer extends Component {
                     // signal complete
                     this.props.completeInitialLoad();
 
+                    // run initial search
+                    this.props.runLayerSearch();
+
                     // ReactTooltip needs to be rebuilt to account
                     // for dynamic lists in LayerMenuContainer
                     // ReactTooltip.rebuild();
@@ -143,6 +147,7 @@ AppContainer.propTypes = {
     runUrlConfig: PropTypes.func.isRequired,
     initializeMap: PropTypes.func.isRequired,
     setMapView: PropTypes.func.isRequired,
+    runLayerSearch: PropTypes.func.isRequired,
     distractionFreeMode: PropTypes.bool.isRequired,
     mapControlsHidden: PropTypes.bool.isRequired
 };
@@ -165,7 +170,8 @@ function mapDispatchToProps(dispatch) {
         activateDefaultLayers: bindActionCreators(mapActionsCore.activateDefaultLayers, dispatch),
         runUrlConfig: bindActionCreators(appActionsCore.runUrlConfig, dispatch),
         initializeMap: bindActionCreators(mapActionsCore.initializeMap, dispatch),
-        setMapView: bindActionCreators(mapActionsCore.setMapView, dispatch)
+        setMapView: bindActionCreators(mapActionsCore.setMapView, dispatch),
+        runLayerSearch: bindActionCreators(appActions.runLayerSearch, dispatch)
     };
 }
 

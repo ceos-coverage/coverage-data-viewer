@@ -20,7 +20,10 @@ export class LayerSearchResult extends Component {
                     tabIndex={-1}
                     disableRipple
                 />
-                <ListItemText primary={this.props.layer.get("title")} />
+                <ListItemText
+                    primary={this.props.layer.get("title")}
+                    secondary="Jan 9, 2006 – June 23, 2011"
+                />
                 <ListItemSecondaryAction>
                     <IconButton aria-label="info">
                         <InfoIcon />

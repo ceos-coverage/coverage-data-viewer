@@ -14,7 +14,7 @@ export class LayerSearchResultsLabel extends Component {
         });
         return (
             <Typography className={containerClasses} variant="body2">
-                Track Results ({trackList.size})
+                Dataset Results ({trackList.size})
             </Typography>
         );
     }

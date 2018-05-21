@@ -8,7 +8,11 @@ import Button from "material-ui/Button";
 import { Typography, Divider } from "material-ui";
 import SortIcon from "mdi-material-ui/Sort";
 import { DateRangePicker, AreaSelectionInput, IconPopover } from "components/Reusables";
-import { LayerSearchFacets, LayerSearchResultsLabel } from "components/MainMenu/LayerSearch";
+import {
+    LayerSearchFacets,
+    LayerSearchResultsLabel,
+    LayerSearchListSort
+} from "components/MainMenu/LayerSearch";
 import * as appActions from "actions/appActions";
 import styles from "components/MainMenu/LayerSearch/LayerSearchForm.scss";
 
@@ -47,7 +51,7 @@ export class LayerSearchForm extends Component {
                         <LayerSearchResultsLabel className={styles.resultLabel} />
                     </Grid>
                     <Grid item xs={2} className={styles.rowItem}>
-                        <IconPopover icon={<SortIcon />}>Sort Options</IconPopover>
+                        <LayerSearchListSort />
                     </Grid>
                 </Grid>
             </Paper>

@@ -40,7 +40,7 @@ export class IconPopover extends Component {
         return (
             <div className={containerClasses}>
                 <IconButtonSmall
-                    color="inherit"
+                    color={this.popoverOpen ? "primary" : "inherit"}
                     className={styles.button}
                     onClick={evt => this.handleClickButton(evt)}
                 >
