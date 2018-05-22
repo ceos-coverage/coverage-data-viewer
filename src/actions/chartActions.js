@@ -45,7 +45,6 @@ export function createChart() {
                 .filter(track => trackIds.contains(track.get("id")))
                 .toList()
                 .map(track => {
-                    console.log(track);
                     return {
                         id: track.get("id"),
                         title: track.get("title"),

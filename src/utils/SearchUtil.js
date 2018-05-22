@@ -104,7 +104,7 @@ export default class SearchUtil {
                 let entry = entries[i];
                 let formattedTrack = Immutable.Map({
                     id: entry.id || entry.project + "_" + entry.source_id,
-                    title: entry.title || entry.platform || entry.id,
+                    title: (entry.title || entry.platform || entry.id).split(" (")[0], // TODO fix chart display to handle long titles
                     insituMeta: Immutable.fromJS(entry).delete("variables")
                 });
                 results.push(Immutable.fromJS(formattedTrack));

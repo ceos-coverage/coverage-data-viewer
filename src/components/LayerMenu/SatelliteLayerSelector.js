@@ -64,22 +64,23 @@ export class SatelliteLayerSelector extends Component {
         );
 
         return (
-            <List subheader={<li />}>
-                <ul className={styles.dummyList}>
-                    <ListSubheader className={styles.subheader}>Satellite Overlay</ListSubheader>
-                    <FormGroup className={styles.form}>
-                        <RadioGroup
-                            aria-label="satellite_layer"
-                            name="satellite_layer"
-                            value={activeLayer ? activeLayer.get("id") : appStrings.NO_DATA}
-                            onChange={(evt, val) => this.handleLayerSelect(val)}
-                            onClick={evt => this.handleLayerSelect(evt.target.value)}
-                        >
-                            {list}
-                        </RadioGroup>
-                    </FormGroup>
-                </ul>
-            </List>
+            <div className={styles.list}>
+                <Typography variant="subheading" className={styles.subheader}>
+                    Satellite Overlay
+                </Typography>
+                <FormGroup className={styles.form}>
+                    <RadioGroup
+                        aria-label="satellite_layer"
+                        name="satellite_layer"
+                        className={styles.radioGrp}
+                        value={activeLayer ? activeLayer.get("id") : appStrings.NO_DATA}
+                        onChange={(evt, val) => this.handleLayerSelect(val)}
+                        onClick={evt => this.handleLayerSelect(evt.target.value)}
+                    >
+                        {list}
+                    </RadioGroup>
+                </FormGroup>
+            </div>
         );
     }
 

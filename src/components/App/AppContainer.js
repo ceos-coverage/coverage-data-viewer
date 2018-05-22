@@ -125,8 +125,10 @@ export class AppContainer extends Component {
                     <DatePickerContainer />
                     <MapContainer />
                     <MapControlsContainer className={styles.mapControls} />
-                    <SatelliteLayerSelector />
-                    <InsituLayerMenu />
+                    <div className={styles.layers}>
+                        <InsituLayerMenu />
+                        <SatelliteLayerSelector />
+                    </div>
                     <LayerInfoContainer />
                     <MainMenu />
                     <AlertsContainer />

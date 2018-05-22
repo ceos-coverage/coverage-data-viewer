@@ -1,9 +1,9 @@
 .root {
-    position: absolute;
-    top: 7.9rem;
-    left: 0.7rem;
+    position: relative;
+    // top: 7.9rem;
+    // left: 0.7rem;
     width: 27.5rem;
-    max-height: calc(100% - 35rem);
+    max-height: calc(100vh - 35rem);
     // background: #3f3f3f;
     background: white;
     display: flex;
