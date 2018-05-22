@@ -54,6 +54,7 @@ export function setTrackSelected(trackId, isSelected) {
                         project: track.get("project"),
                         source_id: track.get("source_id")
                     },
+                    insituMeta: track.get("insituMeta"),
                     timeFormat: "YYYY-MM-DDTHH:mm:ssZ"
                 })
             );

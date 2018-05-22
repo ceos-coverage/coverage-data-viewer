@@ -45,11 +45,12 @@ export function createChart() {
                 .filter(track => trackIds.contains(track.get("id")))
                 .toList()
                 .map(track => {
+                    console.log(track);
                     return {
                         id: track.get("id"),
                         title: track.get("title"),
-                        project: track.getIn(["metadata", "project"]),
-                        source_id: track.getIn(["metadata", "source_id"])
+                        project: track.getIn(["insituMeta", "project"]),
+                        source_id: track.getIn(["insituMeta", "source_id"])
                     };
                 })
                 .sortBy(track => track.title)

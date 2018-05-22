@@ -3,20 +3,38 @@
     flex-flow: row nowrap;
     align-items: center;
     margin-bottom: 0.5rem;
+    width: 100%;
+    overflow: hidden;
     &:last-of-type {
         margin-bottom: 0px;
     }
 }
 
+.leftItem {
+    width: 1.2rem;
+    height: 1.2rem;
+}
+.centerItem {
+    flex: 1 1;
+    overflow: hidden;
+    margin: 0px 0.5rem;
+}
+.rightItem {
+    width: 5.5rem;
+    height: 1.8rem;
+    color: rgba(0, 0, 0, 0.54);
+}
+
 .color {
     display: inline-block;
-    margin-right: 0.5rem;
+    width: 1.2rem;
+    height: 1.2rem;
 }
 
 .label {
-    display: inline-block;
-    flex-grow: 1;
-    white-space: normal;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .actionBtn {
@@ -32,5 +50,4 @@
 .loader {
     width: 1.2rem;
     height: 1.2rem;
-    margin-right: 0.5rem;
 }

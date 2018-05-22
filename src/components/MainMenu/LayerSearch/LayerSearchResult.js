@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
+import moment from "moment";
 import { ListItem, ListItemSecondaryAction, ListItemText } from "material-ui/List";
 import InfoIcon from "material-ui-icons/InfoOutline";
 import Checkbox from "material-ui/Checkbox";
@@ -12,6 +13,14 @@ export class LayerSearchResult extends Component {
         }
     }
     render() {
+        let startStr = moment
+            .unix(this.props.layer.getIn(["insituMeta", "start_date"]))
+            .utc()
+            .format("MMM DD, YYYY");
+        let endStr = moment
+            .unix(this.props.layer.getIn(["insituMeta", "end_date"]))
+            .utc()
+            .format("MMM DD, YYYY");
         return (
             <ListItem dense button onClick={() => this.handleSelect()}>
                 <Checkbox
@@ -22,7 +31,7 @@ export class LayerSearchResult extends Component {
                 />
                 <ListItemText
                     primary={this.props.layer.get("title")}
-                    secondary="Jan 9, 2006 – June 23, 2011"
+                    secondary={startStr + " – " + endStr}
                 />
                 <ListItemSecondaryAction>
                     <IconButton aria-label="info">

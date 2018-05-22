@@ -14,8 +14,9 @@ import MiscUtil from "_core/utils/MiscUtil";
 
 export class LayerSearchList extends Component {
     renderList(trackList) {
+        // group the tracks
         let groups = trackList.reduce((acc, track) => {
-            let title = track.get("project");
+            let title = track.getIn(["insituMeta", "project"]);
             if (acc.length === 0) {
                 acc.push({ title: title, tracks: [track] });
                 return acc;
@@ -27,6 +28,13 @@ export class LayerSearchList extends Component {
 
             return acc;
         }, []);
+
+        // sort the tracks
+        for (let i = 0; i < groups.length; ++i) {
+            groups[i].tracks.sort((a, b) => a.get("title") > b.get("title"));
+        }
+
+        // render the list
         return (
             <List className={styles.list} subheader={<li />}>
                 {groups.map((group, i) => (
@@ -69,7 +77,7 @@ export class LayerSearchList extends Component {
         let trackList = this.props.searchResults
             .get("results")
             .toList()
-            .sort(MiscUtil.getImmutableObjectSort("title"));
+            .sortBy(entry => entry.getIn(["insituMeta", "project"]));
         let totalNum = trackList.size;
         let isLoading = this.props.searchResults.get("isLoading");
 

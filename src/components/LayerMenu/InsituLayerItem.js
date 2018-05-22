@@ -37,41 +37,52 @@ export class InsituLayerItem extends Component {
     render() {
         return (
             <div key={this.props.layer.get("id") + "-insitu-menu-item"} className={styles.root}>
-                {this.renderLeftAction()}
-                <Typography
-                    variant="body1"
-                    color="inherit"
-                    component="span"
-                    className={styles.label}
-                >
-                    {this.props.layer.get("title")}
-                </Typography>
-                <IconButtonSmall
-                    color="inherit"
-                    className={styles.actionBtn}
-                    disabled={this.props.layer.get("isLoading")}
-                    onClick={() => this.props.mapActions.zoomToLayer(this.props.layer.get("id"))}
-                >
-                    <TargetIcon />
-                </IconButtonSmall>
-                <IconButtonSmall
-                    color="inherit"
-                    className={styles.actionBtn}
-                    disabled={this.props.layer.get("isLoading")}
-                    onClick={() => this.props.mapActions.zoomToLayer(this.props.layer.get("id"))}
-                >
-                    <PointErrorIcon />
-                </IconButtonSmall>
-                <IconButtonSmall
-                    color="inherit"
-                    className={styles.actionBtn}
-                    disabled={this.props.layer.get("isLoading")}
-                    onClick={() =>
-                        this.props.appActions.setTrackSelected(this.props.layer.get("id"), false)
-                    }
-                >
-                    <RemoveIcon />
-                </IconButtonSmall>
+                <div className={styles.leftItem}>{this.renderLeftAction()}</div>
+                <div className={styles.centerItem}>
+                    <Typography
+                        variant="body1"
+                        color="inherit"
+                        component="span"
+                        className={styles.label}
+                    >
+                        {this.props.layer.get("title")}
+                    </Typography>
+                </div>
+                <div className={styles.rightItem}>
+                    <IconButtonSmall
+                        color="inherit"
+                        className={styles.actionBtn}
+                        disabled={this.props.layer.get("isLoading")}
+                        onClick={() =>
+                            this.props.mapActions.zoomToLayer(this.props.layer.get("id"))
+                        }
+                    >
+                        <TargetIcon />
+                    </IconButtonSmall>
+                    <IconButtonSmall
+                        color="inherit"
+                        className={styles.actionBtn}
+                        disabled={this.props.layer.get("isLoading")}
+                        onClick={() =>
+                            this.props.mapActions.zoomToLayer(this.props.layer.get("id"))
+                        }
+                    >
+                        <PointErrorIcon />
+                    </IconButtonSmall>
+                    <IconButtonSmall
+                        color="inherit"
+                        className={styles.actionBtn}
+                        disabled={this.props.layer.get("isLoading")}
+                        onClick={() =>
+                            this.props.appActions.setTrackSelected(
+                                this.props.layer.get("id"),
+                                false
+                            )
+                        }
+                    >
+                        <RemoveIcon />
+                    </IconButtonSmall>
+                </div>
             </div>
         );
     }

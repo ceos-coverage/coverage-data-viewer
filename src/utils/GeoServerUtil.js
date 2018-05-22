@@ -9,8 +9,8 @@ export default class GeoServerUtil {
             "version=1.0.0",
             "request=GetFeature",
             "outputFormat=json",
-            "typeName=oiip:mview_vis_geom_" + track.get("project"),
-            "CQL_FILTER=source_id=" + track.get("source_id")
+            "typeName=oiip:mview_vis_geom_" + track.getIn(["insituMeta", "project"]),
+            "CQL_FILTER=source_id=" + track.getIn(["insituMeta", "source_id"])
         ].join("&");
 
         return baseUrl + "?" + query;

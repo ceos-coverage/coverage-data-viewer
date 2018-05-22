@@ -1,19 +1,29 @@
 .root {
     position: absolute;
-    top: 0.7rem;
+    top: 7.9rem;
     left: 0.7rem;
-    width: 21rem;
-    max-height: calc(100% - 12rem);
-    background: #3f3f3f;
-    padding: 0.5rem 1rem;
+    width: 27.5rem;
+    max-height: calc(100% - 35rem);
+    // background: #3f3f3f;
+    background: white;
     display: flex;
+    overflow: hidden;
     flex-flow: column nowrap;
-    color: white;
+    color: rgba(0, 0, 0, 0.87);
+}
+
+.label {
+    height: 3.4rem;
+    padding: 0.5rem 1rem;
+    background: darken(white, 3%);
+    border-bottom: 1px solid darken(white, 10%);
 }
 
 .listWrapper {
-    border-top: 1px solid lighten(#3f3f3f, 20%);
-    padding: 0.5rem 0px;
+    padding: 0.5rem 1rem;
+    flex: 1 1;
+    overflow: hidden;
+    overflow-y: scroll;
 }
 
 .empty {

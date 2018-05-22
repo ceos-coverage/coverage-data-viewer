@@ -24,20 +24,17 @@ export class InsituLayerMenu extends Component {
             .toList()
             .sort(MiscUtil.getImmutableObjectSort("title"));
 
-        let listClasses = MiscUtil.generateStringFromSet({
-            [displayStyles.hidden]: layerList.size === 0
-        });
         let warningClasses = MiscUtil.generateStringFromSet({
             [styles.empty]: true,
             [displayStyles.hidden]: layerList.size > 0
         });
         return (
             <Paper elevation={2} className={styles.root}>
-                <Typography variant="body2" color="inherit">
+                <Typography variant="body2" color="inherit" className={styles.label}>
                     In-Situ Datasets
                 </Typography>
                 <div className={styles.listWrapper}>
-                    <div className={listClasses}>{this.renderLayerList(layerList)}</div>
+                    {this.renderLayerList(layerList)}
                     <Typography variant="caption" color="inherit" className={warningClasses}>
                         None Selected
                     </Typography>
