@@ -67,14 +67,6 @@ export default class MapReducer extends MapReducerCore {
                         appStrings.LAYER_GROUP_TYPE_INSITU_DATA
                     ]);
 
-                    // // keep the index in bounds
-                    // let counter = state.get("layerCounter");
-                    // let numColors = appConfig.INSITU_VECTOR_COLORS.length;
-                    // let colorIndex = counter % numColors;
-
-                    // // try to avoid similar colors one after another
-                    // colorIndex = colorIndex % 2 === 0 ? colorIndex : numColors - (colorIndex + 1);
-                    // let color = appConfig.INSITU_VECTOR_COLORS[colorIndex];
                     let colorIndex = MiscUtil.getRandomInt(
                         0,
                         appConfig.INSITU_VECTOR_COLORS.length
@@ -105,6 +97,21 @@ export default class MapReducer extends MapReducerCore {
 
         state = MapReducerCore.setLayerActive(state, action);
 
+        return state;
+    }
+
+    static setTrackErrorActive(state, action) {
+        // resolve layer from id if necessary
+        let actionLayer = action.layer;
+        if (typeof actionLayer === "string") {
+            actionLayer = this.findLayerById(state, actionLayer);
+        }
+        if (typeof actionLayer !== "undefined") {
+            state = state.setIn(
+                ["layers", actionLayer.get("type"), actionLayer.get("id"), "isErrorActive"],
+                action.isActive
+            );
+        }
         return state;
     }
 

@@ -33,7 +33,7 @@ import Ol_Geom_LineString from "ol/geom/linestring";
 import Ol_Geom_MultiLineString from "ol/geom/multilinestring";
 import Ol_Geom_Point from "ol/geom/point";
 import OL_Geom_GeometryType from "ol/geom/geometrytype";
-import Ol_TileGrid from "ol/tilegrid";
+import Ol_TileGrid from "ol/tilegrid/tilegrid";
 import Ol_Filter from "ol/format/filter";
 import Ol_Extent from "ol/extent";
 import moment from "moment";
@@ -299,9 +299,9 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
             cachedLayer.setVisible(layer.get("isActive"));
 
             // update the style
-            if (layer.get("handleAs") === appStrings.LAYER_VECTOR_TILE_TRACK) {
+            if (layer.get("handleAs") === appStrings.LAYER_VECTOR_POINT_TRACK) {
                 cachedLayer.setStyle(
-                    this.createVectorTileTrackLayerStyles(layer.get("vectorColor"))
+                    this.createVectorPointTrackLayerStyles(layer.get("vectorColor"))
                 );
             }
 
@@ -311,6 +311,12 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
         // create a new layer
         switch (layer.get("handleAs")) {
             case appStrings.LAYER_VECTOR_TILE_TRACK:
+                mapLayer = this.createVectorTileTrackLayer(layer, fromCache);
+                break;
+            case appStrings.LAYER_VECTOR_POINT_TRACK:
+                mapLayer = this.createVectorPointTrackLayer(layer, fromCache);
+                break;
+            case appStrings.LAYER_VECTOR_TILE_TRACK_ERROR:
                 mapLayer = this.createVectorTileTrackLayer(layer, fromCache);
                 break;
             case appStrings.LAYER_MULTI_FILE_VECTOR_KML:
@@ -570,77 +576,9 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
         }
     }
 
-    createVectorTileTrackLayer(layer, fromCache = true) {
+    createVectorPointTrackLayer(layer, fromCache = true) {
         try {
-            // layer for vector display
-            // let vectorLayer = new Ol_Layer_Vector({
-            //     renderMode: "image",
-            //     style: this.createVectorTileTrackLayerStyles(layer),
-            //     source: new Ol_Source_Vector({
-            //         features: []
-            //     })
-            // });
-
-            // // generate a GetFeature request
-            // let wfsFormat = new Ol_Format_WFS();
-            // let geojsonFormat = new Ol_Format_GeoJSON();
-            // let featureRequest = wfsFormat.writeGetFeature({
-            //     srsName: "EPSG:4326",
-            //     featureNS: "oiip.jpl.nasa.gov",
-            //     featurePrefix: "oiip",
-            //     featureTypes: ["mview_vis_geom"],
-            //     outputFormat: "application/json",
-            //     filter: Ol_Filter.equalTo("tag_id", 1)
-            // });
-
-            // // fetch the data
-            // // let parsedData = false;
-            // MiscUtil.asyncFetch({
-            //     url: "https://oiip.jpl.nasa.gov/geoserver/ows",
-            //     options: {
-            //         method: "POST",
-            //         body: new XMLSerializer().serializeToString(featureRequest)
-            //     },
-            //     handleAs: appStringsCore.FILE_TYPE_TEXT
-            // }).then(
-            //     resp => {
-            //         let featureSet = [];
-            //         let features = geojsonFormat.readFeatures(resp);
-            //         for (let i = 0; i < features.length - 1; ++i) {
-            //             let feature = features[i];
-            //             feature.set("_layerId", layer.get("id"));
-            //             let geom = feature.getGeometry();
-            //             let coords = geom.getCoordinates();
-
-            //             // get next point
-            //             let nextFeature = features[i + 1];
-            //             let nextGeom = nextFeature.getGeometry();
-            //             let nextCoords = nextGeom.getCoordinates();
-
-            //             // create new feature
-            //             let newFeature = feature.clone();
-            //             newFeature.setGeometry(new Ol_Geom_LineString([coords, nextCoords]));
-            //             featureSet.push(newFeature);
-            //             featureSet.push(feature);
-            //         }
-
-            //         // catch the last feature
-            //         if (features.length > 0) {
-            //             featureSet.push(features[features.length - 1]);
-            //         }
-
-            //         let vectorSource = new Ol_Source_Vector({
-            //             features: featureSet
-            //         });
-            //         vectorLayer.setSource(vectorSource);
-            //     },
-            //     err => {
-            //         console.warn("Failed to fetch", err);
-            //     }
-            // );
-            // return vectorLayer;
-
-            let layerSource = this.createVectorTileTrackSource(
+            let layerSource = this.createVectorPointTrackSource(
                 layer,
                 {
                     url: layer.get("url")
@@ -653,7 +591,33 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                 renderMode: "image",
                 opacity: layer.get("opacity"),
                 visible: layer.get("isActive"),
-                style: this.createVectorTileTrackLayerStyles(layer.get("vectorColor"))
+                style: this.createVectorPointTrackLayerStyles(layer.get("vectorColor"))
+            });
+        } catch (err) {
+            console.warn("Error in MapWrapperOpenlayers.createVectorPointTrackLayer:", err);
+            return false;
+        }
+    }
+
+    createVectorTileTrackLayer(layer, fromCache = true) {
+        try {
+            return new Ol_Layer_VectorTile({
+                declutter: true,
+                transition: 0,
+                source: new Ol_Source_VectorTile({
+                    format: new Ol_Format_MVT(),
+                    projection: "EPSG:4326",
+                    tileGrid: layer.getIn(["wmtsOptions", "tileGrid"]),
+                    url: layer.get("url")
+                }),
+                style: new Ol_Style({
+                    stroke: new Ol_Style_Stroke({
+                        color: "rgba(0,0,0,0.4)"
+                    }),
+                    fill: new Ol_Style_Fill({
+                        color: "rgba(255,255,255,0.4)"
+                    })
+                })
             });
         } catch (err) {
             console.warn("Error in MapWrapperOpenlayers.createVectorTileTrackLayer:", err);
@@ -661,7 +625,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
         }
     }
 
-    createVectorTileTrackSource(layer, options, fromCache = true) {
+    createVectorPointTrackSource(layer, options, fromCache = true) {
         // try to pull from cache
         let cacheHash = this.getCacheHash(layer) + "_source";
         let cacheSource = this.layerCache.get(cacheHash);
@@ -796,7 +760,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
         return source;
     }
 
-    createVectorTileTrackLayerStyles(color = false) {
+    createVectorPointTrackLayerStyles(color = false) {
         return (feature, resolution) => {
             if (feature.get("_isFirst")) {
                 return new Ol_Style({
@@ -870,7 +834,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
             return false;
         }
 
-        mapLayer.setStyle(this.createVectorTileTrackLayerStyles(color));
+        mapLayer.setStyle(this.createVectorPointTrackLayerStyles(color));
         this.updateLayer(layer, color);
         return true;
     }
@@ -1393,7 +1357,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
 
     updateLayer(layer, color = false) {
         try {
-            if (layer.get("handleAs") === appStrings.LAYER_VECTOR_TILE_TRACK) {
+            if (layer.get("handleAs") === appStrings.LAYER_VECTOR_POINT_TRACK) {
                 let mapLayers = this.map.getLayers().getArray();
                 let mapLayer = this.miscUtil.findObjectInArray(
                     mapLayers,

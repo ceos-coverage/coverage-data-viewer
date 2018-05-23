@@ -9,7 +9,8 @@ export const mapState = mapStateCore.mergeDeep(
         dateIntervalSize: 1,
         intervalDate: appConfig.DEFAULT_DATE,
         layers: {
-            insitu_data: {}
+            insitu_data: {},
+            insitu_data_error: {}
         },
         view: {
             pixelHoverCoordinate: {
@@ -30,6 +31,7 @@ export const layerModel = layerModelCore.mergeDeep(
             variables: Immutable.Set(["time", "depth", "temperature"])
         },
         isLoading: false,
+        isErrorActive: false,
         vectorColor: appConfig.INSITU_VECTOR_COLORS[0]
     })
 );

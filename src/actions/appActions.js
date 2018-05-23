@@ -10,6 +10,10 @@ import * as types from "constants/actionTypes";
 import * as mapActions from "actions/mapActions";
 import * as chartActions from "actions/chartActions";
 import * as appStrings from "constants/appStrings";
+import * as appStringsCore from "_core/constants/appStrings";
+import Ol_Format_WMTSCapabilities from "ol/format/wmtscapabilities";
+import Ol_Source_WMTS from "ol/source/wmts";
+import MiscUtil from "utils/MiscUtil";
 import SearchUtil from "utils/SearchUtil";
 import GeoServerUtil from "utils/GeoServerUtil";
 
@@ -48,7 +52,7 @@ export function setTrackSelected(trackId, isSelected) {
                     id: track.get("id"),
                     title: track.get("title"),
                     type: appStrings.LAYER_GROUP_TYPE_INSITU_DATA,
-                    handleAs: appStrings.LAYER_VECTOR_TILE_TRACK,
+                    handleAs: appStrings.LAYER_VECTOR_POINT_TRACK,
                     url: GeoServerUtil.getUrlForTrack(track),
                     metadata: {
                         project: track.get("project"),
@@ -70,6 +74,59 @@ export function setTrackSelected(trackId, isSelected) {
             dispatch(chartActions.setTrackSelected(trackId, isSelected));
         }
         dispatch(chartActions.updateAvailableVariables());
+    };
+}
+
+export function setTrackErrorActive(trackId, isActive) {
+    return (dispatch, getState) => {
+        dispatch({ type: types.SET_TRACK_ERROR_ACTIVE, layer: trackId, isActive });
+        if (isActive) {
+            MiscUtil.asyncFetch({
+                url: "https://oiip.jpl.nasa.gov/gwc/wmts?REQUEST=GetCapabilities",
+                handleAs: appStringsCore.LAYER_CONFIG_WMTS_XML
+            }).then(
+                data => {
+                    let parser = new Ol_Format_WMTSCapabilities();
+                    let result = parser.read(data);
+                    let options = Ol_Source_WMTS.optionsFromCapabilities(result, {
+                        layer: "oiip:err_tagbase_4",
+                        matrixSet: "EPSG:4326"
+                    });
+                    let state = getState();
+                    let track = state.map.getIn([
+                        "layers",
+                        appStrings.LAYER_GROUP_TYPE_INSITU_DATA,
+                        trackId
+                    ]);
+                    dispatch(
+                        mapActions.addLayer({
+                            id: track.get("id") + "_error",
+                            title: track.get("title"),
+                            type: appStrings.LAYER_GROUP_TYPE_INSITU_DATA_ERROR,
+                            handleAs: appStrings.LAYER_VECTOR_TILE_TRACK_ERROR,
+                            url: GeoServerUtil.getUrlForTrackError(track),
+                            insituMeta: track.get("insituMeta"),
+                            wmtsOptions: {
+                                tileGrid: options.tileGrid
+                            },
+                            timeFormat: "YYYY-MM-DDTHH:mm:ssZ"
+                        })
+                    );
+                },
+                err => {
+                    console.warn("Error in setTrackErrorActive: ", err);
+                }
+            );
+        } else {
+            dispatch(
+                mapActions.removeLayer(
+                    Immutable.Map({
+                        id: trackId + "_error",
+                        type: appStrings.LAYER_GROUP_TYPE_INSITU_DATA
+                    })
+                )
+            );
+        }
     };
 }
 

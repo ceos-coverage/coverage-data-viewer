@@ -60,11 +60,14 @@ export class InsituLayerItem extends Component {
                         <TargetIcon />
                     </IconButtonSmall>
                     <IconButtonSmall
-                        color="inherit"
+                        color={this.props.layer.get("isErrorActive") ? "primary" : "inherit"}
                         className={styles.actionBtn}
                         disabled={this.props.layer.get("isLoading")}
                         onClick={() =>
-                            this.props.mapActions.zoomToLayer(this.props.layer.get("id"))
+                            this.props.appActions.setTrackErrorActive(
+                                this.props.layer.get("id"),
+                                !this.props.layer.get("isErrorActive")
+                            )
                         }
                     >
                         <PointErrorIcon />

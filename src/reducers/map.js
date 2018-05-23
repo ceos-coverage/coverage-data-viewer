@@ -29,6 +29,9 @@ export default function map(state = mapState, action, opt_reducer = MapReducer) 
         case actionTypes.REMOVE_ALL_AREA_SELECTIONS:
             return opt_reducer.removeAllAreaSelections(state, action);
 
+        case actionTypes.SET_TRACK_ERROR_ACTIVE:
+            return opt_reducer.setTrackErrorActive(state, action);
+
         default:
             return mapCore.call(this, state, action, opt_reducer);
     }
