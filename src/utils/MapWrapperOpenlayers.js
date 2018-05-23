@@ -141,8 +141,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                             }),
                             points: 3,
                             stroke: new Ol_Style_Stroke({
-                                color: "#000",
-                                width: 1.25
+                                color: "#000"
                             }),
                             rotation: Math.PI,
                             radius: 13
@@ -156,8 +155,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                             }),
                             points: 3,
                             stroke: new Ol_Style_Stroke({
-                                color: "#000",
-                                width: 1.25
+                                color: "#000"
                             }),
                             rotation: Math.PI,
                             radius: 8
@@ -174,8 +172,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                             }),
                             points: 3,
                             stroke: new Ol_Style_Stroke({
-                                color: "#000",
-                                width: 1.25
+                                color: "#000"
                             }),
                             radius: 13
                         }),
@@ -188,8 +185,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                             }),
                             points: 3,
                             stroke: new Ol_Style_Stroke({
-                                color: "#000",
-                                width: 1.25
+                                color: "#000"
                             }),
                             radius: 8
                         }),
@@ -216,8 +212,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                         image: new Ol_Style_Circle({
                             fill: new Ol_Style_Fill({ color: "#fff" }),
                             stroke: new Ol_Style_Stroke({
-                                color: "#000",
-                                width: 1.25
+                                color: "#000"
                             }),
                             radius: 7
                         }),
@@ -233,8 +228,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                                 color: color
                             }),
                             stroke: new Ol_Style_Stroke({
-                                color: "#000",
-                                width: 1.25
+                                color: "#000"
                             }),
                             radius: 4
                         }),
@@ -770,8 +764,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                         }),
                         points: 3,
                         stroke: new Ol_Style_Stroke({
-                            color: color === "#000000" || color === "#3e2723" ? "#fff" : "#000",
-                            width: 1.25
+                            color: color === "#000000" || color === "#3e2723" ? "#fff" : "#000"
                         }),
                         rotation: Math.PI,
                         radius: 7
@@ -786,8 +779,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                         }),
                         points: 3,
                         stroke: new Ol_Style_Stroke({
-                            color: color === "#000000" || color === "#3e2723" ? "#fff" : "#000",
-                            width: 1.25
+                            color: color === "#000000" || color === "#3e2723" ? "#fff" : "#000"
                         }),
                         radius: 7
                     }),
