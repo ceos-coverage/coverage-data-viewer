@@ -66,6 +66,14 @@ export function setTrackSelected(trackId, isSelected) {
             dispatch(
                 mapActions.removeLayer(
                     Immutable.Map({
+                        id: trackId + "_error",
+                        type: appStrings.LAYER_GROUP_TYPE_INSITU_DATA_ERROR
+                    })
+                )
+            );
+            dispatch(
+                mapActions.removeLayer(
+                    Immutable.Map({
                         id: trackId,
                         type: appStrings.LAYER_GROUP_TYPE_INSITU_DATA
                     })
