@@ -122,7 +122,7 @@ export function setTrackErrorActive(trackId, isActive) {
                 mapActions.removeLayer(
                     Immutable.Map({
                         id: trackId + "_error",
-                        type: appStrings.LAYER_GROUP_TYPE_INSITU_DATA
+                        type: appStrings.LAYER_GROUP_TYPE_INSITU_DATA_ERROR
                     })
                 )
             );
