@@ -114,6 +114,7 @@ export function setTrackErrorActive(trackId, isActive) {
                             handleAs: appStrings.LAYER_VECTOR_TILE_TRACK_ERROR,
                             url: GeoServerUtil.getUrlForTrackError(track),
                             insituMeta: track.get("insituMeta"),
+                            updateParameters: { time: false },
                             wmtsOptions: {
                                 tileGrid: options.tileGrid
                             },
