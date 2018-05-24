@@ -1,3 +1,5 @@
+import Immutable from "immutable";
+import SearchUtil from "utils/SearchUtil";
 import appConfig from "constants/appConfig";
 
 export default class TrackDataUtil {
@@ -10,14 +12,22 @@ export default class TrackDataUtil {
         let { selectedTracks, xAxis, yAxis, zAxis, target, bounds } = options;
         let baseUrl = appConfig.URLS.decimatorMiddleware;
 
-        let keys = typeof zAxis !== "undefined" ? [xAxis, yAxis, zAxis] : [xAxis, yAxis];
+        let keys =
+            typeof zAxis !== "undefined"
+                ? Immutable.List([xAxis, yAxis, zAxis])
+                : Immutable.List([xAxis, yAxis]);
+        let keysStr = SearchUtil.readVariables(keys)
+            .toList()
+            .sortBy(x => keys.indexOf(x))
+            .map(x => x.get("label"))
+            .join(",");
 
         return selectedTracks.map(track => {
             let query = [
                 "format=json",
                 "project=" + track.project,
                 "source_id=" + track.source_id,
-                "keys=" + keys.join(",")
+                "keys=" + keysStr
             ];
 
             if (typeof target !== "undefined") {
