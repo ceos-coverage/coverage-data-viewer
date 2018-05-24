@@ -6,9 +6,11 @@ import RemoveIcon from "material-ui-icons/Close";
 import TargetIcon from "mdi-material-ui/Target";
 import PointErrorIcon from "mdi-material-ui/ImageFilterTiltShift";
 import Typography from "material-ui/Typography";
+import Tooltip from "material-ui/Tooltip";
 import MiscUtil from "utils/MiscUtil";
 import { IconButtonSmall, LoadingSpinner } from "_core/components/Reusables";
 import { SingleColorSelector } from "components/Reusables";
+import { InsituLayerItemTools } from "components/LayerMenu";
 import appConfig from "constants/appConfig";
 import * as appActions from "actions/appActions";
 import * as mapActions from "actions/mapActions";
@@ -49,29 +51,7 @@ export class InsituLayerItem extends Component {
                     </Typography>
                 </div>
                 <div className={styles.rightItem}>
-                    <IconButtonSmall
-                        color="inherit"
-                        className={styles.actionBtn}
-                        disabled={this.props.layer.get("isLoading")}
-                        onClick={() =>
-                            this.props.mapActions.zoomToLayer(this.props.layer.get("id"))
-                        }
-                    >
-                        <TargetIcon />
-                    </IconButtonSmall>
-                    <IconButtonSmall
-                        color={this.props.layer.get("isErrorActive") ? "primary" : "inherit"}
-                        className={styles.actionBtn}
-                        disabled={this.props.layer.get("isLoading")}
-                        onClick={() =>
-                            this.props.appActions.setTrackErrorActive(
-                                this.props.layer.get("id"),
-                                !this.props.layer.get("isErrorActive")
-                            )
-                        }
-                    >
-                        <PointErrorIcon />
-                    </IconButtonSmall>
+                    <InsituLayerItemTools layer={this.props.layer} />
                     <IconButtonSmall
                         color="inherit"
                         className={styles.actionBtn}

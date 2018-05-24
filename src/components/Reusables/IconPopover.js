@@ -37,11 +37,21 @@ export class IconPopover extends Component {
             [this.props.contentClass]: typeof this.props.contentClass !== "undefined"
         });
 
+        let anchorOrigin = this.props.anchorOrigin || {
+            vertical: "bottom",
+            horizontal: "left"
+        };
+        let transformOrigin = this.props.transformOrigin || {
+            vertical: "top",
+            horizontal: "center"
+        };
+
         return (
             <div className={containerClasses}>
                 <IconButtonSmall
                     color={this.popoverOpen ? "primary" : "inherit"}
                     className={styles.button}
+                    disabled={this.props.disabled}
                     onClick={evt => this.handleClickButton(evt)}
                 >
                     {this.props.icon}
@@ -50,14 +60,8 @@ export class IconPopover extends Component {
                     open={this.popoverOpen}
                     anchorEl={this.button}
                     anchorReference="anchorEl"
-                    anchorOrigin={{
-                        vertical: "bottom",
-                        horizontal: "left"
-                    }}
-                    transformOrigin={{
-                        vertical: "top",
-                        horizontal: "center"
-                    }}
+                    anchorOrigin={anchorOrigin}
+                    transformOrigin={transformOrigin}
                     onClose={() => this.handleClose()}
                     classes={{ paper: contentClasses }}
                 >
@@ -72,6 +76,9 @@ IconPopover.propTypes = {
     icon: PropTypes.node.isRequired,
     className: PropTypes.string,
     contentClass: PropTypes.string,
+    disabled: PropTypes.bool,
+    anchorOrigin: PropTypes.object,
+    transformOrigin: PropTypes.object,
     children: PropTypes.oneOfType([PropTypes.object, PropTypes.array, PropTypes.node])
 };
 

@@ -7,7 +7,7 @@
     // background: #3f3f3f;
     background: white;
     display: flex;
-    overflow: hidden;
+    // overflow: hidden;
     flex-flow: column nowrap;
     color: rgba(0, 0, 0, 0.87);
 }
@@ -16,6 +16,8 @@
     height: 3.4rem;
     padding: 0.5rem 1rem;
     background: darken(white, 3%);
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
     border-bottom: 1px solid darken(white, 10%);
 }
 

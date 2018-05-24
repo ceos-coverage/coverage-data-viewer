@@ -14,12 +14,15 @@
     width: 1.2rem;
     height: 1.2rem;
 }
+
 .centerItem {
     flex: 1 1;
     overflow: hidden;
     margin: 0px 0.5rem;
 }
+
 .rightItem {
+    text-align: right;
     width: 5.5rem;
     height: 1.8rem;
     color: rgba(0, 0, 0, 0.54);
@@ -37,11 +40,15 @@
     text-overflow: ellipsis;
 }
 
+.btnWrapper {
+    display: inline-block;
+}
+
 .actionBtn {
     width: 1.8rem;
     height: 1.8rem;
-    line-height: 1.6rem;
-    font-size: 1.6rem;
+    line-height: 1.8rem;
+    font-size: 1.8rem;
     &[disabled] {
         color: darken(white, 50%);
     }
