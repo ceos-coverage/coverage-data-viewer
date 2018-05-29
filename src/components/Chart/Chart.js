@@ -12,6 +12,7 @@ import { ChartButtons, ChartSettings } from "components/Chart";
 import { AreaDefaultMessage } from "components/Reusables";
 import MiscUtil from "utils/MiscUtil";
 import ChartUtil from "utils/ChartUtil";
+import appConfig from "constants/appConfig";
 import styles from "components/Chart/Chart.scss";
 import displayStyles from "_core/styles/display.scss";
 
@@ -26,6 +27,7 @@ export class Chart extends Component {
             node: node,
             data: this.props.chart.get("data"),
             displayOptions: this.props.chart.get("displayOptions"),
+            height: this.getHeight(),
             chartType: this.props.chart.get("chartType"),
             seriesTitles: this.props.chart
                 .getIn(["formOptions", "selectedTracks"])
@@ -163,13 +165,23 @@ export class Chart extends Component {
         return "";
     }
 
+    getHeight() {
+        return (
+            appConfig.CHART_HEIGHT +
+            (this.props.chart.getIn(["formOptions", "selectedTracks"]).size - 1) * 16
+        );
+    }
+
     render() {
         let loadingClasses = MiscUtil.generateStringFromSet({
             [styles.loadingWrapper]: true,
             [displayStyles.hidden]: !this.props.chart.get("dataLoading")
         });
+
+        let height = this.getHeight();
+
         return (
-            <Paper className={styles.root} elevation={2}>
+            <Paper className={styles.root} elevation={2} style={{ height: height }}>
                 {this.renderChart()}
                 <ChartButtons
                     chartId={this.props.chart.get("id")}

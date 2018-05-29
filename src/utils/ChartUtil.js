@@ -371,8 +371,9 @@ export default class ChartUtil {
                     enabled: true,
                     floating: true,
                     align: "left",
+                    layout: "vertical",
                     verticalAlign: "top",
-                    y: -5,
+                    y: -8,
                     x: -12,
                     labelFormatter: function() {
                         return (
@@ -536,17 +537,21 @@ export default class ChartUtil {
         let displayOptions = options.displayOptions;
         let onZoom = options.onZoom;
         let seriesTitles = options.seriesTitles || [];
-        let title = options.title || seriesTitles.join(", ") || "Untitled";
+        let title = options.title || seriesTitles.join("<br>") || "Untitled";
         let note = options.note || "";
+        let width = options.width || appConfig.CHART_WIDTH;
+        let height = options.height || appConfig.CHART_HEIGHT;
+
+        let numVars = typeof keys.zKey === "undefined" ? 2 : 3;
 
         return {
             chart: {
                 zoomType: "x",
                 animation: false,
-                width: appConfig.CHART_WIDTH,
-                height: appConfig.CHART_HEIGHT,
+                width: width,
+                height: height,
                 spacingBottom: 10,
-                marginTop: 58,
+                marginTop: 16 * (seriesTitles.length + 1) + 20,
                 style: {
                     fontFamily: "'Roboto', Helvetica, Arial, sans-serif"
                 },
@@ -642,6 +647,8 @@ export default class ChartUtil {
             title: {
                 text: title,
                 align: "left",
+                useHTML: true,
+                y: 18,
                 style: {
                     fontSize: "1.4rem",
                     fontWeight: "500"
@@ -695,12 +702,20 @@ export default class ChartUtil {
                 animation: false,
                 hideDelay: 0,
                 shared: false,
+                shape: "none",
                 borderRadius: 2,
                 padding: 0,
                 backgroundColor: "rgba(247,247,247,0)",
                 borderWidth: 0,
-                positioner: function() {
-                    return { x: 6, y: 28 };
+                positioner: function(labelWidth, labelHeight, point) {
+                    return {
+                        x: 6,
+                        y: 16 * seriesTitles.length + 6
+                    };
+                    // return {
+                    //     x: this.chart.plotLeft + 1,
+                    //     y: this.chart.plotTop + this.chart.plotHeight - 16 * numVars - 8
+                    // };
                 },
                 style: {
                     fontSize: "1.2rem"

@@ -47,8 +47,17 @@
     text-transform: capitalize;
 }
 
+:global(.highcharts-title) {
+    width: calc(100% - 10rem);
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.6rem;
+}
+
 :global(.highcharts-tooltip) {
     :global(.tooltip-table) {
+        // display: inline-block;
         display: block;
         width: 54.8rem;
         padding: 0.7rem 0.5rem 0px 0.5rem;
@@ -60,18 +69,22 @@
         }
         :global(.tooltip-table-row) {
             display: inline-block;
+            // display: block;
             margin-right: 1rem;
+            line-height: 1.6rem;
         }
         :global(.tooltip-key) {
             display: inline-block;
             font-weight: 400;
             color: lighten(black, 40%);
             text-transform: capitalize;
+            line-height: 1.6rem;
             margin-right: 0.7rem;
         }
         :global(.tooltip-value) {
             display: inline-block;
             font-weight: 500;
+            line-height: 1.6rem;
             letter-spacing: 0.25px;
         }
     }
