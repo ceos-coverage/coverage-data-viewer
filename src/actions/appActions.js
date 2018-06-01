@@ -87,8 +87,9 @@ export function setTrackSelected(trackId, isSelected) {
 
 export function setTrackErrorActive(trackId, isActive) {
     return (dispatch, getState) => {
-        dispatch({ type: types.SET_TRACK_ERROR_ACTIVE, layer: trackId, isActive });
         if (isActive) {
+            let state = getState();
+            console.log(state, trackId);
             MiscUtil.asyncFetch({
                 url: "https://oiip.jpl.nasa.gov/gwc/wmts?REQUEST=GetCapabilities",
                 handleAs: appStringsCore.LAYER_CONFIG_WMTS_XML
@@ -136,6 +137,7 @@ export function setTrackErrorActive(trackId, isActive) {
                 )
             );
         }
+        dispatch({ type: types.SET_TRACK_ERROR_ACTIVE, layer: trackId, isActive });
     };
 }
 
