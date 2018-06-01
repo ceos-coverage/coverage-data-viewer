@@ -32,6 +32,10 @@ const APP_CONFIG = Immutable.fromJS({
             {
                 url: "default-data/capabilities_oiip_gibs.xml",
                 type: "wmts/xml"
+            },
+            {
+                url: "https://oiip.jpl.nasa.gov/gwc/wmts?Request=GetCapabilities",
+                type: "wmts/xml"
             }
         ],
         paletteConfig: "default-data/palettes_oiip.json",
@@ -46,6 +50,7 @@ const APP_CONFIG = Immutable.fromJS({
     },
     DEFAULT_WEB_WORKER_NUM: 1,
     DEFAULT_MAP_EXTENT: [-180 * 2, -90, 180 * 2, 90],
+    DELETE_LAYER_PARTIALS: false,
     DEFAULT_DECIMATION_RATE: 20000,
     INSITU_VECTOR_COLORS: [
         "#F44336", // red

@@ -14,6 +14,7 @@ import * as appStringsCore from "_core/constants/appStrings";
 import Ol_Format_WMTSCapabilities from "ol/format/wmtscapabilities";
 import Ol_Source_WMTS from "ol/source/wmts";
 import MiscUtil from "utils/MiscUtil";
+import MapUtil from "utils/MapUtil";
 import SearchUtil from "utils/SearchUtil";
 import GeoServerUtil from "utils/GeoServerUtil";
 
@@ -54,9 +55,13 @@ export function setTrackSelected(trackId, isSelected) {
                     type: appStrings.LAYER_GROUP_TYPE_INSITU_DATA,
                     handleAs: appStrings.LAYER_VECTOR_POINT_TRACK,
                     url: GeoServerUtil.getUrlForTrack(track),
-                    metadata: {
-                        project: track.get("project"),
-                        source_id: track.get("source_id")
+                    wmtsOptions: {
+                        extents: MapUtil.constrainExtent([
+                            track.getIn(["insituMeta", "lon_min"]),
+                            track.getIn(["insituMeta", "lat_min"]),
+                            track.getIn(["insituMeta", "lon_max"]),
+                            track.getIn(["insituMeta", "lat_max"])
+                        ])
                     },
                     insituMeta: track.get("insituMeta"),
                     timeFormat: "YYYY-MM-DDTHH:mm:ssZ"
@@ -87,45 +92,39 @@ export function setTrackSelected(trackId, isSelected) {
 
 export function setTrackErrorActive(trackId, isActive) {
     return (dispatch, getState) => {
-        dispatch({ type: types.SET_TRACK_ERROR_ACTIVE, layer: trackId, isActive });
         if (isActive) {
-            MiscUtil.asyncFetch({
-                url: "https://oiip.jpl.nasa.gov/gwc/wmts?REQUEST=GetCapabilities",
-                handleAs: appStringsCore.LAYER_CONFIG_WMTS_XML
-            }).then(
-                data => {
-                    let parser = new Ol_Format_WMTSCapabilities();
-                    let result = parser.read(data);
-                    let options = Ol_Source_WMTS.optionsFromCapabilities(result, {
-                        layer: "oiip:err_tagbase_4",
-                        matrixSet: "EPSG:4326"
-                    });
-                    let state = getState();
-                    let track = state.map.getIn([
-                        "layers",
-                        appStrings.LAYER_GROUP_TYPE_INSITU_DATA,
-                        trackId
-                    ]);
-                    dispatch(
-                        mapActions.addLayer({
-                            id: track.get("id") + "_error",
-                            title: track.get("title"),
-                            type: appStrings.LAYER_GROUP_TYPE_INSITU_DATA_ERROR,
-                            handleAs: appStrings.LAYER_VECTOR_TILE_TRACK_ERROR,
-                            url: GeoServerUtil.getUrlForTrackError(track),
-                            insituMeta: track.get("insituMeta"),
-                            updateParameters: { time: false },
-                            wmtsOptions: {
-                                tileGrid: options.tileGrid
-                            },
-                            timeFormat: "YYYY-MM-DDTHH:mm:ssZ"
-                        })
-                    );
-                },
-                err => {
-                    console.warn("Error in setTrackErrorActive: ", err);
-                }
-            );
+            let state = getState();
+            let track = state.map.getIn([
+                "layers",
+                appStrings.LAYER_GROUP_TYPE_INSITU_DATA,
+                trackId
+            ]);
+            let errTrackId =
+                "oiip:err_poly_" +
+                track.getIn(["insituMeta", "project"]) +
+                "_" +
+                track.getIn(["insituMeta", "source_id"]);
+            let errTrackPartial = state.map
+                .getIn(["layers", appStringsCore.LAYER_GROUP_TYPE_PARTIAL])
+                .find(layer => layer.get("id") === errTrackId);
+            if (typeof errTrackPartial !== "undefined") {
+                dispatch(
+                    mapActions.addLayer({
+                        id: track.get("id") + "_error",
+                        title: track.get("title") + " - Error",
+                        type: appStrings.LAYER_GROUP_TYPE_INSITU_DATA_ERROR,
+                        handleAs: appStrings.LAYER_VECTOR_TILE_TRACK_ERROR,
+                        url: GeoServerUtil.getUrlForTrackError(track, errTrackId),
+                        insituMeta: track.get("insituMeta"),
+                        updateParameters: { time: false },
+                        wmtsOptions: {
+                            extents: track.getIn(["wmtsOptions", "extents"]).toJS(),
+                            tileGrid: errTrackPartial.getIn(["wmtsOptions", "tileGrid"]).toJS()
+                        },
+                        timeFormat: "YYYY-MM-DDTHH:mm:ssZ"
+                    })
+                );
+            }
         } else {
             dispatch(
                 mapActions.removeLayer(
@@ -136,6 +135,7 @@ export function setTrackErrorActive(trackId, isActive) {
                 )
             );
         }
+        dispatch({ type: types.SET_TRACK_ERROR_ACTIVE, layer: trackId, isActive });
     };
 }
 

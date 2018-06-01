@@ -595,13 +595,20 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
 
     createVectorTileTrackLayer(layer, fromCache = true) {
         try {
+            let options = layer.get("wmtsOptions").toJS();
             return new Ol_Layer_VectorTile({
                 declutter: true,
                 transition: 0,
                 source: new Ol_Source_VectorTile({
                     format: new Ol_Format_MVT(),
                     projection: "EPSG:4326",
-                    tileGrid: layer.getIn(["wmtsOptions", "tileGrid"]),
+                    tileGrid: new Ol_TileGrid({
+                        extent: options.extents,
+                        origin: options.tileGrid.origin,
+                        resolutions: options.tileGrid.resolutions,
+                        matrixIds: options.tileGrid.matrixIds,
+                        tileSize: options.tileGrid.tileSize
+                    }),
                     url: layer.get("url")
                 }),
                 style: new Ol_Style({
