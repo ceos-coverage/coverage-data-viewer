@@ -1,7 +1,10 @@
 .list {
-    flex: 1 1;
-    overflow: hidden;
-    overflow-y: scroll;
+    display: block;
+    height: 100%;
+    width: 100%;
+    // flex: 1 1;
+    // overflow: hidden;
+    // overflow-y: scroll;
 }
 
 .dummyList {
