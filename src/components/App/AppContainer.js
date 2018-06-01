@@ -19,7 +19,7 @@ import appConfig from "constants/appConfig";
 import MiscUtil from "_core/utils/MiscUtil";
 import { MapContainer, MapControlsContainer } from "components/Map";
 import { MainMenu } from "components/MainMenu";
-import { LayerInfoContainer } from "_core/components/LayerInfo";
+import { LayerInfoContainer } from "components/LayerInfo";
 import { LoadingContainer } from "_core/components/Loading";
 import { AlertsContainer } from "_core/components/Alerts";
 import { DatePickerContainer } from "components/DatePicker";

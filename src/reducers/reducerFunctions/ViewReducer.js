@@ -64,4 +64,8 @@ export default class ViewReducer extends ViewReducerCore {
 
         return ViewReducerCore.resetApplicationState(state, action);
     }
+
+    static setLayerInfo(state, action) {
+        return state.set("layerInfo", action.layer);
+    }
 }

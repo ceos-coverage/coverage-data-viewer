@@ -162,3 +162,7 @@ export function runLayerSearch() {
         );
     };
 }
+
+export function setLayerInfo(layer = undefined) {
+    return { type: types.SET_LAYER_INFO, layer };
+}

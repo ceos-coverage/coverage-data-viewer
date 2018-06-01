@@ -80,8 +80,8 @@ export default class SearchUtil {
         }
 
         return varList.reduce((acc, varStr) => {
-            let labelRe = /^[\w\d\s]+/;
-            let unitsRe = /\([\w\d\s]+\)/;
+            let labelRe = /^[\w\d\s/]+/;
+            let unitsRe = /\([\w\d\s/]+\)/;
             let label = varStr.match(labelRe);
             let units = varStr.match(unitsRe);
 

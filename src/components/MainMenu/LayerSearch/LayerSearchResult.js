@@ -1,10 +1,13 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 import moment from "moment";
 import { ListItem, ListItemSecondaryAction, ListItemText } from "material-ui/List";
 import InfoIcon from "material-ui-icons/InfoOutline";
 import Checkbox from "material-ui/Checkbox";
 import IconButton from "material-ui/IconButton";
+import * as appActions from "actions/appActions";
 
 export class LayerSearchResult extends Component {
     handleSelect() {
@@ -34,7 +37,10 @@ export class LayerSearchResult extends Component {
                     secondary={startStr + " – " + endStr}
                 />
                 <ListItemSecondaryAction>
-                    <IconButton aria-label="info">
+                    <IconButton
+                        aria-label="info"
+                        onClick={() => this.props.appActions.setLayerInfo(this.props.layer)}
+                    >
                         <InfoIcon />
                     </IconButton>
                 </ListItemSecondaryAction>
@@ -46,7 +52,14 @@ export class LayerSearchResult extends Component {
 LayerSearchResult.propTypes = {
     layer: PropTypes.object.isRequired,
     selected: PropTypes.bool.isRequired,
+    appActions: PropTypes.object.isRequired,
     onSelect: PropTypes.func
 };
 
-export default LayerSearchResult;
+function mapDispatchToProps(dispatch) {
+    return {
+        appActions: bindActionCreators(appActions, dispatch)
+    };
+}
+
+export default connect(null, mapDispatchToProps)(LayerSearchResult);

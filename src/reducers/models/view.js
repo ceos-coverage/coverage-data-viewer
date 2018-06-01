@@ -7,6 +7,7 @@ export const viewState = viewStateCore.mergeDeep(
     Immutable.fromJS({
         mainMenuTabIndex: 0,
         isMainMenuOpen: true,
+        layerInfo: undefined,
         layerSearch: {
             formOptions: {
                 startDate: moment

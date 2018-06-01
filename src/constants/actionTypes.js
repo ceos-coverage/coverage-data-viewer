@@ -1,6 +1,7 @@
 // Main menu actions
 export const SET_MAIN_MENU_TAB_INDEX = "SET_MAIN_MENU_TAB_INDEX";
 export const SET_MAIN_MENU_OPEN = "SET_MAIN_MENU_OPEN";
+export const SET_LAYER_INFO = "SET_LAYER_INFO";
 
 // Chart Actions
 export const SET_CHART_TRACK_SELECTED = "SET_CHART_TRACK_SELECTED";
