@@ -6,6 +6,7 @@ import RemoveIcon from "material-ui-icons/Close";
 import TargetIcon from "mdi-material-ui/Target";
 import TrackIcon from "mdi-material-ui/VectorPolyline";
 import BuildIcon from "material-ui-icons/Build";
+import InfoIcon from "material-ui-icons/InfoOutline";
 import DeleteIcon from "material-ui-icons/Delete";
 import PointErrorIcon from "mdi-material-ui/ImageFilterTiltShift";
 import Typography from "material-ui/Typography";
@@ -41,6 +42,16 @@ export class InsituLayerItemTools extends Component {
                 }}
             >
                 <MenuList dense>
+                    <MenuItem
+                        className={styles.toolItem}
+                        onClick={() => this.props.appActions.setLayerInfo(this.props.layer)}
+                        aria-label="Track info"
+                    >
+                        <ListItemIcon classes={{ root: styles.listItemIcon }}>
+                            <InfoIcon />
+                        </ListItemIcon>
+                        <ListItemText inset primary="Track Info" />
+                    </MenuItem>
                     <MenuItem
                         className={styles.toolItem}
                         onClick={() =>
