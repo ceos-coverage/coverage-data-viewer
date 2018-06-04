@@ -10,11 +10,8 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import Immutable from "immutable";
 import MiscUtil from "_core/utils/MiscUtil";
-import {
-    DrawingTooltip,
-    MouseCoordinates as MouseCoordinatesCore
-} from "_core/components/MouseFollower";
-import { DataDisplayContainer } from "components/MouseFollower";
+import { MouseCoordinates as MouseCoordinatesCore } from "_core/components/MouseFollower";
+import { DrawingTooltip, DataDisplayContainer } from "components/MouseFollower";
 import styles from "components/MouseFollower/MouseFollowerContainer.scss";
 import stylesCore from "_core/components/MouseFollower/MouseFollowerContainer.scss";
 import displayStyles from "_core/styles/display.scss";
@@ -23,10 +20,12 @@ export class MouseFollowerContainer extends Component {
     shouldComponentUpdate(nextProps) {
         let nextDraworMeasure =
             nextProps.drawing.get("isDrawingEnabled") ||
-            nextProps.measuring.get("isMeasuringEnabled");
+            nextProps.measuring.get("isMeasuringEnabled") ||
+            nextProps.areaSelection.get("isAreaSelectionEnabled");
         let currDrawOrMeasure =
             this.props.drawing.get("isDrawingEnabled") ||
-            this.props.measuring.get("isMeasuringEnabled");
+            this.props.measuring.get("isMeasuringEnabled") ||
+            this.props.areaSelection.get("isAreaSelectionEnabled");
 
         let currShowData =
             this.props.pixelCoordinate.get("isValid") && this.props.pixelCoordinate.get("showData");
@@ -59,7 +58,8 @@ export class MouseFollowerContainer extends Component {
 
         let drawOrMeasure =
             this.props.drawing.get("isDrawingEnabled") ||
-            this.props.measuring.get("isMeasuringEnabled");
+            this.props.measuring.get("isMeasuringEnabled") ||
+            this.props.areaSelection.get("isAreaSelectionEnabled");
         let dataAvailable = this.props.pixelCoordinate.get("data").size > 0;
 
         let containerClasses = MiscUtil.generateStringFromSet({
@@ -86,6 +86,7 @@ export class MouseFollowerContainer extends Component {
                     <DrawingTooltip
                         drawing={this.props.drawing}
                         measuring={this.props.measuring}
+                        areaSelection={this.props.areaSelection}
                         className={drawClasses}
                     />
                     <DataDisplayContainer
@@ -105,6 +106,7 @@ MouseFollowerContainer.propTypes = {
     pixelCoordinate: PropTypes.object.isRequired,
     drawing: PropTypes.object.isRequired,
     measuring: PropTypes.object.isRequired,
+    areaSelection: PropTypes.object.isRequired,
     className: PropTypes.string
 };
 
@@ -112,7 +114,8 @@ function mapStateToProps(state) {
     return {
         pixelCoordinate: state.map.getIn(["view", "pixelHoverCoordinate"]),
         drawing: state.map.get("drawing"),
-        measuring: state.map.get("measuring")
+        measuring: state.map.get("measuring"),
+        areaSelection: state.map.get("areaSelection")
     };
 }
 

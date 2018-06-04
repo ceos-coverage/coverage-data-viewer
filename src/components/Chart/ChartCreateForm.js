@@ -63,7 +63,7 @@ export class ChartCreateForm extends Component {
                     {sharedVariableSet.map(variable => (
                         <FormControlLabel
                             key={"shared_var_" + variable.get("value")}
-                            value={variable.get("value")}
+                            value={variable.get("label")}
                             control={<Radio color="primary" />}
                             label={variable.get("label")}
                         />

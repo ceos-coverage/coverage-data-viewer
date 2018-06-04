@@ -8,6 +8,7 @@ import InfoIcon from "material-ui-icons/InfoOutline";
 import Checkbox from "material-ui/Checkbox";
 import IconButton from "material-ui/IconButton";
 import * as appActions from "actions/appActions";
+import styles from "components/MainMenu/LayerSearch/LayerSearchResult.scss";
 
 export class LayerSearchResult extends Component {
     handleSelect() {
@@ -35,6 +36,7 @@ export class LayerSearchResult extends Component {
                 <ListItemText
                     primary={this.props.layer.get("title")}
                     secondary={startStr + " – " + endStr}
+                    classes={{ primary: styles.title }}
                 />
                 <ListItemSecondaryAction>
                     <IconButton
