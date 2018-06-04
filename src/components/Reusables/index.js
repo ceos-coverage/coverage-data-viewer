@@ -8,3 +8,6 @@ export { default as AreaSelectionInput } from "components/Reusables/AreaSelectio
 export { default as AreaSelectionForm } from "components/Reusables/AreaSelectionForm.js";
 export { default as DateRangePicker } from "components/Reusables/DateRangePicker.js";
 export { default as MapToolsMenu } from "components/Reusables/MapToolsMenu.js";
+export {
+    default as EnhancedFormControlLabel
+} from "components/Reusables/EnhancedFormControlLabel.js";

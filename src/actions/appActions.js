@@ -42,6 +42,10 @@ export function setSearchResults(results) {
     return { type: types.SET_SEARCH_RESULTS, results };
 }
 
+export function setSearchFacets(facets) {
+    return { type: types.SET_SEARCH_FACETS, facets };
+}
+
 export function setTrackSelected(trackId, isSelected) {
     return (dispatch, getState) => {
         dispatch({ type: types.SET_TRACK_SELECTED, trackId, isSelected });
@@ -146,13 +150,19 @@ export function runLayerSearch() {
 
         dispatch(setSearchLoading(true));
 
-        SearchUtil.searchForTracks({
+        let options = {
             area: searchParams.get("selectedArea").toJS(),
             dateRange: [searchParams.get("startDate"), searchParams.get("endDate")],
             facets: searchParams.get("searchFacets").toJS()
-        }).then(
+        };
+
+        Promise.all([
+            SearchUtil.searchForTracks(options),
+            SearchUtil.searchForFacets(options)
+        ]).then(
             results => {
-                dispatch(setSearchResults(results));
+                dispatch(setSearchResults(results[0]));
+                dispatch(setSearchFacets(results[1]));
                 dispatch(setSearchLoading(false));
             },
             err => {

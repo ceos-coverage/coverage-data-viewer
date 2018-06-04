@@ -2,101 +2,60 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import Radio, { RadioGroup } from "material-ui/Radio";
 import Checkbox from "material-ui/Checkbox";
-import { FormControl, FormGroup, FormControlLabel } from "material-ui/Form";
-import { LabelPopover } from "components/Reusables";
+import { FormGroup, FormControlLabel } from "material-ui/Form";
+import { LabelPopover, EnhancedFormControlLabel } from "components/Reusables";
+import appConfig from "constants/appConfig";
 import styles from "components/MainMenu/LayerSearch/LayerSearchFacets.scss";
 
 export class LayerSearchFacets extends Component {
-    render() {
+    renderFacetSelector(configFacet, propFacet) {
+        let selected = this.props.selectedFacets.get(configFacet.value);
+        let subTitle =
+            selected.size === 0
+                ? "Any"
+                : selected.size === 1 ? selected.get(0) : selected.size + " Selected";
         return (
-            <div className={styles.root}>
-                <LabelPopover label="Variable" subtitle="Any" className={styles.facet}>
-                    <FormGroup>
-                        <FormControlLabel
-                            control={<Checkbox color="primary" checked={false} value="tuna_a304" />}
-                            label="depth"
+            <LabelPopover
+                key={configFacet.value}
+                label={configFacet.label}
+                subtitle={subTitle}
+                className={styles.facet}
+            >
+                <FormGroup>
+                    {propFacet.map((facet, i) => (
+                        <EnhancedFormControlLabel
+                            key={configFacet.value + "_" + i}
+                            control={
+                                <Checkbox
+                                    color="primary"
+                                    checked={false}
+                                    value={facet.get("value")}
+                                />
+                            }
+                            label={facet.get("label")}
+                            rightLabel={facet.get("cnt")}
                         />
-                        <FormControlLabel
-                            control={<Checkbox color="primary" checked={false} value="tuna_a303" />}
-                            label="ext_temp"
-                        />
-                        <FormControlLabel
-                            control={<Checkbox color="primary" checked={false} value="tuna_a303" />}
-                            label="light"
-                        />
-                        <FormControlLabel
-                            control={<Checkbox color="primary" checked={false} value="tuna_a304" />}
-                            label="pressure"
-                        />
-                        <FormControlLabel
-                            control={<Checkbox color="primary" checked={false} value="tuna_a304" />}
-                            label="salinity"
-                        />
-                    </FormGroup>
-                </LabelPopover>
-                <LabelPopover label="Platform" subtitle="Any" className={styles.facet}>
-                    <FormGroup>
-                        <FormControlLabel
-                            control={<Checkbox color="primary" checked={false} value="tuna_a304" />}
-                            label="Buoy"
-                        />
-                        <FormControlLabel
-                            control={<Checkbox color="primary" checked={false} value="tuna_a303" />}
-                            label="Dolphin"
-                        />
-                        <FormControlLabel
-                            control={<Checkbox color="primary" checked={false} value="tuna_a304" />}
-                            label="Shark"
-                        />
-                        <FormControlLabel
-                            control={<Checkbox color="primary" checked={false} value="tuna_a304" />}
-                            label="Ship"
-                        />
-                        <FormControlLabel
-                            control={<Checkbox color="primary" checked={false} value="tuna_a303" />}
-                            label="Tuna"
-                        />
-                    </FormGroup>
-                </LabelPopover>
-                <LabelPopover label="Sensor" subtitle="Any" className={styles.facet}>
-                    <FormGroup>
-                        <FormControlLabel
-                            control={<Checkbox color="primary" checked={false} value="tuna_a303" />}
-                            label="Animal Tag X3K"
-                        />
-                        <FormControlLabel
-                            control={<Checkbox color="primary" checked={false} value="tuna_a304" />}
-                            label="Buoy 44Z"
-                        />
-                        <FormControlLabel
-                            control={<Checkbox color="primary" checked={false} value="tuna_a304" />}
-                            label="Ship Sensor Line"
-                        />
-                    </FormGroup>
-                </LabelPopover>
-                <LabelPopover label="Project" subtitle="Any" className={styles.facet}>
-                    <FormGroup>
-                        <FormControlLabel
-                            control={<Checkbox color="primary" checked={false} value="tuna_a303" />}
-                            label="PO.DAAC"
-                        />
-                        <FormControlLabel
-                            control={<Checkbox color="primary" checked={false} value="tuna_a304" />}
-                            label="Project Name"
-                        />
-                        <FormControlLabel
-                            control={<Checkbox color="primary" checked={false} value="tuna_a304" />}
-                            label="SPURS"
-                        />
-                    </FormGroup>
-                </LabelPopover>
-            </div>
+                    ))}
+                </FormGroup>
+            </LabelPopover>
         );
+    }
+
+    renderFacets() {
+        let facets = appConfig.LAYER_SEARCH.FACETS;
+        return facets.map((facet, i) => {
+            return this.renderFacetSelector(facet, this.props.facets.get(facet.value));
+        });
+    }
+
+    render() {
+        return <div className={styles.root}>{this.renderFacets()}</div>;
     }
 }
 
 LayerSearchFacets.propTypes = {
     facets: PropTypes.object,
+    selectedFacets: PropTypes.object,
     onChange: PropTypes.func
 };
 

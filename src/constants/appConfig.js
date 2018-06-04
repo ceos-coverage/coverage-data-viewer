@@ -41,12 +41,8 @@ const APP_CONFIG = Immutable.fromJS({
         paletteConfig: "default-data/palettes_oiip.json",
         geoserverBase: "https://oiip.jpl.nasa.gov/geoserver/ows",
         solrBase: "https://oiip.jpl.nasa.gov/solr/",
-        decimatorMiddleware: "http://icewhale.jpl.nasa.gov:49181/getData",
-        // decimatorMiddleware: "http://localhost:49181/getData",
-        layerSearch: {
-            defaultFacetSearch:
-                "https://oiip.jpl.nasa.gov/solr/?facet.field=measurement_name&facet.field=category&facet.field=project&facet=on&indent=on&q=*:*&rows=0&wt=json"
-        }
+        decimatorMiddleware: "http://icewhale.jpl.nasa.gov:49181/getData"
+        // decimatorMiddleware: "http://localhost:49181/getData"
     },
     DEFAULT_WEB_WORKER_NUM: 1,
     DEFAULT_MAP_EXTENT: [-180 * 2, -90, 180 * 2, 90],
@@ -93,6 +89,14 @@ const APP_CONFIG = Immutable.fromJS({
             { value: appStrings.PLOT_STYLES.TIME_SERIES.LINES_AND_DOTS, label: "Lines and Dots" },
             { value: appStrings.PLOT_STYLES.TIME_SERIES.DOTS, label: "Dots Only" },
             { value: appStrings.PLOT_STYLES.TIME_SERIES.BARS, label: "Bars" }
+        ]
+    },
+    LAYER_SEARCH: {
+        FACETS: [
+            { value: "variables", label: "variable" },
+            { value: "platform", label: "platform" },
+            { value: "instrument", label: "sensor" },
+            { value: "project", label: "project" }
         ]
     }
 });

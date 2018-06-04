@@ -4,6 +4,7 @@ import appConfig from "constants/appConfig";
 import ViewReducerCore from "_core/reducers/reducerFunctions/ViewReducer";
 import { alert as alertCore } from "_core/reducers/models/alert";
 import { trackModel } from "reducers/models/view";
+import SearchUtil from "utils/SearchUtil";
 
 //IMPORTANT: Note that with Redux, state should NEVER be changed.
 //State is considered immutable. Instead,
@@ -42,6 +43,27 @@ export default class ViewReducer extends ViewReducerCore {
         }, Immutable.OrderedMap());
 
         return state.setIn(["layerSearch", "searchResults", "results"], results);
+    }
+
+    static setSearchFacets(state, action) {
+        let facets = appConfig.LAYER_SEARCH.FACETS;
+        for (let i = 0; i < facets.length; ++i) {
+            let values = action.facets.get(facets[i].value);
+
+            if (facets[i].value === "variables") {
+                values = values.map(entry => {
+                    let varEntry = SearchUtil.readVariable(entry.get("value"));
+                    return entry.set("label", varEntry.get("label"));
+                });
+            }
+
+            state = state.setIn(
+                ["layerSearch", "formOptions", "searchFacets", facets[i].value],
+                values.sortBy(entry => entry.get("label"))
+            );
+        }
+
+        return state;
     }
 
     static setTrackSelected(state, action) {

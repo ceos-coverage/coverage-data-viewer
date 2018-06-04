@@ -3,6 +3,11 @@ import moment from "moment";
 import appConfig from "constants/appConfig";
 import { viewState as viewStateCore } from "_core/reducers/models/view";
 
+let facetMap = appConfig.LAYER_SEARCH.FACETS.reduce((acc, facet) => {
+    acc[facet.value] = [];
+    return acc;
+}, {});
+
 export const viewState = viewStateCore.mergeDeep(
     Immutable.fromJS({
         mainMenuTabIndex: 0,
@@ -16,7 +21,8 @@ export const viewState = viewStateCore.mergeDeep(
                     .toDate(),
                 endDate: appConfig.DEFAULT_DATE,
                 selectedArea: [],
-                searchFacets: []
+                selectedFacets: facetMap,
+                searchFacets: facetMap
             },
             searchResults: {
                 isLoading: false,

@@ -4,9 +4,54 @@ import * as appStringsCore from "_core/constants/appStrings";
 import MiscUtil from "utils/MiscUtil";
 import appConfig from "constants/appConfig";
 
-// https://oiip.jpl.nasa.gov/solr/?q=project:tagbase&fq=datatype:title&indent=on&wt=json&rows=1000
-
 export default class SearchUtil {
+    static searchForFacets(options) {
+        return new Promise((resolve, reject) => {
+            let { area, dateRange } = options;
+
+            let baseUrl = appConfig.URLS.solrBase;
+
+            let sDateStr = moment.utc(dateRange[0]).unix();
+            let eDateStr = moment.utc(dateRange[1]).unix();
+
+            area = area.length === 4 ? area : [-180, -90, 180, 90];
+            let bl = [area[1], area[0]].join(",");
+            let ur = [area[3], area[2]].join(",");
+
+            let query = [
+                "q=datatype:track",
+                "fq=lon_max:[" + area[0] + " TO *]",
+                "fq=lon_min:[* TO " + area[2] + "]",
+                "fq=lat_max:[" + area[1] + " TO *]",
+                "fq=lat_min:[* TO " + area[3] + "]",
+                "fq=start_date:[" + sDateStr + " TO *]",
+                "fq=end_date:[* TO " + eDateStr + "]",
+                "facet=on",
+                "rows=0",
+                "wt=json"
+            ];
+
+            let facets = appConfig.LAYER_SEARCH.FACETS;
+            for (let i = 0; i < facets.length; ++i) {
+                query.push("facet.field=" + facets[i].value);
+            }
+
+            let url = encodeURI(baseUrl + "?" + query.join("&"));
+
+            MiscUtil.asyncFetch({
+                url: url,
+                handleAs: appStringsCore.FILE_TYPE_JSON
+            }).then(
+                data => {
+                    let results = SearchUtil.processFacetResults([data]);
+                    resolve(results);
+                },
+                err => {
+                    reject(err);
+                }
+            );
+        });
+    }
     static searchForTracks(options) {
         return new Promise((resolve, reject) => {
             let { area, dateRange, facets } = options;
@@ -34,14 +79,12 @@ export default class SearchUtil {
 
             let url = encodeURI(baseUrl + "?" + query.join("&"));
 
-            let promise = MiscUtil.asyncFetch({
+            MiscUtil.asyncFetch({
                 url: url,
                 handleAs: appStringsCore.FILE_TYPE_JSON
-            });
-
-            Promise.all([promise]).then(
+            }).then(
                 data => {
-                    let results = SearchUtil.processLayerSearchResults(data);
+                    let results = SearchUtil.processLayerSearchResults([data]);
                     resolve(results);
                 },
                 err => {
@@ -49,6 +92,30 @@ export default class SearchUtil {
                 }
             );
         });
+    }
+
+    static processFacetResults(data) {
+        let retFacets = {};
+        try {
+            if (data.length > 0) {
+                let fields = data[0].facet_counts.facet_fields;
+                let facets = appConfig.LAYER_SEARCH.FACETS;
+                for (let i = 0; i < facets.length; ++i) {
+                    let facet = facets[i].value;
+                    let values = fields[facet];
+                    retFacets[facet] = values.reduce((acc, valueStr, i) => {
+                        if (i % 2 === 0) {
+                            acc.push({ label: valueStr, value: valueStr, cnt: values[i + 1] });
+                        }
+                        return acc;
+                    }, []);
+                }
+            }
+            return Immutable.fromJS(retFacets);
+        } catch (err) {
+            console.warn("Error in SearchUtil.processFacetResults: ", err);
+            return Immutable.fromJS(retFacets);
+        }
     }
 
     static processLayerSearchResults(data) {
@@ -80,25 +147,27 @@ export default class SearchUtil {
         }
 
         return varList.reduce((acc, varStr) => {
-            let labelRe = /^[\w\d\s/]+/;
-            let unitsRe = /\([\w\d\s/]+\)/;
-            let label = varStr.match(labelRe);
-            let units = varStr.match(unitsRe);
-
-            if (label !== null && units !== null) {
-                return acc.add(
-                    Immutable.Map({
-                        value: label[0].trim(),
-                        label: label[0].trim(),
-                        units: units[0]
-                            .replace("(", "")
-                            .replace(")", "")
-                            .trim()
-                    })
-                );
-            } else {
-                return acc.add(Immutable.Map({ value: varStr, label: varStr, units: "" }));
-            }
+            return acc.add(SearchUtil.readVariable(varStr));
         }, Immutable.Set());
+    }
+
+    static readVariable(varStr) {
+        let labelRe = /^[\w\d\s/]+/;
+        let unitsRe = /\([\w\d\s/]+\)/;
+        let label = varStr.match(labelRe);
+        let units = varStr.match(unitsRe);
+
+        if (label !== null && units !== null) {
+            return Immutable.Map({
+                value: varStr,
+                label: label[0].trim(),
+                units: units[0]
+                    .replace("(", "")
+                    .replace(")", "")
+                    .trim()
+            });
+        } else {
+            return Immutable.Map({ value: varStr, label: varStr, units: "" });
+        }
     }
 }
