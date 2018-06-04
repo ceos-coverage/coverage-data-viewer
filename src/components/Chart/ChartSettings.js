@@ -133,8 +133,8 @@ export class ChartSettings extends Component {
         return (
             <Slide direction="left" in={this.props.displayOptions.get("isOpen")}>
                 <Paper elevation={2} className={styles.root}>
-                    <Paper elevation={1} className={styles.header}>
-                        <Typography variant="subheading" className={styles.label}>
+                    <Paper elevation={0} className={styles.header}>
+                        <Typography variant="body2" className={styles.label}>
                             Chart Settings
                         </Typography>
                         <Button

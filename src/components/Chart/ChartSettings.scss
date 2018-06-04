@@ -19,6 +19,8 @@
     align-items: center;
     padding: 0px 1rem;
     z-index: 1;
+    background: darken(white, 3%);
+    border-bottom: 1px solid darken(white, 10%);
 }
 
 .label {
