@@ -7,7 +7,7 @@ import appConfig from "constants/appConfig";
 export default class SearchUtil {
     static searchForFacets(options) {
         return new Promise((resolve, reject) => {
-            let { area, dateRange } = options;
+            let { area, dateRange, facets } = options;
 
             let baseUrl = appConfig.URLS.solrBase;
 
@@ -31,9 +31,21 @@ export default class SearchUtil {
                 "wt=json"
             ];
 
-            let facets = appConfig.LAYER_SEARCH.FACETS;
-            for (let i = 0; i < facets.length; ++i) {
-                query.push("facet.field=" + facets[i].value);
+            // add facet queries
+            // let keys = Object.keys(facets);
+            // for (let i = 0; i < keys.length; ++i) {
+            //     let key = keys[i];
+            //     if (facets[key].length > 0) {
+            //         query.push(
+            //             "fq=" + key + ":(" + facets[key].map(x => '"' + x + '"').join(" OR ") + ")"
+            //         );
+            //     }
+            // }
+
+            // add configured faceting
+            let configFacets = appConfig.LAYER_SEARCH.FACETS;
+            for (let i = 0; i < configFacets.length; ++i) {
+                query.push("facet.field=" + configFacets[i].value);
             }
 
             let url = encodeURI(baseUrl + "?" + query.join("&"));
@@ -76,6 +88,17 @@ export default class SearchUtil {
                 "rows=1000",
                 "wt=json"
             ];
+
+            // add facet queries
+            let keys = Object.keys(facets);
+            for (let i = 0; i < keys.length; ++i) {
+                let key = keys[i];
+                if (facets[key].length > 0) {
+                    query.push(
+                        "fq=" + key + ":(" + facets[key].map(x => '"' + x + '"').join(" OR ") + ")"
+                    );
+                }
+            }
 
             let url = encodeURI(baseUrl + "?" + query.join("&"));
 

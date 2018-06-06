@@ -32,6 +32,9 @@ export default function view(state = viewState, action, opt_reducer = ViewReduce
         case actionTypes.SET_SEARCH_FACETS:
             return opt_reducer.setSearchFacets(state, action);
 
+        case actionTypes.SET_SEARCH_FACET_SELECTED:
+            return opt_reducer.setSearchFacetSelected(state, action);
+
         default:
             return viewCore.call(this, state, action, opt_reducer);
     }

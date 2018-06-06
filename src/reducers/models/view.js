@@ -21,8 +21,14 @@ export const viewState = viewStateCore.mergeDeep(
                     .toDate(),
                 endDate: appConfig.DEFAULT_DATE,
                 selectedArea: [],
-                selectedFacets: facetMap,
-                searchFacets: facetMap
+                selectedFacets: appConfig.LAYER_SEARCH.FACETS.reduce((acc, facet) => {
+                    acc[facet.value] = Immutable.Set();
+                    return acc;
+                }, {}),
+                searchFacets: appConfig.LAYER_SEARCH.FACETS.reduce((acc, facet) => {
+                    acc[facet.value] = [];
+                    return acc;
+                }, {})
             },
             searchResults: {
                 isLoading: false,

@@ -76,6 +76,20 @@ export default class ViewReducer extends ViewReducerCore {
         return state.setIn(["layerSearch", "selectedTracks"], selected);
     }
 
+    static setSearchFacetSelected(state, action) {
+        if (typeof action.facet !== "undefined") {
+            let facet = action.facet;
+            let path = ["layerSearch", "formOptions", "selectedFacets", facet.group];
+            let set = state.getIn(path);
+            if (action.isSelected) {
+                return state.setIn(path, set.add(facet.value));
+            } else {
+                return state.setIn(path, set.delete(facet.value));
+            }
+        }
+        return state;
+    }
+
     static resetApplicationState(state, action) {
         state = this.setMainMenutabIndex(state, { tabIndex: 0 });
         state = this.setMainMenuOpen(state, { isOpen: true });

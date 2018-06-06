@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
+import { bindActionCreators } from "redux";
+import { connect } from "react-redux";
 import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import Checkbox from "@material-ui/core/Checkbox";
@@ -7,6 +9,7 @@ import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import { LabelPopover, EnhancedFormControlLabel } from "components/Reusables";
 import appConfig from "constants/appConfig";
+import * as appActions from "actions/appActions";
 import styles from "components/MainMenu/LayerSearch/LayerSearchFacets.scss";
 
 export class LayerSearchFacets extends Component {
@@ -15,7 +18,9 @@ export class LayerSearchFacets extends Component {
         let subTitle =
             selected.size === 0
                 ? "Any"
-                : selected.size === 1 ? selected.get(0) : selected.size + " Selected";
+                : selected.size === 1
+                  ? propFacet.find(f => selected.contains(f.get("value"))).get("label")
+                  : selected.size + " Selected";
         return (
             <LabelPopover
                 key={configFacet.value}
@@ -30,12 +35,18 @@ export class LayerSearchFacets extends Component {
                             control={
                                 <Checkbox
                                     color="primary"
-                                    checked={false}
+                                    checked={selected.contains(facet.get("value"))}
                                     value={facet.get("value")}
                                 />
                             }
                             label={facet.get("label")}
                             rightLabel={facet.get("cnt")}
+                            onChange={(evt, isSelected) =>
+                                this.props.appActions.setSearchFacetSelected(
+                                    { group: configFacet.value, value: facet.get("value") },
+                                    isSelected
+                                )
+                            }
                         />
                     ))}
                 </FormGroup>
@@ -58,7 +69,13 @@ export class LayerSearchFacets extends Component {
 LayerSearchFacets.propTypes = {
     facets: PropTypes.object,
     selectedFacets: PropTypes.object,
-    onChange: PropTypes.func
+    appActions: PropTypes.object.isRequired
 };
 
-export default LayerSearchFacets;
+function mapDispatchToProps(dispatch) {
+    return {
+        appActions: bindActionCreators(appActions, dispatch)
+    };
+}
+
+export default connect(null, mapDispatchToProps)(LayerSearchFacets);
