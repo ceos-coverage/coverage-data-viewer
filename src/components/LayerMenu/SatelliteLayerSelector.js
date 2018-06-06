@@ -2,23 +2,21 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import Typography from "material-ui/Typography";
-import Paper from "material-ui/Paper";
-import Checkbox from "material-ui/Checkbox";
-import List, { ListSubheader } from "material-ui/List";
-import {
-    FormLabel,
-    FormControl,
-    FormGroup,
-    FormControlLabel,
-    FormHelperText
-} from "material-ui/Form";
+import Typography from "@material-ui/core/Typography";
+import Paper from "@material-ui/core/Paper";
+import Checkbox from "@material-ui/core/Checkbox";
+import List from "@material-ui/core/List";
+import ListSubheader from "@material-ui/core/ListSubheader";
+import FormControl from "@material-ui/core/FormControl";
+import FormGroup from "@material-ui/core/FormGroup";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Radio from "@material-ui/core/Radio";
+import RadioGroup from "@material-ui/core/RadioGroup";
 import { Colorbar } from "_core/components/Colorbar";
 import { LabelPopover } from "components/Reusables";
 import * as mapActionsCore from "_core/actions/mapActions";
 import * as appStringsCore from "_core/constants/appStrings";
 import * as appStrings from "constants/appStrings";
-import Radio, { RadioGroup } from "material-ui/Radio";
 import MiscUtil from "_core/utils/MiscUtil";
 import styles from "components/LayerMenu/SatelliteLayerSelector.scss";
 import displayStyles from "_core/styles/display.scss";

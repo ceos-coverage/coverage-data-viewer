@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { findDOMNode } from "react-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import Popover from "material-ui/Popover";
+import Popover from "@material-ui/core/Popover";
 import MiscUtil from "_core/utils/MiscUtil";
 import styles from "components/Reusables/IconPopover.scss";
 import { IconButtonSmall } from "_core/components/Reusables";

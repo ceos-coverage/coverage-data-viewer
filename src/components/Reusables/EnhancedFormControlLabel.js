@@ -7,8 +7,8 @@
 
 import React from "react";
 import PropTypes from "prop-types";
-import Typography from "material-ui/Typography";
-import { FormControlLabel } from "material-ui/Form";
+import Typography from "@material-ui/core/Typography";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
 import styles from "components/Reusables/EnhancedFormControlLabel.scss";
 
 const EnhancedFormControlLabel = props => {

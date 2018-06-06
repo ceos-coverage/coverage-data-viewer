@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import { Typography } from "material-ui";
+import { Typography } from "@material-ui/core";
 import MiscUtil from "utils/MiscUtil";
 
 export class LayerSearchResultsLabel extends Component {

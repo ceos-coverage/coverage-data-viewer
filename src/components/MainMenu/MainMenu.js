@@ -9,13 +9,14 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import Tabs, { Tab } from "material-ui/Tabs";
-import Paper from "material-ui/Paper";
-import Slide from "material-ui/transitions/Slide";
-import Button from "material-ui/Button";
-import Typography from "material-ui/Typography";
-import IconButton from "material-ui/IconButton";
-import ArrowBack from "material-ui-icons/KeyboardArrowLeft";
+import Tabs from "@material-ui/core/Tabs";
+import Tab from "@material-ui/core/Tab";
+import Paper from "@material-ui/core/Paper";
+import Slide from "@material-ui/core/Slide";
+import Button from "@material-ui/core/Button";
+import Typography from "@material-ui/core/Typography";
+import IconButton from "@material-ui/core/IconButton";
+import ArrowBack from "@material-ui/icons/KeyboardArrowLeft";
 import { ChartMenu } from "components/Chart";
 import { LayerSearchMenu } from "components/MainMenu/LayerSearch";
 import { SettingsContainer } from "components/Settings";
@@ -78,18 +79,14 @@ export class MainMenu extends Component {
                             <Tab
                                 classes={{
                                     root: styles.tabLabel,
-                                    textColorPrimarySelected: styles.tabSelected,
-                                    textColorSecondarySelected: styles.tabSelected,
-                                    textColorInheritSelected: styles.tabSelected
+                                    selected: styles.tabSelected
                                 }}
                                 label="Datasets"
                             />
                             <Tab
                                 classes={{
                                     root: styles.tabLabel,
-                                    textColorPrimarySelected: styles.tabSelected,
-                                    textColorSecondarySelected: styles.tabSelected,
-                                    textColorInheritSelected: styles.tabSelected
+                                    selected: styles.tabSelected
                                 }}
                                 label="Charts"
                             />

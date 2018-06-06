@@ -3,18 +3,19 @@ import PropTypes from "prop-types";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import Immutable from "immutable";
-import { InputLabel } from "material-ui/Input";
-import { MenuItem } from "material-ui/Menu";
-import Select from "material-ui/Select";
-import { FormControl, FormGroup } from "material-ui/Form";
-import Grid from "material-ui/Grid";
-import TextField from "material-ui/TextField";
-import Button from "material-ui/Button";
-import Typography from "material-ui/Typography";
-import Paper from "material-ui/Paper";
-import Divider from "material-ui/Divider";
-import ClickAwayListener from "material-ui/utils/ClickAwayListener";
-import Slide from "material-ui/transitions/Slide";
+import InputLabel from "@material-ui/core/InputLabel";
+import MenuItem from "@material-ui/core/Menu";
+import Select from "@material-ui/core/Select";
+import FormControl from "@material-ui/core/FormControl";
+import FormGroup from "@material-ui/core/FormGroup";
+import Grid from "@material-ui/core/Grid";
+import TextField from "@material-ui/core/TextField";
+import Button from "@material-ui/core/Button";
+import Typography from "@material-ui/core/Typography";
+import Paper from "@material-ui/core/Paper";
+import Divider from "@material-ui/core/Divider";
+import ClickAwayListener from "@material-ui/core/ClickAwayListener";
+import Slide from "@material-ui/core/Slide";
 import appConfig from "constants/appConfig";
 import * as chartActions from "actions/chartActions";
 import MiscUtil from "utils/MiscUtil";
@@ -69,7 +70,7 @@ export class ChartSettings extends Component {
             return (
                 <FormGroup className={styles.formMargin}>
                     <Typography variant="caption">Set Z-Axis Bounds</Typography>
-                    <Grid container justify="space-between" alignItems="center">
+                    <Grid container spacing={16} alignItems="center">
                         <Grid item xs={2}>
                             <Checkbox
                                 color="primary"
@@ -151,7 +152,7 @@ export class ChartSettings extends Component {
                     <div className={styles.content}>
                         <FormGroup className={styles.formMargin}>
                             <Typography variant="caption">Set Y-Axis Bounds</Typography>
-                            <Grid container alignItems="center">
+                            <Grid container spacing={16} alignItems="center">
                                 <Grid item xs={2}>
                                     <Checkbox
                                         color="primary"

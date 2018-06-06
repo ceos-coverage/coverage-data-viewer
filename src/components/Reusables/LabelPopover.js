@@ -2,10 +2,10 @@ import React, { Component } from "react";
 import { findDOMNode } from "react-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import ButtonBase from "material-ui/ButtonBase";
-import ArrowDropDown from "material-ui-icons/ArrowDropDown";
-import Popover from "material-ui/Popover";
-import Typography from "material-ui/Typography";
+import ButtonBase from "@material-ui/core/ButtonBase";
+import ArrowDropDown from "@material-ui/icons/ArrowDropDown";
+import Popover from "@material-ui/core/Popover";
+import Typography from "@material-ui/core/Typography";
 import MiscUtil from "_core/utils/MiscUtil";
 import styles from "components/Reusables/LabelPopover.scss";
 

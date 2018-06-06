@@ -2,10 +2,10 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import Paper from "material-ui/Paper";
-import Grid from "material-ui/Grid";
-import Button from "material-ui/Button";
-import { Typography, Divider } from "material-ui";
+import Paper from "@material-ui/core/Paper";
+import Grid from "@material-ui/core/Grid";
+import Button from "@material-ui/core/Button";
+import { Typography, Divider } from "@material-ui/core";
 import SortIcon from "mdi-material-ui/Sort";
 import { DateRangePicker, AreaSelectionInput, IconPopover } from "components/Reusables";
 import {

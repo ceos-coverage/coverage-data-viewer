@@ -3,17 +3,14 @@ import PropTypes from "prop-types";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import Immutable from "immutable";
-import Radio, { RadioGroup } from "material-ui/Radio";
-import {
-    FormLabel,
-    FormControl,
-    FormGroup,
-    FormControlLabel,
-    FormHelperText
-} from "material-ui/Form";
-import Paper from "material-ui/Paper";
-import Typography from "material-ui/Typography";
-import Button from "material-ui/Button";
+import Radio from "@material-ui/core/Radio";
+import RadioGroup from "@material-ui/core/RadioGroup";
+import FormControl from "@material-ui/core/FormControl";
+import FormGroup from "@material-ui/core/FormGroup";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Paper from "@material-ui/core/Paper";
+import Typography from "@material-ui/core/Typography";
+import Button from "@material-ui/core/Button";
 import { LabelPopover, Checkbox } from "components/Reusables";
 import styles from "components/Chart/ChartCreateForm.scss";
 import * as chartActions from "actions/chartActions";

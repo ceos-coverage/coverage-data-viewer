@@ -3,10 +3,12 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import moment from "moment";
-import { ListItem, ListItemSecondaryAction, ListItemText } from "material-ui/List";
-import InfoIcon from "material-ui-icons/InfoOutline";
-import Checkbox from "material-ui/Checkbox";
-import IconButton from "material-ui/IconButton";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
+import ListItemText from "@material-ui/core/ListItemText";
+import InfoIcon from "@material-ui/icons/InfoOutline";
+import Checkbox from "@material-ui/core/Checkbox";
+import IconButton from "@material-ui/core/IconButton";
 import * as appActions from "actions/appActions";
 import styles from "components/MainMenu/LayerSearch/LayerSearchResult.scss";
 

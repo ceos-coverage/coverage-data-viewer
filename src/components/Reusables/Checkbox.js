@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import CheckboxMui from "material-ui/Checkbox";
-import { FormControlLabel } from "material-ui/Form";
+import CheckboxMui from "@material-ui/core/Checkbox";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
 import styles from "components/Chart/ChartSettings.scss";
 
 export class Checkbox extends Component {

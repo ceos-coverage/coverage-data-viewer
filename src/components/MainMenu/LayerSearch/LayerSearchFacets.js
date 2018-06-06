@@ -1,8 +1,10 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import Radio, { RadioGroup } from "material-ui/Radio";
-import Checkbox from "material-ui/Checkbox";
-import { FormGroup, FormControlLabel } from "material-ui/Form";
+import Radio from "@material-ui/core/Radio";
+import RadioGroup from "@material-ui/core/RadioGroup";
+import Checkbox from "@material-ui/core/Checkbox";
+import FormGroup from "@material-ui/core/FormGroup";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
 import { LabelPopover, EnhancedFormControlLabel } from "components/Reusables";
 import appConfig from "constants/appConfig";
 import styles from "components/MainMenu/LayerSearch/LayerSearchFacets.scss";

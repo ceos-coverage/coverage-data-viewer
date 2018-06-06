@@ -2,13 +2,17 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import List, { ListSubheader } from "material-ui/List";
-import { FormControl, FormGroup, FormControlLabel } from "material-ui/Form";
-import Radio, { RadioGroup } from "material-ui/Radio";
+import List from "@material-ui/core/List";
+import ListSubheader from "@material-ui/core/ListSubheader";
+import FormControl from "@material-ui/core/FormControl";
+import FormGroup from "@material-ui/core/FormGroup";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Radio from "@material-ui/core/Radio";
+import RadioGroup from "@material-ui/core/RadioGroup";
+import SortIcon from "mdi-material-ui/Sort";
 import { IconPopover } from "components/Reusables";
 import * as appStrings from "constants/appStrings";
 import * as appActions from "actions/appActions";
-import SortIcon from "mdi-material-ui/Sort";
 import styles from "components/MainMenu/LayerSearch/LayerSearchListSort.scss";
 
 export class LayerSearchListSort extends Component {

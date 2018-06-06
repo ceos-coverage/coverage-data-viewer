@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import Typography from "material-ui/Typography";
-import AlertIcon from "material-ui-icons/ErrorOutline";
+import Typography from "@material-ui/core/Typography";
+import AlertIcon from "@material-ui/icons/ErrorOutline";
 import MiscUtil from "utils/MiscUtil";
 import styles from "components/Reusables/AreaDefaultMessage.scss";
 import displayStyles from "_core/styles/display.scss";
