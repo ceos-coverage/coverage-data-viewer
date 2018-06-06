@@ -32,15 +32,15 @@ export default class SearchUtil {
             ];
 
             // add facet queries
-            // let keys = Object.keys(facets);
-            // for (let i = 0; i < keys.length; ++i) {
-            //     let key = keys[i];
-            //     if (facets[key].length > 0) {
-            //         query.push(
-            //             "fq=" + key + ":(" + facets[key].map(x => '"' + x + '"').join(" OR ") + ")"
-            //         );
-            //     }
-            // }
+            let keys = Object.keys(facets);
+            for (let i = 0; i < keys.length; ++i) {
+                let key = keys[i];
+                if (facets[key].length > 0) {
+                    query.push(
+                        "fq=" + key + ":(" + facets[key].map(x => '"' + x + '"').join(" OR ") + ")"
+                    );
+                }
+            }
 
             // add configured faceting
             let configFacets = appConfig.LAYER_SEARCH.FACETS;
