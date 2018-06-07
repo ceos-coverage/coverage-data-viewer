@@ -97,7 +97,13 @@ const APP_CONFIG = Immutable.fromJS({
             { value: "platform", label: "platform" },
             { value: "instrument", label: "sensor" },
             { value: "project", label: "project" }
-        ]
+        ],
+        SORT_PARAMS: [
+            { value: "instrument", label: "sensor" },
+            { value: "platform", label: "platform" },
+            { value: "project", label: "project" }
+        ],
+        DEFAULT_SORT_PARAM: "project"
     }
 });
 

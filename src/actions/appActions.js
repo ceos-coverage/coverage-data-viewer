@@ -180,3 +180,7 @@ export function runLayerSearch() {
 export function setLayerInfo(layer = undefined) {
     return { type: types.SET_LAYER_INFO, layer };
 }
+
+export function setSearchSortParameter(param) {
+    return { type: types.SET_SEARCH_SORT_PARAM, param };
+}

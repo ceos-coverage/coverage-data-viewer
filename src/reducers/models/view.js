@@ -34,6 +34,7 @@ export const viewState = viewStateCore.mergeDeep(
                 isLoading: false,
                 results: Immutable.OrderedMap()
             },
+            sortParameter: appConfig.LAYER_SEARCH.DEFAULT_SORT_PARAM,
             selectedTracks: Immutable.Set()
         }
     })

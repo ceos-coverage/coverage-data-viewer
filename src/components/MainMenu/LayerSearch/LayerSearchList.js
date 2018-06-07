@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import Immutable from "immutable";
 import List from "@material-ui/core/List";
 import ListSubheader from "@material-ui/core/ListSubheader";
 import SearchIcon from "@material-ui/icons/Search";
@@ -11,13 +10,12 @@ import { AreaDefaultMessage } from "components/Reusables";
 import { LoadingSpinner } from "_core/components/Reusables";
 import * as appActions from "actions/appActions";
 import styles from "components/MainMenu/LayerSearch/LayerSearchList.scss";
-import MiscUtil from "_core/utils/MiscUtil";
 
 export class LayerSearchList extends Component {
     renderList(trackList) {
         // group the tracks
         let groups = trackList.reduce((acc, track) => {
-            let title = track.getIn(["insituMeta", "project"]);
+            let title = track.getIn(["insituMeta", this.props.sortParam]);
             if (acc.length === 0) {
                 acc.push({ title: title, tracks: [track] });
                 return acc;
@@ -78,7 +76,7 @@ export class LayerSearchList extends Component {
         let trackList = this.props.searchResults
             .get("results")
             .toList()
-            .sortBy(entry => entry.getIn(["insituMeta", "project"]));
+            .sortBy(entry => entry.getIn(["insituMeta", this.props.sortParam]));
         let totalNum = trackList.size;
         let isLoading = this.props.searchResults.get("isLoading");
 
@@ -91,13 +89,15 @@ export class LayerSearchList extends Component {
 LayerSearchList.propTypes = {
     searchResults: PropTypes.object.isRequired,
     selectedTracks: PropTypes.object.isRequired,
+    sortParam: PropTypes.string.isRequired,
     actions: PropTypes.object.isRequired
 };
 
 function mapStateToProps(state) {
     return {
         searchResults: state.view.getIn(["layerSearch", "searchResults"]),
-        selectedTracks: state.view.getIn(["layerSearch", "selectedTracks"])
+        selectedTracks: state.view.getIn(["layerSearch", "selectedTracks"]),
+        sortParam: state.view.getIn(["layerSearch", "sortParameter"])
     };
 }
 

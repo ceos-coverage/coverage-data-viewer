@@ -90,6 +90,13 @@ export default class ViewReducer extends ViewReducerCore {
         return state;
     }
 
+    static setSearchSortParameter(state, action) {
+        if (typeof action.param !== "undefined") {
+            return state.setIn(["layerSearch", "sortParameter"], action.param);
+        }
+        return state;
+    }
+
     static resetApplicationState(state, action) {
         state = this.setMainMenutabIndex(state, { tabIndex: 0 });
         state = this.setMainMenuOpen(state, { isOpen: true });

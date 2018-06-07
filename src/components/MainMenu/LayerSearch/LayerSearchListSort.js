@@ -4,24 +4,17 @@ import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import List from "@material-ui/core/List";
 import ListSubheader from "@material-ui/core/ListSubheader";
-import FormControl from "@material-ui/core/FormControl";
 import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import SortIcon from "mdi-material-ui/Sort";
 import { IconPopover } from "components/Reusables";
-import * as appStrings from "constants/appStrings";
 import * as appActions from "actions/appActions";
+import appConfig from "constants/appConfig";
 import styles from "components/MainMenu/LayerSearch/LayerSearchListSort.scss";
 
 export class LayerSearchListSort extends Component {
-    handleSortOptionSelect(val) {
-        if (val) {
-            console.log(val);
-        }
-    }
-
     render() {
         return (
             <IconPopover icon={<SortIcon />} contentClass={styles.content}>
@@ -32,25 +25,22 @@ export class LayerSearchListSort extends Component {
                             <RadioGroup
                                 aria-label="search_list_sort"
                                 name="search_list_sort"
-                                value={"project"}
-                                onChange={(evt, val) => this.handleSortOptionSelect(val)}
-                                onClick={evt => this.handleSortOptionSelect(evt.target.value)}
+                                value={this.props.sortParam}
+                                onChange={(evt, val) =>
+                                    this.props.appActions.setSearchSortParameter(val)
+                                }
+                                onClick={evt =>
+                                    this.props.appActions.setSearchSortParameter(evt.target.value)
+                                }
                             >
-                                <FormControlLabel
-                                    value={"platform"}
-                                    control={<Radio color="primary" />}
-                                    label={"Platform"}
-                                />
-                                <FormControlLabel
-                                    value={"sensor"}
-                                    control={<Radio color="primary" />}
-                                    label={"Sensor"}
-                                />
-                                <FormControlLabel
-                                    value={"project"}
-                                    control={<Radio color="primary" />}
-                                    label={"Project"}
-                                />
+                                {appConfig.LAYER_SEARCH.SORT_PARAMS.map(entry => (
+                                    <FormControlLabel
+                                        key={"sort_" + entry.value}
+                                        value={entry.value}
+                                        control={<Radio color="primary" />}
+                                        label={entry.label}
+                                    />
+                                ))}
                             </RadioGroup>
                         </FormGroup>
                     </ul>
@@ -61,8 +51,15 @@ export class LayerSearchListSort extends Component {
 }
 
 LayerSearchListSort.propTypes = {
+    sortParam: PropTypes.string.isRequired,
     appActions: PropTypes.object.isRequired
 };
+
+function mapStateToProps(state) {
+    return {
+        sortParam: state.view.getIn(["layerSearch", "sortParameter"])
+    };
+}
 
 function mapDispatchToProps(dispatch) {
     return {
@@ -70,4 +67,4 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-export default connect(null, mapDispatchToProps)(LayerSearchListSort);
+export default connect(mapStateToProps, mapDispatchToProps)(LayerSearchListSort);
