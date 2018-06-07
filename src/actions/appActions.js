@@ -47,6 +47,10 @@ export function setSearchFacetSelected(facet, isSelected) {
     return { type: types.SET_SEARCH_FACET_SELECTED, facet, isSelected };
 }
 
+export function clearSearchFacet(facetGroup) {
+    return { type: types.CLEAR_SEARCH_FACET, facetGroup };
+}
+
 export function setTrackSelected(trackId, isSelected) {
     return (dispatch, getState) => {
         dispatch({ type: types.SET_TRACK_SELECTED, trackId, isSelected });

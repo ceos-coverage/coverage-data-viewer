@@ -96,6 +96,24 @@ export default class ViewReducer extends ViewReducerCore {
         return state;
     }
 
+    static clearSearchFacet(state, action) {
+        if (typeof action.facetGroup !== "undefined") {
+            return state.setIn(
+                ["layerSearch", "formOptions", "selectedFacets", action.facetGroup],
+                Immutable.Set()
+            );
+        } else {
+            let facets = appConfig.LAYER_SEARCH.FACETS;
+            for (let i = 0; i < facets.length; ++i) {
+                state = state.setIn(
+                    ["layerSearch", "formOptions", "selectedFacets", facets[i].value],
+                    Immutable.Set()
+                );
+            }
+            return state;
+        }
+    }
+
     static resetApplicationState(state, action) {
         state = this.setMainMenutabIndex(state, { tabIndex: 0 });
         state = this.setMainMenuOpen(state, { isOpen: true });

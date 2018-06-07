@@ -9,3 +9,30 @@
         margin-right: 0px;
     }
 }
+
+.facetContent {
+    padding: 0px;
+    width: 26rem;
+    display: flex;
+    overflow: hidden;
+    flex-flow: column nowrap;
+}
+
+.optionsList {
+    padding: 1rem;
+    flex: 1 1;
+    overflow: hidden;
+    overflow-y: scroll;
+}
+
+.clearRow {
+    min-height: 4rem;
+    padding: 0px 1rem;
+    text-align: right;
+    // background: darken(white, 3%);
+    border-top: 1px solid darken(white, 10%);
+}
+
+.clearBtn {
+    margin-top: 4px;
+}
