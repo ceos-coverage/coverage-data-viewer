@@ -3,18 +3,12 @@ import PropTypes from "prop-types";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import RemoveIcon from "@material-ui/icons/Close";
-import TargetIcon from "mdi-material-ui/Target";
-import PointErrorIcon from "mdi-material-ui/ImageFilterTiltShift";
 import Typography from "@material-ui/core/Typography";
-import Tooltip from "@material-ui/core/Tooltip";
-import MiscUtil from "utils/MiscUtil";
 import { IconButtonSmall, LoadingSpinner } from "_core/components/Reusables";
 import { SingleColorSelector } from "components/Reusables";
 import { InsituLayerItemTools } from "components/LayerMenu";
-import appConfig from "constants/appConfig";
 import * as appActions from "actions/appActions";
 import * as mapActions from "actions/mapActions";
-import * as appStrings from "constants/appStrings";
 import styles from "components/LayerMenu/InsituLayerItem.scss";
 
 export class InsituLayerItem extends Component {

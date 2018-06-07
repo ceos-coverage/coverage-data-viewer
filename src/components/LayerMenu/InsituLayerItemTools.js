@@ -2,28 +2,21 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import RemoveIcon from "@material-ui/icons/Close";
 import TargetIcon from "mdi-material-ui/Target";
 import TrackIcon from "mdi-material-ui/VectorPolyline";
 import BuildIcon from "@material-ui/icons/Build";
 import InfoIcon from "@material-ui/icons/InfoOutline";
 import DeleteIcon from "@material-ui/icons/Delete";
 import PointErrorIcon from "mdi-material-ui/ImageFilterTiltShift";
-import Typography from "@material-ui/core/Typography";
-import Tooltip from "@material-ui/core/Tooltip";
 import Divider from "@material-ui/core/Divider";
 import MenuList from "@material-ui/core/MenuList";
 import MenuItem from "@material-ui/core/MenuItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
-import { IconButtonSmall } from "_core/components/Reusables";
 import { IconPopover } from "components/Reusables";
-import appConfig from "constants/appConfig";
 import * as appActions from "actions/appActions";
 import * as mapActions from "actions/mapActions";
 import * as mapActionsCore from "_core/actions/mapActions";
-import * as appStrings from "constants/appStrings";
-import MiscUtil from "utils/MiscUtil";
 import styles from "components/LayerMenu/InsituLayerItemTools.scss";
 
 export class InsituLayerItemTools extends Component {

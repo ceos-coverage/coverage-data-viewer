@@ -8,7 +8,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import Immutable from "immutable";
 import MiscUtil from "_core/utils/MiscUtil";
 import { MouseCoordinates as MouseCoordinatesCore } from "_core/components/MouseFollower";
 import { DrawingTooltip, DataDisplayContainer } from "components/MouseFollower";

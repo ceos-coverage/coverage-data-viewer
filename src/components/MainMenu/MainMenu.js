@@ -14,15 +14,10 @@ import Tab from "@material-ui/core/Tab";
 import Paper from "@material-ui/core/Paper";
 import Slide from "@material-ui/core/Slide";
 import Button from "@material-ui/core/Button";
-import Typography from "@material-ui/core/Typography";
-import IconButton from "@material-ui/core/IconButton";
 import ArrowBack from "@material-ui/icons/KeyboardArrowLeft";
 import { ChartMenu } from "components/Chart";
 import { LayerSearchMenu } from "components/MainMenu/LayerSearch";
-import { SettingsContainer } from "components/Settings";
-import { HelpContainer } from "components/Help";
 import * as appActions from "actions/appActions";
-import appConfig from "constants/appConfig";
 import MiscUtil from "_core/utils/MiscUtil";
 import styles from "components/MainMenu/MainMenu.scss";
 import displayStyles from "_core/styles/display.scss";
@@ -42,16 +37,6 @@ export class MainMenu extends Component {
         let tabChartClasses = MiscUtil.generateStringFromSet({
             [styles.tabContent]: true,
             [displayStyles.hidden]: this.props.tabIndex !== 1
-        });
-
-        let tabOptionsClasses = MiscUtil.generateStringFromSet({
-            [styles.tabContent]: true,
-            [displayStyles.hidden]: this.props.tabIndex !== 2
-        });
-
-        let tabHelpClasses = MiscUtil.generateStringFromSet({
-            [styles.tabContent]: true,
-            [displayStyles.hidden]: this.props.tabIndex !== 3
         });
 
         return (

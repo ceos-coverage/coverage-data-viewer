@@ -2,7 +2,6 @@ import Immutable from "immutable";
 import moment from "moment";
 import appConfig from "constants/appConfig";
 import ViewReducerCore from "_core/reducers/reducerFunctions/ViewReducer";
-import { alert as alertCore } from "_core/reducers/models/alert";
 import { trackModel } from "reducers/models/view";
 import SearchUtil from "utils/SearchUtil";
 

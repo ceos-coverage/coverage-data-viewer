@@ -9,7 +9,6 @@ import WebWorkerCore from "_core/utils/WebWorker";
 import * as appStrings from "constants/appStrings";
 import * as appStringsCore from "_core/constants/appStrings";
 import { largestTriangleThreeBucket } from "d3fc-sample";
-import Papa from "papaparse";
 import MiscUtil from "utils/MiscUtil";
 
 const NO_DECIMATION_TARGET = -1;

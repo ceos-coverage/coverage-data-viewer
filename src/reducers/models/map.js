@@ -1,6 +1,5 @@
 import Immutable from "immutable";
 import appConfig from "constants/appConfig";
-import * as appStrings from "constants/appStrings";
 import { mapState as mapStateCore, layerModel as layerModelCore } from "_core/reducers/models/map";
 
 export const mapState = mapStateCore.mergeDeep(

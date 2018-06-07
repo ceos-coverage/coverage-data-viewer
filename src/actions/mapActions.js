@@ -1,5 +1,4 @@
 import * as types from "constants/actionTypes";
-import * as appStrings from "constants/appStrings";
 import * as appActions from "actions/appActions";
 
 export function addLayer(layer, setActive = true) {

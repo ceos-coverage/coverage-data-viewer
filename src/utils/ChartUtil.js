@@ -1,7 +1,6 @@
 import Immutable from "immutable";
 import Highcharts from "utils/HighchartsLoader";
 import moment from "moment";
-import MiscUtil from "utils/MiscUtil";
 import * as appStrings from "constants/appStrings";
 import appConfig from "constants/appConfig";
 

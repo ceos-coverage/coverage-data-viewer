@@ -1,6 +1,5 @@
 import Immutable from "immutable";
 import { chartModel } from "reducers/models/chart";
-import appConfig from "constants/appConfig";
 import * as appStrings from "constants/appStrings";
 
 //IMPORTANT: Note that with Redux, state should NEVER be changed.

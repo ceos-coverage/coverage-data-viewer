@@ -3,7 +3,6 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import EarthIcon from "@material-ui/icons/Public";
-import EditIcon from "@material-ui/icons/ModeEdit";
 import CloseIcon from "@material-ui/icons/Close";
 import { SearchInput, AreaSelectionForm } from "components/Reusables";
 import * as appStrings from "constants/appStrings";

@@ -5,7 +5,6 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import React, { Component } from "react";
 import PropTypes from "prop-types";
 import Immutable from "immutable";
 import { connect } from "react-redux";

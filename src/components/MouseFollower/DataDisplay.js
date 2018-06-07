@@ -4,7 +4,6 @@ import { connect } from "react-redux";
 import moment from "moment";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
-import { LonLatCoordinates } from "_core/components/Reusables";
 import MiscUtil from "utils/MiscUtil";
 import MapUtil from "utils/MapUtil";
 import * as appStrings from "constants/appStrings";
@@ -18,26 +17,12 @@ export class DataDisplay extends Component {
         });
 
         let timeStrList = this.props.data.getIn(["properties", "position_date_time"]);
-        let firstTime = moment
-            // .utc(timeStrList.get(0), this.props.data.getIn(["layer", "timeFormat"]))
-            .utc(timeStrList.get(0))
-            .format("MMM DD, YYYY");
-        let lastTime = moment
-            // .utc(
-            //     timeStrList.get(timeStrList.size - 1),
-            //     this.props.data.getIn(["layer", "timeFormat"])
-            // )
-            .utc(timeStrList.get(timeStrList.size - 1))
-            .format("MMM DD, YYYY");
+        let firstTime = moment.utc(timeStrList.get(0)).format("MMM DD, YYYY");
+        let lastTime = moment.utc(timeStrList.get(timeStrList.size - 1)).format("MMM DD, YYYY");
 
         let isSameTime = firstTime === lastTime;
         let timeStr = !isSameTime ? firstTime + " – " + lastTime : firstTime;
         let connectStr = isSameTime ? "on" : "between";
-        // .map(timeStr =>
-        //     moment
-        //         .utc(timeStr, this.props.data.getIn(["layer", "timeFormat"]))
-        //         .format("MMM DD, YYYY · HH:mm UTC")
-        // );
 
         let coords = this.props.data.get("coords");
         let displayCoords = MapUtil.formatLatLon(coords.get(0), coords.get(1), true, "");

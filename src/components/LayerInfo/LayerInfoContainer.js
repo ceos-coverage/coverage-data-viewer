@@ -15,7 +15,6 @@ import DialogContent from "@material-ui/core/DialogContent";
 import Divider from "@material-ui/core/Divider";
 import Typography from "@material-ui/core/Typography";
 import * as appActions from "actions/appActions";
-import { ModalMenu } from "_core/components/ModalMenu";
 import styles from "components/LayerInfo/LayerInfoContainer.scss";
 
 export class LayerInfoContainer extends Component {

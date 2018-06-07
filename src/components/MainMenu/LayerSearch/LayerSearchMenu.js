@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import PropTypes from "prop-types";
 import { LayerSearchForm, LayerSearchList } from "components/MainMenu/LayerSearch";
 import styles from "components/MainMenu/LayerSearch/LayerSearchMenu.scss";
 
@@ -17,7 +16,5 @@ export class LayerSearchMenu extends Component {
         );
     }
 }
-
-LayerSearchMenu.propTypes = {};
 
 export default LayerSearchMenu;

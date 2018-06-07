@@ -3,7 +3,6 @@ import PropTypes from "prop-types";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import Tooltip from "@material-ui/core/Tooltip";
-import FileDownloadIcon from "@material-ui/icons/FileDownload";
 import CloseIcon from "@material-ui/icons/Close";
 import SettingsIcon from "@material-ui/icons/Settings";
 import { IconButtonSmall } from "_core/components/Reusables";

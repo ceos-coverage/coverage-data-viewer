@@ -3,12 +3,10 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import * as appStrings from "constants/appStrings";
 import * as mapActions from "actions/mapActions";
-import appConfig from "constants/appConfig";
 import styles from "components/Reusables/AreaSelectionForm.scss";
 
 export class AreaSelectionForm extends Component {

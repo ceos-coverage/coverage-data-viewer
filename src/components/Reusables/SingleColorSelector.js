@@ -4,7 +4,6 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import ButtonBase from "@material-ui/core/ButtonBase";
 import Popover from "@material-ui/core/Popover";
-import Paper from "@material-ui/core/Paper";
 import appConfig from "constants/appConfig";
 import MiscUtil from "_core/utils/MiscUtil";
 import styles from "components/Reusables/SingleColorSelector.scss";

@@ -7,7 +7,6 @@
 
 import React from "react";
 import PropTypes from "prop-types";
-import Popover from "@material-ui/core/Popover";
 import Grow from "@material-ui/core/Grow";
 import Tooltip from "@material-ui/core/Tooltip";
 import BuildIcon from "@material-ui/icons/Build";

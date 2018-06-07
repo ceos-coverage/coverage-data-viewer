@@ -5,8 +5,7 @@ import { connect } from "react-redux";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
-import { Typography, Divider } from "@material-ui/core";
-import SortIcon from "mdi-material-ui/Sort";
+import { Divider } from "@material-ui/core";
 import { DateRangePicker, AreaSelectionInput, IconPopover } from "components/Reusables";
 import {
     LayerSearchFacets,

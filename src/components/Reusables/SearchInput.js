@@ -3,7 +3,6 @@ import { findDOMNode } from "react-dom";
 import PropTypes from "prop-types";
 import ButtonBase from "@material-ui/core/ButtonBase";
 import Paper from "@material-ui/core/Paper";
-import ArrowDropDown from "@material-ui/icons/ArrowDropDown";
 import Popover from "@material-ui/core/Popover";
 import Typography from "@material-ui/core/Typography";
 import { IconButtonSmall } from "_core/components/Reusables";
