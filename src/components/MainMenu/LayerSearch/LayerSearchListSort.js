@@ -8,7 +8,6 @@ import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
-import { Typography } from "@material-ui/core";
 import SortIcon from "mdi-material-ui/Sort";
 import { IconPopover } from "components/Reusables";
 import * as appActions from "actions/appActions";
@@ -28,7 +27,7 @@ export class LayerSearchListSort extends Component {
             >
                 <List subheader={<li />}>
                     <ul className={styles.dummyList}>
-                        <ListSubheader className={styles.subheader}>Sort By</ListSubheader>
+                        <ListSubheader className={styles.subheader}>Group By</ListSubheader>
                         <FormGroup className={styles.form}>
                             <RadioGroup
                                 aria-label="search_list_sort"
