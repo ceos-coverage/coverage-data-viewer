@@ -8,6 +8,7 @@ import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
+import { Typography } from "@material-ui/core";
 import SortIcon from "mdi-material-ui/Sort";
 import { IconPopover } from "components/Reusables";
 import * as appActions from "actions/appActions";
@@ -16,8 +17,15 @@ import styles from "components/MainMenu/LayerSearch/LayerSearchListSort.scss";
 
 export class LayerSearchListSort extends Component {
     render() {
+        let selectedParam = appConfig.LAYER_SEARCH.SORT_PARAMS.find(
+            entry => entry.value === this.props.sortParam
+        );
         return (
-            <IconPopover icon={<SortIcon />} contentClass={styles.content}>
+            <IconPopover
+                icon={<SortIcon />}
+                className={styles.button}
+                contentClass={styles.content}
+            >
                 <List subheader={<li />}>
                     <ul className={styles.dummyList}>
                         <ListSubheader className={styles.subheader}>Sort By</ListSubheader>

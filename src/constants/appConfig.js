@@ -93,15 +93,15 @@ const APP_CONFIG = Immutable.fromJS({
     },
     LAYER_SEARCH: {
         FACETS: [
-            { value: "variables", label: "variable" },
-            { value: "platform", label: "platform" },
-            { value: "instrument", label: "sensor" },
-            { value: "project", label: "project" }
+            { value: "variables", label: "Variable" },
+            { value: "platform", label: "Platform" },
+            { value: "instrument", label: "Sensor" },
+            { value: "project", label: "Project" }
         ],
         SORT_PARAMS: [
-            { value: "instrument", label: "sensor" },
-            { value: "platform", label: "platform" },
-            { value: "project", label: "project" }
+            { value: "instrument", label: "Sensor" },
+            { value: "platform", label: "Platform" },
+            { value: "project", label: "Project" }
         ],
         DEFAULT_SORT_PARAM: "project"
     }
