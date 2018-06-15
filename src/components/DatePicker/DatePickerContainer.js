@@ -10,11 +10,10 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import VideoIcon from "@material-ui/icons/Videocam";
-import StepIcon from "mdi-material-ui/DebugStepOver";
 import RightIcon from "mdi-material-ui/MenuRight";
 import LeftIcon from "mdi-material-ui/MenuLeft";
 import { IconButtonSmall } from "_core/components/Reusables";
-import { IconPopover } from "components/Reusables";
+import Tooltip from "@material-ui/core/Tooltip";
 import * as mapActions from "actions/mapActions";
 import * as mapActionsCore from "_core/actions/mapActions";
 import { DatePicker, DateIntervalPicker } from "components/DatePicker";
@@ -40,22 +39,28 @@ export class DatePickerContainer extends Component {
                     className={styles.picker}
                 />
                 <div className={styles.btns}>
-                    <IconButtonSmall
-                        className={styles.thinBtn}
-                        onClick={() => this.props.mapActions.stepDate(false)}
-                    >
-                        <LeftIcon />
-                    </IconButtonSmall>
-                    <IconButtonSmall
-                        className={styles.thinBtn}
-                        onClick={() => this.props.mapActions.stepDate(true)}
-                    >
-                        <RightIcon />
-                    </IconButtonSmall>
+                    <Tooltip title="Step Back" placement="top">
+                        <IconButtonSmall
+                            className={styles.thinBtn}
+                            onClick={() => this.props.mapActions.stepDate(false)}
+                        >
+                            <LeftIcon />
+                        </IconButtonSmall>
+                    </Tooltip>
+                    <Tooltip title="Step Forward" placement="top">
+                        <IconButtonSmall
+                            className={styles.thinBtn}
+                            onClick={() => this.props.mapActions.stepDate(true)}
+                        >
+                            <RightIcon />
+                        </IconButtonSmall>
+                    </Tooltip>
                     <DateIntervalPicker />
-                    <IconButtonSmall>
-                        <VideoIcon />
-                    </IconButtonSmall>
+                    <Tooltip title="Animation" placement="top">
+                        <IconButtonSmall>
+                            <VideoIcon />
+                        </IconButtonSmall>
+                    </Tooltip>
                 </div>
             </div>
         );

@@ -41,6 +41,8 @@ export class DateIntervalPicker extends Component {
                     horizontal: "right"
                 }}
                 contentClass={styles.content}
+                tooltip="Date Interval"
+                tooltipPlacement="top"
             >
                 <div className={styles.list}>
                     <Typography variant="subheading" className={styles.subheader}>

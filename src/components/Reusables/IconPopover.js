@@ -3,6 +3,7 @@ import { findDOMNode } from "react-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import Popover from "@material-ui/core/Popover";
+import Tooltip from "@material-ui/core/Tooltip";
 import MiscUtil from "_core/utils/MiscUtil";
 import styles from "components/Reusables/IconPopover.scss";
 import { IconButtonSmall } from "_core/components/Reusables";
@@ -48,14 +49,19 @@ export class IconPopover extends Component {
 
         return (
             <div className={containerClasses}>
-                <IconButtonSmall
-                    color={this.popoverOpen ? "primary" : "inherit"}
-                    className={styles.button}
-                    disabled={this.props.disabled}
-                    onClick={evt => this.handleClickButton(evt)}
+                <Tooltip
+                    title={this.props.tooltip || ""}
+                    placement={this.props.tooltipPlacement || "bottom"}
                 >
-                    {this.props.icon}
-                </IconButtonSmall>
+                    <IconButtonSmall
+                        color={this.popoverOpen ? "primary" : "inherit"}
+                        className={styles.button}
+                        disabled={this.props.disabled}
+                        onClick={evt => this.handleClickButton(evt)}
+                    >
+                        {this.props.icon}
+                    </IconButtonSmall>
+                </Tooltip>
                 <Popover
                     open={this.popoverOpen}
                     anchorEl={this.button}
@@ -75,6 +81,8 @@ export class IconPopover extends Component {
 IconPopover.propTypes = {
     icon: PropTypes.node.isRequired,
     className: PropTypes.string,
+    tooltip: PropTypes.string,
+    tooltipPlacement: PropTypes.string,
     contentClass: PropTypes.string,
     disabled: PropTypes.bool,
     anchorOrigin: PropTypes.object,
