@@ -40,6 +40,7 @@ export default class ChartUtil {
     static setDateIndicator(options) {
         let node = options.node;
         let date = options.date;
+        let intervalDate = options.intervalDate;
 
         if (typeof node !== "undefined" && typeof date !== "undefined") {
             let chart = nodeChartMap.get(node.id);
@@ -47,20 +48,40 @@ export default class ChartUtil {
                 let xAxis = chart.xAxis[0];
                 if (xAxis.options.type === "datetime") {
                     let x = xAxis.toPixels(date, true);
-                    if (chart.isInsidePlot(x, 10, false)) {
-                        let newIndicator = ChartUtil.getDateIndicatorOptions(chart);
-                        newIndicator.labels[0].point.x = x;
-                        newIndicator.shapes[0].points = newIndicator.shapes[0].points.map(p => {
-                            p.x = x;
-                            return p;
-                        });
-                        newIndicator.visible = true;
+                    let x2 = xAxis.toPixels(intervalDate, true);
+                    // if (chart.isInsidePlot(x, 10, false)) {
+                    let newIndicator = ChartUtil.getDateIndicatorOptions(chart);
 
-                        chart.removeAnnotation("date-indicator");
-                        chart.addAnnotation(newIndicator);
-                    } else {
-                        chart.annotations[0].setVisible(false);
-                    }
+                    // callout
+                    // newIndicator.labels[0].point.x = x;
+
+                    // start line
+                    newIndicator.shapes[0].points = newIndicator.shapes[0].points.map(p => {
+                        p.x = x;
+                        return p;
+                    });
+
+                    // end line
+                    newIndicator.shapes[1].points = newIndicator.shapes[1].points.map(p => {
+                        p.x = x2;
+                        return p;
+                    });
+
+                    // mid line top
+                    newIndicator.shapes[2].points[0].x = x;
+                    newIndicator.shapes[2].points[1].x = x2;
+
+                    // mid line bottom
+                    newIndicator.shapes[3].points[0].x = x;
+                    newIndicator.shapes[3].points[1].x = x2;
+
+                    newIndicator.visible = true;
+
+                    chart.removeAnnotation("date-indicator");
+                    chart.addAnnotation(newIndicator);
+                    // } else {
+                    //     chart.annotations[0].setVisible(false);
+                    // }
                 }
             }
         }
@@ -830,34 +851,63 @@ export default class ChartUtil {
 
     static getDateIndicatorOptions(chart) {
         let lPoint = { x: 0, y: 0 };
-        let sPoints = [{ x: 0, y: 0 }, { x: 0, y: 250 }];
+        let startLine = [{ x: 0, y: 0 }, { x: 0, y: 250 }];
+        let midLineTop = [{ x: 0, y: 1 }, { x: 0, y: 1 }];
+        let midLineBottom = [{ x: 0, y: 250 }, { x: 0, y: 250 }];
+        let endLine = [{ x: 0, y: 0 }, { x: 0, y: 250 }];
         if (typeof chart !== "undefined") {
             let bbox = chart.plotBoxClip.renderer.plotBox;
             if (chart.options.chart.inverted) {
                 lPoint = { x: 0, y: bbox.width };
-                sPoints = [{ x: 0, y: 0 }, { x: 0, y: bbox.width }];
+                startLine = [{ x: 0, y: 0 }, { x: 0, y: bbox.width }];
+                midLineTop = [{ x: 0, y: bbox.width }, { x: 0, y: bbox.width }];
+                midLineBottom = [{ x: 0, y: 0 }, { x: 0, y: 0 }];
+                endLine = [{ x: 0, y: 0 }, { x: 0, y: bbox.width }];
             } else {
-                sPoints = [{ x: 0, y: 0 }, { x: 0, y: bbox.height }];
+                startLine = [{ x: 0, y: 0 }, { x: 0, y: bbox.height }];
+                midLineBottom = [{ x: 0, y: bbox.height - 1 }, { x: 0, y: bbox.height - 1 }];
+                endLine = [{ x: 0, y: 0 }, { x: 0, y: bbox.height }];
             }
         }
         return {
             id: "date-indicator",
-            labels: [
-                {
-                    point: lPoint,
-                    verticalAlign: "bottom",
-                    useHTML: true,
-                    borderWidth: 0,
-                    borderRadius: 0,
-                    distance: 0,
-                    shape: "diamond",
-                    backgroundColor: appConfig.CHART_DATE_INDICATOR_COLOR,
-                    text: " "
-                }
-            ],
+            // labels: [
+            //     {
+            //         point: lPoint,
+            //         verticalAlign: "bottom",
+            //         useHTML: true,
+            //         borderWidth: 0,
+            //         borderRadius: 0,
+            //         distance: 0,
+            //         shape: "diamond",
+            //         backgroundColor: appConfig.CHART_DATE_INDICATOR_COLOR,
+            //         text: " "
+            //     }
+            // ],
             shapes: [
                 {
-                    points: sPoints,
+                    points: startLine,
+                    type: "path",
+                    fill: "none",
+                    stroke: appConfig.CHART_DATE_INDICATOR_COLOR,
+                    strokeWidth: 2
+                },
+                {
+                    points: endLine,
+                    type: "path",
+                    fill: "none",
+                    stroke: appConfig.CHART_DATE_INDICATOR_COLOR,
+                    strokeWidth: 2
+                },
+                {
+                    points: midLineTop,
+                    type: "path",
+                    fill: "none",
+                    stroke: appConfig.CHART_DATE_INDICATOR_COLOR,
+                    strokeWidth: 2
+                },
+                {
+                    points: midLineBottom,
                     type: "path",
                     fill: "none",
                     stroke: appConfig.CHART_DATE_INDICATOR_COLOR,

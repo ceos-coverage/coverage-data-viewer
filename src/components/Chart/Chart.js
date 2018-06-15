@@ -141,12 +141,17 @@ export class Chart extends Component {
                 });
                 ChartUtil.setDateIndicator({
                     node: node,
-                    date: this.props.mapDate
+                    date: this.props.mapDate,
+                    intervalDate: this.props.mapIntervalDate
                 });
-            } else if (prevProps.mapDate !== this.props.mapDate) {
+            } else if (
+                prevProps.mapDate !== this.props.mapDate ||
+                prevProps.mapIntervalDate !== this.props.mapIntervalDate
+            ) {
                 ChartUtil.setDateIndicator({
                     node: node,
-                    date: this.props.mapDate
+                    date: this.props.mapDate,
+                    intervalDate: this.props.mapIntervalDate
                 });
             }
         }

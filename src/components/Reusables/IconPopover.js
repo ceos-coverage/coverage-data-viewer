@@ -27,6 +27,36 @@ export class IconPopover extends Component {
         this.forceUpdate();
     }
 
+    renderButton() {
+        if (typeof this.props.tooltip !== "undefined") {
+            return (
+                <Tooltip
+                    title={this.props.tooltip}
+                    placement={this.props.tooltipPlacement || "bottom"}
+                >
+                    <IconButtonSmall
+                        color={this.popoverOpen ? "primary" : "inherit"}
+                        className={styles.button}
+                        disabled={this.props.disabled}
+                        onClick={evt => this.handleClickButton(evt)}
+                    >
+                        {this.props.icon}
+                    </IconButtonSmall>
+                </Tooltip>
+            );
+        }
+        return (
+            <IconButtonSmall
+                color={this.popoverOpen ? "primary" : "inherit"}
+                className={styles.button}
+                disabled={this.props.disabled}
+                onClick={evt => this.handleClickButton(evt)}
+            >
+                {this.props.icon}
+            </IconButtonSmall>
+        );
+    }
+
     render() {
         let containerClasses = MiscUtil.generateStringFromSet({
             [styles.root]: true,
@@ -49,19 +79,7 @@ export class IconPopover extends Component {
 
         return (
             <div className={containerClasses}>
-                <Tooltip
-                    title={this.props.tooltip || ""}
-                    placement={this.props.tooltipPlacement || "bottom"}
-                >
-                    <IconButtonSmall
-                        color={this.popoverOpen ? "primary" : "inherit"}
-                        className={styles.button}
-                        disabled={this.props.disabled}
-                        onClick={evt => this.handleClickButton(evt)}
-                    >
-                        {this.props.icon}
-                    </IconButtonSmall>
-                </Tooltip>
+                {this.renderButton()}
                 <Popover
                     open={this.popoverOpen}
                     anchorEl={this.button}

@@ -32,8 +32,8 @@ export default class MapReducer extends MapReducerCore {
         let scale = action.scale;
 
         try {
-            let testDate = moment.utc(state.get("date")).add(size, scale);
-            if (testDate.isValid()) {
+            let intervalDate = moment.utc(state.get("date")).add(size, scale);
+            if (intervalDate.isValid()) {
                 let intervalMs = moment.duration(size, scale).asMilliseconds();
 
                 // update each map
@@ -53,7 +53,10 @@ export default class MapReducer extends MapReducerCore {
                     }
                 });
 
-                return state.set("dateIntervalSize", size).set("dateIntervalScale", scale);
+                return state
+                    .set("dateIntervalSize", size)
+                    .set("dateIntervalScale", scale)
+                    .set("intervalDate", intervalDate.toDate());
             }
         } catch (err) {
             console.warn("Error in MapReducer.setDateInterval: ", err);
