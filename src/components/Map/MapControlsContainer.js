@@ -22,8 +22,8 @@ import MiscUtil from "_core/utils/MiscUtil";
 import { MapButton } from "_core/components/Reusables";
 import { MapLabelsButton } from "_core/components/Map";
 import { BasemapPicker, MapToolsButton } from "components/Map";
-import styles from "components/Map/MapControlsContainer.scss";
 import stylesCore from "_core/components/Map/MapControlsContainer.scss";
+import styles from "components/Map/MapControlsContainer.scss";
 import displayStyles from "_core/styles/display.scss";
 
 export class MapControlsContainer extends Component {
