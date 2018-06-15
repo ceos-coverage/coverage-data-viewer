@@ -9,23 +9,54 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
+import VideoIcon from "@material-ui/icons/Videocam";
+import StepIcon from "mdi-material-ui/DebugStepOver";
+import RightIcon from "mdi-material-ui/MenuRight";
+import LeftIcon from "mdi-material-ui/MenuLeft";
+import { IconButtonSmall } from "_core/components/Reusables";
+import { IconPopover } from "components/Reusables";
+import * as mapActions from "actions/mapActions";
 import * as mapActionsCore from "_core/actions/mapActions";
-import { DatePicker } from "components/DatePicker";
+import { DatePicker, DateIntervalPicker } from "components/DatePicker";
 import MiscUtil from "_core/utils/MiscUtil";
-import styles from "_core/components/DatePicker/DatePickerContainer.scss";
+import stylesCore from "_core/components/DatePicker/DatePickerContainer.scss";
+import styles from "components/DatePicker/DatePickerContainer.scss";
 import displayStyles from "_core/styles/display.scss";
 
 export class DatePickerContainer extends Component {
     render() {
         let containerClasses = MiscUtil.generateStringFromSet({
-            [styles.datePickerContainer]: true,
+            [styles.root]: true,
+            [stylesCore.datePickerContainer]: true,
             [displayStyles.hiddenFadeOut]: this.props.distractionFreeMode,
             [displayStyles.hiddenFadeIn]: !this.props.distractionFreeMode,
             [this.props.className]: typeof this.props.className !== "undefined"
         });
         return (
             <div className={containerClasses}>
-                <DatePicker date={this.props.date} setDate={this.props.mapActionsCore.setDate} />
+                <DatePicker
+                    date={this.props.date}
+                    setDate={this.props.mapActionsCore.setDate}
+                    className={styles.picker}
+                />
+                <div className={styles.btns}>
+                    <IconButtonSmall
+                        className={styles.thinBtn}
+                        onClick={() => this.props.mapActions.stepDate(false)}
+                    >
+                        <LeftIcon />
+                    </IconButtonSmall>
+                    <IconButtonSmall
+                        className={styles.thinBtn}
+                        onClick={() => this.props.mapActions.stepDate(true)}
+                    >
+                        <RightIcon />
+                    </IconButtonSmall>
+                    <DateIntervalPicker />
+                    <IconButtonSmall>
+                        <VideoIcon />
+                    </IconButtonSmall>
+                </div>
             </div>
         );
     }
@@ -34,6 +65,7 @@ export class DatePickerContainer extends Component {
 DatePickerContainer.propTypes = {
     date: PropTypes.object.isRequired,
     distractionFreeMode: PropTypes.bool.isRequired,
+    mapActions: PropTypes.object.isRequired,
     mapActionsCore: PropTypes.object.isRequired,
     className: PropTypes.string
 };
@@ -47,6 +79,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
+        mapActions: bindActionCreators(mapActions, dispatch),
         mapActionsCore: bindActionCreators(mapActionsCore, dispatch)
     };
 }

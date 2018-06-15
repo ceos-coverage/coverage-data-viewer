@@ -9,10 +9,11 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import moment from "moment";
 import Grid from "@material-ui/core/Grid";
-import { YearPicker, MonthPicker, DayPicker, IncrementButton } from "_core/components/DatePicker";
+import { YearPicker, MonthPicker, DayPicker } from "_core/components/DatePicker";
 import appConfig from "constants/appConfig";
 import MiscUtil from "_core/utils/MiscUtil";
-import styles from "_core/components/DatePicker/DatePicker.scss";
+import stylesCore from "_core/components/DatePicker/DatePicker.scss";
+import styles from "components/DatePicker/DatePicker.scss";
 
 export class DatePicker extends Component {
     incrementDate(resolution, increment = true) {
@@ -62,39 +63,14 @@ export class DatePicker extends Component {
         let day = date.format("DD");
 
         let containerClasses = MiscUtil.generateStringFromSet({
-            [styles.datePicker]: true,
+            // [styles.root]: true,
+            [stylesCore.datePicker]: true,
             [this.props.className]: typeof this.props.className !== "undefined"
         });
 
         return (
             <div className={containerClasses}>
-                <Grid container spacing={0}>
-                    <Grid item xs={5} className={styles.incrementButtonWrapper}>
-                        <IncrementButton
-                            className={styles.incrementButton}
-                            aria-label="Years +1"
-                            decrement={false}
-                            onClick={() => this.incrementDate("years", true)}
-                        />
-                    </Grid>
-                    <Grid item xs={4} className={styles.incrementButtonWrapper}>
-                        <IncrementButton
-                            className={styles.incrementButton}
-                            aria-label="Months +1"
-                            decrement={false}
-                            onClick={() => this.incrementDate("months", true)}
-                        />
-                    </Grid>
-                    <Grid item xs={3} className={styles.incrementButtonWrapper}>
-                        <IncrementButton
-                            className={styles.incrementButton}
-                            aria-label="Days +1"
-                            decrement={false}
-                            onClick={() => this.incrementDate("days", true)}
-                        />
-                    </Grid>
-                </Grid>
-                <Grid container spacing={0}>
+                <Grid container spacing={0} className={styles.inputs}>
                     <Grid item xs={5} className={styles.datePickerSelection}>
                         <YearPicker
                             year={year}
@@ -109,32 +85,6 @@ export class DatePicker extends Component {
                     </Grid>
                     <Grid item xs={3} className={styles.datePickerSelection}>
                         <DayPicker day={day} onUpdate={value => this.updateDate("days", value)} />
-                    </Grid>
-                </Grid>
-                <Grid container spacing={0}>
-                    <Grid item xs={5} className={styles.incrementButtonWrapper}>
-                        <IncrementButton
-                            className={styles.incrementButton}
-                            aria-label="Years -1"
-                            decrement={true}
-                            onClick={() => this.incrementDate("years", false)}
-                        />
-                    </Grid>
-                    <Grid item xs={4} className={styles.incrementButtonWrapper}>
-                        <IncrementButton
-                            className={styles.incrementButton}
-                            aria-label="Months -1"
-                            decrement={true}
-                            onClick={() => this.incrementDate("months", false)}
-                        />
-                    </Grid>
-                    <Grid item xs={3} className={styles.incrementButtonWrapper}>
-                        <IncrementButton
-                            className={styles.incrementButton}
-                            aria-label="Days -1"
-                            decrement={true}
-                            onClick={() => this.incrementDate("days", false)}
-                        />
                     </Grid>
                 </Grid>
             </div>

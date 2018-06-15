@@ -1,5 +1,7 @@
 import * as types from "constants/actionTypes";
 import * as appActions from "actions/appActions";
+import * as mapActions from "_core/actions/mapActions";
+import moment from "moment";
 
 export function addLayer(layer, setActive = true) {
     return { type: types.ADD_LAYER, layer, setActive };
@@ -45,4 +47,21 @@ export function setSelectedArea(area, geometryType) {
     return dispatch => {
         dispatch(appActions.setSearchSelectedArea(area, geometryType));
     };
+}
+
+export function stepDate(forward) {
+    return (dispatch, getState) => {
+        let state = getState();
+        let size = state.map.get("dateIntervalSize");
+        let scale = state.map.get("dateIntervalScale");
+        let date = moment.utc(state.map.get("date"));
+
+        let nextDate = (forward ? date.add(size, scale) : date.subtract(size, scale)).toDate();
+
+        dispatch(mapActions.setDate(nextDate));
+    };
+}
+
+export function setDateInterval(size, scale) {
+    return { type: types.SET_DATE_INTERVAL, size, scale };
 }

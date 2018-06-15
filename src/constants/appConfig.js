@@ -104,7 +104,16 @@ const APP_CONFIG = Immutable.fromJS({
             { value: "project", label: "Project" }
         ],
         DEFAULT_SORT_PARAM: "project"
-    }
+    },
+    DATE_INTERVALS: [
+        { size: 1, scale: "day" },
+        { size: 5, scale: "day" },
+        { size: 1, scale: "week" },
+        { size: 1, scale: "month" },
+        { size: 3, scale: "month" },
+        { size: 6, scale: "month" },
+        { size: 1, scale: "year" }
+    ]
 });
 
 // define and export the final config

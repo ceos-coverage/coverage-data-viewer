@@ -17,15 +17,30 @@ export default class MapReducer extends MapReducerCore {
         return layerModel;
     }
 
-    // static setMapDate(state, action) {
-    //     state = MapReducerCore.setMapDate(state, action);
+    static setMapDate(state, action) {
+        state = MapReducerCore.setMapDate(state, action);
 
-    //     let size = state.get("dateIntervalSize");
-    //     let scale = state.get("dateIntervalScale");
-    //     let date = moment.utc(state.get("date"));
+        let size = state.get("dateIntervalSize");
+        let scale = state.get("dateIntervalScale");
+        let date = moment.utc(state.get("date"));
 
-    //     return state.set("intervalDate", date.add(size, scale).toDate());
-    // }
+        return state.set("intervalDate", date.add(size, scale).toDate());
+    }
+
+    static setDateInterval(state, action) {
+        let size = parseInt(action.size);
+        let scale = action.scale;
+
+        try {
+            let testDate = moment.utc(state.get("date")).add(size, scale);
+            if (testDate.isValid()) {
+                return state.set("dateIntervalSize", size).set("dateIntervalScale", scale);
+            }
+        } catch (err) {
+            console.warn("Error in MapReducer.setDateInterval: ", err);
+            return state;
+        }
+    }
 
     static setLayerLoading(state, action) {
         let actionLayer = action.layer;

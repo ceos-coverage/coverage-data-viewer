@@ -32,6 +32,9 @@ export default function map(state = mapState, action, opt_reducer = MapReducer) 
         case actionTypes.SET_TRACK_ERROR_ACTIVE:
             return opt_reducer.setTrackErrorActive(state, action);
 
+        case actionTypes.SET_DATE_INTERVAL:
+            return opt_reducer.setDateInterval(state, action);
+
         default:
             return mapCore.call(this, state, action, opt_reducer);
     }

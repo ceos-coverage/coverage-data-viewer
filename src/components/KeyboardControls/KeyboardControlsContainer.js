@@ -21,6 +21,18 @@ export class KeyboardControlsContainer extends KeyboardControlsContainerCore {
             this.props.disableAreaSelection();
         }
     }
+
+    handleKeyDown_ArrowUp() {
+        return undefined;
+    }
+
+    handleKeyDown_ArrowDown() {
+        return undefined;
+    }
+
+    incrementDate(resolution, increment = true) {
+        this.props.stepDate(increment);
+    }
 }
 
 KeyboardControlsContainer.propTypes = {
@@ -32,6 +44,7 @@ KeyboardControlsContainer.propTypes = {
     isAreaSelectionEnabled: PropTypes.bool.isRequired,
     dateSliderTimeResolution: PropTypes.object.isRequired,
     disableAreaSelection: PropTypes.func.isRequired,
+    stepDate: PropTypes.func.isRequired,
     date: PropTypes.object.isRequired
 };
 
@@ -50,7 +63,8 @@ function mapDispatchToProps(dispatch) {
     return {
         mapActions: bindActionCreators(mapActionsCore, dispatch),
         dateSliderActions: bindActionCreators(dateSliderActions, dispatch),
-        disableAreaSelection: bindActionCreators(mapActions.disableAreaSelection, dispatch)
+        disableAreaSelection: bindActionCreators(mapActions.disableAreaSelection, dispatch),
+        stepDate: bindActionCreators(mapActions.stepDate, dispatch)
     };
 }
 

@@ -20,11 +20,7 @@ export class LayerSearchListSort extends Component {
             entry => entry.value === this.props.sortParam
         );
         return (
-            <IconPopover
-                icon={<SortIcon />}
-                className={styles.button}
-                contentClass={styles.content}
-            >
+            <IconPopover icon={<SortIcon />} contentClass={styles.content}>
                 <List subheader={<li />}>
                     <ul className={styles.dummyList}>
                         <ListSubheader className={styles.subheader}>Group By</ListSubheader>
