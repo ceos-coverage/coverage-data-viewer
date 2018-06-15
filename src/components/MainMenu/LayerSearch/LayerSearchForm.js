@@ -49,10 +49,10 @@ export class LayerSearchForm extends Component {
                 </Grid>
                 <Divider />
                 <Grid container alignItems="center" className={styles.resultsRow}>
-                    <Grid item xs={10} className={styles.rowItem}>
+                    <Grid item xs={6} className={styles.rowItem}>
                         <LayerSearchResultsLabel className={styles.resultLabel} />
                     </Grid>
-                    <Grid item xs={2} className={styles.rowItem}>
+                    <Grid item xs={6} className={styles.rowItem}>
                         <LayerSearchListSort />
                     </Grid>
                 </Grid>

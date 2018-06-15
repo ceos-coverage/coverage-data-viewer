@@ -16,11 +16,18 @@ import styles from "components/MainMenu/LayerSearch/LayerSearchListSort.scss";
 
 export class LayerSearchListSort extends Component {
     render() {
+        let selectedParam = appConfig.LAYER_SEARCH.SORT_PARAMS.find(
+            entry => entry.value === this.props.sortParam
+        );
         return (
-            <IconPopover icon={<SortIcon />} contentClass={styles.content}>
+            <IconPopover
+                icon={<SortIcon />}
+                className={styles.button}
+                contentClass={styles.content}
+            >
                 <List subheader={<li />}>
                     <ul className={styles.dummyList}>
-                        <ListSubheader className={styles.subheader}>Sort By</ListSubheader>
+                        <ListSubheader className={styles.subheader}>Group By</ListSubheader>
                         <FormGroup className={styles.form}>
                             <RadioGroup
                                 aria-label="search_list_sort"

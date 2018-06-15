@@ -27,6 +27,15 @@ export class LayerSearchResult extends Component {
             .unix(this.props.layer.getIn(["insituMeta", "end_date"]))
             .utc()
             .format("MMM DD, YYYY");
+
+        let secondaryText = (
+            <span>
+                {this.props.layer.getIn(["insituMeta", "instrument"])}
+                <br />
+                {startStr + " – " + endStr}
+            </span>
+        );
+
         return (
             <ListItem dense button onClick={() => this.handleSelect()}>
                 <Checkbox
@@ -37,7 +46,7 @@ export class LayerSearchResult extends Component {
                 />
                 <ListItemText
                     primary={this.props.layer.get("title")}
-                    secondary={startStr + " – " + endStr}
+                    secondary={secondaryText}
                     classes={{ primary: styles.title }}
                 />
                 <ListItemSecondaryAction>
