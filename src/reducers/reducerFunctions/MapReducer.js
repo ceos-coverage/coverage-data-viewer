@@ -34,6 +34,25 @@ export default class MapReducer extends MapReducerCore {
         try {
             let testDate = moment.utc(state.get("date")).add(size, scale);
             if (testDate.isValid()) {
+                let intervalMs = moment.duration(size, scale).asMilliseconds();
+
+                // update each map
+                state.get("maps").forEach(map => {
+                    if (map.setMapDateInterval(intervalMs)) {
+                        // update each layer on the map
+                        state.get("layers").forEach(layerSection => {
+                            layerSection.forEach(layer => {
+                                if (
+                                    layer.get("isActive") &&
+                                    layer.get("updateParameters").get("time")
+                                ) {
+                                    map.updateLayer(layer);
+                                }
+                            });
+                        });
+                    }
+                });
+
                 return state.set("dateIntervalSize", size).set("dateIntervalScale", scale);
             }
         } catch (err) {

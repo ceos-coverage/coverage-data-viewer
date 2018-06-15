@@ -56,6 +56,16 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
         this.animationBuffer = new AnimationBuffer(22);
         this.tileLoadingQueue = new TileLoadingQueue();
         this.layerLoadCallback = undefined;
+        this.dateInterval = 86400000;
+    }
+
+    setMapDateInterval(interval) {
+        interval = parseInt(interval);
+        if (interval && typeof interval !== "undefined") {
+            this.dateInterval = interval;
+            return true;
+        }
+        return false;
     }
 
     setLayerLoadCallback(callback) {
@@ -1389,7 +1399,6 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                 .utc(this.mapDate)
                 .startOf("d")
                 .toDate();
-            let msInDay = 86400000;
             let refFeature = features[0];
             let layerId = refFeature.get("_layerId");
             let highlightFeatures = [];
@@ -1409,7 +1418,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                     let featureTimeArr = feature.get("position_date_time") || [];
                     for (let j = 0; j < featureTimeArr.length; ++j) {
                         let featureTimeDiff = featureTimeArr[j] - date;
-                        if (featureTimeDiff >= 0 && featureTimeDiff < msInDay) {
+                        if (featureTimeDiff >= 0 && featureTimeDiff < this.dateInterval) {
                             let highlightFeature = feature.clone();
                             highlightFeature.set("_color", color);
                             highlightFeature.set("_matchIndex", j);
