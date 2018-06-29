@@ -1,7 +1,7 @@
 {
-  "name": "cmc-core",
+  "name": "oiip-data-viewer",
   "version": "1.0.0",
-  "description": "making a mapping app with react, redux, and friends",
+  "description": "data viewer application for Oceanographic In-Situ Interoperability Project",
   "scripts": {
     "postinstall": "scripts/postinstall.sh",
     "prestart": "npm run prep:dist",
@@ -155,6 +155,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/nasa/common-mapping-client.git"
+    "url": "https://github.jpl.nasa.gov/fplatt/oiip-data-viewer.git"
   }
 }

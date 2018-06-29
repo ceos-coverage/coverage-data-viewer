@@ -1,21 +1,16 @@
 #!/bin/bash
 
-
-# Copyright 2017 California Institute of Technology.
-#
-# This source code is licensed under the APACHE 2.0 license found in the
-# LICENSE.txt file in the root directory of this source tree.
-
-
+# http://stackoverflow.com/a/125340
 # remove origin/ from branch name
 SOURCE_BRANCH=${GIT_BRANCH#*/}
 
 BUILD_VERSION=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g' | tr -d '[[:space:]]')
-PROJECT_NAME="oiip-data-viewer"
-CONTAINER_NAME="oiip-data-viewer"
-IMAGE_NAME="${PROJECT_NAME}:latest"
-IMAGE_NAME_TAG="${PROJECT_NAME}:${BUILD_VERSION}-${BUILD_NUMBER}"
-BUNDLE_NAME="oiip-${BUILD_VERSION}-${BUILD_NUMBER}"
+ARTIFACTORY_REPO="podaac-ci.jpl.nasa.gov:5000"
+PROJECT_NAME="oiip/oiip-data-viewer"
+CONTAINER_NAME="oiip_oiip-data-viewer"
+IMAGE_NAME="${ARTIFACTORY_REPO}/${PROJECT_NAME}:latest"
+IMAGE_NAME_TAG="${ARTIFACTORY_REPO}/${PROJECT_NAME}/${BUILD_VERSION}:${BUILD_VERSION}-${BUILD_NUMBER}"
+BUNDLE_NAME="oiip-data-viewer-${BUILD_VERSION}-${BUILD_NUMBER}"
 
 if [[ -z "${SOURCE_BRANCH// }" ]]; then
   echo "Could not resolve branch. Exiting."
@@ -23,6 +18,9 @@ if [[ -z "${SOURCE_BRANCH// }" ]]; then
 else
   echo "Building branch: ${SOURCE_BRANCH}"
 fi
+
+echo "Removing old tar balls..."
+rm -f ./*.tar.gz;
 
 echo "Installing dependencies..."
 npm install
@@ -55,22 +53,61 @@ fi
 #   exit 1
 # fi
 
-# echo "Moving test results..."
-# mv test-results dist/
+echo "Checking if branch is master..."
+if [[ "${SOURCE_BRANCH}" == "master" ]]; then
+  echo "Removing build report..."
+  rm dist/build-report.txt
+
+  echo "Building docker image..."
+  sudo docker build -t ${IMAGE_NAME} -f scripts/deployAssets/Dockerfile .
+
+  echo "Tagging image..."
+  sudo docker tag ${IMAGE_NAME} ${IMAGE_NAME_TAG}
+
+  echo "Pushing image..."
+  sudo docker push ${IMAGE_NAME}
+
+  echo "Pushing image tag..."
+  sudo docker push ${IMAGE_NAME_TAG}
+
+  echo "Removing docker images..."
+  sudo docker rmi ${IMAGE_NAME_TAG}
+  sudo docker rmi ${IMAGE_NAME}
+
+  echo "Creating bundle..."
+  mkdir ${BUNDLE_NAME}
+
+  echo "Copying dist to bundle..."
+  cp -r dist ${BUNDLE_NAME}/oiip-data-viewer
+
+  echo "Copying docker-compose into bundle..."
+  cp docker-compose.yml ${BUNDLE_NAME}/docker-compose.yml
+
+  echo "Updating version numbers in docker-compose..."
+  cd ${BUNDLE_NAME}
+  sed -i "s/@APPVERSION/${BUILD_VERSION}-${BUILD_NUMBER}/g" docker-compose.yml
+  cd ..
+
+  echo "Creating tar bundle..."
+  tar czf ${BUNDLE_NAME}.tar.gz ${BUNDLE_NAME}
+
+  echo "Removing bundle..."
+  rm -rf ${BUNDLE_NAME}
+fi
+
+echo "Moving test results..."
+mv test-results dist/
 
 echo "Checking branches dir..."
 if [ ! -d "branches" ]; then
   mkdir branches
 fi
 
-echo "Creating target branch directory ${SOURCE_BRANCH}..."
+echo "Creating target branch directory branches/${SOURCE_BRANCH}..."
 rm -rf branches/${SOURCE_BRANCH} && mv dist branches/${SOURCE_BRANCH}
 
 echo "Moving branches to dist for image build..."
 mv branches dist
-
-echo "Moving docker ignore out for build..."
-cp scripts/deployAssets/.dockerignore .dockerignore
 
 echo "Clearing old containers and images..."
 sudo docker ps | grep ${PROJECT_NAME} | awk '{print $1 }' | xargs -I {} sudo docker stop {}
@@ -80,10 +117,10 @@ sudo docker images | grep ${PROJECT_NAME} | awk '{print $1":"$2}' | xargs -I {} 
 echo "Building docker image..."
 sudo docker build -t ${PROJECT_NAME} -f scripts/deployAssets/Dockerfile .
 
-echo "Starting container..."
-sudo docker run -d -p 49180:80 --name ${CONTAINER_NAME} ${PROJECT_NAME}
-
 echo "Moving dist back to branches..."
 mv dist branches
+
+echo "Starting container..."
+sudo docker run -d -p 8102:80 --name ${CONTAINER_NAME} ${PROJECT_NAME}
 
 exit 0
