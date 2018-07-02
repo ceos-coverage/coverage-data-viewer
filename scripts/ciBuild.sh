@@ -30,14 +30,6 @@ if [ ! $? -eq 0 ]; then
   exit 1
 fi
 
-# echo "Testing..."
-# npm run test --nowebgl --includecoretests
-
-# if [ ! $? -eq 0 ]; then
-#   echo "Test failed."
-#   exit 1
-# fi
-
 echo "Building..."
 npm run build
 
@@ -46,12 +38,6 @@ if [ ! -d "dist" ]; then
   echo "Build failed."
   exit 1
 fi
-
-# echo "Checking test results..."
-# if [ ! -d "test-results" ]; then
-#   echo "No test-results available."
-#   exit 1
-# fi
 
 echo "Checking if branch is master..."
 if [[ "${SOURCE_BRANCH}" == "master" ]]; then
@@ -94,9 +80,6 @@ if [[ "${SOURCE_BRANCH}" == "master" ]]; then
   echo "Removing bundle..."
   rm -rf ${BUNDLE_NAME}
 fi
-
-# echo "Moving test results..."
-# mv test-results dist/
 
 echo "Checking branches dir..."
 if [ ! -d "branches" ]; then
