@@ -1395,10 +1395,9 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
         let source = mapLayer.getSource();
 
         if (features.length > 0) {
-            let date = moment
-                .utc(this.mapDate)
-                .startOf("d")
-                .toDate();
+            let date = moment.utc(this.mapDate);
+            let endTime = date.valueOf() + this.dateInterval;
+            let startTime = date.startOf("d").valueOf();
             let refFeature = features[0];
             let layerId = refFeature.get("_layerId");
             let highlightFeatures = [];
@@ -1417,8 +1416,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                 if (feature.getGeometry() instanceof Ol_Geom_Point) {
                     let featureTimeArr = feature.get("position_date_time") || [];
                     for (let j = 0; j < featureTimeArr.length; ++j) {
-                        let featureTimeDiff = featureTimeArr[j] - date;
-                        if (featureTimeDiff >= 0 && featureTimeDiff < this.dateInterval) {
+                        if (featureTimeArr[j] >= startTime && featureTimeArr[j] < endTime) {
                             let highlightFeature = feature.clone();
                             highlightFeature.set("_color", color);
                             highlightFeature.set("_matchIndex", j);

@@ -41,7 +41,8 @@ const APP_CONFIG = Immutable.fromJS({
         paletteConfig: "default-data/palettes_oiip.json",
         geoserverBase: "https://oiip.jpl.nasa.gov/geoserver/ows",
         solrBase: "https://oiip.jpl.nasa.gov/solr/",
-        decimatorMiddleware: "http://icewhale.jpl.nasa.gov:49181/getData"
+        // decimatorMiddleware: "http://icewhale.jpl.nasa.gov:49181/getData"
+        decimatorMiddleware: "http://babywhale1.jpl.nasa.gov:8100/getData/"
         // decimatorMiddleware: "http://localhost:49181/getData"
     },
     DEFAULT_WEB_WORKER_NUM: 1,
