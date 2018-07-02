@@ -95,8 +95,8 @@ if [[ "${SOURCE_BRANCH}" == "master" ]]; then
   rm -rf ${BUNDLE_NAME}
 fi
 
-echo "Moving test results..."
-mv test-results dist/
+# echo "Moving test results..."
+# mv test-results dist/
 
 echo "Checking branches dir..."
 if [ ! -d "branches" ]; then
