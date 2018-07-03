@@ -44,7 +44,33 @@ export function setSearchFacets(facets) {
 }
 
 export function setSearchFacetSelected(facet, isSelected) {
-    return { type: types.SET_SEARCH_FACET_SELECTED, facet, isSelected };
+    // return { type: types.SET_SEARCH_FACET_SELECTED, facet, isSelected };
+
+    return (dispatch, getState) => {
+        dispatch({ type: types.SET_SEARCH_FACET_SELECTED, facet, isSelected });
+
+        let state = getState();
+        let searchParams = state.view.getIn(["layerSearch", "formOptions"]);
+
+        let options = {
+            area: searchParams.get("selectedArea").toJS(),
+            dateRange: [searchParams.get("startDate"), searchParams.get("endDate")],
+            facets: searchParams.get("selectedFacets").toJS()
+        };
+
+        Promise.all([SearchUtil.searchForFacets(options)]).then(
+            results => {
+                let facets = results[0].set(
+                    facet.group,
+                    state.view.getIn(["layerSearch", "formOptions", "searchFacets", facet.group])
+                );
+                dispatch(setSearchFacets(facets));
+            },
+            err => {
+                console.warn("Facet search Fail: ", err);
+            }
+        );
+    };
 }
 
 export function clearSearchFacet(facetGroup) {
@@ -148,7 +174,7 @@ export function setTrackErrorActive(trackId, isActive) {
     };
 }
 
-export function runLayerSearch() {
+export function runLayerSearch(refreshFacets = false) {
     return (dispatch, getState) => {
         let state = getState();
         let searchParams = state.view.getIn(["layerSearch", "formOptions"]);
@@ -161,20 +187,27 @@ export function runLayerSearch() {
             facets: searchParams.get("selectedFacets").toJS()
         };
 
-        Promise.all([
-            SearchUtil.searchForTracks(options),
-            SearchUtil.searchForFacets(options)
-        ]).then(
+        SearchUtil.searchForTracks(options).then(
             results => {
-                dispatch(setSearchResults(results[0]));
-                dispatch(setSearchFacets(results[1]));
+                dispatch(setSearchResults(results));
                 dispatch(setSearchLoading(false));
             },
             err => {
-                console.warn("Search Fail: ", err);
+                console.warn("Track search fail: ", err);
                 dispatch(setSearchLoading(false));
             }
         );
+
+        if (refreshFacets === true) {
+            SearchUtil.searchForFacets(options).then(
+                results => {
+                    dispatch(setSearchFacets(results));
+                },
+                err => {
+                    console.warn("Facet search fail: ", err);
+                }
+            );
+        }
     };
 }
 
