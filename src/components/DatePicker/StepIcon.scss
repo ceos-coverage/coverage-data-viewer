@@ -1,0 +1,11 @@
+.root {
+    display: flex;
+    flex-flow: column nowrap;
+    font-size: 2rem;
+}
+
+.label {
+    composes: fontRobotoMono from "_core/styles/text.scss";
+    font-size: 1rem;
+    line-height: 1rem;
+}

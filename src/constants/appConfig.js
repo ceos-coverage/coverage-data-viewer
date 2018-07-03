@@ -107,15 +107,16 @@ const APP_CONFIG = Immutable.fromJS({
         ],
         DEFAULT_SORT_PARAM: "project"
     },
-    DATE_INTERVALS: [
-        { size: 1, scale: "day" },
-        { size: 5, scale: "day" },
-        { size: 1, scale: "week" },
-        { size: 1, scale: "month" },
-        { size: 3, scale: "month" },
-        { size: 6, scale: "month" },
-        { size: 1, scale: "year" }
-    ]
+    DATE_INTERVAL: {
+        SCALES: [
+            { label: "minute", value: "minute", abbr: "mi" },
+            { label: "hour", value: "hour", abbr: "hr" },
+            { label: "day", value: "day", abbr: "da" },
+            { label: "week", value: "week", abbr: "wk" },
+            { label: "month", value: "month", abbr: "mo" },
+            { label: "year", value: "year", abbr: "yr" }
+        ]
+    }
 });
 
 // define and export the final config

@@ -56,12 +56,11 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
         this.animationBuffer = new AnimationBuffer(22);
         this.tileLoadingQueue = new TileLoadingQueue();
         this.layerLoadCallback = undefined;
-        this.dateInterval = 86400000;
+        this.dateInterval = { scale: "day", size: 1 };
     }
 
     setMapDateInterval(interval) {
-        interval = parseInt(interval);
-        if (interval && typeof interval !== "undefined") {
+        if (typeof interval !== "undefined") {
             this.dateInterval = interval;
             return true;
         }
@@ -1396,8 +1395,10 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
 
         if (features.length > 0) {
             let date = moment.utc(this.mapDate);
-            let endTime = date.valueOf() + this.dateInterval;
-            let startTime = date.startOf("d").valueOf();
+            let endTime = date.valueOf();
+            let startTime = date
+                .subtract(this.dateInterval.size, this.dateInterval.scale)
+                .valueOf();
             let refFeature = features[0];
             let layerId = refFeature.get("_layerId");
             let highlightFeatures = [];
@@ -1416,7 +1417,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                 if (feature.getGeometry() instanceof Ol_Geom_Point) {
                     let featureTimeArr = feature.get("position_date_time") || [];
                     for (let j = 0; j < featureTimeArr.length; ++j) {
-                        if (featureTimeArr[j] >= startTime && featureTimeArr[j] < endTime) {
+                        if (featureTimeArr[j] > startTime && featureTimeArr[j] <= endTime) {
                             let highlightFeature = feature.clone();
                             highlightFeature.set("_color", color);
                             highlightFeature.set("_matchIndex", j);

@@ -24,7 +24,7 @@ export default class MapReducer extends MapReducerCore {
         let scale = state.get("dateIntervalScale");
         let date = moment.utc(state.get("date"));
 
-        return state.set("intervalDate", date.add(size, scale).toDate());
+        return state.set("intervalDate", date.subtract(size, scale).toDate());
     }
 
     static setDateInterval(state, action) {
@@ -32,13 +32,13 @@ export default class MapReducer extends MapReducerCore {
         let scale = action.scale;
 
         try {
-            let intervalDate = moment.utc(state.get("date")).add(size, scale);
+            let intervalDate = moment.utc(state.get("date")).subtract(size, scale);
             if (intervalDate.isValid()) {
-                let intervalMs = moment.duration(size, scale).asMilliseconds();
+                // let intervalMs = moment.duration(size, scale).asMilliseconds();
 
                 // update each map
                 state.get("maps").forEach(map => {
-                    if (map.setMapDateInterval(intervalMs)) {
+                    if (map.setMapDateInterval({ size, scale })) {
                         // update each layer on the map
                         state.get("layers").forEach(layerSection => {
                             layerSection.forEach(layer => {

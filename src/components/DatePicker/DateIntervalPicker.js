@@ -12,9 +12,15 @@ import { bindActionCreators } from "redux";
 import StepIcon from "mdi-material-ui/DebugStepOver";
 import Typography from "@material-ui/core/Typography";
 import FormGroup from "@material-ui/core/FormGroup";
+import InputLabel from "@material-ui/core/InputLabel";
+import Select from "@material-ui/core/Select";
+import TextField from "@material-ui/core/TextField";
+import FormControl from "@material-ui/core/FormControl";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Grid from "@material-ui/core/Grid";
 import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
+// import { StepIcon } from "components/DatePicker";
 import { IconPopover } from "components/Reusables";
 import * as mapActions from "actions/mapActions";
 import appConfig from "constants/appConfig";
@@ -34,11 +40,11 @@ export class DateIntervalPicker extends Component {
                 className={styles.root}
                 anchorOrigin={{
                     vertical: "top",
-                    horizontal: "right"
+                    horizontal: "center"
                 }}
                 transformOrigin={{
                     vertical: "bottom",
-                    horizontal: "right"
+                    horizontal: "center"
                 }}
                 contentClass={styles.content}
                 tooltip="Date Interval"
@@ -48,25 +54,63 @@ export class DateIntervalPicker extends Component {
                     <Typography variant="subheading" className={styles.subheader}>
                         Date Interval
                     </Typography>
-                    <FormGroup className={styles.form}>
-                        <RadioGroup
-                            aria-label="search_list_sort"
-                            name="search_list_sort"
-                            value={this.props.dateIntervalSize + "/" + this.props.dateIntervalScale}
-                            onChange={(evt, val) => this.handleIntervalSelect(val)}
-                            onClick={evt => this.handleIntervalSelect(evt.target.value)}
-                        >
-                            {appConfig.DATE_INTERVALS.map(entry => (
-                                <FormControlLabel
-                                    key={"interval_" + entry.size + entry.scale}
-                                    value={entry.size + "/" + entry.scale}
-                                    control={<Radio color="primary" />}
-                                    className={styles.intervalOption}
-                                    label={entry.size + "/" + entry.scale}
+
+                    <div className={styles.form}>
+                        <Grid container spacing={8}>
+                            <Grid item xs={6}>
+                                <TextField
+                                    id="date_interval_size"
+                                    defaultValue={this.props.dateIntervalSize.toString()}
+                                    label="Interval Size"
+                                    fullWidth={true}
+                                    onChange={evt =>
+                                        this.props.mapActions.setDateInterval(
+                                            parseInt(evt.target.value),
+                                            this.props.dateIntervalScale
+                                        )
+                                    }
+                                    inputProps={{
+                                        type: "number"
+                                    }}
                                 />
-                            ))}
-                        </RadioGroup>
-                    </FormGroup>
+                            </Grid>
+                            <Grid item xs={6}>
+                                <FormGroup>
+                                    <FormControl>
+                                        <InputLabel htmlFor="dateIntervalScale">
+                                            Interval Scale
+                                        </InputLabel>
+                                        <Select
+                                            native={true}
+                                            value={this.props.dateIntervalScale}
+                                            onChange={evt =>
+                                                this.props.mapActions.setDateInterval(
+                                                    this.props.dateIntervalSize,
+                                                    evt.target.value
+                                                )
+                                            }
+                                            inputProps={{
+                                                name: "dateIntervalScale",
+                                                id: "dateIntervalScale"
+                                            }}
+                                        >
+                                            {appConfig.DATE_INTERVAL.SCALES.map((entry, i) => {
+                                                return (
+                                                    <option
+                                                        key={"interval-scale-" + i}
+                                                        value={entry.value}
+                                                        tabIndex="-1"
+                                                    >
+                                                        {entry.label}
+                                                    </option>
+                                                );
+                                            })}
+                                        </Select>
+                                    </FormControl>
+                                </FormGroup>
+                            </Grid>
+                        </Grid>
+                    </div>
                 </div>
             </IconPopover>
         );

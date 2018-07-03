@@ -9,6 +9,7 @@
     padding: 0px;
     position: relative;
     overflow: hidden;
+    height: 10rem;
 }
 
 .list {
@@ -34,8 +35,9 @@
 }
 
 .form {
+    padding: 1rem;
     width: 100%;
-    padding-left: 1rem;
+    // padding-left: 1rem;
     display: block;
     flex: 1 1;
     overflow: hidden;
