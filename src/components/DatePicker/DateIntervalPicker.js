@@ -16,10 +16,7 @@ import InputLabel from "@material-ui/core/InputLabel";
 import Select from "@material-ui/core/Select";
 import TextField from "@material-ui/core/TextField";
 import FormControl from "@material-ui/core/FormControl";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Grid from "@material-ui/core/Grid";
-import Radio from "@material-ui/core/Radio";
-import RadioGroup from "@material-ui/core/RadioGroup";
 // import { StepIcon } from "components/DatePicker";
 import { IconPopover } from "components/Reusables";
 import * as mapActions from "actions/mapActions";
@@ -27,12 +24,6 @@ import appConfig from "constants/appConfig";
 import styles from "components/DatePicker/DateIntervalPicker.scss";
 
 export class DateIntervalPicker extends Component {
-    handleIntervalSelect(valueStr) {
-        if (typeof valueStr !== "undefined") {
-            let pieces = valueStr.split("/");
-            this.props.mapActions.setDateInterval(parseInt(pieces[0]), pieces[1]);
-        }
-    }
     render() {
         return (
             <IconPopover
