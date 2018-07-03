@@ -1,8 +1,10 @@
 oiip-data-viewer:
-  image: podaac-ci.jpl.nasa.gov:5000/oiip/oiip-data-viewer/1.0.0:@APPVERSION
+  image: podaac-ci.jpl.nasa.gov:5000/oiip/oiip-data-viewer/1.0.0:latest
   ports:
     - 8102:80
   volumes:
     - ./oiip-data-viewer:/usr/share/nginx/html/app:ro
+    - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    - ./.htpasswd:/etc/nginx/.htpasswd:ro
     - ./oiip-data-viewer-logs:/var/log/nginx:rw
   privileged: true

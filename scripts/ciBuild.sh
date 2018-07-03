@@ -63,16 +63,10 @@ if [[ "${SOURCE_BRANCH}" == "master" ]]; then
   echo "Creating bundle..."
   mkdir ${BUNDLE_NAME}
 
-  echo "Copying dist to bundle..."
+  echo "Copying assets to bundle..."
   cp -r dist ${BUNDLE_NAME}/oiip-data-viewer
-
-  echo "Copying docker-compose into bundle..."
   cp docker-compose.yml ${BUNDLE_NAME}/docker-compose.yml
-
-  echo "Updating version numbers in docker-compose..."
-  cd ${BUNDLE_NAME}
-  sed -i "s/@APPVERSION/${BUILD_VERSION}-${BUILD_NUMBER}/g" docker-compose.yml
-  cd ..
+  cp nginx.conf ${BUNDLE_NAME}/nginx.conf
 
   echo "Creating tar bundle..."
   tar czf ${BUNDLE_NAME}.tar.gz ${BUNDLE_NAME}
