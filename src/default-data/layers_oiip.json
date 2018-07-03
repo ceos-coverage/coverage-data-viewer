@@ -28,7 +28,7 @@
         }
     }, {
         "id": "oscar_l4_oc_third_deg___oceancurrent_speed___1088_x_544___daynight",
-        "title": "Ocean Surface Current Speed",
+        "title": "Ocean Surface Current Speed (5 day)",
         "subtitle": "ESR/OSCAR",
         "type": "data",
         "handleAs": "GIBS_raster",
@@ -52,7 +52,7 @@
         }
     }, {
         "id": "oscar_l4_oc_third_deg___oceancurrent_dir_color",
-        "title": "Ocean Surface Current Vectors",
+        "title": "Ocean Surface Current Vectors (5 day)",
         "subtitle": "ESR/OSCAR",
         "url": "https://podaac-tools.jpl.nasa.gov/onearth/kml/oscar_l4_oc_third_deg___oceancurrent_dir_color/oscar_l4_oc_third_deg___oceancurrent_dir_color___1088_x_544___daynight___{TIME}/{Z}/{X}/{Y}.kml",
         "type": "data",
