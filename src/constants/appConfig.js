@@ -41,9 +41,10 @@ const APP_CONFIG = Immutable.fromJS({
         paletteConfig: "default-data/palettes_oiip.json",
         geoserverBase: "https://oiip.jpl.nasa.gov/geoserver/ows",
         solrBase: "https://oiip.jpl.nasa.gov/solr/",
-        // decimatorMiddleware: "http://icewhale.jpl.nasa.gov:49181/getData"
-        decimatorMiddleware: "http://babywhale1.jpl.nasa.gov:8100/getData/"
-        // decimatorMiddleware: "http://localhost:49181/getData"
+        decimatorMiddleware: "https://oiip.jpl.nasa.gov/getDecData"
+        // decimatorMiddleware: "http://icewhale.jpl.nasa.gov:8100/getData"
+        // decimatorMiddleware: "http://babywhale1.jpl.nasa.gov:8100/getData/"
+        // decimatorMiddleware: "http://localhost:8100/getData"
     },
     DEFAULT_WEB_WORKER_NUM: 1,
     DEFAULT_MAP_EXTENT: [-180 * 2, -90, 180 * 2, 90],
@@ -69,7 +70,7 @@ const APP_CONFIG = Immutable.fromJS({
         "#9C27B0", // purple
         "#673AB7", // deep purple
         "#3e2723", // brown
-        "#000000" // black,
+        "#000000" // black
     ],
     CHART_SERIES_COLORS: [
         "#00BCD4", // cyan
@@ -79,7 +80,7 @@ const APP_CONFIG = Immutable.fromJS({
         "#4CAF50", // green
         "#FF5722", // deep orange
         "#2196F3", // blue
-        "#000000" // black,
+        "#000000" // black
     ],
     CHART_COLORBAR_COLORS: ["#0288d1", "#fffbbc", "#d14702"],
     CHART_DATE_INDICATOR_COLOR: "rgba(0, 0, 0, 0.5)",
