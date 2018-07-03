@@ -26,6 +26,8 @@
 
 .labelContent {
     text-transform: capitalize;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .colorbarWrapper {
