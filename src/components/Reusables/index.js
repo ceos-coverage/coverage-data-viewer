@@ -1,3 +1,10 @@
+/**
+ * Copyright 2018 California Institute of Technology.
+ *
+ * This source code is licensed under the APACHE 2.0 license found in the
+ * LICENSE.txt file in the root directory of this source tree.
+ */
+
 export { default as LabelPopover } from "components/Reusables/LabelPopover.js";
 export { default as IconPopover } from "components/Reusables/IconPopover.js";
 export { default as Checkbox } from "components/Reusables/Checkbox.js";

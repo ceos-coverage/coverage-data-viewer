@@ -1,7 +1,9 @@
-// .root {
-//     display: flex;
-//     flex-flow: row nowrap;
-// }
+/**
+ * Copyright 2018 California Institute of Technology.
+ *
+ * This source code is licensed under the APACHE 2.0 license found in the
+ * LICENSE.txt file in the root directory of this source tree.
+ */
 
 .datePickerSelection {
     position: relative;
@@ -10,12 +12,5 @@
 }
 
 .inputs {
-    // flex: 1 1;
     padding: 0.5rem 0px;
 }
-
-// .btns {
-//     width: 8rem;
-//     padding: 0.2rem 0px;
-//     display: inline-block;
-// }

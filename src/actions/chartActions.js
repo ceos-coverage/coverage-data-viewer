@@ -1,3 +1,10 @@
+/**
+ * Copyright 2018 California Institute of Technology.
+ *
+ * This source code is licensed under the APACHE 2.0 license found in the
+ * LICENSE.txt file in the root directory of this source tree.
+ */
+
 import Immutable from "immutable";
 import * as appStrings from "constants/appStrings";
 import * as types from "constants/actionTypes";
@@ -5,8 +12,6 @@ import DataStore from "utils/DataStore";
 import ChartUtil from "utils/ChartUtil";
 import TrackDataUtil from "utils/TrackDataUtil";
 import appConfig from "constants/appConfig";
-
-const sample_url = "http://localhost:3000/default-data/albacoreTunaData.csv";
 
 export function setTrackSelected(trackId, isSelected) {
     return { type: types.SET_CHART_TRACK_SELECTED, trackId, isSelected };

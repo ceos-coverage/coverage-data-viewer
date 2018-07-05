@@ -1,3 +1,10 @@
+/**
+ * Copyright 2018 California Institute of Technology.
+ *
+ * This source code is licensed under the APACHE 2.0 license found in the
+ * LICENSE.txt file in the root directory of this source tree.
+ */
+
 export const WORKER_TASK_RETRIEVE_DATA = "WORKER_TASK_RETRIEVE_DATA";
 export const WORKER_TASK_DECIMATE_POINTS_LTTB = "WORKER_TASK_DECIMATE_POINTS_LTTB";
 export const WORKER_TASK_CLEAR_CACHE_ENTRY = "WORKER_TASK_CLEAR_CACHE_ENTRY";
