@@ -6,6 +6,7 @@
  */
 
 import Immutable from "immutable";
+import moment from "moment";
 import appConfig from "constants/appConfig";
 import { mapState as mapStateCore, layerModel as layerModelCore } from "_core/reducers/models/map";
 
@@ -13,7 +14,10 @@ export const mapState = mapStateCore.mergeDeep(
     Immutable.fromJS({
         dateIntervalScale: "day",
         dateIntervalSize: 1,
-        intervalDate: appConfig.DEFAULT_DATE,
+        intervalDate: moment
+            .utc(appConfig.DEFAULT_DATE)
+            .subtract(1, "day")
+            .toDate(),
         layers: {
             insitu_data: {},
             insitu_data_error: {}

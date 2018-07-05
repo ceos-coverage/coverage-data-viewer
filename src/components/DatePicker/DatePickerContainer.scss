@@ -6,13 +6,23 @@
  */
 
 .root {
-    height: 3.4rem;
+    height: 5.4rem;
     left: 0.7rem;
     bottom: 0.7rem;
     border-radius: 2px;
-    width: 29rem;
-    padding: 0px 0.5rem;
+    width: 34.5rem;
+    padding: 0.5rem 0.5rem;
+}
+
+.intervalDate {
+    composes: fontRobotoMono from "_core/styles/text.scss";
+    font-size: 1.2rem;
+    padding-left: 0.6rem;
+}
+
+.inlineRow {
     display: flex;
+    align-items: center;
     flex-flow: row nowrap;
 }
 
@@ -22,7 +32,7 @@
 
 .btns {
     width: 10rem;
-    padding: 0.2rem 0px;
+    padding: 0px;
     display: inline-block;
     text-align: right;
     .thinBtn {

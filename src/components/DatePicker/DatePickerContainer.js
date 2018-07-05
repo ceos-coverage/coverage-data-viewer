@@ -9,7 +9,9 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
+import moment from "moment";
 import VideoIcon from "@material-ui/icons/Videocam";
+import Typography from "@material-ui/core/Typography";
 import RightIcon from "mdi-material-ui/MenuRight";
 import LeftIcon from "mdi-material-ui/MenuLeft";
 import { IconButtonSmall } from "_core/components/Reusables";
@@ -33,34 +35,41 @@ export class DatePickerContainer extends Component {
         });
         return (
             <div className={containerClasses}>
-                <DatePicker
-                    date={this.props.date}
-                    setDate={this.props.mapActionsCore.setDate}
-                    className={styles.picker}
-                />
-                <div className={styles.btns}>
-                    <Tooltip title="Step Back" placement="top">
-                        <IconButtonSmall
-                            className={styles.thinBtn}
-                            onClick={() => this.props.mapActions.stepDate(false)}
-                        >
-                            <LeftIcon />
-                        </IconButtonSmall>
-                    </Tooltip>
-                    <Tooltip title="Step Forward" placement="top">
-                        <IconButtonSmall
-                            className={styles.thinBtn}
-                            onClick={() => this.props.mapActions.stepDate(true)}
-                        >
-                            <RightIcon />
-                        </IconButtonSmall>
-                    </Tooltip>
-                    <DateIntervalPicker />
-                    <Tooltip title="Animation" placement="top">
-                        <IconButtonSmall>
-                            <VideoIcon />
-                        </IconButtonSmall>
-                    </Tooltip>
+                <div className={styles.hintRow}>
+                    <Typography variant="caption" className={styles.intervalDate}>
+                        {moment.utc(this.props.intervalDate).format("YYYY MMM DD, HH:mm UTC")}
+                    </Typography>
+                </div>
+                <div className={styles.inlineRow}>
+                    <DatePicker
+                        date={this.props.date}
+                        setDate={this.props.mapActionsCore.setDate}
+                        className={styles.picker}
+                    />
+                    <div className={styles.btns}>
+                        <Tooltip title="Step Back" placement="top">
+                            <IconButtonSmall
+                                className={styles.thinBtn}
+                                onClick={() => this.props.mapActions.stepDate(false)}
+                            >
+                                <LeftIcon />
+                            </IconButtonSmall>
+                        </Tooltip>
+                        <Tooltip title="Step Forward" placement="top">
+                            <IconButtonSmall
+                                className={styles.thinBtn}
+                                onClick={() => this.props.mapActions.stepDate(true)}
+                            >
+                                <RightIcon />
+                            </IconButtonSmall>
+                        </Tooltip>
+                        <DateIntervalPicker />
+                        <Tooltip title="Animation" placement="top">
+                            <IconButtonSmall>
+                                <VideoIcon />
+                            </IconButtonSmall>
+                        </Tooltip>
+                    </div>
                 </div>
             </div>
         );
@@ -69,6 +78,7 @@ export class DatePickerContainer extends Component {
 
 DatePickerContainer.propTypes = {
     date: PropTypes.object.isRequired,
+    intervalDate: PropTypes.object.isRequired,
     distractionFreeMode: PropTypes.bool.isRequired,
     mapActions: PropTypes.object.isRequired,
     mapActionsCore: PropTypes.object.isRequired,
@@ -78,6 +88,7 @@ DatePickerContainer.propTypes = {
 function mapStateToProps(state) {
     return {
         date: state.map.get("date"),
+        intervalDate: state.map.get("intervalDate"),
         distractionFreeMode: state.view.get("distractionFreeMode")
     };
 }

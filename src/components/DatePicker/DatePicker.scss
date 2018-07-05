@@ -14,3 +14,18 @@
 .inputs {
     padding: 0.5rem 0px;
 }
+
+.inputWrapper {
+    composes: fontRobotoMono from "_core/styles/text.scss";
+    font-weight: 500;
+    padding: 3px 5px;
+    font-size: 1.4rem;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    &:before {
+        display: none;
+    }
+}
+
+.input {
+    padding: 0px;
+}
