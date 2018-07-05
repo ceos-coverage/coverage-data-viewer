@@ -1,5 +1,5 @@
 /**
- * Copyright 2017 California Institute of Technology.
+ * Copyright 2018 California Institute of Technology.
  *
  * This source code is licensed under the APACHE 2.0 license found in the
  * LICENSE.txt file in the root directory of this source tree.
@@ -14,6 +14,7 @@ import * as appStringsCore from "_core/constants/appStrings";
 import MapUtil from "utils/MapUtil";
 import SearchUtil from "utils/SearchUtil";
 import GeoServerUtil from "utils/GeoServerUtil";
+import shouldUpdate from "recompose/shouldUpdate";
 
 export function setMainMenuTabIndex(tabIndex) {
     return { type: types.SET_MAIN_MENU_TAB_INDEX, tabIndex };
@@ -43,33 +44,15 @@ export function setSearchFacets(facets) {
     return { type: types.SET_SEARCH_FACETS, facets };
 }
 
-export function setSearchFacetSelected(facet, isSelected) {
+export function setSearchFacetSelected(facet, isSelected, shouldUpdateFacets = false) {
     // return { type: types.SET_SEARCH_FACET_SELECTED, facet, isSelected };
 
     return (dispatch, getState) => {
         dispatch({ type: types.SET_SEARCH_FACET_SELECTED, facet, isSelected });
 
-        let state = getState();
-        let searchParams = state.view.getIn(["layerSearch", "formOptions"]);
-
-        let options = {
-            area: searchParams.get("selectedArea").toJS(),
-            dateRange: [searchParams.get("startDate"), searchParams.get("endDate")],
-            facets: searchParams.get("selectedFacets").toJS()
-        };
-
-        Promise.all([SearchUtil.searchForFacets(options)]).then(
-            results => {
-                let facets = results[0].set(
-                    facet.group,
-                    state.view.getIn(["layerSearch", "formOptions", "searchFacets", facet.group])
-                );
-                dispatch(setSearchFacets(facets));
-            },
-            err => {
-                console.warn("Facet search Fail: ", err);
-            }
-        );
+        if (shouldUpdateFacets === true) {
+            updateFacets(dispatch, getState);
+        }
     };
 }
 
@@ -174,7 +157,7 @@ export function setTrackErrorActive(trackId, isActive) {
     };
 }
 
-export function runLayerSearch(refreshFacets = false) {
+export function runLayerSearch() {
     return (dispatch, getState) => {
         let state = getState();
         let searchParams = state.view.getIn(["layerSearch", "formOptions"]);
@@ -198,16 +181,7 @@ export function runLayerSearch(refreshFacets = false) {
             }
         );
 
-        if (refreshFacets === true) {
-            SearchUtil.searchForFacets(options).then(
-                results => {
-                    dispatch(setSearchFacets(results));
-                },
-                err => {
-                    console.warn("Facet search fail: ", err);
-                }
-            );
-        }
+        updateFacets(dispatch, getState);
     };
 }
 
@@ -217,4 +191,24 @@ export function setLayerInfo(layer = undefined) {
 
 export function setSearchSortParameter(param) {
     return { type: types.SET_SEARCH_SORT_PARAM, param };
+}
+
+export function updateFacets(dispatch, getState) {
+    let state = getState();
+    let searchParams = state.view.getIn(["layerSearch", "formOptions"]);
+
+    let options = {
+        area: searchParams.get("selectedArea").toJS(),
+        dateRange: [searchParams.get("startDate"), searchParams.get("endDate")],
+        facets: searchParams.get("selectedFacets").toJS()
+    };
+
+    SearchUtil.searchForFacets(options).then(
+        results => {
+            dispatch(setSearchFacets(results));
+        },
+        err => {
+            console.warn("Facet search Fail: ", err);
+        }
+    );
 }
