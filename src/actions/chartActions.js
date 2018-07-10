@@ -14,7 +14,10 @@ import TrackDataUtil from "utils/TrackDataUtil";
 import appConfig from "constants/appConfig";
 
 export function setTrackSelected(trackId, isSelected) {
-    return { type: types.SET_CHART_TRACK_SELECTED, trackId, isSelected };
+    return (dispatch, getState) => {
+        dispatch({ type: types.SET_CHART_TRACK_SELECTED, trackId, isSelected });
+        dispatch(updateAvailableVariables());
+    };
 }
 
 export function setAxisVariable(axis, variable) {
@@ -197,9 +200,17 @@ export function updateAvailableVariables() {
     return (dispatch, getState) => {
         let state = getState();
 
+        let formOptions = state.chart.get("formOptions");
+        let trackIds = formOptions.get("selectedTracks");
+
         let trackList = state.map
             .getIn(["layers", appStrings.LAYER_GROUP_TYPE_INSITU_DATA])
-            .filter(track => !track.get("isDisabled") && track.get("isActive"))
+            .filter(
+                track =>
+                    !track.get("isDisabled") &&
+                    track.get("isActive") &&
+                    trackIds.contains(track.get("id"))
+            )
             .toList();
 
         let sharedVariableSet =
@@ -222,11 +233,10 @@ export function updateAvailableVariables() {
                   }, undefined)
                 : Immutable.Set();
 
-        let currOptions = state.chart.get("formOptions");
-
+        let sharedVariableList = sharedVariableSet.map(x => x.get("label")).toList();
         ["xAxis", "yAxis", "zAxis"].map(axis => {
-            let currVal = currOptions.get(axis);
-            if (typeof currVal !== "undefined" && !sharedVariableSet.contains(currVal)) {
+            let currVal = formOptions.get(axis);
+            if (typeof currVal !== "undefined" && !sharedVariableList.contains(currVal)) {
                 dispatch(setAxisVariable(axis, undefined));
             }
         });

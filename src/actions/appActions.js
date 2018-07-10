@@ -104,7 +104,6 @@ export function setTrackSelected(trackId, isSelected) {
             );
             dispatch(chartActions.setTrackSelected(trackId, isSelected));
         }
-        dispatch(chartActions.updateAvailableVariables());
     };
 }
 
