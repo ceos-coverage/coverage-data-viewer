@@ -40,6 +40,7 @@ const APP_CONFIG = Immutable.fromJS({
         ],
         paletteConfig: "default-data/palettes_oiip.json",
         geoserverBase: "https://oiip.jpl.nasa.gov/geoserver/ows",
+        geoserverVectorTileBase: "https://oiip.jpl.nasa.gov/gwc/wmts",
         solrBase: "https://oiip.jpl.nasa.gov/solr/",
         decimatorMiddleware: "https://oiip.jpl.nasa.gov/getDecData"
         // decimatorMiddleware: "http://icewhale.jpl.nasa.gov:8100/getData"

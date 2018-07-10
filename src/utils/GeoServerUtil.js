@@ -24,9 +24,7 @@ export default class GeoServerUtil {
     }
 
     static getUrlForTrackError(track, errTrackId = "") {
-        // http://oiip.jpl.nasa.gov/gwc/wmts?REQUEST=GetTile&SERVICE=WMTS&VERSION=1.0.0&LAYER=oiip:err_tagbase_4&STYLE=&TILEMATRIX=EPSG:4326:8&TILEMATRIXSET=EPSG:4326&FORMAT=application/x-protobuf;type=mapbox-vector&TILECOL=135&TILEROW=94
-
-        let baseUrl = "http://oiip.jpl.nasa.gov/gwc/wmts";
+        let baseUrl = appConfig.URLS.geoserverVectorTileBase;
 
         if (errTrackId === "") {
             errTrackId =
