@@ -73,6 +73,7 @@ export class DatePicker extends Component {
             dateStr = moment.utc(this.props.date).format("YYYY MMM DD, HH:mm UTC");
         }
         this.updateFromInternal = false;
+        this.dateStr = dateStr;
 
         let containerClasses = MiscUtil.generateStringFromSet({
             [stylesCore.datePicker]: true,
