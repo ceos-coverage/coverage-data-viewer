@@ -125,12 +125,27 @@ export class ChartCreateForm extends Component {
             typeof this.props.formOptions.get("xAxis") !== "undefined" &&
             typeof this.props.formOptions.get("yAxis") !== "undefined";
 
+        let datasetsSubtitle = this.props.formOptions.get("selectedTracks").size + " Selected";
+        if (this.props.formOptions.get("selectedTracks").size === 1) {
+            datasetsSubtitle = trackList
+                .find(track => {
+                    return (
+                        track.get("id") ===
+                        this.props.formOptions
+                            .get("selectedTracks")
+                            .toList()
+                            .get(0)
+                    );
+                })
+                .get("title");
+        }
+
         return (
             <Paper elevation={3} className={styles.root}>
                 <div className={styles.options}>
                     <LabelPopover
                         label="Datasets"
-                        subtitle={this.props.formOptions.get("selectedTracks").size + " Selected"}
+                        subtitle={datasetsSubtitle}
                         className={styles.chartOption}
                     >
                         <FormGroup>{this.renderTrackList(trackList)}</FormGroup>
