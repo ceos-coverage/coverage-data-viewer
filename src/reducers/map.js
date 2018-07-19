@@ -42,6 +42,45 @@ export default function map(state = mapState, action, opt_reducer = MapReducer) 
         case actionTypes.SET_DATE_INTERVAL:
             return opt_reducer.setDateInterval(state, action);
 
+        case actionTypes.SET_ANIMATION_OPEN:
+            return opt_reducer.setAnimationOpen(state, action);
+
+        case actionTypes.SET_ANIMATION_PLAYING:
+            return opt_reducer.setAnimationPlaying(state, action);
+
+        case actionTypes.STOP_ANIMATION:
+            return opt_reducer.stopAnimation(state, action);
+
+        case actionTypes.STEP_ANIMATION:
+            return opt_reducer.stepAnimation(state, action);
+
+        case actionTypes.SET_ANIMATION_START_DATE:
+            return opt_reducer.setAnimationStartDate(state, action);
+
+        case actionTypes.SET_ANIMATION_END_DATE:
+            return opt_reducer.setAnimationEndDate(state, action);
+
+        case actionTypes.SET_ANIMATION_DATE_RANGE:
+            return opt_reducer.setAnimationDateRange(state, action);
+
+        case actionTypes.FILL_ANIMATION_BUFFER:
+            return opt_reducer.fillAnimationBuffer(state, action);
+
+        case actionTypes.EMPTY_ANIMATION_BUFFER:
+            return opt_reducer.emptyAnimationBuffer(state, action);
+
+        case actionTypes.CHECK_ANIMATION_BUFFER:
+            return opt_reducer.checkAnimationBuffer(state, action);
+
+        case actionTypes.CHECK_INITIAL_ANIMATION_BUFFER:
+            return opt_reducer.checkInitialAnimationBuffer(state, action);
+
+        case actionTypes.CHECK_NEXT_FRAME:
+            return opt_reducer.checkNextAnimationFrame(state, action);
+
+        case actionTypes.SET_ANIMATION_SPEED:
+            return opt_reducer.setAnimationSpeed(state, action);
+
         default:
             return mapCore.call(this, state, action, opt_reducer);
     }

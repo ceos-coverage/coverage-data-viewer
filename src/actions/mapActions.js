@@ -5,10 +5,11 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
+import Immutable from "immutable";
+import moment from "moment";
 import * as types from "constants/actionTypes";
 import * as appActions from "actions/appActions";
-import * as mapActions from "_core/actions/mapActions";
-import moment from "moment";
+import * as mapActionsCore from "_core/actions/mapActions";
 
 export function addLayer(layer, setActive = true) {
     return { type: types.ADD_LAYER, layer, setActive };
@@ -65,10 +66,96 @@ export function stepDate(forward) {
 
         let nextDate = (forward ? date.add(size, scale) : date.subtract(size, scale)).toDate();
 
-        dispatch(mapActions.setDate(nextDate));
+        dispatch(mapActionsCore.setDate(nextDate));
     };
 }
 
 export function setDateInterval(size, scale) {
     return { type: types.SET_DATE_INTERVAL, size, scale };
+}
+
+// set the animation component open or closed
+export function setAnimationOpen(isOpen, updateRange = true) {
+    return { type: types.SET_ANIMATION_OPEN, isOpen, updateRange };
+}
+
+// play or pause the animation
+export function setAnimationPlaying(isPlaying) {
+    return { type: types.SET_ANIMATION_PLAYING, isPlaying };
+}
+
+// stop playing, clear the buffer, reset the current date, etc
+export function stopAnimation() {
+    return { type: types.STOP_ANIMATION };
+}
+
+// step the animation forward or backward one frame
+export function stepAnimation(forward) {
+    return { type: types.STEP_ANIMATION, forward };
+}
+
+// set the start date for the animation
+export function setAnimationStartDate(date) {
+    return { type: types.SET_ANIMATION_START_DATE, date };
+}
+
+// set the end date of the animation
+export function setAnimationEndDate(date) {
+    return { type: types.SET_ANIMATION_END_DATE, date };
+}
+
+// set the date range of the animation
+export function setAnimationDateRange(startDate, endDate) {
+    return { type: types.SET_ANIMATION_DATE_RANGE, startDate, endDate };
+}
+
+// initialize and begin filling the animation buffer
+export function fillAnimationBuffer(startDate, endDate, stepResolution, callback) {
+    return { type: types.FILL_ANIMATION_BUFFER, startDate, endDate, stepResolution, callback };
+}
+
+// clear the animation buffer
+export function emptyAnimationBuffer() {
+    return { type: types.EMPTY_ANIMATION_BUFFER };
+}
+
+// check if the animation buffer is filled
+export function checkBuffer() {
+    return { type: types.CHECK_ANIMATION_BUFFER };
+}
+
+// check if the animation buffer is filled for the first time
+export function checkInitialBuffer() {
+    return { type: types.CHECK_INITIAL_ANIMATION_BUFFER };
+}
+
+// check if the next frame is loaded
+export function checkNextFrame() {
+    return { type: types.CHECK_NEXT_FRAME };
+}
+
+// update the delay between animation frames
+export function setAnimationSpeed(speed) {
+    return { type: types.SET_ANIMATION_SPEED, speed };
+}
+
+// update the step size between animation frames
+export function setAnimationStepSize(stepSize) {
+    return { type: types.SET_ANIMATION_STEP_SIZE, stepSize };
+}
+
+export function setAnimationExportOpen(isOpen) {
+    return { type: types.SET_ANIMATION_EXPORT_OPEN, isOpen };
+}
+
+export function setAnimationExportSelectedArea(area, allowEmpty = false) {
+    return { type: types.SET_ANIMATION_EXPORT_SELECTED_AREA, area: Immutable.List(area) };
+}
+
+export function setAnimationExportFileFormat(format) {
+    return { type: types.SET_ANIMATION_EXPORT_FILE_FORMAT, format };
+}
+
+export function setAnimationExportResolution(resolution) {
+    return { type: types.SET_ANIMATION_EXPORT_RESOLUTION, resolution };
 }

@@ -117,7 +117,15 @@ const APP_CONFIG = Immutable.fromJS({
             { label: "month", value: "month", abbr: "mo" },
             { label: "year", value: "year", abbr: "yr" }
         ]
-    }
+    },
+    ANIMATION_SPEEDS: [
+        { value: 100, label: "Very Fast (10 fps)" },
+        { value: 200, label: "Fast (5 fps)" },
+        { value: 500, label: "Medium (2 fps)" },
+        { value: 1000, label: "Slow (1 fps)" },
+        { value: 2000, label: "Very Slow (0.5 fps)" }
+    ],
+    DEFAULT_ANIMAITON_SPEED: 500
 });
 
 // define and export the final config

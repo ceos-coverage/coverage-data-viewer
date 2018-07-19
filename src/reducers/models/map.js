@@ -31,6 +31,26 @@ export const mapState = mapStateCore.mergeDeep(
         areaSelection: {
             isAreaSelectionEnabled: false,
             geometryType: ""
+        },
+        animation: {
+            isOpen: false, // true if widget should be open, false otherwise
+            isCollapsed: false, // true if the widget should be collapsed, false otherwise
+            isPlaying: false, // true if animation is playing, false otherwise
+            initiated: false, // true if buffering has begin, false otherwise
+            bufferLoaded: false, // true if the buffer is loaded, false otherwise
+            bufferFramesTotal: 0, // number of frames in the buffer
+            bufferFramesLoaded: 0, // number of frames loaded in the buffer
+            bufferTilesTotal: 0, // number of tiles in the buffer
+            bufferTilesLoaded: 0, // number of tiles loaded in the buffer
+            initialBufferLoaded: false, // true if the buffer has loaded at least once, false otherwise
+            nextFrameLoaded: false, // true if the next frame is loaded, false otherwise
+            previousFrameLoaded: false, // true if the previous frame is loaded, false otherwise
+            speed: appConfig.DEFAULT_ANIMAITON_SPEED, // ms delay between frames
+            startDate: moment
+                .utc(appConfig.DEFAULT_DATE)
+                .subtract(1, "week")
+                .toDate(), // date to begin animation
+            endDate: appConfig.DEFAULT_DATE // date to end animation
         }
     })
 );

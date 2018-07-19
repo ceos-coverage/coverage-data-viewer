@@ -119,12 +119,18 @@ export class AppContainer extends Component {
             [displayStyles.mouseVisible]: !hideMouse,
             [displayStyles.mouseHidden]: hideMouse
         });
+
+        let mapControlsClasses = MiscUtil.generateStringFromSet({
+            [styles.mapControls]: true,
+            [styles.lifted]: this.props.animationOpen
+        });
+
         return (
             <MuiThemeProvider theme={theme}>
                 <div className={containerClasses}>
                     <DatePickerContainer />
                     <MapContainer />
-                    <MapControlsContainer className={styles.mapControls} />
+                    <MapControlsContainer className={mapControlsClasses} />
                     <div className={styles.layers}>
                         <InsituLayerMenu />
                         <SatelliteLayerSelector />
@@ -151,13 +157,15 @@ AppContainer.propTypes = {
     setMapView: PropTypes.func.isRequired,
     runLayerSearch: PropTypes.func.isRequired,
     distractionFreeMode: PropTypes.bool.isRequired,
-    mapControlsHidden: PropTypes.bool.isRequired
+    mapControlsHidden: PropTypes.bool.isRequired,
+    animationOpen: PropTypes.bool.isRequired
 };
 
 function mapStateToProps(state) {
     return {
         distractionFreeMode: state.view.get("distractionFreeMode"),
-        mapControlsHidden: state.view.get("mapControlsHidden")
+        mapControlsHidden: state.view.get("mapControlsHidden"),
+        animationOpen: state.map.getIn(["animation", "isOpen"])
     };
 }
 

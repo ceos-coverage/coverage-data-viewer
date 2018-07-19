@@ -449,4 +449,491 @@ export default class MapReducer extends MapReducerCore {
             return state;
         }
     }
+
+    static setAnimationOpen(state, action) {
+        // state = this.setAnimationStartDate(state, { date: moment.utc(state.get("date")).subtract(1, 'week').toDate() });
+        // state = this.setAnimationEndDate(state, { date: moment.utc(state.get("date")).add(1, 'week').toDate() });
+        if (action.isOpen && action.updateRange) {
+            state = this.setAnimationStartDate(state, {
+                date: moment
+                    .utc(state.get("date"))
+                    .subtract(2, "week")
+                    .toDate()
+            });
+            state = this.setAnimationEndDate(state, {
+                date: moment.utc(state.get("date"))
+            });
+        }
+
+        return state.setIn(["animation", "isOpen"], action.isOpen);
+    }
+
+    static setAnimationCollapsed(state, action) {
+        return state.setIn(["animation", "isCollapsed"], action.isCollapsed);
+    }
+
+    static setAnimationPlaying(state, action) {
+        return state.setIn(["animation", "isPlaying"], action.isPlaying);
+    }
+
+    static fillAnimationBuffer(state, action) {
+        let alerts = state.get("alerts");
+
+        // get an array of layers that will animate (active and time dependant)
+        let animateTypes = [
+            appStringsCore.LAYER_GIBS_RASTER,
+            appStringsCore.LAYER_WMTS_RASTER,
+            appStringsCore.LAYER_XYZ_RASTER,
+            appStrings.LAYER_MULTI_FILE_VECTOR_KML
+        ];
+        let timeLayers = state
+            .getIn(["layers", appStringsCore.LAYER_GROUP_TYPE_DATA])
+            .filter(layer => {
+                return layer.get("isActive") && layer.getIn(["updateParameters", "time"]);
+            });
+
+        // filter layers we can/cannot animate
+        let layersToBuffer = timeLayers.filter(layer => {
+            return animateTypes.indexOf(layer.get("handleAs")) !== -1;
+        });
+        let layersToRemove = timeLayers.filter(layer => {
+            return animateTypes.indexOf(layer.get("handleAs")) === -1;
+        });
+
+        // validate step size
+        let stepSize = action.stepResolution.split("/");
+        let stepDate = moment.utc(action.startDate).add(stepSize[0], stepSize[1]);
+        let framesAvailable = !stepDate.isAfter(moment.utc(action.endDate));
+        if (framesAvailable) {
+            if (layersToBuffer.size > 0) {
+                // remove layers we cannot animate
+                layersToRemove.forEach(layer => {
+                    MapReducerCore.setLayerActive(state, { layer, active: false });
+                    alerts = alerts.push(
+                        alertCore.merge({
+                            title: appStrings.ALERTS.NON_ANIMATION_LAYER.title,
+                            body: appStrings.ALERTS.NON_ANIMATION_LAYER.formatString.replace(
+                                "{LAYER}",
+                                layer.get("title")
+                            ),
+                            severity: appStrings.ALERTS.NON_ANIMATION_LAYER.severity,
+                            time: new Date()
+                        })
+                    );
+                });
+
+                // send the layers off to buffer
+                let anySucceed = state.get("maps").reduce((acc, map) => {
+                    // only animate on the active map
+                    if (map.isActive) {
+                        if (
+                            map.fillAnimationBuffer(
+                                layersToBuffer,
+                                action.startDate,
+                                action.endDate,
+                                action.stepResolution,
+                                action.callback
+                            )
+                        ) {
+                            return true;
+                        } else {
+                            // catch errors
+                            let contextStr = map.is3D ? "3D" : "2D";
+                            alerts = alerts.push(
+                                alertCore.merge({
+                                    title: appStrings.ALERTS.FILL_BUFFER_FAILED.title,
+                                    body: appStrings.ALERTS.FILL_BUFFER_FAILED.formatString.replace(
+                                        "{MAP}",
+                                        contextStr
+                                    ),
+                                    severity: appStrings.ALERTS.FILL_BUFFER_FAILED.severity,
+                                    time: new Date()
+                                })
+                            );
+                        }
+                    }
+                    return acc;
+                }, false);
+
+                if (anySucceed) {
+                    // signal that buffering has begun
+                    state = state.setIn(["animation", "initiated"], true);
+
+                    // begin checking the initial buffer
+                    state = this.checkInitialAnimationBuffer(state, {});
+                }
+            } else {
+                state = this.stopAnimation(state, {});
+                alerts = alerts.push(
+                    alertCore.merge({
+                        title: appStrings.ALERTS.NO_ANIMATION_LAYERS.title,
+                        body: appStrings.ALERTS.NO_ANIMATION_LAYERS.formatString,
+                        severity: appStrings.ALERTS.NO_ANIMATION_LAYERS.severity,
+                        time: new Date()
+                    })
+                );
+            }
+        } else {
+            state = this.stopAnimation(state, {});
+            alerts = alerts.push(
+                alertCore.merge({
+                    title: appStrings.ALERTS.NO_STEP_FRAMES.title,
+                    body: appStrings.ALERTS.NO_STEP_FRAMES.formatString,
+                    severity: appStrings.ALERTS.NO_STEP_FRAMES.severity,
+                    time: new Date()
+                })
+            );
+        }
+
+        return state.set("alerts", alerts);
+    }
+
+    static emptyAnimationBuffer(state, action) {
+        let alerts = state.get("alerts");
+
+        let anySucceed = state.get("maps").reduce((acc, map) => {
+            // clear all maps' buffers (just in case)
+            if (map.clearAnimationBuffer()) {
+                return true;
+            } else {
+                // catch errors
+                let contextStr = map.is3D ? "3D" : "2D";
+                alerts = alerts.push(
+                    alertCore.merge({
+                        title: appStrings.ALERTS.CLEAR_BUFFER_FAILED.title,
+                        body: appStrings.ALERTS.CLEAR_BUFFER_FAILED.formatString.replace(
+                            "{MAP}",
+                            contextStr
+                        ),
+                        severity: appStrings.ALERTS.CLEAR_BUFFER_FAILED.severity,
+                        time: new Date()
+                    })
+                );
+            }
+            return acc;
+        }, false);
+
+        return state.set("alerts", alerts);
+    }
+
+    static stopAnimation(state, action) {
+        // empty the animation buffer
+        state = this.emptyAnimationBuffer(state, {});
+
+        // upate state variables
+        state = state
+            .setIn(["animation", "isPlaying"], false)
+            .setIn(["animation", "initiated"], false)
+            .setIn(["animation", "bufferLoaded"], false)
+            .setIn(["animation", "initialBufferLoaded"], false)
+            .setIn(["animation", "nextFrameLoaded"], false)
+            .setIn(["animation", "previousFrameLoaded"], false)
+            .setIn(["animation", "bufferFramesTotal"], 0)
+            .setIn(["animation", "bufferFramesLoaded"], 0)
+            .setIn(["animation", "bufferTilesTotal"], 0)
+            .setIn(["animation", "bufferTilesLoaded"], 0);
+
+        // don't need to reactivate layers if we are opening the panel for the first time
+        if (state.getIn(["animation", "isOpen"])) {
+            // get an array of layers that must be reactivated (were active, time dependant, and non-raster)
+            let animateTypes = [
+                appStringsCore.LAYER_GIBS_RASTER,
+                appStringsCore.LAYER_WMTS_RASTER,
+                appStringsCore.LAYER_XYZ_RASTER
+            ];
+            let layersToReactivate = state
+                .getIn(["layers", appStringsCore.LAYER_GROUP_TYPE_DATA])
+                .filter(layer => {
+                    return (
+                        layer.get("isActive") &&
+                        layer.getIn(["updateParameters", "time"]) &&
+                        animateTypes.indexOf(layer.get("handleAs")) === -1
+                    );
+                });
+
+            // reactivate the layers and adjust opacity
+            layersToReactivate.forEach(layer => {
+                state = MapReducerCore.setLayerActive(state, {
+                    layer: layer.set("isActive", false),
+                    active: true
+                });
+                state = MapReducerCore.setLayerOpacity(state, {
+                    layer,
+                    opacity: layer.get("opacity")
+                });
+            });
+        }
+
+        return state;
+    }
+
+    static stepAnimation(state, action) {
+        let nextFrame = false;
+
+        // check frames
+        state = this.checkNextAnimationFrame(state, {});
+        state = this.checkPreviousAnimationFrame(state, {});
+
+        if (action.forward) {
+            // verify frame is loaded
+            if (state.getIn(["animation", "nextFrameLoaded"])) {
+                nextFrame = state.get("maps").reduce((acc, map) => {
+                    let frame = map.nextAnimationFrame();
+                    if (frame) {
+                        return frame;
+                    }
+                    return acc;
+                }, false);
+            } else {
+                state = this.checkAnimationBuffer(state, {});
+            }
+        } else {
+            // verify frame is loaded
+            if (state.getIn(["animation", "previousFrameLoaded"])) {
+                nextFrame = state.get("maps").reduce((acc, map) => {
+                    let frame = map.previousAnimationFrame();
+                    if (frame) {
+                        return frame;
+                    }
+                    return acc;
+                }, false);
+            } else {
+                state = this.checkAnimationBuffer(state, {});
+            }
+        }
+
+        // update the current frame reference
+        if (nextFrame) {
+            let nextDate = nextFrame.get("date");
+            state = this.setMapDate(state, { date: nextDate });
+        }
+        return state;
+    }
+
+    static checkAnimationBuffer(state, action) {
+        state = this.checkNextAnimationFrame(state, {});
+        state = this.checkPreviousAnimationFrame(state, {});
+
+        let bufferStatus = state.get("maps").reduce((acc, map) => {
+            // check only active map
+            if (map.isActive) {
+                return map.getBufferStatus();
+            }
+            return acc;
+        }, false);
+
+        if (bufferStatus) {
+            return state
+                .setIn(["animation", "bufferLoaded"], bufferStatus.isLoaded)
+                .setIn(["animation", "bufferFramesTotal"], bufferStatus.framesTotal)
+                .setIn(["animation", "bufferFramesLoaded"], bufferStatus.framesLoaded)
+                .setIn(["animation", "bufferTilesTotal"], bufferStatus.tilesTotal)
+                .setIn(["animation", "bufferTilesLoaded"], bufferStatus.tilesLoaded);
+        }
+        return state;
+    }
+
+    static checkInitialAnimationBuffer(state, action) {
+        // verify the buffer has been filled at least once
+        if (!state.getIn(["animation", "initialBufferLoaded"])) {
+            state = this.checkAnimationBuffer(state, {});
+            state = state.setIn(
+                ["animation", "initialBufferLoaded"],
+                state.getIn(["animation", "bufferLoaded"])
+            );
+            state = this.setAnimationPlaying(state, {
+                isPlaying: state.getIn(["animation", "bufferLoaded"])
+            });
+        }
+        return state;
+    }
+
+    static checkNextAnimationFrame(state, action) {
+        let nextFrameLoaded = state.get("maps").reduce((acc, map) => {
+            // check only active map
+            if (map.isActive) {
+                let status = map.getNextFrameStatus();
+                if (status.isLoaded) {
+                    return acc;
+                }
+                return false;
+            }
+            return acc;
+        }, true);
+
+        return state.setIn(["animation", "nextFrameLoaded"], nextFrameLoaded);
+    }
+
+    static checkPreviousAnimationFrame(state, action) {
+        let previousFrameLoaded = state.get("maps").reduce((acc, map) => {
+            // check only active map
+            if (map.isActive) {
+                let status = map.getPreviousFrameStatus();
+                if (status.isLoaded) {
+                    return acc;
+                }
+                return false;
+            }
+            return acc;
+        }, true);
+
+        return state.setIn(["animation", "previousFrameLoaded"], previousFrameLoaded);
+    }
+
+    static setAnimationStartDate(state, action) {
+        state = this.stopAnimation(state, {});
+
+        let alerts = state.get("alerts");
+
+        let date = action.date;
+        if (typeof date === "string") {
+            if (date.toLowerCase() === "today") {
+                date = moment.utc().startOf("day");
+            } else {
+                date = moment.utc(date, "YYYY-MM-DD", true);
+            }
+        } else {
+            date = moment.utc(date);
+        }
+
+        if (date.isValid()) {
+            let minDate = moment.utc(appConfig.MIN_DATE);
+            let maxDate = moment.utc(state.getIn(["animation", "endDate"]));
+            if (date.isBefore(minDate)) {
+                date = minDate;
+            } else if (date.isAfter(maxDate)) {
+                date = maxDate;
+            }
+            state = state.setIn(["animation", "startDate"], date.toDate());
+        } else {
+            alerts = alerts.push(
+                alertCore.merge({
+                    title: appStrings.ALERTS.ANIMATION_BAD_DATE.title,
+                    body: appStrings.ALERTS.ANIMATION_BAD_DATE.formatString.replace(
+                        "{STARTEND}",
+                        "start"
+                    ),
+                    severity: appStrings.ALERTS.ANIMATION_BAD_DATE.severity,
+                    time: new Date()
+                })
+            );
+        }
+
+        return state.set("alerts", alerts);
+    }
+
+    static setAnimationEndDate(state, action) {
+        state = this.stopAnimation(state, {});
+
+        let alerts = state.get("alerts");
+
+        let date = action.date;
+        if (typeof date === "string") {
+            if (date.toLowerCase() === "today") {
+                date = moment.utc().startOf("day");
+            } else {
+                date = moment.utc(date, "YYYY-MM-DD", true);
+            }
+        } else {
+            date = moment.utc(date);
+        }
+
+        if (date.isValid()) {
+            let minDate = moment.utc(state.getIn(["animation", "startDate"]));
+            let maxDate = moment.utc(appConfig.MAX_DATE);
+            if (date.isBefore(minDate)) {
+                date = minDate;
+            } else if (date.isAfter(maxDate)) {
+                date = maxDate;
+            }
+            state = state.setIn(["animation", "endDate"], date.toDate());
+        } else {
+            alerts = alerts.push(
+                alertCore.merge({
+                    title: appStrings.ALERTS.ANIMATION_BAD_DATE.title,
+                    body: appStrings.ALERTS.ANIMATION_BAD_DATE.formatString.replace(
+                        "{STARTEND}",
+                        "end"
+                    ),
+                    severity: appStrings.ALERTS.ANIMATION_BAD_DATE.severity,
+                    time: new Date()
+                })
+            );
+        }
+
+        return state.set("alerts", alerts);
+    }
+
+    static setAnimationDateRange(state, action) {
+        let alerts = state.get("alerts");
+        if (state.getIn(["animation", "initiated"]) && state.getIn(["animation", "isPlaying"])) {
+            alerts = alerts.push(
+                alertCore.merge({
+                    title: appStrings.ALERTS.ANIMATION_NO_LAYER_TOGGLE.title,
+                    body: appStrings.ALERTS.ANIMATION_NO_LAYER_TOGGLE.formatString,
+                    severity: appStrings.ALERTS.ANIMATION_NO_LAYER_TOGGLE.severity,
+                    time: new Date()
+                })
+            );
+        }
+
+        state = this.stopAnimation(state, {});
+
+        let startDate = action.startDate;
+        if (typeof startDate === "string") {
+            if (startDate.toLowerCase() === "today") {
+                startDate = moment.utc().startOf("day");
+            } else {
+                startDate = moment.utc(startDate, "YYYY-MM-DD", true);
+            }
+        } else {
+            startDate = moment.utc(startDate);
+        }
+        let endDate = action.endDate;
+        if (typeof endDate === "string") {
+            if (endDate.toLowerCase() === "today") {
+                endDate = moment.utc().startOf("day");
+            } else {
+                endDate = moment.utc(endDate, "YYYY-MM-DD", true);
+            }
+        } else {
+            endDate = moment.utc(endDate);
+        }
+
+        if (startDate.isValid() && endDate.isValid() && startDate.isSameOrBefore(endDate)) {
+            let minDate = moment.utc(appConfig.MIN_DATE);
+            let maxDate = moment.utc(appConfig.MAX_DATE);
+            if (startDate.isBefore(minDate)) {
+                startDate = minDate;
+            } else if (startDate.isAfter(maxDate)) {
+                startDate = maxDate;
+            }
+            if (endDate.isBefore(minDate)) {
+                endDate = minDate;
+            } else if (endDate.isAfter(maxDate)) {
+                endDate = maxDate;
+            }
+
+            state = state
+                .setIn(["animation", "startDate"], startDate.toDate())
+                .setIn(["animation", "endDate"], endDate.toDate());
+        } else {
+            alerts = alerts.push(
+                alertCore.merge({
+                    title: appStrings.ALERTS.ANIMATION_BAD_DATE.title,
+                    body: appStrings.ALERTS.ANIMATION_BAD_DATE.formatString.replace(
+                        "{STARTEND}",
+                        "start or end"
+                    ),
+                    severity: appStrings.ALERTS.ANIMATION_BAD_DATE.severity,
+                    time: new Date()
+                })
+            );
+        }
+        return state.set("alerts", alerts);
+    }
+
+    static setAnimationSpeed(state, action) {
+        return state.setIn(["animation", "speed"], action.speed);
+    }
 }

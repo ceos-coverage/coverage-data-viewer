@@ -10,6 +10,11 @@
     left: 0.7rem;
     bottom: 7rem;
     align-items: start;
+    transition: bottom 161ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+
+    &.lifted {
+        bottom: 8.6rem;
+    }
 }
 
 .title {

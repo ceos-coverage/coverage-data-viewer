@@ -8,17 +8,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
-import moment from "moment";
-import VideoIcon from "@material-ui/icons/Videocam";
-import Typography from "@material-ui/core/Typography";
-import RightIcon from "mdi-material-ui/MenuRight";
-import LeftIcon from "mdi-material-ui/MenuLeft";
-import { IconButtonSmall } from "_core/components/Reusables";
-import Tooltip from "@material-ui/core/Tooltip";
-import * as mapActions from "actions/mapActions";
-import * as mapActionsCore from "_core/actions/mapActions";
-import { DatePicker, DateIntervalPicker } from "components/DatePicker";
+import { CurrentDatePickerContainer, AnimationContainer } from "components/DatePicker";
 import MiscUtil from "_core/utils/MiscUtil";
 import stylesCore from "_core/components/DatePicker/DatePickerContainer.scss";
 import styles from "components/DatePicker/DatePickerContainer.scss";
@@ -27,77 +17,31 @@ import displayStyles from "_core/styles/display.scss";
 export class DatePickerContainer extends Component {
     render() {
         let containerClasses = MiscUtil.generateStringFromSet({
-            [styles.root]: true,
             [stylesCore.datePickerContainer]: true,
-            [displayStyles.hiddenFadeOut]: this.props.distractionFreeMode,
-            [displayStyles.hiddenFadeIn]: !this.props.distractionFreeMode,
+            [styles.root]: true,
+            [styles.expanded]: this.props.animationOpen,
             [this.props.className]: typeof this.props.className !== "undefined"
         });
-        return (
-            <div className={containerClasses}>
-                <div className={styles.hintRow}>
-                    <Typography variant="caption" className={styles.intervalDate}>
-                        {moment.utc(this.props.intervalDate).format("YYYY MMM DD, HH:mm UTC")}
-                    </Typography>
-                </div>
-                <div className={styles.inlineRow}>
-                    <DatePicker
-                        date={this.props.date}
-                        setDate={this.props.mapActionsCore.setDate}
-                        className={styles.picker}
-                    />
-                    <div className={styles.btns}>
-                        <Tooltip title="Step Back" placement="top">
-                            <IconButtonSmall
-                                className={styles.thinBtn}
-                                onClick={() => this.props.mapActions.stepDate(false)}
-                            >
-                                <LeftIcon />
-                            </IconButtonSmall>
-                        </Tooltip>
-                        <Tooltip title="Step Forward" placement="top">
-                            <IconButtonSmall
-                                className={styles.thinBtn}
-                                onClick={() => this.props.mapActions.stepDate(true)}
-                            >
-                                <RightIcon />
-                            </IconButtonSmall>
-                        </Tooltip>
-                        <DateIntervalPicker />
-                        <Tooltip title="Animation" placement="top">
-                            <IconButtonSmall>
-                                <VideoIcon />
-                            </IconButtonSmall>
-                        </Tooltip>
-                    </div>
-                </div>
-            </div>
+
+        let content = this.props.animationOpen ? (
+            <AnimationContainer />
+        ) : (
+            <CurrentDatePickerContainer />
         );
+
+        return <div className={containerClasses}>{content}</div>;
     }
 }
 
 DatePickerContainer.propTypes = {
-    date: PropTypes.object.isRequired,
-    intervalDate: PropTypes.object.isRequired,
-    distractionFreeMode: PropTypes.bool.isRequired,
-    mapActions: PropTypes.object.isRequired,
-    mapActionsCore: PropTypes.object.isRequired,
+    animationOpen: PropTypes.bool.isRequired,
     className: PropTypes.string
 };
 
 function mapStateToProps(state) {
     return {
-        date: state.map.get("date"),
-        intervalDate: state.map.get("intervalDate"),
-        distractionFreeMode: state.view.get("distractionFreeMode")
+        animationOpen: state.map.getIn(["animation", "isOpen"])
     };
 }
 
-function mapDispatchToProps(dispatch) {
-    return {
-        mapActions: bindActionCreators(mapActions, dispatch),
-        mapActionsCore: bindActionCreators(mapActionsCore, dispatch)
-    };
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(DatePickerContainer);
+export default connect(mapStateToProps, null)(DatePickerContainer);

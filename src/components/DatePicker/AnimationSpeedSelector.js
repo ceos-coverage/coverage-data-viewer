@@ -1,30 +1,36 @@
-/**
- * Copyright 2018 California Institute of Technology.
- *
- * This source code is licensed under the APACHE 2.0 license found in the
- * LICENSE.txt file in the root directory of this source tree.
- */
-
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 import List from "@material-ui/core/List";
 import ListSubheader from "@material-ui/core/ListSubheader";
 import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
-import SortIcon from "mdi-material-ui/Sort";
+import SpeedIcon from "mdi-material-ui/ClockFast";
 import { IconPopover } from "components/Reusables";
-import * as appActions from "actions/appActions";
+import * as mapActions from "actions/mapActions";
 import appConfig from "constants/appConfig";
-import styles from "components/MainMenu/LayerSearch/LayerSearchListSort.scss";
+import styles from "components/DatePicker/AnimationSpeedSelector.scss";
 
-export class LayerSearchListSort extends Component {
+export class SpeedSelector extends Component {
     render() {
         return (
-            <IconPopover icon={<SortIcon />} contentClass={styles.content} tooltip="Group By">
+            <IconPopover
+                icon={<SpeedIcon />}
+                className={styles.root}
+                contentClass={styles.content}
+                anchorOrigin={{
+                    vertical: "top",
+                    horizontal: "center"
+                }}
+                transformOrigin={{
+                    vertical: "bottom",
+                    horizontal: "center"
+                }}
+                tooltip="Speed"
+            >
                 <List subheader={<li />}>
                     <ul className={styles.dummyList}>
                         <ListSubheader className={styles.subheader}>Group By</ListSubheader>
@@ -32,18 +38,20 @@ export class LayerSearchListSort extends Component {
                             <RadioGroup
                                 aria-label="search_list_sort"
                                 name="search_list_sort"
-                                value={this.props.sortParam}
+                                value={this.props.speed.toString()}
                                 onChange={(evt, val) =>
-                                    this.props.appActions.setSearchSortParameter(val)
+                                    this.props.mapActions.setAnimationSpeed(parseInt(val))
                                 }
                                 onClick={evt =>
-                                    this.props.appActions.setSearchSortParameter(evt.target.value)
+                                    this.props.mapActions.setAnimationSpeed(
+                                        parseInt(evt.target.value)
+                                    )
                                 }
                             >
-                                {appConfig.LAYER_SEARCH.SORT_PARAMS.map(entry => (
+                                {appConfig.ANIMATION_SPEEDS.map(entry => (
                                     <FormControlLabel
                                         key={"sort_" + entry.value}
-                                        value={entry.value}
+                                        value={entry.value.toString()}
                                         control={<Radio color="primary" />}
                                         label={entry.label}
                                     />
@@ -57,21 +65,21 @@ export class LayerSearchListSort extends Component {
     }
 }
 
-LayerSearchListSort.propTypes = {
-    sortParam: PropTypes.string.isRequired,
-    appActions: PropTypes.object.isRequired
+SpeedSelector.propTypes = {
+    speed: PropTypes.number.isRequired,
+    mapActions: PropTypes.object.isRequired
 };
 
 function mapStateToProps(state) {
     return {
-        sortParam: state.view.getIn(["layerSearch", "sortParameter"])
+        speed: state.map.getIn(["animation", "speed"])
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        appActions: bindActionCreators(appActions, dispatch)
+        mapActions: bindActionCreators(mapActions, dispatch)
     };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(LayerSearchListSort);
+export default connect(mapStateToProps, mapDispatchToProps)(SpeedSelector);
