@@ -22,7 +22,7 @@ import { MainMenu } from "components/MainMenu";
 import { LayerInfoContainer } from "components/LayerInfo";
 import { LoadingContainer } from "_core/components/Loading";
 import { AlertsContainer } from "_core/components/Alerts";
-import { DatePickerContainer } from "components/DatePicker";
+import { DatePickerContainer, AnimationLoading } from "components/DatePicker";
 import { MouseFollowerContainer } from "components/MouseFollower";
 import { KeyboardControlsContainer } from "components/KeyboardControls";
 import { SatelliteLayerSelector, InsituLayerMenu } from "components/LayerMenu";
@@ -139,6 +139,7 @@ export class AppContainer extends Component {
                     <MainMenu />
                     <AlertsContainer />
                     <MouseFollowerContainer />
+                    <AnimationLoading />
                     <LoadingContainer />
                     <KeyboardControlsContainer />
                 </div>

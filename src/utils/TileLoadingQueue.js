@@ -8,12 +8,6 @@
 import Immutable from "immutable";
 
 const MAX_TILES_LOADING = 7;
-const TILE_STATE_LOADING = 1; // loading states found in ol.tile.js
-const TILE_STATE_LOADED = 2;
-const TILE_STATE_ERROR = 3;
-
-let _tilesLoading = 0;
-let listeners = 0;
 
 export default class TileLoadingQueue {
     constructor() {

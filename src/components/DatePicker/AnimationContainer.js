@@ -45,6 +45,7 @@ export class AnimationContainer extends Component {
 
         return (
             nextProps.className !== this.props.className ||
+            nextProps.animation.get("isPlaying") !== this.props.animation.get("isPlaying") ||
             nextProps.animation.get("startDate") !== this.props.animation.get("startDate") ||
             nextProps.animation.get("endDate") !== this.props.animation.get("endDate")
         );
@@ -170,6 +171,20 @@ export class AnimationContainer extends Component {
         this.props.mapActions.setAnimationOpen(false);
     }
 
+    handlePlayPress() {
+        if (
+            !this.props.animation.get("initialBufferLoaded") &&
+            !this.props.animation.get("initiated")
+        ) {
+            this.loadAnimation();
+        } else if (
+            this.props.animation.get("initialBufferLoaded") &&
+            this.props.animation.get("initiated")
+        ) {
+            this.togglePlayPause();
+        }
+    }
+
     render() {
         // pull out state vars
         let isInitiated = this.props.animation.get("initiated");
@@ -188,6 +203,7 @@ export class AnimationContainer extends Component {
             [styles.root]: true,
             [this.props.className]: typeof this.props.className !== "undefined"
         });
+
         return (
             <div className={containerClasses}>
                 <Grid container spacing={0} alignItems="center" className={styles.controlsRow}>
@@ -195,7 +211,7 @@ export class AnimationContainer extends Component {
                         <CurrentDateDisplay />
                     </Grid>
                     <Grid item xs={3} className={styles.playControls}>
-                        <IconButtonSmall onClick={() => this.togglePlayPause()}>
+                        <IconButtonSmall onClick={() => this.handlePlayPress()}>
                             {animationIsPlaying ? <PauseIcon /> : <PlayIcon />}
                         </IconButtonSmall>
                         <IconButtonSmall

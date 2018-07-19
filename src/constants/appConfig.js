@@ -8,6 +8,7 @@
 import Immutable from "immutable";
 import * as coreConfig from "_core/constants/appConfig";
 import * as appStrings from "constants/appStrings";
+import * as appStringsCore from "_core/constants/appStrings";
 
 // the config as defined by CMC Core
 const CORE_CONFIG = Immutable.fromJS(coreConfig);
@@ -125,7 +126,9 @@ const APP_CONFIG = Immutable.fromJS({
         { value: 1000, label: "Slow (1 fps)" },
         { value: 2000, label: "Very Slow (0.5 fps)" }
     ],
-    DEFAULT_ANIMAITON_SPEED: 500
+    DEFAULT_ANIMAITON_SPEED: 500,
+    TILE_LAYER_UPDATE_STRATEGY: appStringsCore.TILE_LAYER_UPDATE_STRATEGIES.LAYER,
+    DEFAULT_TILE_TRANSITION_TIME: 0
 });
 
 // define and export the final config
