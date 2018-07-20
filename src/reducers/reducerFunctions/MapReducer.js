@@ -157,6 +157,20 @@ export default class MapReducer extends MapReducerCore {
 
         state = MapReducerCore.setLayerActive(state, action);
 
+        // check if we need to stop and clear the animation
+        let alerts = state.get("alerts");
+        if (state.getIn(["animation", "initiated"])) {
+            alerts = alerts.push(
+                alertCore.merge({
+                    title: appStrings.ALERTS.ANIMATION_NO_LAYER_TOGGLE.title,
+                    body: appStrings.ALERTS.ANIMATION_NO_LAYER_TOGGLE.formatString,
+                    severity: appStrings.ALERTS.ANIMATION_NO_LAYER_TOGGLE.severity,
+                    time: new Date()
+                })
+            );
+            state = this.stopAnimation(state, {}).set("alerts", alerts);
+        }
+
         return state;
     }
 
