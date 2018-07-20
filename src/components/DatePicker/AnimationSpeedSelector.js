@@ -33,7 +33,7 @@ export class SpeedSelector extends Component {
             >
                 <List subheader={<li />}>
                     <ul className={styles.dummyList}>
-                        <ListSubheader className={styles.subheader}>Group By</ListSubheader>
+                        <ListSubheader className={styles.subheader}>Animation Speed</ListSubheader>
                         <FormGroup className={styles.form}>
                             <RadioGroup
                                 aria-label="search_list_sort"

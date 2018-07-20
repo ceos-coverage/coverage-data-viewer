@@ -35,6 +35,21 @@ export default class MapReducer extends MapReducerCore {
     }
 
     static setDateInterval(state, action) {
+        let alerts = state.get("alerts");
+        if (state.getIn(["animation", "initiated"])) {
+            if (state.getIn(["animation", "isPlaying"])) {
+                alerts = alerts.push(
+                    alertCore.merge({
+                        title: appStrings.ALERTS.ANIMATION_NO_CHANGE_STEP.title,
+                        body: appStrings.ALERTS.ANIMATION_NO_CHANGE_STEP.formatString,
+                        severity: appStrings.ALERTS.ANIMATION_NO_CHANGE_STEP.severity,
+                        time: new Date()
+                    })
+                );
+            }
+            state = this.stopAnimation(state, {});
+        }
+
         let size = parseInt(action.size);
         let scale = action.scale;
 
@@ -63,7 +78,8 @@ export default class MapReducer extends MapReducerCore {
                 return state
                     .set("dateIntervalSize", size)
                     .set("dateIntervalScale", scale)
-                    .set("intervalDate", intervalDate.toDate());
+                    .set("intervalDate", intervalDate.toDate())
+                    .set("alerts", alerts);
             }
         } catch (err) {
             console.warn("Error in MapReducer.setDateInterval: ", err);

@@ -9,11 +9,13 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
+import moment from "moment";
 import TargetIcon from "mdi-material-ui/Target";
 import TrackIcon from "mdi-material-ui/VectorPolyline";
 import BuildIcon from "@material-ui/icons/Build";
 import InfoIcon from "@material-ui/icons/InfoOutline";
 import DeleteIcon from "@material-ui/icons/Delete";
+import CalendarRangeIcon from "mdi-material-ui/CalendarRange";
 import PointErrorIcon from "mdi-material-ui/ImageFilterTiltShift";
 import Divider from "@material-ui/core/Divider";
 import MenuList from "@material-ui/core/MenuList";
@@ -27,6 +29,19 @@ import * as mapActionsCore from "_core/actions/mapActions";
 import styles from "components/LayerMenu/InsituLayerItemTools.scss";
 
 export class InsituLayerItemTools extends Component {
+    handleSetAnimationRange() {
+        let startDate = moment
+            .unix(this.props.layer.getIn(["insituMeta", "start_date"]))
+            .utc()
+            .toDate();
+        let endDate = moment
+            .unix(this.props.layer.getIn(["insituMeta", "end_date"]))
+            .utc()
+            .toDate();
+        this.props.mapActions.setAnimationOpen(true);
+        this.props.mapActions.setAnimationDateRange(startDate, endDate);
+    }
+
     render() {
         return (
             <IconPopover
@@ -107,6 +122,16 @@ export class InsituLayerItemTools extends Component {
                                 " Track Path"
                             }
                         />
+                    </MenuItem>
+                    <MenuItem
+                        className={styles.toolItem}
+                        onClick={() => this.handleSetAnimationRange()}
+                        aria-label="Set Animation Bounds"
+                    >
+                        <ListItemIcon classes={{ root: styles.listItemIcon }}>
+                            <CalendarRangeIcon />
+                        </ListItemIcon>
+                        <ListItemText inset primary="Set Animation Range" />
                     </MenuItem>
                     <Divider />
                     <MenuItem

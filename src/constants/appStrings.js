@@ -42,3 +42,62 @@ export const NO_DATA = "No Data";
 export const INTERACTION_AREA_SELECTION = "SelectArea";
 export const INTERACTION_AREA_DISPLAY = "DisplayArea";
 export const GEOMETRY_BOX = "Box";
+
+export const ALERTS = {
+    FILL_BUFFER_FAILED: {
+        title: "Buffering Animation Failed",
+        formatString: "The {MAP} map failed to buffer one or more animation frames.",
+        severity: 2
+    },
+    CLEAR_BUFFER_FAILED: {
+        title: "Clearing Animation Buffer Failed",
+        formatString: "The {MAP} map failed to clear the animation buffer.",
+        severity: 2
+    },
+    NO_ANIMATION_LAYERS: {
+        title: "Could Not Load Animation",
+        formatString: "There are no layers active on the map that can be animated.",
+        severity: 1
+    },
+    NON_ANIMATION_LAYER: {
+        title: "Could Not Animate Layer",
+        formatString:
+            "{LAYER} cannot be animated. It has been hidden until the animation is stopped.",
+        severity: 1
+    },
+    ANIMATION_NO_LAYER_TOGGLE: {
+        title: "Animation Stopped",
+        formatString:
+            "The animation has been stopped due to a layer activation toggle. Press the play button to reload the animation with the new layer selections.",
+        severity: 1
+    },
+    ANIMATION_BAD_DATE: {
+        title: "Animation Date Range Error",
+        formatString: "Could not set the animation {STARTEND} date.",
+        severity: 2
+    },
+    EXCESSIVE_LAYERS: {
+        title: "High Active Layer Count",
+        formatString:
+            "Activating more than {NUM_LAYERS} layers can cause application performance to degrade in display responsiveness, animation, and resource usage.",
+        severity: 1
+    },
+    NO_STEP_FRAMES: {
+        title: "Step Size Too Large",
+        formatString:
+            "The step size is too large for the selected date range. Please select either a smaller step size or a wider date range.",
+        severity: 2
+    },
+    ANIMATION_NO_CHANGE_STEP: {
+        title: "Animation Stopped",
+        formatString:
+            "The animation has been stopped due to a change in selected step size. Press the play button to reload the animation with the new step size.",
+        severity: 2
+    },
+    UNSUPPORTED_BROWSER: {
+        title: "Unsupported Browser",
+        formatString:
+            "This browser is not supported. Please use a recent version of Google Chrome, Mozilla Firefox, or Apple Safari.",
+        severity: 4
+    }
+};

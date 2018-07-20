@@ -73,12 +73,12 @@ export class LayerInfoContainer extends Component {
                         {moment
                             .unix(meta.get("start_date"))
                             .utc()
-                            .format("MMM DD, YYYY")}{" "}
-                        –
+                            .format("YYYY MMM DD, HH:mm UTC")}
+                        &nbsp;–&nbsp;
                         {moment
                             .unix(meta.get("end_date"))
                             .utc()
-                            .format("MMM DD, YYYY")}
+                            .format("YYYY MMM DD, HH:mm UTC")}
                     </Typography>
                     <Typography variant="title" className={styles.label}>
                         Spatial Range
