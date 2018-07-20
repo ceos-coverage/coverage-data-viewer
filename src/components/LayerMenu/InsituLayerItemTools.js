@@ -104,27 +104,6 @@ export class InsituLayerItemTools extends Component {
                     </MenuItem>
                     <MenuItem
                         className={styles.toolItem}
-                        onClick={() =>
-                            this.props.mapActionsCore.setLayerOpacity(
-                                this.props.layer.get("id"),
-                                this.props.layer.get("opacity") === 0 ? 1 : 0
-                            )
-                        }
-                        aria-label="Track path"
-                    >
-                        <ListItemIcon classes={{ root: styles.listItemIcon }}>
-                            <TrackIcon />
-                        </ListItemIcon>
-                        <ListItemText
-                            inset
-                            primary={
-                                (this.props.layer.get("opacity") === 0 ? "Enable" : "Disable") +
-                                " Track Path"
-                            }
-                        />
-                    </MenuItem>
-                    <MenuItem
-                        className={styles.toolItem}
                         onClick={() => this.handleSetAnimationRange()}
                         aria-label="Set Animation Bounds"
                     >
