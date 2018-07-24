@@ -13,7 +13,7 @@ import moment from "moment";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import ErrorIcon from "@material-ui/icons/ErrorOutline";
-import * as mapActionsCore from "_core/actions/mapActions";
+import * as mapActions from "actions/mapActions";
 import * as chartActions from "actions/chartActions";
 import { ChartButtons, ChartSettings } from "components/Chart";
 import { AreaDefaultMessage } from "components/Reusables";
@@ -60,7 +60,7 @@ export class Chart extends Component {
                     let date = moment.utc(evt.x);
                     // set the map date, if found
                     if (date.isValid()) {
-                        this.props.mapActionsCore.setDate(date.toDate());
+                        this.props.mapActions.setDate(date.toDate());
                     }
                 }
             }
@@ -166,11 +166,18 @@ export class Chart extends Component {
 
     renderChart() {
         if (!this.props.chart.getIn(["dataError", "error"])) {
+            let chartClasses = MiscUtil.generateStringFromSet({
+                [styles.chart]: true,
+                [styles.dateLinked]: this.props.chart.getIn([
+                    "displayOptions",
+                    "linkToDateInterval"
+                ])
+            });
             return (
                 <div
                     id={this.props.chart.get("nodeId")}
                     ref="chartWrapper"
-                    className={styles.chart}
+                    className={chartClasses}
                 />
             );
         }
@@ -187,7 +194,8 @@ export class Chart extends Component {
     render() {
         let loadingClasses = MiscUtil.generateStringFromSet({
             [styles.loadingWrapper]: true,
-            [displayStyles.hidden]: !this.props.chart.get("dataLoading")
+            [styles.loadingHidden]: !this.props.chart.get("dataLoading")
+            // [displayStyles.hidden]: !this.props.chart.get("dataLoading")
         });
 
         let height = this.getHeight();
@@ -226,7 +234,7 @@ Chart.propTypes = {
     chart: PropTypes.object.isRequired,
     mapDate: PropTypes.object.isRequired,
     chartActions: PropTypes.object.isRequired,
-    mapActionsCore: PropTypes.object.isRequired,
+    mapActions: PropTypes.object.isRequired,
     mapIntervalDate: PropTypes.object.isRequired
 };
 
@@ -240,7 +248,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
     return {
         chartActions: bindActionCreators(chartActions, dispatch),
-        mapActionsCore: bindActionCreators(mapActionsCore, dispatch)
+        mapActions: bindActionCreators(mapActions, dispatch)
     };
 }
 

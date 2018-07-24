@@ -18,7 +18,6 @@ import Tooltip from "@material-ui/core/Tooltip";
 import { IconButtonSmall } from "_core/components/Reusables";
 import { DatePicker, DateIntervalPicker } from "components/DatePicker";
 import * as mapActions from "actions/mapActions";
-import * as mapActionsCore from "_core/actions/mapActions";
 import MiscUtil from "_core/utils/MiscUtil";
 import styles from "components/DatePicker/CurrentDatePickerContainer.scss";
 
@@ -38,7 +37,7 @@ export class CurrentDatePickerContainer extends Component {
                 <div className={styles.inlineRow}>
                     <DatePicker
                         date={this.props.date}
-                        setDate={this.props.mapActionsCore.setDate}
+                        setDate={this.props.mapActions.setDate}
                         className={styles.picker}
                     />
                     <div className={styles.btns}>
@@ -77,7 +76,6 @@ CurrentDatePickerContainer.propTypes = {
     date: PropTypes.object.isRequired,
     intervalDate: PropTypes.object.isRequired,
     mapActions: PropTypes.object.isRequired,
-    mapActionsCore: PropTypes.object.isRequired,
     className: PropTypes.string
 };
 
@@ -90,8 +88,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        mapActions: bindActionCreators(mapActions, dispatch),
-        mapActionsCore: bindActionCreators(mapActionsCore, dispatch)
+        mapActions: bindActionCreators(mapActions, dispatch)
     };
 }
 

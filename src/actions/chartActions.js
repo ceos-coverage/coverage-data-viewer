@@ -12,6 +12,7 @@ import DataStore from "utils/DataStore";
 import ChartUtil from "utils/ChartUtil";
 import TrackDataUtil from "utils/TrackDataUtil";
 import appConfig from "constants/appConfig";
+import { moment } from "../../node_modules/vis/index-timeline-graph2d";
 
 export function setTrackSelected(trackId, isSelected) {
     return (dispatch, getState) => {
@@ -33,7 +34,15 @@ export function closeChart(id) {
 }
 
 export function setChartDisplayOptions(id, displayOptions) {
-    return { type: types.SET_CHART_DISPLAY_OPTIONS, id, displayOptions };
+    return (dispatch, getState) => {
+        dispatch({ type: types.SET_CHART_DISPLAY_OPTIONS, id, displayOptions });
+
+        if (typeof displayOptions.linkToDateInterval !== "undefined") {
+            dispatch(updateDateLinkedCharts(id));
+        } else if (typeof displayOptions.decimationRate !== "undefined") {
+            dispatch(refreshChart(id));
+        }
+    };
 }
 
 export function setChartLoading(id, isLoading) {
@@ -246,6 +255,38 @@ export function updateAvailableVariables() {
             sharedVariableSet,
             nonsharedVariableSet
         });
+    };
+}
+
+export function updateDateLinkedCharts(chartId = undefined) {
+    return (dispatch, getState) => {
+        let state = getState();
+
+        let date = moment.utc(state.map.get("date"));
+        let intervalDate = moment.utc(state.map.get("intervalDate"));
+        let bounds = [intervalDate.valueOf(), date.valueOf()];
+
+        if (typeof chartId !== "undefined") {
+            let chart = state.chart.getIn(["charts", chartId]);
+            let node = document.getElementById(chart.get("nodeId"));
+            if (typeof node !== "undefined") {
+                if (chart.getIn(["displayOptions", "linkToDateInterval"])) {
+                    ChartUtil.setAxisBounds(node, "xAxis", bounds);
+                    ChartUtil.setZoomEnabled(node, false);
+                } else {
+                    ChartUtil.setZoomEnabled(node, true);
+                }
+            }
+        } else {
+            state.chart.get("charts").forEach((chart, chartId) => {
+                if (chart.getIn(["displayOptions", "linkToDateInterval"])) {
+                    let node = document.getElementById(chart.get("nodeId"));
+                    if (typeof node !== "undefined") {
+                        ChartUtil.setAxisBounds(node, "xAxis", bounds);
+                    }
+                }
+            });
+        }
     };
 }
 

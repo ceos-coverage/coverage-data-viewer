@@ -7,53 +7,6 @@
 
 @import "~styles/colors";
 
-.root {
-    display: block;
-    position: relative;
-    width: calc(100% - 10px);
-    height: 30rem;
-    margin: auto;
-    overflow: hidden;
-    text-align: left;
-    margin-bottom: 1.4rem;
-    user-select: none;
-}
-
-.chart {
-    width: 100%;
-    height: 100%;
-    display: block;
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    z-index: 1;
-}
-
-.error {
-    top: 50%;
-}
-
-.loadingWrapper {
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    width: 100%;
-    height: 100%;
-    background: rgba(white, 0.85);
-    z-index: 2;
-}
-
-.loading {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    // color: $color-dark;
-    // font-weight: 500;
-    // font-size: 1.8rem;
-    text-transform: capitalize;
-}
-
 :global(.highcharts-title) {
     width: calc(100% - 10rem);
     display: block;
@@ -106,4 +59,61 @@
         color: $color-primary !important;
         fill: $color-primary !important;
     }
+}
+
+.root {
+    display: block;
+    position: relative;
+    width: calc(100% - 10px);
+    height: 30rem;
+    margin: auto;
+    overflow: hidden;
+    text-align: left;
+    margin-bottom: 1.4rem;
+    user-select: none;
+}
+
+.chart {
+    width: 100%;
+    height: 100%;
+    display: block;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    z-index: 1;
+    &.dateLinked {
+        :global(.highcharts-reset-zoom) {
+            display: none;
+        }
+    }
+}
+
+.error {
+    top: 50%;
+}
+
+.loadingWrapper {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    background: rgba(white, 0.85);
+    z-index: 2;
+    opacity: 1;
+    visibility: visible;
+    transition: visibility 0ms linear 500ms, opacity 161ms cubic-bezier(0.4, 0, 0.2, 1) 500ms;
+    &.loadingHidden {
+        opacity: 0;
+        visibility: hidden;
+        transition: visibility 0ms linear 0s, opacity 0s cubic-bezier(0.4, 0, 0.2, 1) 0s;
+    }
+}
+
+.loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-transform: capitalize;
 }

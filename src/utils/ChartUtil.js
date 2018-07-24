@@ -44,6 +44,40 @@ export default class ChartUtil {
         }
     }
 
+    static setAxisBounds(node, axisStr, bounds) {
+        if (
+            typeof node !== "undefined" &&
+            typeof axisStr !== "undefined" &&
+            typeof bounds !== "undefined"
+        ) {
+            let chart = nodeChartMap.get(node.id);
+            if (typeof chart !== "undefined") {
+                let axis = chart[axisStr];
+                if (typeof axis !== "undefined") {
+                    axis = axis[0];
+                    axis.setExtremes(bounds[0], bounds[1], true, false, {
+                        userMin: bounds[0],
+                        userMax: bounds[1]
+                    });
+                    chart.showResetZoom();
+                }
+            }
+        }
+    }
+
+    static setZoomEnabled(node, zoomEnabled) {
+        if (typeof node !== "undefined") {
+            let chart = nodeChartMap.get(node.id);
+            if (typeof chart !== "undefined") {
+                if (zoomEnabled) {
+                    chart.options.chart.zoomType = "x";
+                } else {
+                    chart.options.chart.zoomType = "";
+                }
+            }
+        }
+    }
+
     static setDateIndicator(options) {
         let node = options.node;
         let date = options.date;
@@ -56,11 +90,7 @@ export default class ChartUtil {
                 if (xAxis.options.type === "datetime") {
                     let x = xAxis.toPixels(date, true);
                     let x2 = xAxis.toPixels(intervalDate, true);
-                    // if (chart.isInsidePlot(x, 10, false)) {
                     let newIndicator = ChartUtil.getDateIndicatorOptions(chart);
-
-                    // callout
-                    // newIndicator.labels[0].point.x = x;
 
                     // start line
                     newIndicator.shapes[0].points = newIndicator.shapes[0].points.map(p => {
@@ -86,9 +116,6 @@ export default class ChartUtil {
 
                     chart.removeAnnotation("date-indicator");
                     chart.addAnnotation(newIndicator);
-                    // } else {
-                    //     chart.annotations[0].setVisible(false);
-                    // }
                 }
             }
         }
@@ -878,33 +905,20 @@ export default class ChartUtil {
         }
         return {
             id: "date-indicator",
-            // labels: [
-            //     {
-            //         point: lPoint,
-            //         verticalAlign: "bottom",
-            //         useHTML: true,
-            //         borderWidth: 0,
-            //         borderRadius: 0,
-            //         distance: 0,
-            //         shape: "diamond",
-            //         backgroundColor: appConfig.CHART_DATE_INDICATOR_COLOR,
-            //         text: " "
-            //     }
-            // ],
             shapes: [
                 {
                     points: startLine,
                     type: "path",
                     fill: "none",
                     stroke: appConfig.CHART_DATE_INDICATOR_COLOR,
-                    strokeWidth: 2
+                    strokeWidth: 1
                 },
                 {
                     points: endLine,
                     type: "path",
                     fill: "none",
                     stroke: appConfig.CHART_DATE_INDICATOR_COLOR,
-                    strokeWidth: 2
+                    strokeWidth: 1
                 },
                 {
                     points: midLineTop,

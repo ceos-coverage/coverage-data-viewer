@@ -31,6 +31,7 @@ export const chartModel = Immutable.fromJS({
     displayOptions: {
         isOpen: false,
         yAxisReversed: false,
+        linkToDateInterval: false,
         bounds: [],
         markerType: appStrings.PLOT_STYLES.TIME_SERIES.DOTS,
         decimationRate: appConfig.DEFAULT_DECIMATION_RATE,

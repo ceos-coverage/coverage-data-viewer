@@ -51,10 +51,6 @@ export class ChartSettings extends Component {
                 this.props.chartId,
                 this.displayOptions.toJS()
             );
-
-            if (typeof this.displayOptions.get("decimationRate") !== "undefined") {
-                this.props.chartActions.refreshChart(this.props.chartId);
-            }
             this.displayOptions = this.displayOptions.clear();
             clearTimeout(this.updateTimeout);
             this.updateTimeout = undefined;
@@ -128,6 +124,25 @@ export class ChartSettings extends Component {
                         </Grid>
                     </Grid>
                 </FormGroup>
+            );
+        } else {
+            return "";
+        }
+    }
+
+    renderDateIntervalLink() {
+        if (this.props.formOptions.get("xAxis").indexOf("time") !== -1) {
+            return (
+                <Checkbox
+                    color="primary"
+                    label="Link X-Axis to Date Interval"
+                    checked={this.props.displayOptions.get("linkToDateInterval")}
+                    onChange={checked => {
+                        this.bufferDisplayOptionsUpdate({
+                            linkToDateInterval: checked
+                        });
+                    }}
+                />
             );
         } else {
             return "";
@@ -230,6 +245,7 @@ export class ChartSettings extends Component {
                                 }}
                             />
                         </FormGroup>
+                        {this.renderDateIntervalLink()}
                         <Divider />
                         <FormGroup className={styles.formMargin}>
                             <TextField

@@ -8,7 +8,9 @@
 import Immutable from "immutable";
 import moment from "moment";
 import * as types from "constants/actionTypes";
+import * as typesCore from "_core/constants/actionTypes";
 import * as appActions from "actions/appActions";
+import * as chartActions from "actions/chartActions";
 import * as mapActionsCore from "_core/actions/mapActions";
 
 export function addLayer(layer, setActive = true) {
@@ -57,6 +59,14 @@ export function setSelectedArea(area, geometryType) {
     };
 }
 
+export function setDate(date) {
+    return dispatch => {
+        dispatch({ type: typesCore.SET_MAP_DATE, date });
+
+        dispatch(chartActions.updateDateLinkedCharts());
+    };
+}
+
 export function stepDate(forward) {
     return (dispatch, getState) => {
         let state = getState();
@@ -66,12 +76,16 @@ export function stepDate(forward) {
 
         let nextDate = (forward ? date.add(size, scale) : date.subtract(size, scale)).toDate();
 
-        dispatch(mapActionsCore.setDate(nextDate));
+        dispatch(setDate(nextDate));
     };
 }
 
 export function setDateInterval(size, scale) {
-    return { type: types.SET_DATE_INTERVAL, size, scale };
+    return dispatch => {
+        dispatch({ type: types.SET_DATE_INTERVAL, size, scale });
+
+        dispatch(chartActions.updateDateLinkedCharts());
+    };
 }
 
 // set the animation component open or closed
