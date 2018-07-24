@@ -535,74 +535,75 @@ export default class MapReducer extends MapReducerCore {
         let stepDate = moment.utc(action.startDate).add(stepSize[0], stepSize[1]);
         let framesAvailable = !stepDate.isAfter(moment.utc(action.endDate));
         if (framesAvailable) {
-            if (layersToBuffer.size > 0) {
-                // remove layers we cannot animate
-                layersToRemove.forEach(layer => {
-                    MapReducerCore.setLayerActive(state, { layer, active: false });
-                    alerts = alerts.push(
-                        alertCore.merge({
-                            title: appStrings.ALERTS.NON_ANIMATION_LAYER.title,
-                            body: appStrings.ALERTS.NON_ANIMATION_LAYER.formatString.replace(
-                                "{LAYER}",
-                                layer.get("title")
-                            ),
-                            severity: appStrings.ALERTS.NON_ANIMATION_LAYER.severity,
-                            time: new Date()
-                        })
-                    );
-                });
-
-                // send the layers off to buffer
-                let anySucceed = state.get("maps").reduce((acc, map) => {
-                    // only animate on the active map
-                    if (map.isActive) {
-                        if (
-                            map.fillAnimationBuffer(
-                                layersToBuffer,
-                                action.startDate,
-                                action.endDate,
-                                action.stepResolution,
-                                action.callback
-                            )
-                        ) {
-                            return true;
-                        } else {
-                            // catch errors
-                            let contextStr = map.is3D ? "3D" : "2D";
-                            alerts = alerts.push(
-                                alertCore.merge({
-                                    title: appStrings.ALERTS.FILL_BUFFER_FAILED.title,
-                                    body: appStrings.ALERTS.FILL_BUFFER_FAILED.formatString.replace(
-                                        "{MAP}",
-                                        contextStr
-                                    ),
-                                    severity: appStrings.ALERTS.FILL_BUFFER_FAILED.severity,
-                                    time: new Date()
-                                })
-                            );
-                        }
-                    }
-                    return acc;
-                }, false);
-
-                if (anySucceed) {
-                    // signal that buffering has begun
-                    state = state.setIn(["animation", "initiated"], true);
-
-                    // begin checking the initial buffer
-                    state = this.checkInitialAnimationBuffer(state, {});
-                }
-            } else {
-                state = this.stopAnimation(state, {});
+            // if (layersToBuffer.size > 0) {
+            // remove layers we cannot animate
+            layersToRemove.forEach(layer => {
+                MapReducerCore.setLayerActive(state, { layer, active: false });
                 alerts = alerts.push(
                     alertCore.merge({
-                        title: appStrings.ALERTS.NO_ANIMATION_LAYERS.title,
-                        body: appStrings.ALERTS.NO_ANIMATION_LAYERS.formatString,
-                        severity: appStrings.ALERTS.NO_ANIMATION_LAYERS.severity,
+                        title: appStrings.ALERTS.NON_ANIMATION_LAYER.title,
+                        body: appStrings.ALERTS.NON_ANIMATION_LAYER.formatString.replace(
+                            "{LAYER}",
+                            layer.get("title")
+                        ),
+                        severity: appStrings.ALERTS.NON_ANIMATION_LAYER.severity,
                         time: new Date()
                     })
                 );
+            });
+
+            // send the layers off to buffer
+            let anySucceed = state.get("maps").reduce((acc, map) => {
+                // only animate on the active map
+                if (map.isActive) {
+                    if (
+                        map.fillAnimationBuffer(
+                            layersToBuffer,
+                            action.startDate,
+                            action.endDate,
+                            action.stepResolution,
+                            action.callback
+                        )
+                    ) {
+                        return true;
+                    } else {
+                        // catch errors
+                        let contextStr = map.is3D ? "3D" : "2D";
+                        alerts = alerts.push(
+                            alertCore.merge({
+                                title: appStrings.ALERTS.FILL_BUFFER_FAILED.title,
+                                body: appStrings.ALERTS.FILL_BUFFER_FAILED.formatString.replace(
+                                    "{MAP}",
+                                    contextStr
+                                ),
+                                severity: appStrings.ALERTS.FILL_BUFFER_FAILED.severity,
+                                time: new Date()
+                            })
+                        );
+                    }
+                }
+                return acc;
+            }, false);
+
+            if (anySucceed) {
+                // signal that buffering has begun
+                state = state.setIn(["animation", "initiated"], true);
+
+                // begin checking the initial buffer
+                state = this.checkInitialAnimationBuffer(state, {});
             }
+            // }
+            // else {
+            //     state = this.stopAnimation(state, {});
+            //     alerts = alerts.push(
+            //         alertCore.merge({
+            //             title: appStrings.ALERTS.NO_ANIMATION_LAYERS.title,
+            //             body: appStrings.ALERTS.NO_ANIMATION_LAYERS.formatString,
+            //             severity: appStrings.ALERTS.NO_ANIMATION_LAYERS.severity,
+            //             time: new Date()
+            //         })
+            //     );
+            // }
         } else {
             state = this.stopAnimation(state, {});
             alerts = alerts.push(

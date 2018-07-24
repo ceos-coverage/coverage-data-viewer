@@ -237,7 +237,8 @@ export default class AnimationBuffer {
             });
         }
         return {
-            isLoaded: layersTotal === layersLoaded && layersTotal > 0,
+            // isLoaded: layersTotal === layersLoaded && layersTotal > 0,
+            isLoaded: layersTotal === layersLoaded,
             layersTotal,
             layersLoaded,
             tilesTotal,
