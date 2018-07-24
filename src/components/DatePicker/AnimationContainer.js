@@ -19,6 +19,7 @@ import {
 } from "components/DatePicker";
 import styles from "components/DatePicker/AnimationContainer.scss";
 import * as mapActions from "actions/mapActions";
+import * as chartActions from "actions/chartActions";
 import MiscUtil from "utils/MiscUtil";
 
 export class AnimationContainer extends Component {
@@ -117,6 +118,9 @@ export class AnimationContainer extends Component {
     stepFrame(forward) {
         // step the animation forward
         this.props.mapActions.stepAnimation(forward);
+
+        // update charts
+        this.props.updateDateLinkedCharts();
     }
 
     loadAnimation() {
@@ -255,6 +259,7 @@ AnimationContainer.propTypes = {
     dateIntervalScale: PropTypes.string.isRequired,
     dateIntervalSize: PropTypes.number.isRequired,
     mapActions: PropTypes.object.isRequired,
+    updateDateLinkedCharts: PropTypes.func.isRequired,
     className: PropTypes.string
 };
 
@@ -269,7 +274,8 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        mapActions: bindActionCreators(mapActions, dispatch)
+        mapActions: bindActionCreators(mapActions, dispatch),
+        updateDateLinkedCharts: bindActionCreators(chartActions.updateDateLinkedCharts, dispatch)
     };
 }
 

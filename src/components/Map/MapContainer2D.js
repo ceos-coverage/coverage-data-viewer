@@ -12,6 +12,7 @@ import { bindActionCreators } from "redux";
 import { MapContainer2D as MapContainer2DCore } from "_core/components/Map/MapContainer2D.js";
 import * as mapActions from "actions/mapActions";
 import * as mapActionsCore from "_core/actions/mapActions";
+import * as chartActions from "actions/chartActions";
 import * as appStrings from "constants/appStrings";
 import * as appStringsCore from "_core/constants/appStrings";
 
@@ -76,13 +77,20 @@ export class MapContainer2D extends MapContainer2DCore {
         //     this.drawTimeout = undefined;
         // }, 250);
     }
+
+    handlePixelClick(map, clickEvt) {
+        MapContainer2DCore.prototype.handlePixelClick.call(this, map, clickEvt);
+
+        this.props.updateDateLinkedCharts();
+    }
 }
 
 MapContainer2D.propTypes = Immutable.Map(MapContainer2DCore.propTypes)
     .merge({
         disableAreaSelection: PropTypes.func.isRequired,
         setSelectedArea: PropTypes.func.isRequired,
-        setLayerLoading: PropTypes.func.isRequired
+        setLayerLoading: PropTypes.func.isRequired,
+        updateDateLinkedCharts: PropTypes.func.isRequired
     })
     .toJS();
 
@@ -100,7 +108,8 @@ function mapDispatchToProps(dispatch) {
         mapActions: bindActionCreators(mapActionsCore, dispatch),
         disableAreaSelection: bindActionCreators(mapActions.disableAreaSelection, dispatch),
         setSelectedArea: bindActionCreators(mapActions.setSelectedArea, dispatch),
-        setLayerLoading: bindActionCreators(mapActions.setLayerLoading, dispatch)
+        setLayerLoading: bindActionCreators(mapActions.setLayerLoading, dispatch),
+        updateDateLinkedCharts: bindActionCreators(chartActions.updateDateLinkedCharts, dispatch)
     };
 }
 
