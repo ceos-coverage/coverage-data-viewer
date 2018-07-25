@@ -107,6 +107,7 @@
         opacity: 0;
         visibility: hidden;
         transition: visibility 0ms linear 0s, opacity 0s cubic-bezier(0.4, 0, 0.2, 1) 0s;
+        pointer-events: none;
     }
 }
 

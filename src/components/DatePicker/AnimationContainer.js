@@ -120,7 +120,9 @@ export class AnimationContainer extends Component {
         this.props.mapActions.stepAnimation(forward);
 
         // update charts
-        this.props.updateDateLinkedCharts();
+        if (!this.props.animation.get("isPlaying")) {
+            this.props.updateDateLinkedCharts();
+        }
     }
 
     loadAnimation() {
@@ -158,6 +160,7 @@ export class AnimationContainer extends Component {
         if (this.props.animation.get("initialBufferLoaded")) {
             // update the play state
             this.props.mapActions.setAnimationPlaying(!this.props.animation.get("isPlaying"));
+
             // set the loop running (will do nothing if already running)
             this.beginAnimationLoop();
         }
@@ -168,6 +171,9 @@ export class AnimationContainer extends Component {
         this.endAnimationLoop();
         // clear buffer, etc
         this.props.mapActions.stopAnimation();
+        // update charts
+        this.props.updateDateLinkedCharts();
+        this.props.blockChartAnimationUpdates(false);
     }
 
     handleClose() {
@@ -176,6 +182,8 @@ export class AnimationContainer extends Component {
     }
 
     handlePlayPress() {
+        let shouldBlock = true;
+
         if (
             !this.props.animation.get("initialBufferLoaded") &&
             !this.props.animation.get("initiated")
@@ -186,7 +194,14 @@ export class AnimationContainer extends Component {
             this.props.animation.get("initiated")
         ) {
             this.togglePlayPause();
+            shouldBlock = !this.props.animation.get("isPlaying");
+            if (!shouldBlock) {
+                this.props.updateDateLinkedCharts();
+            }
         }
+
+        // update charts
+        this.props.blockChartAnimationUpdates(shouldBlock);
     }
 
     render() {
@@ -220,7 +235,7 @@ export class AnimationContainer extends Component {
                         </IconButtonSmall>
                         <IconButtonSmall
                             disabled={!animationIsPaused || animationIsLoading || !nextFrameLoaded}
-                            onClick={() => this.stepFrame()}
+                            onClick={() => this.stepFrame(true)}
                         >
                             <SkipNextIcon />
                         </IconButtonSmall>
@@ -260,6 +275,7 @@ AnimationContainer.propTypes = {
     dateIntervalSize: PropTypes.number.isRequired,
     mapActions: PropTypes.object.isRequired,
     updateDateLinkedCharts: PropTypes.func.isRequired,
+    blockChartAnimationUpdates: PropTypes.func.isRequired,
     className: PropTypes.string
 };
 
@@ -275,7 +291,11 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
     return {
         mapActions: bindActionCreators(mapActions, dispatch),
-        updateDateLinkedCharts: bindActionCreators(chartActions.updateDateLinkedCharts, dispatch)
+        updateDateLinkedCharts: bindActionCreators(chartActions.updateDateLinkedCharts, dispatch),
+        blockChartAnimationUpdates: bindActionCreators(
+            chartActions.blockChartAnimationUpdates,
+            dispatch
+        )
     };
 }
 

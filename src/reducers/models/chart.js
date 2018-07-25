@@ -41,6 +41,10 @@ export const chartModel = Immutable.fromJS({
         useCustomZAxisBounds: false,
         customZMin: 0,
         customZMax: 0
+    },
+    warning: {
+        active: false,
+        text: ""
     }
 });
 

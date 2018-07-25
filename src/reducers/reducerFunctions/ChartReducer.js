@@ -88,6 +88,12 @@ export default class ChartReducer {
         return state.setIn(["charts", action.id, "dataLoading"], action.isLoading);
     }
 
+    static setChartWarning(state, action) {
+        return state
+            .setIn(["charts", action.id, "warning", "active"], action.active)
+            .setIn(["charts", action.id, "warning", "text"], action.text || "");
+    }
+
     static setChartDisplayOptions(state, action) {
         let displayOptions = state
             .getIn(["charts", action.id, "displayOptions"])

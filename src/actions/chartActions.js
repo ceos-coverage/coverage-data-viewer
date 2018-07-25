@@ -290,6 +290,34 @@ export function updateDateLinkedCharts(chartId = undefined) {
     };
 }
 
+export function blockChartAnimationUpdates(shouldBlock = true) {
+    return (dispatch, getState) => {
+        let state = getState();
+
+        if (shouldBlock) {
+            state.chart.get("charts").forEach((chart, chartId) => {
+                if (chart.getIn(["displayOptions", "linkToDateInterval"])) {
+                    dispatch({
+                        type: types.SET_CHART_WARNING,
+                        id: chartId,
+                        active: true,
+                        text: "Linking Unavailable During Animation"
+                    });
+                }
+            });
+        } else {
+            state.chart.get("charts").forEach((chart, chartId) => {
+                dispatch({
+                    type: types.SET_CHART_WARNING,
+                    id: chartId,
+                    active: false,
+                    text: ""
+                });
+            });
+        }
+    };
+}
+
 function initializeChart(id, formOptions, urls, dataStore) {
     return { type: types.INITIALIZE_CHART, id, formOptions, urls, dataStore };
 }

@@ -911,14 +911,14 @@ export default class ChartUtil {
                     type: "path",
                     fill: "none",
                     stroke: appConfig.CHART_DATE_INDICATOR_COLOR,
-                    strokeWidth: 1
+                    strokeWidth: 2
                 },
                 {
                     points: endLine,
                     type: "path",
                     fill: "none",
                     stroke: appConfig.CHART_DATE_INDICATOR_COLOR,
-                    strokeWidth: 1
+                    strokeWidth: 2
                 },
                 {
                     points: midLineTop,

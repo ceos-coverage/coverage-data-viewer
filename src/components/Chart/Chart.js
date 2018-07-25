@@ -194,8 +194,9 @@ export class Chart extends Component {
     render() {
         let loadingClasses = MiscUtil.generateStringFromSet({
             [styles.loadingWrapper]: true,
-            [styles.loadingHidden]: !this.props.chart.get("dataLoading")
-            // [displayStyles.hidden]: !this.props.chart.get("dataLoading")
+            [styles.loadingHidden]:
+                !this.props.chart.get("dataLoading") &&
+                !this.props.chart.getIn(["warning", "active"])
         });
 
         let height = this.getHeight();
@@ -210,7 +211,9 @@ export class Chart extends Component {
                 />
                 <div className={loadingClasses}>
                     <Typography variant="title" component="div" className={styles.loading}>
-                        loading data...
+                        {this.props.chart.getIn(["warning", "active"])
+                            ? this.props.chart.getIn(["warning", "text"])
+                            : "loading data..."}
                     </Typography>
                 </div>
                 <ChartSettings

@@ -38,6 +38,9 @@ export default function chart(state = chartState, action, opt_reducer = ChartRed
         case actionTypes.SET_CHART_FORM_VARIABLE_OPTIONS:
             return opt_reducer.setChartFormVariableOptions(state, action);
 
+        case actionTypes.SET_CHART_WARNING:
+            return opt_reducer.setChartWarning(state, action);
+
         default:
             return state;
     }
