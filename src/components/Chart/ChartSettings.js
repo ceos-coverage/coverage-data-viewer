@@ -23,6 +23,7 @@ import Divider from "@material-ui/core/Divider";
 import Slide from "@material-ui/core/Slide";
 import appConfig from "constants/appConfig";
 import * as chartActions from "actions/chartActions";
+import * as appStrings from "constants/appStrings";
 import { Checkbox } from "components/Reusables";
 import styles from "components/Chart/ChartSettings.scss";
 
@@ -31,6 +32,7 @@ export class ChartSettings extends Component {
         super(props);
 
         this.displayOptions = Immutable.Map();
+        this.defaultOptions = props.displayOptions.delete("isOpen").delete("bounds");
         this.updateTimeout = undefined;
     }
 
@@ -42,19 +44,20 @@ export class ChartSettings extends Component {
 
     bufferDisplayOptionsUpdate(options) {
         this.displayOptions = this.displayOptions.mergeDeep(options);
-        if (typeof this.updateTimeout !== "undefined") {
-            clearTimeout(this.updateTimeout);
-            this.updateTimeout = undefined;
-        }
-        this.updateTimeout = setTimeout(() => {
-            this.props.chartActions.setChartDisplayOptions(
-                this.props.chartId,
-                this.displayOptions.toJS()
-            );
-            this.displayOptions = this.displayOptions.clear();
-            clearTimeout(this.updateTimeout);
-            this.updateTimeout = undefined;
-        }, 500);
+        this.forceUpdate();
+        // if (typeof this.updateTimeout !== "undefined") {
+        //     clearTimeout(this.updateTimeout);
+        //     this.updateTimeout = undefined;
+        // }
+        // this.updateTimeout = setTimeout(() => {
+        //     this.props.chartActions.setChartDisplayOptions(
+        //         this.props.chartId,
+        //         this.displayOptions.toJS()
+        //     );
+        //     this.displayOptions = this.displayOptions.clear();
+        //     clearTimeout(this.updateTimeout);
+        //     this.updateTimeout = undefined;
+        // }, 500);
     }
 
     closeSettings() {
@@ -65,7 +68,20 @@ export class ChartSettings extends Component {
         }
     }
 
+    applyChanges() {
+        let options = this.displayOptions.toJS();
+        this.displayOptions = this.displayOptions.clear();
+        this.props.chartActions.setChartDisplayOptions(this.props.chartId, options);
+        this.closeSettings();
+    }
+
+    resetChanges() {
+        this.displayOptions = this.displayOptions.mergeDeep(this.defaultOptions);
+        this.forceUpdate();
+    }
+
     renderZMinMaxInput() {
+        let displayObj = this.props.displayOptions.mergeDeep(this.displayOptions);
         if (typeof this.props.formOptions.get("zAxis") !== "undefined") {
             return (
                 <FormGroup className={styles.formMargin}>
@@ -74,7 +90,7 @@ export class ChartSettings extends Component {
                         <Grid item xs={2}>
                             <Checkbox
                                 color="primary"
-                                checked={this.props.displayOptions.get("useCustomZAxisBounds")}
+                                checked={displayObj.get("useCustomZAxisBounds")}
                                 onChange={checked => {
                                     this.bufferDisplayOptionsUpdate({
                                         useCustomZAxisBounds: checked
@@ -85,10 +101,8 @@ export class ChartSettings extends Component {
                         <Grid item xs={5}>
                             <TextField
                                 id="min_bound"
-                                defaultValue={this.props.displayOptions
-                                    .get("customZMin")
-                                    .toString()}
-                                disabled={!this.props.displayOptions.get("useCustomZAxisBounds")}
+                                value={displayObj.get("customZMin").toString()}
+                                disabled={!displayObj.get("useCustomZAxisBounds")}
                                 label="Z-Axis Min"
                                 margin="dense"
                                 fullWidth={true}
@@ -105,10 +119,8 @@ export class ChartSettings extends Component {
                         <Grid item xs={5}>
                             <TextField
                                 id="max_bound"
-                                defaultValue={this.props.displayOptions
-                                    .get("customZMax")
-                                    .toString()}
-                                disabled={!this.props.displayOptions.get("useCustomZAxisBounds")}
+                                value={displayObj.get("customZMax").toString()}
+                                disabled={!displayObj.get("useCustomZAxisBounds")}
                                 label="Z-Axis Max"
                                 margin="dense"
                                 fullWidth={true}
@@ -131,12 +143,13 @@ export class ChartSettings extends Component {
     }
 
     renderDateIntervalLink() {
+        let displayObj = this.props.displayOptions.mergeDeep(this.displayOptions);
         if (this.props.formOptions.get("xAxis").indexOf("time") !== -1) {
             return (
                 <Checkbox
                     color="primary"
                     label="Link X-Axis to Date Interval"
-                    checked={this.props.displayOptions.get("linkToDateInterval")}
+                    checked={displayObj.get("linkToDateInterval")}
                     onChange={checked => {
                         this.bufferDisplayOptionsUpdate({
                             linkToDateInterval: checked
@@ -150,8 +163,9 @@ export class ChartSettings extends Component {
     }
 
     render() {
+        let displayObj = this.props.displayOptions.mergeDeep(this.displayOptions);
         return (
-            <Slide direction="left" in={this.props.displayOptions.get("isOpen")}>
+            <Slide direction="left" in={displayObj.get("isOpen")}>
                 <Paper elevation={2} className={styles.root}>
                     <Paper elevation={0} className={styles.header}>
                         <Typography variant="body2" className={styles.label}>
@@ -159,13 +173,23 @@ export class ChartSettings extends Component {
                         </Typography>
                         <Button
                             size="small"
-                            color="primary"
-                            className={styles.doneBtn}
+                            color="inherit"
+                            className={styles.btn}
                             onClick={() => {
-                                this.closeSettings();
+                                this.resetChanges();
                             }}
                         >
-                            Done
+                            Reset
+                        </Button>
+                        <Button
+                            size="small"
+                            color="primary"
+                            className={styles.btn}
+                            onClick={() => {
+                                this.applyChanges();
+                            }}
+                        >
+                            Apply
                         </Button>
                     </Paper>
                     <div className={styles.content}>
@@ -175,9 +199,7 @@ export class ChartSettings extends Component {
                                 <Grid item xs={2}>
                                     <Checkbox
                                         color="primary"
-                                        checked={this.props.displayOptions.get(
-                                            "useCustomYAxisBounds"
-                                        )}
+                                        checked={displayObj.get("useCustomYAxisBounds")}
                                         onChange={checked => {
                                             this.bufferDisplayOptionsUpdate({
                                                 useCustomYAxisBounds: checked
@@ -188,12 +210,8 @@ export class ChartSettings extends Component {
                                 <Grid item xs={5}>
                                     <TextField
                                         id="min_bound"
-                                        defaultValue={this.props.displayOptions
-                                            .get("customYMin")
-                                            .toString()}
-                                        disabled={
-                                            !this.props.displayOptions.get("useCustomYAxisBounds")
-                                        }
+                                        value={displayObj.get("customYMin").toString()}
+                                        disabled={!displayObj.get("useCustomYAxisBounds")}
                                         label="Y-Axis Min"
                                         margin="dense"
                                         fullWidth={true}
@@ -210,12 +228,8 @@ export class ChartSettings extends Component {
                                 <Grid item xs={5}>
                                     <TextField
                                         id="max_bound"
-                                        defaultValue={this.props.displayOptions
-                                            .get("customYMax")
-                                            .toString()}
-                                        disabled={
-                                            !this.props.displayOptions.get("useCustomYAxisBounds")
-                                        }
+                                        value={displayObj.get("customYMax").toString()}
+                                        disabled={!displayObj.get("useCustomYAxisBounds")}
                                         label="Y-Axis Max"
                                         margin="dense"
                                         fullWidth={true}
@@ -237,7 +251,7 @@ export class ChartSettings extends Component {
                             <Checkbox
                                 color="primary"
                                 label="Invert Y-Axis"
-                                checked={this.props.displayOptions.get("yAxisReversed")}
+                                checked={displayObj.get("yAxisReversed")}
                                 onChange={checked => {
                                     this.bufferDisplayOptionsUpdate({
                                         yAxisReversed: checked
@@ -250,9 +264,7 @@ export class ChartSettings extends Component {
                         <FormGroup className={styles.formMargin}>
                             <TextField
                                 id={this.props.chartId + "_dec_rate"}
-                                defaultValue={this.props.displayOptions
-                                    .get("decimationRate")
-                                    .toString()}
+                                value={displayObj.get("decimationRate").toString()}
                                 label="Decimation Target"
                                 margin="dense"
                                 fullWidth={true}
@@ -273,7 +285,7 @@ export class ChartSettings extends Component {
                                 <InputLabel htmlFor="markerType">Display Style</InputLabel>
                                 <Select
                                     native={true}
-                                    value={this.props.displayOptions.get("markerType")}
+                                    value={displayObj.get("markerType")}
                                     onChange={evt => {
                                         this.bufferDisplayOptionsUpdate({
                                             markerType: evt.target.value

@@ -35,10 +35,11 @@
     flex: 1 1;
 }
 
-.doneBtn {
+.btn {
     height: 2.6rem;
     min-height: 2.6rem;
-    padding: 1px 8px;
+    padding: 1px 4px;
+    min-width: 5rem;
 }
 
 .content {

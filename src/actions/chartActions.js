@@ -39,7 +39,13 @@ export function setChartDisplayOptions(id, displayOptions) {
 
         if (typeof displayOptions.linkToDateInterval !== "undefined") {
             dispatch(updateDateLinkedCharts(id));
-        } else if (typeof displayOptions.decimationRate !== "undefined") {
+        }
+
+        if (
+            typeof displayOptions.decimationRate !== "undefined" &&
+            (typeof displayOptions.linkToDateInterval === "undefined" ||
+                displayOptions.linkToDateInterval === false)
+        ) {
             dispatch(refreshChart(id));
         }
     };

@@ -71,8 +71,7 @@ export class Chart extends Component {
         // only update the chart if its something other than opening the settings
         // or updating the loading screen
         if (
-            this.props.chart.getIn(["displayOptions", "isOpen"]) ===
-                prevProps.chart.getIn(["displayOptions", "isOpen"]) &&
+            !this.props.chart.getIn(["displayOptions", "isOpen"]) &&
             this.props.chart.get("dataLoading") === prevProps.chart.get("dataLoading")
         ) {
             let node =
