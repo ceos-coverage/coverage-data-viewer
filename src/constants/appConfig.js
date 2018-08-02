@@ -43,9 +43,9 @@ const APP_CONFIG = Immutable.fromJS({
         geoserverBase: "https://oiip.jpl.nasa.gov/geoserver/ows",
         geoserverVectorTileBase: "https://oiip.jpl.nasa.gov/gwc/wmts",
         solrBase: "https://oiip.jpl.nasa.gov/solr/",
-        decimatorMiddleware: "https://oiip.jpl.nasa.gov/getDecData"
+        // decimatorMiddleware: "https://oiip.jpl.nasa.gov/getDecData"
         // decimatorMiddleware: "http://icewhale.jpl.nasa.gov:8100/getData"
-        // decimatorMiddleware: "http://babywhale1.jpl.nasa.gov:8100/getData/"
+        decimatorMiddleware: "http://babywhale1.jpl.nasa.gov:8100/getData/"
         // decimatorMiddleware: "http://localhost:8100/getData"
     },
     DEFAULT_WEB_WORKER_NUM: 1,
