@@ -46,7 +46,7 @@ export class ChartCreateForm extends Component {
     renderVariableSelect(sharedVariableSet, nonSharedVariableSet, axis) {
         if (axis !== "xAxis") {
             sharedVariableSet = sharedVariableSet.filter(
-                key => key.get("value").indexOf("time") === -1
+                key => key.get("label").indexOf("time") === -1
             );
         }
 
@@ -63,7 +63,7 @@ export class ChartCreateForm extends Component {
                 >
                     {sharedVariableSet.map(variable => (
                         <FormControlLabel
-                            key={"shared_var_" + variable.get("value")}
+                            key={"shared_var_" + variable.get("label")}
                             value={variable.get("label")}
                             control={<Radio color="primary" />}
                             label={variable.get("label")}

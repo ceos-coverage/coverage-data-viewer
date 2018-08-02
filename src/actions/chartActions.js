@@ -15,7 +15,7 @@ import appConfig from "constants/appConfig";
 import { moment } from "../../node_modules/vis/index-timeline-graph2d";
 
 export function setTrackSelected(trackId, isSelected) {
-    return (dispatch, getState) => {
+    return dispatch => {
         dispatch({ type: types.SET_CHART_TRACK_SELECTED, trackId, isSelected });
         dispatch(updateAvailableVariables());
     };
@@ -34,7 +34,7 @@ export function closeChart(id) {
 }
 
 export function setChartDisplayOptions(id, displayOptions) {
-    return (dispatch, getState) => {
+    return dispatch => {
         dispatch({ type: types.SET_CHART_DISPLAY_OPTIONS, id, displayOptions });
 
         if (typeof displayOptions.linkToDateInterval !== "undefined") {
@@ -89,7 +89,6 @@ export function createChart() {
 
         state = getState();
         let chart = state.chart.getIn(["charts", chartId]);
-        let decimationRate = chart.getIn(["displayOptions", "decimationRate"]);
         let xKey = chart.getIn(["formOptions", "xAxis"]);
         let yKey = chart.getIn(["formOptions", "yAxis"]);
         let zKey = chart.getIn(["formOptions", "zAxis"]);

@@ -21,12 +21,16 @@ export const chartModel = Immutable.fromJS({
         error: false,
         message: ""
     },
+    datasets: [],
     chartType: appStrings.CHART_TYPES.SINGLE_SERIES,
     formOptions: {
         selectedTracks: [],
         xAxis: undefined,
+        xAxisLabel: "",
         yAxis: undefined,
-        zAxis: undefined
+        yAxisLabel: "",
+        zAxis: undefined,
+        zAxisLabel: ""
     },
     displayOptions: {
         isOpen: false,

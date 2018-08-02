@@ -44,8 +44,11 @@ export class Chart extends Component {
             note: "decimation unknown",
             keys: {
                 xKey: this.props.chart.getIn(["formOptions", "xAxis"]),
+                xLabel: this.props.chart.getIn(["formOptions", "xAxisLabel"]),
                 yKey: this.props.chart.getIn(["formOptions", "yAxis"]),
-                zKey: this.props.chart.getIn(["formOptions", "zAxis"])
+                yLabel: this.props.chart.getIn(["formOptions", "yAxisLabel"]),
+                zKey: this.props.chart.getIn(["formOptions", "zAxis"]),
+                zLabel: this.props.chart.getIn(["formOptions", "zAxisLabel"])
             },
             onZoom: bounds => {
                 this.props.chartActions.zoomChartData(this.props.chart.get("id"), bounds);

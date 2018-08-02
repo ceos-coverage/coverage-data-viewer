@@ -320,7 +320,7 @@ export default class ChartUtil {
                     opposite: true,
                     tickLength: 0,
                     title: {
-                        text: keys.zKey,
+                        text: keys.zLabel || keys.zKey,
                         rotation: -90,
                         margin: 30,
                         style: {
@@ -345,7 +345,7 @@ export default class ChartUtil {
                         [1, appConfig.CHART_COLORBAR_COLORS[2]]
                     ],
                     title: {
-                        text: keys.zKey,
+                        text: keys.zLabel || keys.zKey,
                         style: {
                             fontSize: "1.4rem"
                         }
@@ -501,7 +501,7 @@ export default class ChartUtil {
                     opposite: true,
                     tickLength: 0,
                     title: {
-                        text: keys.zKey,
+                        text: keys.zLabel || keys.zKey,
                         rotation: -90,
                         margin: 30,
                         style: {
@@ -526,7 +526,7 @@ export default class ChartUtil {
                         [1, appConfig.CHART_COLORBAR_COLORS[2]]
                     ],
                     title: {
-                        text: keys.zKey,
+                        text: keys.zLabel || keys.zKey,
                         style: {
                             fontSize: "1.4rem"
                         }
@@ -639,7 +639,7 @@ export default class ChartUtil {
                 gridLineWidth: 1,
                 lineWidth: 2,
                 title: {
-                    text: keys.xKey,
+                    text: keys.xLabel || keys.xKey,
                     style: {
                         fontSize: "1.4rem"
                     }
@@ -687,7 +687,7 @@ export default class ChartUtil {
                     tickPixelInterval: 50,
                     lineWidth: 2,
                     title: {
-                        text: keys.yKey,
+                        text: keys.yLabel || keys.yKey,
                         style: {
                             fontSize: "1.4rem"
                         }

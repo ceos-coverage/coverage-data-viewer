@@ -158,7 +158,11 @@ export default class SearchUtil {
                     title: entry.get("title") || entry.get("platform") || entry.get("id"),
                     insituMeta: entry.set(
                         "variables",
-                        SearchUtil.readVariables(entry.get("variables"))
+                        SearchUtil.readVariables(
+                            entry.get("variables"),
+                            entry.get("variables_units"),
+                            true
+                        )
                     )
                 });
                 results.push(Immutable.fromJS(formattedTrack));
@@ -167,37 +171,26 @@ export default class SearchUtil {
         }, []);
     }
 
-    static readVariables(varList) {
+    static readVariables(varList, unitsList, addMissing = false) {
         // hack: add in known variables
-        if (!varList.contains("time")) {
-            varList = varList.push("time");
-        }
-        if (!varList.contains("depth (dbar)")) {
-            varList = varList.push("depth (dbar)");
+        if (addMissing) {
+            if (!varList.contains("time")) {
+                varList = varList.push("time");
+                unitsList = unitsList.push("");
+            }
+            if (!varList.contains("depth")) {
+                varList = varList.push("depth");
+                unitsList = unitsList.push("dbar");
+            }
         }
 
-        return varList.reduce((acc, varStr) => {
-            return acc.add(SearchUtil.readVariable(varStr));
+        return varList.reduce((acc, varStr, i) => {
+            return acc.add(
+                Immutable.Map({
+                    label: varStr,
+                    units: unitsList.get(i) || ""
+                })
+            );
         }, Immutable.Set());
-    }
-
-    static readVariable(varStr) {
-        let labelRe = /^[\w\d\s/]+/;
-        let unitsRe = /\([\w\d\s/]+\)/;
-        let label = varStr.match(labelRe);
-        let units = varStr.match(unitsRe);
-
-        if (label !== null && units !== null) {
-            return Immutable.Map({
-                value: varStr,
-                label: label[0].trim(),
-                units: units[0]
-                    .replace("(", "")
-                    .replace(")", "")
-                    .trim()
-            });
-        } else {
-            return Immutable.Map({ value: varStr, label: varStr, units: "" });
-        }
     }
 }

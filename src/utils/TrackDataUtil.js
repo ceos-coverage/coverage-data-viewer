@@ -23,18 +23,12 @@ export default class TrackDataUtil {
             typeof zAxis !== "undefined"
                 ? Immutable.List([xAxis, yAxis, zAxis])
                 : Immutable.List([xAxis, yAxis]);
-        let keysStr = SearchUtil.readVariables(keys)
-            .toList()
-            .sortBy(x => keys.indexOf(x))
-            .map(x => x.get("label"))
-            .join(",");
-
         return selectedTracks.map(track => {
             let query = [
                 "format=json",
                 "project=" + track.project,
                 "source_id=" + track.source_id,
-                "keys=" + keysStr
+                "keys=" + keys.join(",")
             ];
 
             if (typeof target !== "undefined") {

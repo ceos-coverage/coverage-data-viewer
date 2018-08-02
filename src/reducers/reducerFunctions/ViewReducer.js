@@ -56,13 +56,6 @@ export default class ViewReducer extends ViewReducerCore {
         for (let i = 0; i < facets.length; ++i) {
             let values = action.facets.get(facets[i].value);
 
-            if (facets[i].value === "variables") {
-                values = values.map(entry => {
-                    let varEntry = SearchUtil.readVariable(entry.get("value"));
-                    return entry.set("label", varEntry.get("label"));
-                });
-            }
-
             state = state.setIn(
                 ["layerSearch", "formOptions", "searchFacets", facets[i].value],
                 values.sortBy(entry => entry.get("label"))

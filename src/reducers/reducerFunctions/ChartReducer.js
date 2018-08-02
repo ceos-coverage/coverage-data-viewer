@@ -51,6 +51,20 @@ export default class ChartReducer {
             cleverOptions.yAxisReversed = true;
         }
 
+        // resolve labels
+        let axisLabels = ["xAxis", "yAxis", "zAxis"].map(axis => {
+            return action.formOptions.variables.shared.reduce((acc, entry) => {
+                if (
+                    entry.label === action.formOptions[axis] &&
+                    entry.units &&
+                    entry.units !== "units"
+                ) {
+                    return entry.label + " (" + entry.units + ")";
+                }
+                return acc;
+            }, action.formOptions[axis] || "");
+        });
+
         let chart = chartModel
             .set("id", action.id)
             .set("title", title)
@@ -66,8 +80,11 @@ export default class ChartReducer {
                 Immutable.List(action.formOptions.selectedTracks)
             )
             .setIn(["formOptions", "xAxis"], action.formOptions.xAxis)
+            .setIn(["formOptions", "xAxisLabel"], axisLabels[0])
             .setIn(["formOptions", "yAxis"], action.formOptions.yAxis)
+            .setIn(["formOptions", "yAxisLabel"], axisLabels[1])
             .setIn(["formOptions", "zAxis"], action.formOptions.zAxis)
+            .setIn(["formOptions", "zAxisLabel"], axisLabels[2])
             .set("displayOptions", chartModel.get("displayOptions").mergeDeep(cleverOptions));
         return state.setIn(["charts", action.id], chart);
     }
