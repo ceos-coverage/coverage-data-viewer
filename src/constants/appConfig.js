@@ -45,8 +45,8 @@ const APP_CONFIG = Immutable.fromJS({
         solrBase: "https://oiip.jpl.nasa.gov/solr/",
         // decimatorMiddleware: "https://oiip.jpl.nasa.gov/getDecData"
         // decimatorMiddleware: "http://icewhale.jpl.nasa.gov:8100/getData"
-        // decimatorMiddleware: "http://babywhale1.jpl.nasa.gov:8100/getData/"
-        decimatorMiddleware: "http://localhost:8100/getData"
+        decimatorMiddleware: "http://babywhale1.jpl.nasa.gov:8100/getData/"
+        // decimatorMiddleware: "http://localhost:8100/getData"
     },
     DEFAULT_WEB_WORKER_NUM: 1,
     DEFAULT_MAP_EXTENT: [-180 * 2, -90, 180 * 2, 90],
