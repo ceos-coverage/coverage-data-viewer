@@ -118,11 +118,6 @@ export class AnimationContainer extends Component {
     stepFrame(forward) {
         // step the animation forward
         this.props.mapActions.stepAnimation(forward);
-
-        // update charts
-        if (!this.props.animation.get("isPlaying")) {
-            this.props.updateDateLinkedCharts();
-        }
     }
 
     loadAnimation() {
@@ -173,7 +168,6 @@ export class AnimationContainer extends Component {
         this.props.mapActions.stopAnimation();
         // update charts
         this.props.updateDateLinkedCharts();
-        this.props.blockChartAnimationUpdates(false);
     }
 
     handleClose() {
@@ -182,7 +176,13 @@ export class AnimationContainer extends Component {
     }
 
     handlePlayPress() {
-        let shouldBlock = true;
+        let dateRange = [
+            moment
+                .utc(this.props.animation.get("startDate"))
+                .subtract(this.props.dateIntervalSize, this.props.dateIntervalScale)
+                .toDate(),
+            this.props.animation.get("endDate")
+        ];
 
         if (
             !this.props.animation.get("initialBufferLoaded") &&
@@ -194,14 +194,14 @@ export class AnimationContainer extends Component {
             this.props.animation.get("initiated")
         ) {
             this.togglePlayPause();
-            shouldBlock = !this.props.animation.get("isPlaying");
-            if (!shouldBlock) {
-                this.props.updateDateLinkedCharts();
+
+            if (this.props.animation.get("isPlaying")) {
+                dateRange = [];
             }
         }
 
         // update charts
-        this.props.blockChartAnimationUpdates(shouldBlock);
+        this.props.updateDateLinkedCharts(undefined, dateRange);
     }
 
     render() {

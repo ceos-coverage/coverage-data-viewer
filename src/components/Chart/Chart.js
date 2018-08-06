@@ -54,16 +54,18 @@ export class Chart extends Component {
                 this.props.chartActions.zoomChartData(this.props.chart.get("id"), bounds);
             },
             onClick: evt => {
-                let axisIsTime =
-                    this.props.chart
-                        .getIn(["formOptions", "xAxis"])
-                        .toLocaleLowerCase()
-                        .indexOf("time") !== -1;
-                if (axisIsTime) {
-                    let date = moment.utc(evt.x);
-                    // set the map date, if found
-                    if (date.isValid()) {
-                        this.props.mapActions.setDate(date.toDate());
+                if (!this.props.chart.getIn(["displayOptions", "linkToDateInterval"])) {
+                    let axisIsTime =
+                        this.props.chart
+                            .getIn(["formOptions", "xAxis"])
+                            .toLocaleLowerCase()
+                            .indexOf("time") !== -1;
+                    if (axisIsTime) {
+                        let date = moment.utc(evt.x);
+                        // set the map date, if found
+                        if (date.isValid()) {
+                            this.props.mapActions.setDate(date.toDate());
+                        }
                     }
                 }
             }

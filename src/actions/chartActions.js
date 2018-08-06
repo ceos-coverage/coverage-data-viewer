@@ -263,14 +263,26 @@ export function updateAvailableVariables() {
     };
 }
 
-export function updateDateLinkedCharts(chartId = undefined) {
+export function updateDateLinkedCharts(chartId = undefined, bounds = []) {
     return (dispatch, getState) => {
         let state = getState();
 
-        let date = moment.utc(state.map.get("date"));
-        let intervalDate = moment.utc(state.map.get("intervalDate"));
-        let bounds = [intervalDate.valueOf(), date.valueOf()];
+        // attempt to extract dates
+        if (bounds && bounds.length === 2) {
+            bounds = bounds.map(val => {
+                let d = moment.utc(val);
+                if (d.isValid()) {
+                    return d.valueOf();
+                }
+                return undefined;
+            });
+        } else {
+            let date = moment.utc(state.map.get("date"));
+            let intervalDate = moment.utc(state.map.get("intervalDate"));
+            bounds = [intervalDate.valueOf(), date.valueOf()];
+        }
 
+        // update all charts or just a specific chart
         if (typeof chartId !== "undefined") {
             let chart = state.chart.getIn(["charts", chartId]);
             let node = document.getElementById(chart.get("nodeId"));
