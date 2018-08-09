@@ -8,18 +8,21 @@
 .root {
     display: flex;
     flex-flow: row nowrap;
-    align-items: center;
-    margin-bottom: 0.5rem;
+    align-items: start;
+    padding: 0.5rem 1rem;
     width: 100%;
     overflow: hidden;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
     &:last-of-type {
-        margin-bottom: 0px;
+        // padding-bottom: 0px;
+        border-bottom: none;
     }
 }
 
 .leftItem {
     width: 1.2rem;
     height: 1.2rem;
+    margin-top: 0.4rem;
 }
 
 .centerItem {
@@ -33,6 +36,7 @@
     width: 4rem;
     height: 1.8rem;
     color: rgba(0, 0, 0, 0.54);
+    margin-top: 0.2rem;
 }
 
 .color {
@@ -42,9 +46,7 @@
 }
 
 .label {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    white-space: normal;
 }
 
 .btnWrapper {

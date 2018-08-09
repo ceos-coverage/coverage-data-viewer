@@ -302,6 +302,16 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                 );
             }
 
+            if (cachedLayer.getSource().get("_hasLoaded")) {
+                // run async to avoid reducer block
+                window.requestAnimationFrame(() => {
+                    // run the call back (if it exists)
+                    if (typeof this.layerLoadCallback === "function") {
+                        this.layerLoadCallback(layer);
+                    }
+                });
+            }
+
             return cachedLayer;
         }
 
@@ -634,20 +644,22 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
         let cacheHash = this.getCacheHash(layer) + "_source";
         let cacheSource = this.layerCache.get(cacheHash);
         if (fromCache && cacheSource) {
-            // highlight the points
-            this.highlightTrackPoints(
-                cacheSource.getFeatures(),
-                layer.get("timeFormat"),
-                layer.get("vectorColor")
-            );
+            if (cacheSource.get("_hasLoaded")) {
+                // highlight the points
+                this.highlightTrackPoints(
+                    cacheSource.getFeatures(),
+                    layer.get("timeFormat"),
+                    layer.get("vectorColor")
+                );
 
-            // run async to avoid reducer block
-            window.requestAnimationFrame(() => {
-                // run the call back (if it exists)
-                if (typeof this.layerLoadCallback === "function") {
-                    this.layerLoadCallback(layer);
-                }
-            });
+                // run async to avoid reducer block
+                window.requestAnimationFrame(() => {
+                    // run the call back (if it exists)
+                    if (typeof this.layerLoadCallback === "function") {
+                        this.layerLoadCallback(layer);
+                    }
+                });
+            }
 
             return cacheSource;
         }
@@ -742,6 +754,8 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                             layer.get("timeFormat"),
                             layer.get("vectorColor")
                         );
+
+                        source.set("_hasLoaded", true);
 
                         console.log("Point Reduction", features.length, featuresToAdd.length);
 
