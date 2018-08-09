@@ -13,7 +13,7 @@ import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import { Divider } from "@material-ui/core";
-import { DateRangePicker, AreaSelectionInput, IconPopover } from "components/Reusables";
+import { DateRangePicker, AreaSelectionInput } from "components/Reusables";
 import {
     LayerSearchFacets,
     LayerSearchResultsLabel,

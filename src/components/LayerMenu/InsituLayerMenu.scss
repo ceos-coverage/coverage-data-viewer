@@ -19,8 +19,8 @@
     color: rgba(0, 0, 0, 0.87);
 }
 
-.label {
-    height: 3.4rem;
+.header {
+    height: 4rem;
     padding: 0.5rem 1rem;
     background: darken(white, 3%);
     border-top-left-radius: 2px;
@@ -38,4 +38,8 @@
 .empty {
     line-height: 2rem;
     padding: 0px 1rem;
+}
+
+.sortBtnWrapper {
+    text-align: right;
 }

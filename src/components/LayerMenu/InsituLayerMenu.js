@@ -10,8 +10,9 @@ import PropTypes from "prop-types";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import Paper from "@material-ui/core/Paper";
+import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
-import { InsituLayerItem } from "components/LayerMenu";
+import { InsituLayerItem, InsituLayerItemSort } from "components/LayerMenu";
 import * as mapActions from "actions/mapActions";
 import * as appStrings from "constants/appStrings";
 import MiscUtil from "utils/MiscUtil";
@@ -37,9 +38,18 @@ export class InsituLayerMenu extends Component {
         });
         return (
             <Paper elevation={2} className={styles.root}>
-                <Typography variant="body2" color="inherit" className={styles.label}>
-                    In-Situ Datasets
-                </Typography>
+                <div className={styles.header}>
+                    <Grid container alignItems="center">
+                        <Grid item xs={10}>
+                            <Typography variant="body2" color="inherit">
+                                In-Situ Datasets
+                            </Typography>
+                        </Grid>
+                        <Grid item xs={2} className={styles.sortBtnWrapper}>
+                            <InsituLayerItemSort />
+                        </Grid>
+                    </Grid>
+                </div>
                 <div className={styles.listWrapper}>
                     {this.renderLayerList(layerList)}
                     <Typography variant="caption" color="inherit" className={warningClasses}>
