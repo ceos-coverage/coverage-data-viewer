@@ -20,7 +20,8 @@ export const mapState = mapStateCore.mergeDeep(
             .toDate(),
         layers: {
             insitu_data: {},
-            insitu_data_error: {}
+            insitu_data_error: {},
+            data_reference: {}
         },
         view: {
             pixelHoverCoordinate: {

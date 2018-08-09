@@ -76,6 +76,11 @@ export class BasemapPicker extends Component {
                         <Target>
                             <Tooltip title={"Select Basemap"} placement="left">
                                 <MapButton
+                                    color={
+                                        this.props.mapControlsBasemapPickerOpen
+                                            ? "primary"
+                                            : "default"
+                                    }
                                     onClick={() =>
                                         this.props.appActions.setMapControlsBasemapPickerOpen(
                                             !this.props.mapControlsBasemapPickerOpen
