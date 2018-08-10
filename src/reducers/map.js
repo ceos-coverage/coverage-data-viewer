@@ -81,6 +81,9 @@ export default function map(state = mapState, action, opt_reducer = MapReducer) 
         case actionTypes.SET_ANIMATION_SPEED:
             return opt_reducer.setAnimationSpeed(state, action);
 
+        case actionTypes.SET_INSITU_LAYER_TITLES:
+            return opt_reducer.setInsituLayerTitles(state, action);
+
         default:
             return mapCore.call(this, state, action, opt_reducer);
     }

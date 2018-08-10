@@ -173,3 +173,7 @@ export function setAnimationExportFileFormat(format) {
 export function setAnimationExportResolution(resolution) {
     return { type: types.SET_ANIMATION_EXPORT_RESOLUTION, resolution };
 }
+
+export function setInsituLayerTitles(titleField) {
+    return { type: types.SET_INSITU_LAYER_TITLES, titleField };
+}

@@ -11,7 +11,7 @@ import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import RemoveIcon from "@material-ui/icons/Close";
 import Typography from "@material-ui/core/Typography";
-import { IconButtonSmall, LoadingSpinner } from "_core/components/Reusables";
+import { IconButtonSmall, EnhancedTooltip, LoadingSpinner } from "_core/components/Reusables";
 import { SingleColorSelector } from "components/Reusables";
 import { InsituLayerItemTools } from "components/LayerMenu";
 import * as appActions from "actions/appActions";
@@ -42,14 +42,30 @@ export class InsituLayerItem extends Component {
             <div key={this.props.layer.get("id") + "-insitu-menu-item"} className={styles.root}>
                 <div className={styles.leftItem}>{this.renderLeftAction()}</div>
                 <div className={styles.centerItem}>
-                    <Typography
-                        variant="body1"
-                        color="inherit"
-                        component="span"
-                        className={styles.label}
+                    <EnhancedTooltip
+                        disableTriggerFocus
+                        title={this.props.layer.getIn(["insituMeta", "instrument"])}
+                        placement="bottom"
+                        PopperProps={{
+                            modifiers: {
+                                preventOverflow: {
+                                    enabled: false
+                                },
+                                hide: {
+                                    enabled: false
+                                }
+                            }
+                        }}
                     >
-                        {this.props.layer.get("title")}
-                    </Typography>
+                        <Typography
+                            variant="body1"
+                            color="inherit"
+                            component="span"
+                            className={styles.label}
+                        >
+                            {this.props.layer.get("title")}
+                        </Typography>
+                    </EnhancedTooltip>
                 </div>
                 <div className={styles.rightItem}>
                     <InsituLayerItemTools layer={this.props.layer} />

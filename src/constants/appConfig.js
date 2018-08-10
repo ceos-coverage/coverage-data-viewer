@@ -127,6 +127,10 @@ const APP_CONFIG = Immutable.fromJS({
         { value: 2000, label: "Very Slow (0.5 fps)" }
     ],
     DEFAULT_ANIMAITON_SPEED: 500,
+    INSITU_TITLE_FIELDS: [
+        { value: "platform", label: "Platform" },
+        { value: "instrument", label: "Sensor" }
+    ],
     TILE_LAYER_UPDATE_STRATEGY: appStringsCore.TILE_LAYER_UPDATE_STRATEGIES.LAYER,
     DEFAULT_TILE_TRANSITION_TIME: 0
 });

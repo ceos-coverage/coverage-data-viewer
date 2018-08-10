@@ -22,6 +22,7 @@ export const mapState = mapStateCore.mergeDeep(
             insitu_data: {},
             insitu_data_error: {}
         },
+        insituLayerTitleField: "platform",
         view: {
             pixelHoverCoordinate: {
                 data: [],

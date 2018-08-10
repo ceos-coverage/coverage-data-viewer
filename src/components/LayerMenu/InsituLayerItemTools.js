@@ -11,7 +11,6 @@ import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import moment from "moment";
 import TargetIcon from "mdi-material-ui/Target";
-import TrackIcon from "mdi-material-ui/VectorPolyline";
 import BuildIcon from "@material-ui/icons/Build";
 import InfoIcon from "@material-ui/icons/InfoOutline";
 import DeleteIcon from "@material-ui/icons/Delete";

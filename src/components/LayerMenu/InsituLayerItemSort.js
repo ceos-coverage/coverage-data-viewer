@@ -17,7 +17,7 @@ import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import SortIcon from "mdi-material-ui/Sort";
 import { IconPopover } from "components/Reusables";
-import * as appActions from "actions/appActions";
+import * as mapActions from "actions/mapActions";
 import appConfig from "constants/appConfig";
 import styles from "components/LayerMenu/InsituLayerItemSort.scss";
 
@@ -34,13 +34,13 @@ export class InsituLayerItemSort extends Component {
                                 name="insitu_item_label"
                                 value={this.props.sortParam}
                                 onChange={(evt, val) =>
-                                    this.props.appActions.setSearchSortParameter(val)
+                                    this.props.mapActions.setInsituLayerTitles(val)
                                 }
                                 onClick={evt =>
-                                    this.props.appActions.setSearchSortParameter(evt.target.value)
+                                    this.props.mapActions.setInsituLayerTitles(evt.target.value)
                                 }
                             >
-                                {appConfig.LAYER_SEARCH.SORT_PARAMS.map(entry => (
+                                {appConfig.INSITU_TITLE_FIELDS.map(entry => (
                                     <FormControlLabel
                                         key={"sort_" + entry.value}
                                         value={entry.value}
@@ -59,18 +59,18 @@ export class InsituLayerItemSort extends Component {
 
 InsituLayerItemSort.propTypes = {
     sortParam: PropTypes.string.isRequired,
-    appActions: PropTypes.object.isRequired
+    mapActions: PropTypes.object.isRequired
 };
 
 function mapStateToProps(state) {
     return {
-        sortParam: state.view.getIn(["layerSearch", "sortParameter"])
+        sortParam: state.map.get("insituLayerTitleField")
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        appActions: bindActionCreators(appActions, dispatch)
+        mapActions: bindActionCreators(mapActions, dispatch)
     };
 }
 

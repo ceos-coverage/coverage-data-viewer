@@ -101,6 +101,23 @@ export default class MapReducer extends MapReducerCore {
         return state;
     }
 
+    static setInsituLayerTitles(state, action) {
+        if (typeof action.titleField !== "undefined") {
+            let dataLayers = state
+                .getIn(["layers", appStrings.LAYER_GROUP_TYPE_INSITU_DATA])
+                .map(layer => {
+                    if (typeof layer.getIn(["insituMeta", action.titleField]) !== "undefined") {
+                        return layer.set("title", layer.getIn(["insituMeta", action.titleField]));
+                    }
+                    return layer;
+                });
+            return state
+                .setIn(["layers", appStrings.LAYER_GROUP_TYPE_INSITU_DATA], dataLayers)
+                .set("insituLayerTitleField", action.titleField);
+        }
+        return state;
+    }
+
     static setLayerActive(state, action) {
         // turn off the other data layers first
         if (action.active) {
