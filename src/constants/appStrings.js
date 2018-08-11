@@ -26,13 +26,15 @@ export const CHART_TYPES = {
 
 export const LAYER_GROUP_TYPE_INSITU_DATA = "insitu_data";
 export const LAYER_GROUP_TYPE_INSITU_DATA_ERROR = "insitu_data_error";
+export const LAYER_GROUP_TYPE_DATA_REFERENCE = "data_reference";
 
 export const LAYER_VECTOR_POINT_TRACK = "vector_point_track";
 export const LAYER_VECTOR_TILE_TRACK = "vector_tile_track";
 export const LAYER_VECTOR_TILE_TRACK_ERROR = "vector_tile_track_error";
 export const LAYER_VECTOR_TILE_POINTS = "vector_tile_points";
 export const LAYER_MULTI_FILE_VECTOR_KML = "multi_file_vector_kml";
-export const VECTOR_FEATURE_LOAD = "VECTOR_FEATURE_LOAD";
+export const LAYER_VECTOR_TILE_OUTLINE = "vector_tile_outline";
+export const VECTOR_FEATURE_LOAD = "vector_feature_load";
 
 export const CURRENTS_VECTOR_COLOR = "oscar_l4_oc_third_deg___oceancurrent_dir_color";
 export const CURRENTS_VECTOR_BLACK = "oscar_l4_oc_third_deg___oceancurrent_dir_black";

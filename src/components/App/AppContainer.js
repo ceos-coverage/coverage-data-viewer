@@ -17,7 +17,7 @@ import * as appStringsCore from "_core/constants/appStrings";
 import * as appActions from "actions/appActions";
 import appConfig from "constants/appConfig";
 import MiscUtil from "_core/utils/MiscUtil";
-import { MapContainer, MapControlsContainer } from "components/Map";
+import { MapContainer, MapControlsContainer, RefDataDisplay } from "components/Map";
 import { MainMenu } from "components/MainMenu";
 import { LayerInfoContainer } from "components/LayerInfo";
 import { LoadingContainer } from "_core/components/Loading";
@@ -125,6 +125,10 @@ export class AppContainer extends Component {
             [styles.lifted]: this.props.animationOpen
         });
 
+        let dataDisplayClasses = MiscUtil.generateStringFromSet({
+            [styles.lifted]: this.props.animationOpen
+        });
+
         return (
             <MuiThemeProvider theme={theme}>
                 <div className={containerClasses}>
@@ -139,6 +143,7 @@ export class AppContainer extends Component {
                     <MainMenu />
                     <AlertsContainer />
                     <MouseFollowerContainer />
+                    <RefDataDisplay />
                     <AnimationLoading />
                     <LoadingContainer />
                     <KeyboardControlsContainer />

@@ -12,35 +12,46 @@ import { bindActionCreators } from "redux";
 import Tooltip from "@material-ui/core/Tooltip";
 import Grow from "@material-ui/core/Grow";
 import ClickAwayListener from "@material-ui/core/ClickAwayListener";
-import MapIcon from "@material-ui/icons/Layers";
+import MapMarkerIcon from "mdi-material-ui/MapMarker";
 import { Manager, Target, Popper } from "react-popper";
-import * as mapActions from "_core/actions/mapActions";
-import * as appActions from "_core/actions/appActions";
-import * as appStrings from "_core/constants/appStrings";
+import * as appStrings from "constants/appStrings";
+import * as mapActionsCore from "_core/actions/mapActions";
 import { BaseMapList } from "_core/components/Settings";
 import { MapButton } from "_core/components/Reusables";
 import MiscUtil from "_core/utils/MiscUtil";
-import styles from "_core/components/Map/BasemapPicker.scss";
 import mapControlsStyles from "_core/components/Map/MapControlsContainer.scss";
 import displayStyles from "_core/styles/display.scss";
 
-export class BasemapPicker extends Component {
-    setBasemap(layerId) {
+export class ReferenceLayerPicker extends Component {
+    constructor(props) {
+        super(props);
+
+        this.popoverOpen = false;
+    }
+
+    setPopoverOpen(isOpen) {
+        this.popoverOpen = isOpen;
+        this.forceUpdate();
+    }
+
+    setReferenceLayer(layerId) {
+        this.props.referenceLayers.forEach(layer => {
+            this.props.mapActionsCore.setLayerActive(layer.get("id"), false);
+        });
         if (layerId && layerId !== "") {
-            this.props.mapActions.setBasemap(layerId);
-        } else {
-            this.props.mapActions.hideBasemap();
+            this.props.mapActionsCore.setLayerActive(layerId, true);
         }
     }
+
     render() {
-        // sort and gather the basemaps into a set of dropdown options
-        let activeBasemapId = "";
-        let activeBasemapThumbnail = "img/no_tile.png";
-        let basemapList = this.props.basemaps.sort(MiscUtil.getImmutableObjectSort("title"));
-        let basemapOptions = basemapList.reduce((acc, layer) => {
+        // sort and gather the referenceLayers into a set of dropdown options
+        let activeReferenceLayerId = "";
+        let referenceLayerList = this.props.referenceLayers.sort(
+            MiscUtil.getImmutableObjectSort("title")
+        );
+        let referenceLayerOptions = referenceLayerList.reduce((acc, layer) => {
             if (layer.get("isActive")) {
-                activeBasemapId = layer.get("id");
-                activeBasemapThumbnail = layer.get("thumbnailImage");
+                activeReferenceLayerId = layer.get("id");
             }
 
             acc.push({
@@ -50,46 +61,41 @@ export class BasemapPicker extends Component {
             });
             return acc;
         }, []);
-        basemapOptions.push({
+        referenceLayerOptions.push({
             value: "",
             label: "None",
             thumbnailImage: ""
         });
 
         let containerClasses = MiscUtil.generateStringFromSet({
-            [styles.basemapPicker]: true,
             [this.props.className]: typeof this.props.className !== "undefined"
         });
         let popperClasses = MiscUtil.generateStringFromSet({
-            [displayStyles.noPointer]: !this.props.mapControlsBasemapPickerOpen
+            [displayStyles.noPointer]: !this.popoverOpen
         });
         return (
             <ClickAwayListener
                 onClickAway={() => {
-                    if (this.props.mapControlsBasemapPickerOpen) {
-                        this.props.appActions.setMapControlsBasemapPickerOpen(false);
+                    if (this.popoverOpen) {
+                        this.setPopoverOpen(false);
                     }
                 }}
             >
                 <div className={containerClasses}>
                     <Manager>
                         <Target>
-                            <Tooltip title={"Select Basemap"} placement="left">
+                            <Tooltip title={"Select Reference Layer"} placement="left">
                                 <MapButton
                                     color={
-                                        this.props.mapControlsBasemapPickerOpen
+                                        this.popoverOpen || activeReferenceLayerId !== ""
                                             ? "primary"
                                             : "default"
                                     }
-                                    onClick={() =>
-                                        this.props.appActions.setMapControlsBasemapPickerOpen(
-                                            !this.props.mapControlsBasemapPickerOpen
-                                        )
-                                    }
-                                    aria-label="basemap selection"
+                                    onClick={() => this.setPopoverOpen(!this.popoverOpen)}
+                                    aria-label="reference layer selection"
                                     className={mapControlsStyles.lineButton}
                                 >
-                                    <MapIcon />
+                                    <MapMarkerIcon />
                                 </MapButton>
                             </Tooltip>
                         </Target>
@@ -101,18 +107,15 @@ export class BasemapPicker extends Component {
                                     gpuAcceleration: false
                                 }
                             }}
-                            eventsEnabled={this.props.mapControlsBasemapPickerOpen}
+                            eventsEnabled={this.popoverOpen}
                             className={popperClasses}
                         >
-                            <Grow
-                                style={{ transformOrigin: "left bottom" }}
-                                in={this.props.mapControlsBasemapPickerOpen}
-                            >
+                            <Grow style={{ transformOrigin: "left bottom" }} in={this.popoverOpen}>
                                 <div>
                                     <BaseMapList
-                                        value={activeBasemapId}
-                                        items={basemapOptions}
-                                        onClick={value => this.setBasemap(value)}
+                                        value={activeReferenceLayerId}
+                                        items={referenceLayerOptions}
+                                        onClick={value => this.setReferenceLayer(value)}
                                     />
                                 </div>
                             </Grow>
@@ -124,26 +127,22 @@ export class BasemapPicker extends Component {
     }
 }
 
-BasemapPicker.propTypes = {
-    basemaps: PropTypes.object.isRequired,
-    mapActions: PropTypes.object.isRequired,
-    appActions: PropTypes.object.isRequired,
-    mapControlsBasemapPickerOpen: PropTypes.bool.isRequired,
+ReferenceLayerPicker.propTypes = {
+    referenceLayers: PropTypes.object.isRequired,
+    mapActionsCore: PropTypes.object.isRequired,
     className: PropTypes.string
 };
 
 function mapStateToProps(state) {
     return {
-        basemaps: state.map.getIn(["layers", appStrings.LAYER_GROUP_TYPE_BASEMAP]),
-        mapControlsBasemapPickerOpen: state.view.get("mapControlsBasemapPickerOpen")
+        referenceLayers: state.map.getIn(["layers", appStrings.LAYER_GROUP_TYPE_DATA_REFERENCE])
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        mapActions: bindActionCreators(mapActions, dispatch),
-        appActions: bindActionCreators(appActions, dispatch)
+        mapActionsCore: bindActionCreators(mapActionsCore, dispatch)
     };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(BasemapPicker);
+export default connect(mapStateToProps, mapDispatchToProps)(ReferenceLayerPicker);

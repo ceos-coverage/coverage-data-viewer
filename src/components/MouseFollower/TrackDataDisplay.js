@@ -7,22 +7,14 @@
 
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { connect } from "react-redux";
 import moment from "moment";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
-import MiscUtil from "utils/MiscUtil";
 import MapUtil from "utils/MapUtil";
-import * as appStrings from "constants/appStrings";
-import styles from "components/MouseFollower/DataDisplay.scss";
+import styles from "components/MouseFollower/TrackDataDisplay.scss";
 
-export class DataDisplay extends Component {
+export class TrackDataDisplay extends Component {
     render() {
-        let containerClasses = MiscUtil.generateStringFromSet({
-            [styles.root]: true,
-            "no-data": this.props.data.get("value") === appStrings.NO_DATA
-        });
-
         let timeStrList = this.props.data.getIn(["properties", "position_date_time"]);
         let firstTime = moment.utc(timeStrList.get(0)).format("MMM DD, YYYY");
         let lastTime = moment.utc(timeStrList.get(timeStrList.size - 1)).format("MMM DD, YYYY");
@@ -35,7 +27,7 @@ export class DataDisplay extends Component {
         let displayCoords = MapUtil.formatLatLon(coords.get(0), coords.get(1), true, "");
 
         return (
-            <div className={containerClasses}>
+            <div className={styles.root}>
                 <div className={styles.labelRow}>
                     <div
                         className={styles.color}
@@ -44,6 +36,11 @@ export class DataDisplay extends Component {
                     <Typography variant="body2" className={styles.label}>
                         {this.props.data.getIn(["layer", "title"])}
                     </Typography>
+                    <div className={styles.subtitle}>
+                        <Typography variant="caption" className={styles.label}>
+                            {this.props.data.getIn(["layer", "insituMeta", "instrument"])}
+                        </Typography>
+                    </div>
                 </div>
                 <Grid container spacing={0}>
                     <Grid item xs={4}>
@@ -81,8 +78,8 @@ export class DataDisplay extends Component {
     }
 }
 
-DataDisplay.propTypes = {
+TrackDataDisplay.propTypes = {
     data: PropTypes.object.isRequired
 };
 
-export default connect()(DataDisplay);
+export default TrackDataDisplay;

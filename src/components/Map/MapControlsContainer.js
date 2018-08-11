@@ -21,7 +21,7 @@ import appConfig from "constants/appConfig";
 import MiscUtil from "_core/utils/MiscUtil";
 import { MapButton } from "_core/components/Reusables";
 import { MapLabelsButton } from "_core/components/Map";
-import { BasemapPicker, MapToolsButton } from "components/Map";
+import { BasemapPicker, MapToolsButton, ReferenceLayerPicker } from "components/Map";
 import stylesCore from "_core/components/Map/MapControlsContainer.scss";
 import styles from "components/Map/MapControlsContainer.scss";
 import displayStyles from "_core/styles/display.scss";
@@ -110,7 +110,7 @@ export class MapControlsContainer extends Component {
                         setOpen={isOpen => this.props.appActions.setMapControlsToolsOpen(isOpen)}
                     />
                     <BasemapPicker className={styles.basemapPicker} />
-                    <MapLabelsButton />
+                    <ReferenceLayerPicker />
                 </Paper>
                 <Paper elevation={2} className={stylesCore.buttonGroup}>
                     <Tooltip title="Home" placement="right">
