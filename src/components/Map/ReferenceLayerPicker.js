@@ -86,7 +86,11 @@ export class ReferenceLayerPicker extends Component {
                         <Target>
                             <Tooltip title={"Select Reference Layer"} placement="left">
                                 <MapButton
-                                    color={this.popoverOpen ? "primary" : "default"}
+                                    color={
+                                        this.popoverOpen || activeReferenceLayerId !== ""
+                                            ? "primary"
+                                            : "default"
+                                    }
                                     onClick={() => this.setPopoverOpen(!this.popoverOpen)}
                                     aria-label="reference layer selection"
                                     className={mapControlsStyles.lineButton}

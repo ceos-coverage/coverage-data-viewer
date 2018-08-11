@@ -36,6 +36,11 @@ export class TrackDataDisplay extends Component {
                     <Typography variant="body2" className={styles.label}>
                         {this.props.data.getIn(["layer", "title"])}
                     </Typography>
+                    <div className={styles.subtitle}>
+                        <Typography variant="caption" className={styles.label}>
+                            {this.props.data.getIn(["layer", "insituMeta", "instrument"])}
+                        </Typography>
+                    </div>
                 </div>
                 <Grid container spacing={0}>
                     <Grid item xs={4}>

@@ -206,6 +206,25 @@ export default class MapReducer extends MapReducerCore {
                         })
                     );
 
+                    // extract reference layer data
+                    let refData = data.filter(entry => {
+                        return (
+                            entry.getIn(["layer", "type"]) ===
+                            appStrings.LAYER_GROUP_TYPE_DATA_REFERENCE
+                        );
+                    });
+
+                    data = data
+                        .filterNot(entry => {
+                            return (
+                                entry.getIn(["layer", "type"]) ===
+                                appStrings.LAYER_GROUP_TYPE_DATA_REFERENCE
+                            );
+                        })
+                        .slice(0, 1);
+
+                    state = state.setIn(["view", "refHoverData"], refData);
+
                     // set the coordinate as valid
                     pixelCoordinate = pixelCoordinate
                         .set("lat", coords.lat)
@@ -242,6 +261,15 @@ export default class MapReducer extends MapReducerCore {
                                 return entry;
                             })
                         );
+
+                        data = data
+                            .filterNot(entry => {
+                                return (
+                                    entry.getIn(["layer", "type"]) ===
+                                    appStrings.LAYER_GROUP_TYPE_DATA_REFERENCE
+                                );
+                            })
+                            .slice(0, 1);
 
                         // set the coordinate as valid
                         pixelCoordinate = pixelCoordinate

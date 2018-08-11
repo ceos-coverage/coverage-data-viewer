@@ -11,3 +11,4 @@ export { default as BasemapPicker } from "components/Map/BasemapPicker.js";
 export { default as ReferenceLayerPicker } from "components/Map/ReferenceLayerPicker.js";
 export { default as MapToolsButton } from "components/Map/MapToolsButton.js";
 export { default as MapContainer2D } from "components/Map/MapContainer2D.js";
+export { default as RefDataDisplay } from "components/Map/RefDataDisplay.js";

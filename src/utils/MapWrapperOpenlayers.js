@@ -686,7 +686,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
 
             // console.log(SLD_STRING);
 
-            console.log(options.tileGrid);
+            // console.log(options.tileGrid);
 
             // http://oiip.jpl.nasa.gov:8080/geoserver/oiip/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image%2Fpng&TRANSPARENT=true&STYLES&LAYERS=oiip%3Afao&exceptions=application%2Fvnd.ogc.se_inimage&FORMAT_OPTIONS=antialias%3Afull&CRS=EPSG%3A4326&WIDTH=1000&HEIGHT=1000&BBOX=20.6103515625%2C-21.796875%2C64.5556640625%2C22.1484375
             // http://oiip.jpl.nasa.gov:8080/geoserver/oiip/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image%2Fpng&TRANSPARENT=true&LAYERS=oiip%3Afao&exceptions=application%2Fvnd.ogc.se_inimage&SRS=EPSG%3A4326&STYLES=&WIDTH=2048&HEIGHT=1469&BBOX=-90%2C-64.5556640625%2C90%2C64.5556640625
@@ -742,11 +742,12 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
             //     })
             // });
 
-            return new Ol_Layer_Group({
-                extent: appConfig.DEFAULT_MAP_EXTENT,
-                layers: [outlineLayer],
-                visible: true
-            });
+            // return new Ol_Layer_Group({
+            //     extent: appConfig.DEFAULT_MAP_EXTENT,
+            //     layers: [outlineLayer],
+            //     visible: true
+            // });
+            return outlineLayer;
         } catch (err) {
             console.warn("Error in MapWrapperOpenlayers.createVectorTileOutline:", err);
             return false;
@@ -1087,23 +1088,27 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                 }
             );
 
-            // if(data.length === 0) {
-            //     this.map.forEachFeatureAtPixel(pixel, (feature, mapLayer) => {
-            //         data.push({
-            //             layerId: mapLayer.get("_layerId"),
-            //             properties: feature.getProperties(),
-            //             coords: coord
-            //         });
-            //     }, {
-            //         layerFilter: mapLayer => {
-            //             return (
-            //                 mapLayer.getVisible() &&
-            //                 mapLayer.get("_layerType") === appStrings.LAYER_GROUP_TYPE_DATA_REFERENCE
-            //             );
-            //         }
-            //     });
-            // }
-            return data.slice(0, 1);
+            this.map.forEachFeatureAtPixel(
+                pixel,
+                (feature, mapLayer) => {
+                    data.push({
+                        layerId: mapLayer.get("_layerId"),
+                        properties: feature.getProperties(),
+                        coords: coord
+                    });
+                },
+                {
+                    layerFilter: mapLayer => {
+                        return (
+                            mapLayer.getVisible() &&
+                            mapLayer.get("_layerType") ===
+                                appStrings.LAYER_GROUP_TYPE_DATA_REFERENCE
+                        );
+                    }
+                }
+            );
+
+            return data;
 
             // return data;
         } catch (err) {

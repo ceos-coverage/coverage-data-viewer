@@ -27,7 +27,8 @@ export const mapState = mapStateCore.mergeDeep(
             pixelHoverCoordinate: {
                 data: [],
                 showData: true
-            }
+            },
+            refHoverData: []
         },
         areaSelection: {
             isAreaSelectionEnabled: false,
