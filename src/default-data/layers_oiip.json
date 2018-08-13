@@ -131,7 +131,7 @@
             "handleAs": "vector_tile_outline",
             "updateParameters": { "time": false },
             "thumbnailImage": "https://upload.wikimedia.org/wikipedia/en/f/fa/UNCLOS_logo.png",
-            "url": "http://oiip.jpl.nasa.gov/gwc/wmts?REQUEST=GetTile&SERVICE=WMTS&VERSION=1.0.0&LAYER=oiip:eez_lr&STYLE=&TILEMATRIX=EPSG:4326:{z}&TILEMATRIXSET=EPSG:4326&FORMAT=application/x-protobuf;type=mapbox-vector&TILECOL={x}&TILEROW={y}"
+            "url": "https://oiip.jpl.nasa.gov/gwc/wmts?REQUEST=GetTile&SERVICE=WMTS&VERSION=1.0.0&LAYER=oiip:eez_lr&STYLE=&TILEMATRIX=EPSG:4326:{z}&TILEMATRIXSET=EPSG:4326&FORMAT=application/x-protobuf;type=mapbox-vector&TILECOL={x}&TILEROW={y}"
         },
         {
             "id": "oiip:iho",
@@ -140,7 +140,7 @@
             "handleAs": "vector_tile_outline",
             "updateParameters": { "time": false },
             "thumbnailImage": "https://pbs.twimg.com/media/Cj8XSNiXEAA0hCi.png",
-            "url": "http://oiip.jpl.nasa.gov/gwc/wmts?REQUEST=GetTile&SERVICE=WMTS&VERSION=1.0.0&LAYER=oiip:iho&STYLE=&TILEMATRIX=EPSG:4326:{z}&TILEMATRIXSET=EPSG:4326&FORMAT=application/x-protobuf;type=mapbox-vector&TILECOL={x}&TILEROW={y}"
+            "url": "https://oiip.jpl.nasa.gov/gwc/wmts?REQUEST=GetTile&SERVICE=WMTS&VERSION=1.0.0&LAYER=oiip:iho&STYLE=&TILEMATRIX=EPSG:4326:{z}&TILEMATRIXSET=EPSG:4326&FORMAT=application/x-protobuf;type=mapbox-vector&TILECOL={x}&TILEROW={y}"
         },
         {
             "id": "oiip:fao",
@@ -149,7 +149,7 @@
             "handleAs": "vector_tile_outline",
             "updateParameters": { "time": false },
             "thumbnailImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/FAO_logo.svg/2000px-FAO_logo.svg.png",
-            "url": "http://oiip.jpl.nasa.gov/gwc/wmts?REQUEST=GetTile&SERVICE=WMTS&VERSION=1.0.0&LAYER=oiip:fao&STYLE=&TILEMATRIX=EPSG:4326:{z}&TILEMATRIXSET=EPSG:4326&FORMAT=application/x-protobuf;type=mapbox-vector&TILECOL={x}&TILEROW={y}"
+            "url": "https://oiip.jpl.nasa.gov/gwc/wmts?REQUEST=GetTile&SERVICE=WMTS&VERSION=1.0.0&LAYER=oiip:fao&STYLE=&TILEMATRIX=EPSG:4326:{z}&TILEMATRIXSET=EPSG:4326&FORMAT=application/x-protobuf;type=mapbox-vector&TILECOL={x}&TILEROW={y}"
         },
         {
             "id": "BlueMarble_ShadedRelief_Bathymetry",
