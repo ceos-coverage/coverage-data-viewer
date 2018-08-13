@@ -19,11 +19,6 @@ import Ol_Format_MVT from "ol/format/mvt";
 import Ol_Style from "ol/style/style";
 import Ol_Style_Stroke from "ol/style/stroke";
 import Ol_Style_Fill from "ol/style/fill";
-import Ol_Layer_Tile from "ol/layer/tile";
-import Ol_Source_WMTS from "ol/source/wmts";
-import Ol_Source_WMS from "ol/source/ImageWMS.js";
-import Ol_Source_TileWMS from "ol/source/TileWMS.js";
-import Ol_Source_XYZ from "ol/source/xyz";
 import Ol_Style_RegularShape from "ol/style/regularshape";
 import Ol_Collection from "ol/collection";
 import Ol_Observable from "ol/observable";
@@ -703,28 +698,28 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
             // https://oiip.jpl.nasa.gov/gwc/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image%2Fpng&TRANSPARENT=true&STYLES&LAYERS=oiip%3Afao&exceptions=application%2Fvnd.ogc.se_inimage&FORMAT_OPTIONS=antialias%3Afull&CRS=EPSG%3A4326&WIDTH=1000&HEIGHT=1000&BBOX=20.6103515625%2C-21.796875%2C64.5556640625%2C22.1484375
             // https://oiip.jpl.nasa.gov/gwc/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&FORMAT=image%2Fpng&TRANSPARENT=true&LAYERS=oiip%3Afao&exceptions=application%2Fvnd.ogc.se_inimage&SRS=EPSG%3A4326&STYLES=&WIDTH=2048&HEIGHT=1469&BBOX=-90%2C-64.5556640625%2C90%2C64.5556640625
 
-            let labelLayer = new Ol_Layer_Tile({
-                source: new Ol_Source_TileWMS({
-                    url: "http://oiip.jpl.nasa.gov/gwc/wms",
-                    hidpi: true,
-                    params: {
-                        LAYERS: layer.get("id"),
-                        VERSION: "1.1.1",
-                        STYLES: ""
-                        // STYLES:
-                        //     layer
-                        //         .get("id")
-                        //         .split("_lr")
-                        //         .join("") + "_labels",
-                        // SRS: options.projection
-                    },
-                    ratio: 1,
-                    resolutions: options.tileGrid.resolutions,
-                    serverType: "geoserver",
-                    crossOrigin: "anonymous",
-                    projection: options.projection
-                })
-            });
+            // let labelLayer = new Ol_Layer_Tile({
+            //     source: new Ol_Source_TileWMS({
+            //         url: "http://oiip.jpl.nasa.gov/gwc/wms",
+            //         hidpi: true,
+            //         params: {
+            //             LAYERS: layer.get("id"),
+            //             VERSION: "1.1.1",
+            //             STYLES: ""
+            //             // STYLES:
+            //             //     layer
+            //             //         .get("id")
+            //             //         .split("_lr")
+            //             //         .join("") + "_labels",
+            //             // SRS: options.projection
+            //         },
+            //         ratio: 1,
+            //         resolutions: options.tileGrid.resolutions,
+            //         serverType: "geoserver",
+            //         crossOrigin: "anonymous",
+            //         projection: options.projection
+            //     })
+            // });
 
             // let labelLayer = new Ol_Layer_Tile({
             //     transition: 0,
