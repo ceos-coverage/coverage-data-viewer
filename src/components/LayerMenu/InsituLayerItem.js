@@ -38,13 +38,18 @@ export class InsituLayerItem extends Component {
         }
     }
     render() {
+        let subtitle =
+            this.props.layer.get("title") === this.props.layer.getIn(["insituMeta", "instrument"])
+                ? this.props.layer.getIn(["insituMeta", "platform"])
+                : this.props.layer.getIn(["insituMeta", "instrument"]);
+
         return (
             <div key={this.props.layer.get("id") + "-insitu-menu-item"} className={styles.root}>
                 <div className={styles.leftItem}>{this.renderLeftAction()}</div>
                 <div className={styles.centerItem}>
                     <EnhancedTooltip
                         disableTriggerFocus
-                        title={this.props.layer.getIn(["insituMeta", "instrument"])}
+                        title={subtitle}
                         placement="bottom"
                         PopperProps={{
                             modifiers: {
