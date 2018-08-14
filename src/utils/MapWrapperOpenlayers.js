@@ -592,9 +592,8 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
 
             let outlineLayer = new Ol_Layer_VectorTile({
                 transition: 0,
-                // declutter: true,
                 renderMode: "image",
-                overlaps: false,
+                // overlaps: false,
                 source: new Ol_Source_VectorTile({
                     format: new Ol_Format_MVT(),
                     projection: "EPSG:4326",
@@ -621,137 +620,10 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                                 width: 0.75
                             })
                         })
-                        // ,
-                        // new Ol_Style({
-                        //     text: new Ol_Style_Text({
-                        //         text:
-                        //             feature.get("GeoName") ||
-                        //             feature.get("F_CODE") ||
-                        //             feature.get("NAME"),
-                        //         font: 'bold 11px "Open Sans", "Arial Unicode MS", "sans-serif"',
-                        //         fill: new Ol_Style_Fill({
-                        //             color: "#FFFFFF"
-                        //         }),
-                        //         stroke: new Ol_Style_Stroke({
-                        //             color: "#000000"
-                        //         })
-                        //     })
-                        // })
                     ];
                 }
             });
 
-            // let SLD_STRING =
-            //     // '<?xml version="1.0" encoding="ISO-8859-1"?>' +
-            //     '<sld:StyledLayerDescriptor xmlns:sld="http://www.opengis.net/sld" version="1.0.0" xsi:schemaLocation="http://www.opengis.net/sld http://schemas.opengis.net/sld/1.0.0/StyledLayerDescriptor.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ogc="http://www.opengis.net/ogc" xmlns:gml="http://www.opengis.net/gml">' +
-            //     "<sld:NamedLayer>" +
-            //     "<sld:Name>" +
-            //     layer.get("id") +
-            //     "</sld:Name>" +
-            //     "<sld:NamedStyle>" +
-            //     "<sld:Name>style_sld_body</sld:Name>" +
-            //     "<sld:IsDefault>1</sld:IsDefault>" +
-            //     "<sld:FeatureTypeStyle>" +
-            //     "<sld:Rule>" +
-            //     "<sld:TextSymbolizer>" +
-            //     "<sld:Label>" +
-            //     "<ogc:PropertyName>" +
-            //     "F_CODE" +
-            //     "</ogc:PropertyName>" +
-            //     "</sld:Label>" +
-            //     "<sld:Font>" +
-            //     '<sld:CssParameter name="font-family">Arial</sld:CssParameter>' +
-            //     '<sld:CssParameter name="font-size">10</sld:CssParameter>' +
-            //     '<sld:CssParameter name="font-style">normal</sld:CssParameter>' +
-            //     '<sld:CssParameter name="font-weight">bold</sld:CssParameter>' +
-            //     "</sld:Font>" +
-            //     "<sld:LabelPlacement>" +
-            //     "<sld:PointPlacement>" +
-            //     "<sld:AnchorPoint>" +
-            //     "<sld:AnchorPointX>0.5</sld:AnchorPointX>" +
-            //     "<sld:AnchorPointY>0.5</sld:AnchorPointY>" +
-            //     "</sld:AnchorPoint>" +
-            //     "</sld:PointPlacement>" +
-            //     "</sld:LabelPlacement>" +
-            //     "<sld:Fill>" +
-            //     '<sld:CssParameter name="fill">#000000</sld:CssParameter>' +
-            //     "</sld:Fill>" +
-            //     "<sld:Halo>" +
-            //     "<sld:Fill>" +
-            //     '<sld:CssParameter name="fill">#FFFFFF</sld:CssParameter>' +
-            //     '<sld:CssParameter name="fill-opacity">0.8</sld:CssParameter>' +
-            //     "</sld:Fill>" +
-            //     "</sld:Halo>" +
-            //     "</sld:TextSymbolizer>" +
-            //     "</sld:Rule>" +
-            //     "</sld:FeatureTypeStyle>" +
-            //     "</sld:NamedStyle>" +
-            //     "</sld:NamedLayer>" +
-            //     "</sld:StyledLayerDescriptor>";
-
-            // console.log(SLD_STRING);
-
-            // console.log(options.tileGrid);
-
-            // http://oiip.jpl.nasa.gov:8080/geoserver/oiip/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image%2Fpng&TRANSPARENT=true&STYLES&LAYERS=oiip%3Afao&exceptions=application%2Fvnd.ogc.se_inimage&FORMAT_OPTIONS=antialias%3Afull&CRS=EPSG%3A4326&WIDTH=1000&HEIGHT=1000&BBOX=20.6103515625%2C-21.796875%2C64.5556640625%2C22.1484375
-            // http://oiip.jpl.nasa.gov:8080/geoserver/oiip/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image%2Fpng&TRANSPARENT=true&LAYERS=oiip%3Afao&exceptions=application%2Fvnd.ogc.se_inimage&SRS=EPSG%3A4326&STYLES=&WIDTH=2048&HEIGHT=1469&BBOX=-90%2C-64.5556640625%2C90%2C64.5556640625
-            // https://oiip.jpl.nasa.gov/gwc/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&FORMAT=image%2Fpng&TRANSPARENT=true&STYLES&LAYERS=oiip%3Afao&exceptions=application%2Fvnd.ogc.se_inimage&FORMAT_OPTIONS=antialias%3Afull&CRS=EPSG%3A4326&WIDTH=1000&HEIGHT=1000&BBOX=20.6103515625%2C-21.796875%2C64.5556640625%2C22.1484375
-            // https://oiip.jpl.nasa.gov/gwc/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&FORMAT=image%2Fpng&TRANSPARENT=true&LAYERS=oiip%3Afao&exceptions=application%2Fvnd.ogc.se_inimage&SRS=EPSG%3A4326&STYLES=&WIDTH=2048&HEIGHT=1469&BBOX=-90%2C-64.5556640625%2C90%2C64.5556640625
-
-            // let labelLayer = new Ol_Layer_Tile({
-            //     source: new Ol_Source_TileWMS({
-            //         url: "http://oiip.jpl.nasa.gov/gwc/wms",
-            //         hidpi: true,
-            //         params: {
-            //             LAYERS: layer.get("id"),
-            //             VERSION: "1.1.1",
-            //             STYLES: ""
-            //             // STYLES:
-            //             //     layer
-            //             //         .get("id")
-            //             //         .split("_lr")
-            //             //         .join("") + "_labels",
-            //             // SRS: options.projection
-            //         },
-            //         ratio: 1,
-            //         resolutions: options.tileGrid.resolutions,
-            //         serverType: "geoserver",
-            //         crossOrigin: "anonymous",
-            //         projection: options.projection
-            //     })
-            // });
-
-            // let labelLayer = new Ol_Layer_Tile({
-            //     transition: 0,
-            //     source: new Ol_Source_XYZ({
-            //         url:
-            //             layer
-            //                 .get("url")
-            //                 .split("application/x-protobuf;type=mapbox-vector")
-            //                 .join("image/png")
-            //                 .split("STYLE=")
-            //                 .join("STYLE=labels_style") +
-            //             "&SLD_BODY=" +
-            //             encodeURIComponent(SLD_STRING),
-            //         projection: options.projection,
-            //         transition: 0,
-            //         crossOrigin: "anonymous",
-            //         tileGrid: new Ol_TileGrid({
-            //             extent: options.extents,
-            //             origin: options.tileGrid.origin,
-            //             resolutions: options.tileGrid.resolutions,
-            //             matrixIds: options.tileGrid.matrixIds,
-            //             tileSize: options.tileGrid.tileSize
-            //         }),
-            //         wrapX: true
-            //     })
-            // });
-
-            // return new Ol_Layer_Group({
-            //     extent: appConfig.DEFAULT_MAP_EXTENT,
-            //     layers: [outlineLayer],
-            //     visible: true
-            // });
             return outlineLayer;
         } catch (err) {
             console.warn("Error in MapWrapperOpenlayers.createVectorTileOutline:", err);

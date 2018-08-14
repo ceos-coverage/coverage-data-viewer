@@ -42,7 +42,6 @@ APPLICATION_CONFIG = {
 APPLICATION_CONFIG = {
     URLS: {
         decimatorMiddleware: "https://oiip.jpl.nasa.gov/getDecData"
-        // decimatorMiddleware: "http://icewhale.jpl.nasa.gov:8100/getData"
         // decimatorMiddleware: "http://babywhale1.jpl.nasa.gov:8100/getData/"
         // decimatorMiddleware: "http://localhost:8100/getData"
     }
