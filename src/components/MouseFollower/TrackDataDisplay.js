@@ -26,6 +26,12 @@ export class TrackDataDisplay extends Component {
         let coords = this.props.data.get("coords");
         let displayCoords = MapUtil.formatLatLon(coords.get(0), coords.get(1), true, "");
 
+        let subtitle =
+            this.props.data.getIn(["layer", "title"]) ===
+            this.props.data.getIn(["layer", "insituMeta", "instrument"])
+                ? this.props.data.getIn(["layer", "insituMeta", "platform"])
+                : this.props.data.getIn(["layer", "insituMeta", "instrument"]);
+
         return (
             <div className={styles.root}>
                 <div className={styles.labelRow}>
@@ -38,7 +44,7 @@ export class TrackDataDisplay extends Component {
                     </Typography>
                     <div className={styles.subtitle}>
                         <Typography variant="caption" className={styles.label}>
-                            {this.props.data.getIn(["layer", "insituMeta", "instrument"])}
+                            {subtitle}
                         </Typography>
                     </div>
                 </div>
