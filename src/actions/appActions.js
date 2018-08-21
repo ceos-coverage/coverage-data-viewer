@@ -66,10 +66,11 @@ export function setTrackSelected(trackId, isSelected) {
         if (isSelected) {
             let state = getState();
             let track = state.view.getIn(["layerSearch", "searchResults", "results", trackId]);
+            let titleField = state.map.get("insituLayerTitleField");
             dispatch(
                 mapActions.addLayer({
                     id: track.get("id"),
-                    title: track.get("title"),
+                    title: track.getIn(["insituMeta", titleField]),
                     type: appStrings.LAYER_GROUP_TYPE_INSITU_DATA,
                     handleAs: appStrings.LAYER_VECTOR_POINT_TRACK,
                     url: GeoServerUtil.getUrlForTrack(track),
