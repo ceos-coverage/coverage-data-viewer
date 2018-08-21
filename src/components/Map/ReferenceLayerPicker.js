@@ -84,7 +84,11 @@ export class ReferenceLayerPicker extends Component {
                 <div className={containerClasses}>
                     <Manager>
                         <Target>
-                            <Tooltip title={"Select Reference Layer"} placement="left">
+                            <Tooltip
+                                disableFocusListener={true}
+                                title={"Select Reference Layer"}
+                                placement="left"
+                            >
                                 <MapButton
                                     color={
                                         this.popoverOpen || activeReferenceLayerId !== ""

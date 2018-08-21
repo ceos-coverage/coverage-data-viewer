@@ -103,10 +103,6 @@ export class AppContainer extends Component {
 
                     // run initial search
                     this.props.runLayerSearch(true);
-
-                    // ReactTooltip needs to be rebuilt to account
-                    // for dynamic lists in LayerMenuContainer
-                    // ReactTooltip.rebuild();
                 }, 0);
             });
         });

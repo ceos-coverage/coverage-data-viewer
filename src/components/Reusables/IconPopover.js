@@ -39,6 +39,7 @@ export class IconPopover extends Component {
             return (
                 <Tooltip
                     title={this.props.tooltip}
+                    disableFocusListener={true}
                     placement={this.props.tooltipPlacement || "bottom"}
                 >
                     <IconButtonSmall

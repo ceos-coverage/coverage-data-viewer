@@ -41,7 +41,7 @@ export class CurrentDatePickerContainer extends Component {
                         className={styles.picker}
                     />
                     <div className={styles.btns}>
-                        <Tooltip title="Step Back" placement="top">
+                        <Tooltip disableFocusListener={true} title="Step Back" placement="top">
                             <IconButtonSmall
                                 className={styles.thinBtn}
                                 onClick={() => this.props.mapActions.stepDate(false)}
@@ -49,7 +49,7 @@ export class CurrentDatePickerContainer extends Component {
                                 <LeftIcon />
                             </IconButtonSmall>
                         </Tooltip>
-                        <Tooltip title="Step Forward" placement="top">
+                        <Tooltip disableFocusListener={true} title="Step Forward" placement="top">
                             <IconButtonSmall
                                 className={styles.thinBtn}
                                 onClick={() => this.props.mapActions.stepDate(true)}
@@ -58,7 +58,7 @@ export class CurrentDatePickerContainer extends Component {
                             </IconButtonSmall>
                         </Tooltip>
                         <DateIntervalPicker />
-                        <Tooltip title="Animation" placement="top">
+                        <Tooltip disableFocusListener={true} title="Animation" placement="top">
                             <IconButtonSmall
                                 onClick={() => this.props.mapActions.setAnimationOpen(true)}
                             >

@@ -21,7 +21,7 @@ export class ChartButtons extends Component {
         return (
             <div className={styles.root}>
                 <Tooltip
-                    disableTriggerFocus
+                    disableFocusListener={true}
                     title="Options"
                     placement="bottom"
                     className={styles.btnWrapper}
@@ -40,7 +40,7 @@ export class ChartButtons extends Component {
                     </IconButtonSmall>
                 </Tooltip>
                 <Tooltip
-                    disableTriggerFocus
+                    disableFocusListener={true}
                     title="Close"
                     placement="bottom"
                     className={styles.btnWrapper}

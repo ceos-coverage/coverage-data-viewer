@@ -48,7 +48,7 @@ export class InsituLayerItem extends Component {
                 <div className={styles.leftItem}>{this.renderLeftAction()}</div>
                 <div className={styles.centerItem}>
                     <EnhancedTooltip
-                        disableTriggerFocus
+                        disableFocusListener={true}
                         title={subtitle}
                         placement="bottom"
                         PopperProps={{

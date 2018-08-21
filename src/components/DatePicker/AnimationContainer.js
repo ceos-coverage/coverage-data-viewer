@@ -9,7 +9,6 @@ import RemoveIcon from "@material-ui/icons/Close";
 import PlayIcon from "@material-ui/icons/PlayArrow";
 import PauseIcon from "@material-ui/icons/Pause";
 import SkipNextIcon from "@material-ui/icons/SkipNext";
-import Tooltip from "@material-ui/core/Tooltip";
 import { IconButtonSmall } from "_core/components/Reusables";
 import {
     DatePicker,

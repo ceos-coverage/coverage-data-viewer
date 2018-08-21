@@ -113,7 +113,7 @@ export class MapControlsContainer extends Component {
                     <ReferenceLayerPicker />
                 </Paper>
                 <Paper elevation={2} className={stylesCore.buttonGroup}>
-                    <Tooltip title="Home" placement="right">
+                    <Tooltip disableFocusListener={true} title="Home" placement="right">
                         <MapButton
                             onClick={() => {
                                 this.props.mapActions.setMapView(
@@ -127,7 +127,7 @@ export class MapControlsContainer extends Component {
                             <HomeIcon />
                         </MapButton>
                     </Tooltip>
-                    <Tooltip title="Zoom In" placement="right">
+                    <Tooltip disableFocusListener={true} title="Zoom In" placement="right">
                         <MapButton
                             onClick={this.props.mapActions.zoomIn}
                             aria-label="Zoom in"
@@ -136,7 +136,7 @@ export class MapControlsContainer extends Component {
                             <PlusIcon />
                         </MapButton>
                     </Tooltip>
-                    <Tooltip title="Zoom Out" placement="right">
+                    <Tooltip disableFocusListener={true} title="Zoom Out" placement="right">
                         <MapButton
                             onClick={this.props.mapActions.zoomOut}
                             aria-label="Zoom out"

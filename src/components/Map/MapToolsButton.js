@@ -30,7 +30,7 @@ const MapToolsButton = props => {
         >
             <Manager>
                 <Target>
-                    <Tooltip title="Tools" placement="left">
+                    <Tooltip disableFocusListener={true} title="Tools" placement="left">
                         <MapButton
                             color={props.isOpen ? "primary" : "default"}
                             onClick={() => {

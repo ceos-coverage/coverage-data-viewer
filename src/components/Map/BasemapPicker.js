@@ -74,7 +74,11 @@ export class BasemapPicker extends Component {
                 <div className={containerClasses}>
                     <Manager>
                         <Target>
-                            <Tooltip title={"Select Basemap"} placement="left">
+                            <Tooltip
+                                disableFocusListener={true}
+                                title={"Select Basemap"}
+                                placement="left"
+                            >
                                 <MapButton
                                     color={
                                         this.props.mapControlsBasemapPickerOpen
