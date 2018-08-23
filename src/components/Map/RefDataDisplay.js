@@ -23,9 +23,9 @@ export class RefDataDisplay extends Component {
             let data = this.props.data.get(0);
             let coords = this.props.data.get("coords");
 
-            if (typeof data.getIn(["properties", "GeoName"]) !== "undefined") {
+            if (typeof data.getIn(["properties", "EEZ"]) !== "undefined") {
                 label = "EEZ Region";
-                val = data.getIn(["properties", "GeoName"]);
+                val = data.getIn(["properties", "EEZ"]);
             } else if (typeof data.getIn(["properties", "F_CODE"]) !== "undefined") {
                 label = "FAO Region";
                 val = data.getIn(["properties", "F_CODE"]);
