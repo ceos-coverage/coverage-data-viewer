@@ -12,10 +12,11 @@ import Qty from "js-quantities";
 import turfCentroid from "turf-centroid";
 import proj4js from "proj4";
 import { GreatCircle } from "assets/arc/arc";
-import Ol_Format_WMTSCapabilities from "ol/format/wmtscapabilities";
-import Ol_Source_WMTS from "ol/source/wmts";
-import Ol_Proj from "ol/proj";
-import Ol_Proj_Projection from "ol/proj/projection";
+import Ol_Format_WMTSCapabilities from "ol/format/WMTSCapabilities";
+import Ol_Format_WMSCapabilities from "ol/format/WMSCapabilities";
+import { optionsFromCapabilities } from "ol/source/WMTS";
+import * as Ol_Proj from "ol/proj";
+import { register as Ol_Proj4_register } from "ol/proj/proj4";
 import * as appStrings from "_core/constants/appStrings";
 import appConfig from "constants/appConfig";
 import MiscUtil from "_core/utils/MiscUtil";
@@ -162,7 +163,7 @@ export default class MapUtil {
     }
 
     /**
-     * parses a getCapabilities xml string
+     * parses a WMTS getCapabilities xml string
      * note that it uses openlayers to do the actual parsing
      *
      * @static
@@ -170,12 +171,32 @@ export default class MapUtil {
      * @returns {object} an opject of wmts cappabilities
      * @memberof MapUtil
      */
-    static parseCapabilities(xmlString) {
+    static parseWMTSCapabilities(xmlString) {
         try {
             let parser = new Ol_Format_WMTSCapabilities();
             return parser.read(xmlString);
         } catch (err) {
-            console.warn("Error in MapUtil.parseCapabilities:", err);
+            console.warn("Error in MapUtil.parseWMTSCapabilities:", err);
+            return false;
+        }
+    }
+
+    /**
+     * parses a WMS getCapabilities xml string
+     * note that it uses openlayers to do the actual parsing
+     *
+     * @static
+     * @param {string} xmlString string of capabilities XML
+     * @param {bool} isWmts true if the capabilities is a WMTS config, false if WMS
+     * @returns {object} an opject of wms cappabilities
+     * @memberof MapUtil
+     */
+    static parseWMSCapabilities(xmlString) {
+        try {
+            let parser = new Ol_Format_WMSCapabilities();
+            return parser.read(xmlString);
+        } catch (err) {
+            console.warn("Error in MapUtil.parseWMSCapabilities:", err);
             return false;
         }
     }
@@ -186,17 +207,14 @@ export default class MapUtil {
      *
      * @static
      * @param {object} options options for matching up the capabilities for the layer
-     * - capabilities - {object} outfrom from parseCapabilities
+     * - capabilities - {object} outfrom from parseWMTSCapabilities
      * - options - {object} see config from http://openlayers.org/en/latest/apidoc/ol.source.WMTS.html#.optionsFromCapabilities
      * @returns {object} an object containing WMTS capabilities options for the layer or false if the matchup failed
      * @memberof MapUtil
      */
     static getWmtsOptions(options) {
         try {
-            let parseOptions = Ol_Source_WMTS.optionsFromCapabilities(
-                options.capabilities,
-                options.options
-            );
+            let parseOptions = optionsFromCapabilities(options.capabilities, options.options);
             return {
                 url: parseOptions.urls[0],
                 layer: options.options.layer,
@@ -224,6 +242,50 @@ export default class MapUtil {
     }
 
     /**
+     * generates a set of wms options for a layer
+     * note that it uses openlayers to do the actual info gathering
+     *
+     * @static
+     * @param {object} options options for matching up the capabilities for the layer
+     * - capabilities - {object} outfrom from parseWMSCapabilities
+     * - options - {object} see config from http://openlayers.org/en/latest/apidoc/ol.source.WMTS.html#.optionsFromCapabilities
+     * @returns {object} an object containing WMTS capabilities options for the layer or false if the matchup failed
+     * @memberof MapUtil
+     */
+    static getWmsOptions(options) {
+        // console.log(options);
+        const capabilities = options.capabilities;
+        const layerOptions = options.options;
+        const requestOptions = options.requestOptions;
+
+        const url = requestOptions.url.split("?")[0].split("#")[0];
+        const layerId = layerOptions.layer;
+
+        const layerData = capabilities.Capability.Layer.Layer.find(layer => layerId === layer.Name);
+        if (layerData) {
+            const bb = layerData.BoundingBox.find(b => Ol_Proj.get(b.crs));
+            if (bb) {
+                const extents = bb.extent;
+                const proj = Ol_Proj.get(bb.crs).getCode();
+
+                // throw new Error("fack");
+                return {
+                    url: url,
+                    layer: layerId,
+                    projection: proj,
+                    extents: extents
+                };
+            } else {
+                console.warn("Error in MapUtil.getWmsOptions: Failed to projection layer", options);
+                return false;
+            }
+        } else {
+            console.warn("Error in MapUtil.getWmsOptions: Failed to match layer", options);
+            return false;
+        }
+    }
+
+    /**
      * Sets the proj4 instance used by openlayers and initializes the default
      * projection data within that instance
      *
@@ -238,8 +300,8 @@ export default class MapUtil {
      * @memberof MapUtil
      */
     static prepProjection(projectionList = appConfig.DEFAULT_AVAILABLE_PROJECTIONS) {
-        // assign the proj4js instance to openlayers
-        Ol_Proj.setProj4(proj4js);
+        // initially assign the proj4js instance to openlayers
+        Ol_Proj4_register(proj4js);
 
         // make sure we're using a list
         if (!(projectionList instanceof Array)) {
@@ -251,9 +313,10 @@ export default class MapUtil {
             let projection = projectionList[i];
 
             // add configured projection
-            let projDef = proj4js.defs(projection.code);
+            let proj4Def = proj4js.defs(projection.code);
             if (typeof proj4Def === "undefined") {
                 proj4js.defs(projection.code, projection.proj4Def);
+                Ol_Proj4_register(proj4js); // catch registry updates
                 Ol_Proj.get(projection.code).setExtent(projection.extent);
             }
 
@@ -261,6 +324,7 @@ export default class MapUtil {
             if (typeof projection.aliases !== "undefined") {
                 for (let i = 0; i < projection.aliases.length; ++i) {
                     proj4js.defs(projection.aliases[i], proj4js.defs(projection.code));
+                    Ol_Proj4_register(proj4js); // catch registry updates
                 }
             }
         }
@@ -285,7 +349,7 @@ export default class MapUtil {
      * @returns {string} a url string for the WMTS tile
      * @memberof MapUtil
      */
-    static buildTileUrl(options) {
+    static buildWmtsTileUrl(options) {
         let layerId = options.layerId;
         let url = options.url;
         let tileMatrixSet = options.tileMatrixSet;
