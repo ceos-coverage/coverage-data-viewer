@@ -29,18 +29,19 @@ export class LayerSearchForm extends Component {
     }
 
     handleDatePickerUpdate(value) {
+        const date = moment(value);
         if (typeof this.props.onUpdate === "function") {
             if (this.selectsStart) {
-                let endDate = value.isAfter(moment.utc(this.props.endDate))
-                    ? value.toDate()
+                let endDate = date.isAfter(moment.utc(this.props.endDate))
+                    ? date.toDate()
                     : this.props.endDate;
-                this.props.onUpdate(value.toDate(), endDate);
+                this.props.onUpdate(date.toDate(), endDate);
                 this.toggleSelectStartEnd();
             } else {
-                let startDate = value.isBefore(moment.utc(this.props.startDate))
-                    ? value.toDate()
+                let startDate = date.isBefore(moment.utc(this.props.startDate))
+                    ? date.toDate()
                     : this.props.startDate;
-                this.props.onUpdate(startDate, value.toDate());
+                this.props.onUpdate(startDate, date.toDate());
                 this.handleClose();
             }
         }
@@ -107,13 +108,13 @@ export class LayerSearchForm extends Component {
                     showYearDropdown
                     disabledKeyboardNavigation
                     dropdownMode="select"
-                    minDate={moment.utc(appConfig.MIN_DATE)}
-                    maxDate={moment.utc(appConfig.MAX_DATE)}
+                    minDate={moment.utc(appConfig.MIN_DATE).toDate()}
+                    maxDate={moment.utc(appConfig.MAX_DATE).toDate()}
                     selectsStart={this.selectsStart}
                     selectsEnd={!this.selectsStart}
-                    selected={this.selectsStart ? startDate : endDate}
-                    startDate={startDate}
-                    endDate={endDate}
+                    selected={this.selectsStart ? startDate.toDate() : endDate.toDate()}
+                    startDate={startDate.toDate()}
+                    endDate={endDate.toDate()}
                     onSelect={value => this.handleDatePickerUpdate(value)}
                 />
                 <div className={styles.footer}>
@@ -123,7 +124,7 @@ export class LayerSearchForm extends Component {
                         date
                     </Typography>
                     <Button
-                        variant="flat"
+                        variant="text"
                         size="small"
                         color="primary"
                         onClick={() => this.handleClose()}

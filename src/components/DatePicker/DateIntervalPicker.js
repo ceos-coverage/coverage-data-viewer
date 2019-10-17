@@ -42,10 +42,9 @@ export class DateIntervalPicker extends Component {
                 tooltipPlacement="top"
             >
                 <div className={styles.list}>
-                    <Typography variant="subheading" className={styles.subheader}>
+                    <Typography variant="subtitle1" className={styles.subheader}>
                         Date Interval
                     </Typography>
-
                     <div className={styles.form}>
                         <Grid container spacing={8}>
                             <Grid item xs={6}>
@@ -53,7 +52,6 @@ export class DateIntervalPicker extends Component {
                                     id="date_interval_size"
                                     defaultValue={this.props.dateIntervalSize.toString()}
                                     label="Interval Size"
-                                    fullWidth={true}
                                     onChange={evt =>
                                         this.props.mapActions.setDateInterval(
                                             parseInt(evt.target.value),
@@ -127,4 +125,7 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(DateIntervalPicker);
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(DateIntervalPicker);

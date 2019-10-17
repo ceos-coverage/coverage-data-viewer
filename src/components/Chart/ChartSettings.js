@@ -168,7 +168,7 @@ export class ChartSettings extends Component {
             <Slide direction="left" in={displayObj.get("isOpen")}>
                 <Paper elevation={2} className={styles.root}>
                     <Paper elevation={0} className={styles.header}>
-                        <Typography variant="body2" className={styles.label}>
+                        <Typography variant="body1" className={styles.label}>
                             Chart Settings
                         </Typography>
                         <Button
@@ -330,4 +330,7 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-export default connect(null, mapDispatchToProps)(ChartSettings);
+export default connect(
+    null,
+    mapDispatchToProps
+)(ChartSettings);

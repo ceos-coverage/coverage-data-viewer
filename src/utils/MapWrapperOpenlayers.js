@@ -5,31 +5,31 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import Ol_Has from "ol/has";
-import Ol_Interaction_Draw from "ol/interaction/draw";
-import Ol_Layer_Vector from "ol/layer/vector";
-import Ol_Layer_Group from "ol/layer/group";
-import Ol_Layer_Image from "ol/layer/image";
-import Ol_Layer_VectorTile from "ol/layer/vectortile";
-import Ol_Source_Vector from "ol/source/vector";
-import Ol_Source_VectorTile from "ol/source/vectortile";
-import Ol_Source_ImageCanvas from "ol/source/imagecanvas";
-import Ol_Format_KML from "ol/format/kml";
-import Ol_Format_MVT from "ol/format/mvt";
-import Ol_Style from "ol/style/style";
-import Ol_Style_Stroke from "ol/style/stroke";
-import Ol_Style_Fill from "ol/style/fill";
-import Ol_Style_RegularShape from "ol/style/regularshape";
-import Ol_Collection from "ol/collection";
-import Ol_Observable from "ol/observable";
-import Ol_Style_Circle from "ol/style/circle";
-import Ol_Feature from "ol/feature";
-import Ol_Geom_Polygon from "ol/geom/polygon";
-import Ol_FeatureLoader from "ol/featureloader";
-import Ol_Format_GeoJSON from "ol/format/geojson";
-import Ol_Geom_MultiLineString from "ol/geom/multilinestring";
-import Ol_Geom_Point from "ol/geom/point";
-import Ol_TileGrid from "ol/tilegrid/tilegrid";
+import * as Ol_Has from "ol/has";
+import Ol_Interaction_Draw, { createBox } from "ol/interaction/Draw";
+import Ol_Layer_Vector from "ol/layer/Vector";
+import Ol_Layer_Group from "ol/layer/Group";
+import Ol_Layer_Image from "ol/layer/Image";
+import Ol_Layer_VectorTile from "ol/layer/VectorTile";
+import Ol_Source_Vector from "ol/source/Vector";
+import Ol_Source_VectorTile from "ol/source/VectorTile";
+import Ol_Source_ImageCanvas from "ol/source/ImageCanvas";
+import Ol_Format_KML from "ol/format/KML";
+import Ol_Format_MVT from "ol/format/MVT";
+import Ol_Style from "ol/style/Style";
+import Ol_Style_Stroke from "ol/style/Stroke";
+import Ol_Style_Fill from "ol/style/Fill";
+import Ol_Style_RegularShape from "ol/style/RegularShape";
+import Ol_Collection from "ol/Collection";
+import { unByKey } from "ol/Observable";
+import Ol_Style_Circle from "ol/style/Circle";
+import Ol_Feature from "ol/Feature";
+import Ol_Geom_Polygon from "ol/geom/Polygon";
+import * as Ol_FeatureLoader from "ol/featureloader";
+import Ol_Format_GeoJSON from "ol/format/GeoJSON";
+import Ol_Geom_MultiLineString from "ol/geom/MultiLineString";
+import Ol_Geom_Point from "ol/geom/Point";
+import Ol_TileGrid from "ol/tilegrid/TileGrid";
 import moment from "moment";
 import MapWrapperOpenlayersCore from "_core/utils/MapWrapperOpenlayers";
 import AnimationBuffer from "utils/AnimationBuffer";
@@ -40,7 +40,8 @@ import * as appStringsCore from "_core/constants/appStrings";
 import MiscUtil from "utils/MiscUtil";
 import MapUtil from "utils/MapUtil";
 
-const kmlLayerExtents = JSON.parse(require("default-data/kmlExtents.json"));
+import kmlText from "default-data/kmlExtents.json";
+const kmlLayerExtents = JSON.parse(kmlText);
 const TILE_STATE_IDLE = 0; // loading states found in ol.tile.js
 const TILE_STATE_LOADING = 1;
 const TILE_STATE_LOADED = 2;
@@ -568,7 +569,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
         }
     }
 
-    addLayerToCache(mapLayer, updateStrategy = appStrings.TILE_LAYER_UPDATE_STRATEGIES.TILE) {
+    addLayerToCache(mapLayer, updateStrategy = appStringsCore.TILE_LAYER_UPDATE_STRATEGIES.TILE) {
         try {
             if (
                 mapLayer.get("_layerRef").get("handleAs") !== appStrings.LAYER_MULTI_FILE_VECTOR_KML
@@ -588,7 +589,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
 
     createVectorTileOutline(layer, fromCache = true) {
         try {
-            let options = layer.get("wmtsOptions").toJS();
+            let options = layer.get("mappingOptions").toJS();
 
             let outlineLayer = new Ol_Layer_VectorTile({
                 transition: 0,
@@ -656,7 +657,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
 
     createVectorTileTrackLayer(layer, fromCache = true) {
         try {
-            let options = layer.get("wmtsOptions").toJS();
+            let options = layer.get("mappingOptions").toJS();
             return new Ol_Layer_VectorTile({
                 declutter: true,
                 transition: 0,
@@ -715,10 +716,10 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
         // customize the layer url if needed
         if (
             typeof options.url !== "undefined" &&
-            typeof layer.getIn(["urlFunctions", appStrings.MAP_LIB_2D]) !== "undefined"
+            typeof layer.getIn(["urlFunctions", appStringsCore.MAP_LIB_2D]) !== "undefined"
         ) {
             let urlFunction = this.tileHandler.getUrlFunction(
-                layer.getIn(["urlFunctions", appStrings.MAP_LIB_2D])
+                layer.getIn(["urlFunctions", appStringsCore.MAP_LIB_2D])
             );
             options.url = urlFunction({
                 layer: layer,
@@ -960,12 +961,13 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                         }
                     }
                 },
-                undefined,
-                mapLayer => {
-                    return (
-                        mapLayer.getVisible() &&
-                        mapLayer.get("_layerType") === appStrings.LAYER_GROUP_TYPE_INSITU_DATA
-                    );
+                {
+                    layerFilter: mapLayer => {
+                        return (
+                            mapLayer.getVisible() &&
+                            mapLayer.get("_layerType") === appStrings.LAYER_GROUP_TYPE_INSITU_DATA
+                        );
+                    }
                 }
             );
 
@@ -1042,7 +1044,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                         let drawInteraction = new Ol_Interaction_Draw({
                             source: mapLayer.getSource(),
                             type: "Circle",
-                            geometryFunction: Ol_Interaction_Draw.createBox(),
+                            geometryFunction: createBox(),
                             style: drawStyle,
                             wrapX: true
                         });
@@ -1777,9 +1779,9 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
     }
 
     clearLayerTileListeners(mapLayer) {
-        Ol_Observable.unByKey(mapLayer.getSource().get("_tileLoadEndListener"));
+        unByKey(mapLayer.getSource().get("_tileLoadEndListener"));
         mapLayer.getSource().unset("_tileLoadEndListener");
-        Ol_Observable.unByKey(mapLayer.getSource().get("_tileLoadErrorListener"));
+        unByKey(mapLayer.getSource().get("_tileLoadErrorListener"));
         mapLayer.getSource().unset("_tileLoadErrorListener");
     }
 

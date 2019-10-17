@@ -74,7 +74,7 @@ export function setTrackSelected(trackId, isSelected) {
                     type: appStrings.LAYER_GROUP_TYPE_INSITU_DATA,
                     handleAs: appStrings.LAYER_VECTOR_POINT_TRACK,
                     url: GeoServerUtil.getUrlForTrack(track),
-                    wmtsOptions: {
+                    mappingOptions: {
                         extents: MapUtil.constrainExtent([
                             track.getIn(["insituMeta", "lon_min"]),
                             track.getIn(["insituMeta", "lat_min"]),
@@ -135,9 +135,9 @@ export function setTrackErrorActive(trackId, isActive) {
                         url: GeoServerUtil.getUrlForTrackError(track, errTrackId),
                         insituMeta: track.get("insituMeta"),
                         updateParameters: { time: false },
-                        wmtsOptions: {
-                            extents: track.getIn(["wmtsOptions", "extents"]).toJS(),
-                            tileGrid: errTrackPartial.getIn(["wmtsOptions", "tileGrid"]).toJS()
+                        mappingOptions: {
+                            extents: track.getIn(["mappingOptions", "extents"]).toJS(),
+                            tileGrid: errTrackPartial.getIn(["mappingOptions", "tileGrid"]).toJS()
                         },
                         timeFormat: "YYYY-MM-DDTHH:mm:ssZ"
                     })

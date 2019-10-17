@@ -13,7 +13,7 @@ import moment from "moment";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import ListItemText from "@material-ui/core/ListItemText";
-import InfoIcon from "@material-ui/icons/InfoOutline";
+import InfoIcon from "mdi-material-ui/InformationOutline";
 import Checkbox from "@material-ui/core/Checkbox";
 import IconButton from "@material-ui/core/IconButton";
 import * as appActions from "actions/appActions";
@@ -82,4 +82,7 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-export default connect(null, mapDispatchToProps)(LayerSearchResult);
+export default connect(
+    null,
+    mapDispatchToProps
+)(LayerSearchResult);

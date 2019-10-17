@@ -16,7 +16,7 @@
 }
 
 .inputWrapper {
-    composes: fontRobotoMono from "_core/styles/text.scss";
+    composes: fontRobotoMono from "../../_core/styles/text.scss";
     font-weight: 500;
     padding: 3px 5px;
     font-size: 1.4rem;

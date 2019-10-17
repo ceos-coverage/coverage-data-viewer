@@ -12,10 +12,10 @@ import { connect } from "react-redux";
 import moment from "moment";
 import TargetIcon from "mdi-material-ui/Target";
 import BuildIcon from "@material-ui/icons/Build";
-import InfoIcon from "@material-ui/icons/InfoOutline";
 import DeleteIcon from "@material-ui/icons/Delete";
 import CalendarRangeIcon from "mdi-material-ui/CalendarRange";
 import PointErrorIcon from "mdi-material-ui/ImageFilterTiltShift";
+import InfoIcon from "mdi-material-ui/InformationOutline";
 import Divider from "@material-ui/core/Divider";
 import MenuList from "@material-ui/core/MenuList";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -148,4 +148,7 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-export default connect(null, mapDispatchToProps)(InsituLayerItemTools);
+export default connect(
+    null,
+    mapDispatchToProps
+)(InsituLayerItemTools);

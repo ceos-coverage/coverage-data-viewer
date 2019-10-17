@@ -69,7 +69,7 @@ export class LabelPopover extends Component {
                     }}
                 >
                     <Typography
-                        variant="body2"
+                        variant="body1"
                         color={this.popoverOpen ? "primary" : "inherit"}
                         className={styles.label}
                     >

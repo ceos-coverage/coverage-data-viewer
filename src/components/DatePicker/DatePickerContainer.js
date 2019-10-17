@@ -12,7 +12,6 @@ import { CurrentDatePickerContainer, AnimationContainer } from "components/DateP
 import MiscUtil from "_core/utils/MiscUtil";
 import stylesCore from "_core/components/DatePicker/DatePickerContainer.scss";
 import styles from "components/DatePicker/DatePickerContainer.scss";
-import displayStyles from "_core/styles/display.scss";
 
 export class DatePickerContainer extends Component {
     render() {
@@ -44,4 +43,7 @@ function mapStateToProps(state) {
     };
 }
 
-export default connect(mapStateToProps, null)(DatePickerContainer);
+export default connect(
+    mapStateToProps,
+    null
+)(DatePickerContainer);

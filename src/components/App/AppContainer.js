@@ -10,7 +10,7 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
-import { cyan, grey } from "@material-ui/core/colors";
+import cyan from "@material-ui/core/colors/cyan";
 import * as appActionsCore from "_core/actions/appActions";
 import * as mapActionsCore from "_core/actions/mapActions";
 import * as appStringsCore from "_core/constants/appStrings";
@@ -32,16 +32,11 @@ import displayStyles from "_core/styles/display.scss";
 
 const theme = createMuiTheme({
     typography: {
+        useNextVariants: true,
         htmlFontSize: 10
     },
     palette: {
         primary: cyan,
-        // secondary: {
-        //     light: "#88ffff",
-        //     main: "#4dd0e1",
-        //     dark: "#009faf",
-        //     contrastText: "#000"
-        // }
         secondary: {
             light: "#ffffff",
             main: "#f5f5f5",
@@ -187,4 +182,7 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(AppContainer);
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(AppContainer);

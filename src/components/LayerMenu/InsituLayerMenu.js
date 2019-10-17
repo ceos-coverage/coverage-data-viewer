@@ -40,7 +40,7 @@ export class InsituLayerMenu extends Component {
             <Paper elevation={2} className={styles.root}>
                 <Grid container className={styles.header} alignItems="center">
                     <Grid item xs={10}>
-                        <Typography variant="body2" color="inherit">
+                        <Typography variant="body1" color="inherit">
                             In-Situ Datasets
                         </Typography>
                     </Grid>
@@ -75,4 +75,7 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(InsituLayerMenu);
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(InsituLayerMenu);

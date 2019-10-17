@@ -43,7 +43,7 @@ export class MainMenu extends Component {
             <Slide direction="left" in={this.props.isOpen} className={styles.root}>
                 <Paper elevation={4}>
                     <Button
-                        variant="raised"
+                        variant="contained"
                         className={styles.toggleBtn}
                         aria-label={this.props.isOpen ? "Close" : "Open"}
                         onClick={() => this.props.appActions.setMainMenuOpen(!this.props.isOpen)}
@@ -108,4 +108,7 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(MainMenu);
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(MainMenu);

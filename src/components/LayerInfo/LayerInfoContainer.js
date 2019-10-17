@@ -34,27 +34,27 @@ export class LayerInfoContainer extends Component {
 
             return (
                 <DialogContent className={styles.content}>
-                    <Typography variant="title" className={styles.label}>
+                    <Typography variant="h6" className={styles.label}>
                         Project
                     </Typography>
                     <Divider className={styles.divider} />
                     <Typography variant="body1">{meta.get("project") || "N/A"}</Typography>
-                    <Typography variant="title" className={styles.label}>
+                    <Typography variant="h6" className={styles.label}>
                         Mission
                     </Typography>
                     <Divider className={styles.divider} />
                     <Typography variant="body1">{meta.get("mission") || "N/A"}</Typography>
-                    <Typography variant="title" className={styles.label}>
+                    <Typography variant="h6" className={styles.label}>
                         Platform
                     </Typography>
                     <Divider className={styles.divider} />
                     <Typography variant="body1">{meta.get("platform") || "N/A"}</Typography>
-                    <Typography variant="title" className={styles.label}>
+                    <Typography variant="h6" className={styles.label}>
                         Instrument
                     </Typography>
                     <Divider className={styles.divider} />
                     <Typography variant="body1">{meta.get("instrument") || "N/A"}</Typography>
-                    <Typography variant="title" className={styles.label}>
+                    <Typography variant="h6" className={styles.label}>
                         Variables
                     </Typography>
                     <Divider className={styles.divider} />
@@ -65,7 +65,7 @@ export class LayerInfoContainer extends Component {
                             .sort()
                             .join(", ") || "N/A"}
                     </Typography>
-                    <Typography variant="title" className={styles.label}>
+                    <Typography variant="h6" className={styles.label}>
                         Time Range
                     </Typography>
                     <Divider className={styles.divider} />
@@ -80,7 +80,7 @@ export class LayerInfoContainer extends Component {
                             .utc()
                             .format("YYYY MMM DD, HH:mm UTC")}
                     </Typography>
-                    <Typography variant="title" className={styles.label}>
+                    <Typography variant="h6" className={styles.label}>
                         Spatial Range
                     </Typography>
                     <Divider className={styles.divider} />
@@ -92,7 +92,7 @@ export class LayerInfoContainer extends Component {
                             meta.get("lat_max")
                         ].join(", ")}
                     </Typography>
-                    <Typography variant="title" className={styles.label}>
+                    <Typography variant="h6" className={styles.label}>
                         Description
                     </Typography>
                     <Divider className={styles.divider} />
@@ -134,4 +134,7 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(LayerInfoContainer);
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(LayerInfoContainer);

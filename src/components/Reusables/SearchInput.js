@@ -17,7 +17,7 @@ import MiscUtil from "_core/utils/MiscUtil";
 import styles from "components/Reusables/SearchInput.scss";
 import displayStyles from "_core/styles/display.scss";
 
-export class LabelPopover extends Component {
+export class SearchInput extends Component {
     constructor(props) {
         super(props);
 
@@ -124,6 +124,18 @@ export class LabelPopover extends Component {
         }
     }
 
+    renderLabel() {
+        if (typeof this.props.label === "string") {
+            return (
+                <Typography variant="body1" color="inherit" className={styles.label}>
+                    {this.props.label}
+                </Typography>
+            );
+        } else {
+            return this.props.label;
+        }
+    }
+
     render() {
         let open = this.useExternal ? this.props.open : this.popoverOpen;
 
@@ -170,9 +182,7 @@ export class LabelPopover extends Component {
                     }}
                 >
                     {this.renderLeftAction()}
-                    <Typography variant="body2" color="inherit" className={styles.label}>
-                        {this.props.label}
-                    </Typography>
+                    {this.renderLabel()}
                 </ButtonBase>
                 <div className={styles.rightActions}>{this.renderRightAction()}</div>
                 <Popover
@@ -198,7 +208,7 @@ export class LabelPopover extends Component {
     }
 }
 
-LabelPopover.propTypes = {
+SearchInput.propTypes = {
     label: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
     placeholder: PropTypes.string,
     leftAction: PropTypes.object,
@@ -212,4 +222,4 @@ LabelPopover.propTypes = {
     children: PropTypes.oneOfType([PropTypes.object, PropTypes.array, PropTypes.node])
 };
 
-export default LabelPopover;
+export default SearchInput;

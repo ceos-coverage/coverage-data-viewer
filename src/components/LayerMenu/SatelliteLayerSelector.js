@@ -66,7 +66,7 @@ export class SatelliteLayerSelector extends Component {
 
         return (
             <div className={styles.list}>
-                <Typography variant="subheading" className={styles.subheader}>
+                <Typography variant="subtitle1" className={styles.subheader}>
                     Satellite Overlay
                 </Typography>
                 <FormGroup className={styles.form}>
@@ -168,4 +168,7 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(SatelliteLayerSelector);
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(SatelliteLayerSelector);

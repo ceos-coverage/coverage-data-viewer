@@ -11,10 +11,10 @@
             "min": 0.0,
             "max": 32.0,
             "units": "°C",
-            "wmtsOptions": {
+            "mappingOptions": {
                 "urlFunctions": {
-                    "openlayers": "kvpTimeParam",
-                    "cesium": "kvpTimeParam"
+                    "openlayers": "kvpTimeParam_wmts",
+                    "cesium": "kvpTimeParam_wmts"
                 }
             },
             "metadata": {
@@ -36,10 +36,10 @@
             "min": 0.0,
             "max": 0.5,
             "units": "m/s",
-            "wmtsOptions": {
+            "mappingOptions": {
                 "urlFunctions": {
-                    "openlayers": "kvpTimeParam",
-                    "cesium": "kvpTimeParam"
+                    "openlayers": "kvpTimeParam_wmts",
+                    "cesium": "kvpTimeParam_wmts"
                 }
             },
             "metadata": {
@@ -84,10 +84,10 @@
             "min": 0.01,
             "max": 10.0,
             "units": "mg/m\u00b3",
-            "wmtsOptions": {
+            "mappingOptions": {
                 "urlFunctions": {
-                    "openlayers": "kvpTimeParam",
-                    "cesium": "kvpTimeParam"
+                    "openlayers": "kvpTimeParam_wmts",
+                    "cesium": "kvpTimeParam_wmts"
                 }
             },
             "metadata": {
@@ -109,10 +109,10 @@
             "min": 30.0,
             "max": 40.0,
             "units": "psu",
-            "wmtsOptions": {
+            "mappingOptions": {
                 "urlFunctions": {
-                    "openlayers": "kvpTimeParam",
-                    "cesium": "kvpTimeParam"
+                    "openlayers": "kvpTimeParam_wmts",
+                    "cesium": "kvpTimeParam_wmts"
                 }
             },
             "metadata": {

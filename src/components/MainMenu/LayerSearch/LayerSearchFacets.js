@@ -24,8 +24,8 @@ export class LayerSearchFacets extends Component {
             selected.size === 0
                 ? "Any"
                 : selected.size === 1
-                  ? propFacet.find(f => selected.contains(f.get("value"))).get("label")
-                  : selected.size + " Selected";
+                ? propFacet.find(f => selected.contains(f.get("value"))).get("label")
+                : selected.size + " Selected";
         return (
             <LabelPopover
                 key={"facet_" + configFacet.value}
@@ -61,7 +61,7 @@ export class LayerSearchFacets extends Component {
                 <div className={styles.clearRow}>
                     <Button
                         size="small"
-                        variant="flat"
+                        variant="text"
                         color="primary"
                         onClick={() => this.props.appActions.clearSearchFacet(configFacet.value)}
                         className={styles.clearBtn}
@@ -97,4 +97,7 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-export default connect(null, mapDispatchToProps)(LayerSearchFacets);
+export default connect(
+    null,
+    mapDispatchToProps
+)(LayerSearchFacets);

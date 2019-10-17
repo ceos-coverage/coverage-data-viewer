@@ -154,7 +154,7 @@ export class ChartCreateForm extends Component {
                     {this.renderVariableSelections(sharedVariableSet, nonSharedVariableSet)}
                 </div>
                 <Button
-                    variant="raised"
+                    variant="contained"
                     size="small"
                     color="primary"
                     disabled={!couldCreateChart}
@@ -186,4 +186,7 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ChartCreateForm);
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(ChartCreateForm);

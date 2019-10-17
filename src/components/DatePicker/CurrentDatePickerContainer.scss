@@ -5,7 +5,7 @@
 }
 
 .intervalDate {
-    composes: fontRobotoMono from "_core/styles/text.scss";
+    composes: fontRobotoMono from "../../_core/styles/text.scss";
     font-size: 1.2rem;
     padding-left: 0.6rem;
 }

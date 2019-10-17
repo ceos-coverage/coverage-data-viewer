@@ -39,7 +39,7 @@ export class TrackDataDisplay extends Component {
                         className={styles.color}
                         style={{ background: this.props.data.getIn(["layer", "vectorColor"]) }}
                     />
-                    <Typography variant="body2" className={styles.label}>
+                    <Typography variant="body1" className={styles.label}>
                         {this.props.data.getIn(["layer", "title"])}
                     </Typography>
                     <div className={styles.subtitle}>

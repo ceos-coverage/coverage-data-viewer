@@ -153,27 +153,6 @@ export function setAnimationSpeed(speed) {
     return { type: types.SET_ANIMATION_SPEED, speed };
 }
 
-// update the step size between animation frames
-export function setAnimationStepSize(stepSize) {
-    return { type: types.SET_ANIMATION_STEP_SIZE, stepSize };
-}
-
-export function setAnimationExportOpen(isOpen) {
-    return { type: types.SET_ANIMATION_EXPORT_OPEN, isOpen };
-}
-
-export function setAnimationExportSelectedArea(area, allowEmpty = false) {
-    return { type: types.SET_ANIMATION_EXPORT_SELECTED_AREA, area: Immutable.List(area) };
-}
-
-export function setAnimationExportFileFormat(format) {
-    return { type: types.SET_ANIMATION_EXPORT_FILE_FORMAT, format };
-}
-
-export function setAnimationExportResolution(resolution) {
-    return { type: types.SET_ANIMATION_EXPORT_RESOLUTION, resolution };
-}
-
 export function setInsituLayerTitles(titleField) {
     return { type: types.SET_INSITU_LAYER_TITLES, titleField };
 }
