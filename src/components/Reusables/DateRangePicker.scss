@@ -86,9 +86,6 @@
     width: 2rem;
     height: 2rem;
     line-height: 2rem;
-    &:hover {
-        border-radius: 25%;
-    }
 }
 :global(.react-datepicker__day--selected),
 :global(.react-datepicker__day--in-selecting-range),
@@ -103,6 +100,15 @@
     }
     &:global(.react-datepicker__day--in-selecting-range) {
         color: white;
+    }
+}
+:global(.react-datepicker__month--selecting-range) {
+    :global(.react-datepicker__day--in-selecting-range) {
+        background-color: $color-primary;
+        color: white;
+        &:hover {
+            background-color: #1d5d90;
+        }
     }
 }
 :global(.react-datepicker__month--selecting-range) {
