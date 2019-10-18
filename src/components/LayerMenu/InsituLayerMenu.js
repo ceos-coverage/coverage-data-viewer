@@ -40,7 +40,7 @@ export class InsituLayerMenu extends Component {
             <Paper elevation={2} className={styles.root}>
                 <Grid container className={styles.header} alignItems="center">
                     <Grid item xs={10}>
-                        <Typography variant="body1" color="inherit">
+                        <Typography variant="body2" color="inherit" className={styles.title}>
                             In-Situ Datasets
                         </Typography>
                     </Grid>

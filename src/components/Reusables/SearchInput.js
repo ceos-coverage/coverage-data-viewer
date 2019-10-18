@@ -132,7 +132,7 @@ export class SearchInput extends Component {
                 </Typography>
             );
         } else {
-            return this.props.label;
+            return <div className={styles.label}>{this.props.label}</div>;
         }
     }
 

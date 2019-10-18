@@ -44,6 +44,8 @@
 .content {
     padding: 0px;
     position: relative;
+    width: 320px;
+    max-height: auto;
     overflow: hidden;
 }
 
@@ -51,6 +53,7 @@
     width: 100%;
     position: relative;
     height: 100%;
+    max-height: 30rem;
     display: flex;
     flex-flow: column nowrap;
 }

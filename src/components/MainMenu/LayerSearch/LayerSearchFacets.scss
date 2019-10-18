@@ -23,6 +23,9 @@
     display: flex;
     overflow: hidden;
     flex-flow: column nowrap;
+    &.empty {
+        width: auto;
+    }
 }
 
 .optionsList {
@@ -30,6 +33,9 @@
     flex: 1 1;
     overflow: hidden;
     overflow-y: scroll;
+    &.empty {
+        overflow-y: hidden;
+    }
 }
 
 .clearRow {

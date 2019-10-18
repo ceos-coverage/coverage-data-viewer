@@ -59,7 +59,7 @@ export class MainMenu extends Component {
                             }
                             textColor="secondary"
                             indicatorColor="secondary"
-                            fullWidth={true}
+                            variant="fullWidth"
                         >
                             <Tab
                                 classes={{
