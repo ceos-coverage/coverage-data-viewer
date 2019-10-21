@@ -63,7 +63,7 @@ export class InsituLayerItem extends Component {
                         }}
                     >
                         <Typography
-                            variant="body1"
+                            variant="body2"
                             color="inherit"
                             component="span"
                             className={styles.label}
@@ -106,4 +106,7 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-export default connect(null, mapDispatchToProps)(InsituLayerItem);
+export default connect(
+    null,
+    mapDispatchToProps
+)(InsituLayerItem);

@@ -38,27 +38,27 @@ export class LayerInfoContainer extends Component {
                         Project
                     </Typography>
                     <Divider className={styles.divider} />
-                    <Typography variant="body1">{meta.get("project") || "N/A"}</Typography>
+                    <Typography variant="body2">{meta.get("project") || "N/A"}</Typography>
                     <Typography variant="h6" className={styles.label}>
                         Mission
                     </Typography>
                     <Divider className={styles.divider} />
-                    <Typography variant="body1">{meta.get("mission") || "N/A"}</Typography>
+                    <Typography variant="body2">{meta.get("mission") || "N/A"}</Typography>
                     <Typography variant="h6" className={styles.label}>
                         Platform
                     </Typography>
                     <Divider className={styles.divider} />
-                    <Typography variant="body1">{meta.get("platform") || "N/A"}</Typography>
+                    <Typography variant="body2">{meta.get("platform") || "N/A"}</Typography>
                     <Typography variant="h6" className={styles.label}>
                         Instrument
                     </Typography>
                     <Divider className={styles.divider} />
-                    <Typography variant="body1">{meta.get("instrument") || "N/A"}</Typography>
+                    <Typography variant="body2">{meta.get("instrument") || "N/A"}</Typography>
                     <Typography variant="h6" className={styles.label}>
                         Variables
                     </Typography>
                     <Divider className={styles.divider} />
-                    <Typography variant="body1">
+                    <Typography variant="body2">
                         {meta
                             .get("variables")
                             .map(x => x.get("label"))
@@ -69,7 +69,7 @@ export class LayerInfoContainer extends Component {
                         Time Range
                     </Typography>
                     <Divider className={styles.divider} />
-                    <Typography variant="body1">
+                    <Typography variant="body2">
                         {moment
                             .unix(meta.get("start_date"))
                             .utc()
@@ -84,7 +84,7 @@ export class LayerInfoContainer extends Component {
                         Spatial Range
                     </Typography>
                     <Divider className={styles.divider} />
-                    <Typography variant="body1">
+                    <Typography variant="body2">
                         {[
                             meta.get("lon_min"),
                             meta.get("lat_min"),
@@ -96,7 +96,7 @@ export class LayerInfoContainer extends Component {
                         Description
                     </Typography>
                     <Divider className={styles.divider} />
-                    <Typography variant="body1">{meta.get("description") || "N/A"}</Typography>
+                    <Typography variant="body2">{meta.get("description") || "N/A"}</Typography>
                 </DialogContent>
             );
         }
