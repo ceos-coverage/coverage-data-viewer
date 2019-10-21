@@ -22,6 +22,8 @@ module.exports = config => {
     });
     */
 
+    config.output.globalObject = "this";
+
     config.module.rules.push({
         test: /\.json$/,
         type: "javascript/auto",
