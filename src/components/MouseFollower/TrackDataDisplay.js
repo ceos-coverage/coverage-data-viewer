@@ -11,7 +11,7 @@ import moment from "moment";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import MapUtil from "utils/MapUtil";
-import styles from "components/MouseFollower/TrackDataDisplay.scss";
+import styles from "components/MouseFollower/DataDisplay.scss";
 
 export class TrackDataDisplay extends Component {
     render() {

@@ -321,6 +321,9 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
             case appStrings.LAYER_VECTOR_TILE_TRACK:
                 mapLayer = this.createVectorTileTrackLayer(layer, fromCache);
                 break;
+            case appStrings.LAYER_VECTOR_TILE_POINTS:
+                mapLayer = this.createVectorTilePointsLayer(layer, fromCache);
+                break;
             case appStrings.LAYER_VECTOR_POINT_TRACK:
                 mapLayer = this.createVectorPointTrackLayer(layer, fromCache);
                 break;
@@ -619,6 +622,9 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                             stroke: new Ol_Style_Stroke({
                                 color: "#FFFFFF",
                                 width: 0.75
+                            }),
+                            fill: new Ol_Style_Fill({
+                                color: "rgba(255,255,255,0.01)"
                             })
                         })
                     ];
@@ -681,6 +687,55 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                         color: "rgba(255,255,255,0.4)"
                     })
                 })
+            });
+        } catch (err) {
+            console.warn("Error in MapWrapperOpenlayers.createVectorTileTrackLayer:", err);
+            return false;
+        }
+    }
+
+    createVectorTilePointsLayer(layer, fromCache = true) {
+        try {
+            let options = layer.get("mappingOptions").toJS();
+            const fill = new Ol_Style_Fill({
+                color: "rgba(255,255,255,0.8)"
+            });
+            const stroke = new Ol_Style_Stroke({
+                color: "rgba(0,0,0,1)",
+                width: 1.25
+            });
+            return new Ol_Layer_VectorTile({
+                declutter: false,
+                transition: 0,
+                source: new Ol_Source_VectorTile({
+                    format: new Ol_Format_MVT(),
+                    projection: "EPSG:4326",
+                    tileGrid: new Ol_TileGrid({
+                        extent: options.extents,
+                        origin: options.tileGrid.origin,
+                        resolutions: options.tileGrid.resolutions,
+                        matrixIds: options.tileGrid.matrixIds,
+                        tileSize: options.tileGrid.tileSize
+                    }),
+                    url: layer.getIn(["updateParameters", "time"])
+                        ? layer
+                              .get("url")
+                              .replace("{time}", moment.utc(this.mapDate).format("YYYY-MM-DD"))
+                        : layer.get("url")
+                }),
+
+                style: (feature, res) => {
+                    const val = parseFloat(feature.getProperties().vessel_hr);
+                    return new Ol_Style({
+                        image: new Ol_Style_Circle({
+                            fill: fill,
+                            stroke: stroke,
+                            radius: Math.max(5, Math.min(13, val))
+                        }),
+                        stroke: stroke,
+                        fill: fill
+                    });
+                }
             });
         } catch (err) {
             console.warn("Error in MapWrapperOpenlayers.createVectorTileTrackLayer:", err);
@@ -979,13 +1034,18 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                         properties: feature.getProperties(),
                         coords: coord
                     });
+
+                    if (mapLayer.get("_layerType") === appStringsCore.LAYER_GROUP_TYPE_DATA) {
+                        return true;
+                    }
                 },
                 {
                     layerFilter: mapLayer => {
                         return (
                             mapLayer.getVisible() &&
-                            mapLayer.get("_layerType") ===
-                                appStrings.LAYER_GROUP_TYPE_DATA_REFERENCE
+                            (mapLayer.get("_layerType") ===
+                                appStrings.LAYER_GROUP_TYPE_DATA_REFERENCE ||
+                                mapLayer.get("_layerType") === appStringsCore.LAYER_GROUP_TYPE_DATA)
                         );
                     }
                 }

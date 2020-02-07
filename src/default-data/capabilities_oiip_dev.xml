@@ -1,0 +1,1915 @@
+<Capabilities xmlns="http://www.opengis.net/wmts/1.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:gml="http://www.opengis.net/gml" xsi:schemaLocation="http://www.opengis.net/wmts/1.0 http://schemas.opengis.net/wmts/1.0/wmtsGetCapabilities_response.xsd" version="1.0.0">
+<ows:ServiceIdentification>
+<ows:Title xml:lang="en">NASA Global Imagery Browse Services for EOSDIS</ows:Title>
+<ows:Abstract xml:lang="en">
+Near real time imagery from multiple NASA instruments
+</ows:Abstract>
+<ows:Keywords>
+<ows:Keyword>World</ows:Keyword>
+<ows:Keyword>Global</ows:Keyword>
+</ows:Keywords>
+<ows:ServiceType>OGC WMTS</ows:ServiceType>
+<ows:ServiceTypeVersion>1.0.0</ows:ServiceTypeVersion>
+<ows:Fees>none</ows:Fees>
+<ows:AccessConstraints>none</ows:AccessConstraints>
+</ows:ServiceIdentification>
+<ows:ServiceProvider>
+<ows:ProviderName>National Aeronautics and Space Administration</ows:ProviderName>
+<ows:ProviderSite xlink:href="http://earthdata.nasa.gov/"/>
+<ows:ServiceContact>
+<ows:IndividualName/>
+<ows:PositionName/>
+<ows:ContactInfo>
+<ows:Address>
+<ows:DeliveryPoint/>
+<ows:City/>
+<ows:AdministrativeArea/>
+<ows:PostalCode/>
+<ows:Country/>
+<ows:ElectronicMailAddress/>
+</ows:Address>
+</ows:ContactInfo>
+</ows:ServiceContact>
+</ows:ServiceProvider>
+<ows:OperationsMetadata>
+<ows:Operation name="GetCapabilities">
+<ows:DCP>
+<ows:HTTP>
+<ows:Get xlink:href="http://skywalker.jpl.nasa.gov/wmts-geo/1.0.0/WMTSCapabilities.xml">
+<ows:Constraint name="GetEncoding">
+<ows:AllowedValues>
+<ows:Value>RESTful</ows:Value>
+</ows:AllowedValues>
+</ows:Constraint>
+</ows:Get>
+<ows:Get xlink:href="http://skywalker.jpl.nasa.gov/wmts-geo/wmts.cgi?">
+<ows:Constraint name="GetEncoding">
+<ows:AllowedValues>
+<ows:Value>KVP</ows:Value>
+</ows:AllowedValues>
+</ows:Constraint>
+</ows:Get>
+</ows:HTTP>
+</ows:DCP>
+</ows:Operation>
+<ows:Operation name="GetTile">
+<ows:DCP>
+<ows:HTTP>
+<ows:Get xlink:href="http://skywalker.jpl.nasa.gov/wmts-geo/">
+<ows:Constraint name="GetEncoding">
+<ows:AllowedValues>
+<ows:Value>RESTful</ows:Value>
+</ows:AllowedValues>
+</ows:Constraint>
+</ows:Get>
+<ows:Get xlink:href="http://skywalker.jpl.nasa.gov/wmts-geo/wmts.cgi?">
+<ows:Constraint name="GetEncoding">
+<ows:AllowedValues>
+<ows:Value>KVP</ows:Value>
+</ows:AllowedValues>
+</ows:Constraint>
+</ows:Get>
+</ows:HTTP>
+</ows:DCP>
+</ows:Operation>
+</ows:OperationsMetadata>
+<Contents>
+<Layer>
+<ows:Title xml:lang="en">airs_CldFrcTot</ows:Title>
+<ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+<ows:LowerCorner>-180 -90</ows:LowerCorner>
+<ows:UpperCorner>180 90</ows:UpperCorner>
+</ows:WGS84BoundingBox>
+<ows:Identifier>airs_CldFrcTot</ows:Identifier>
+<Style isDefault="true">
+<ows:Title xml:lang="en">default</ows:Title>
+<ows:Identifier>default</ows:Identifier>
+</Style>
+<Format>image/lerc</Format>
+<Dimension>
+<ows:Identifier>Time</ows:Identifier>
+<ows:UOM>ISO8601</ows:UOM>
+<Default>2016-07-11T00:00:00Z</Default>
+<Current>false</Current>
+<Value>2016-07-11T00:00:00Z/2016-07-11T00:00:00Z/PT24H</Value>
+</Dimension>
+<TileMatrixSetLink>
+<TileMatrixSet>EPSG4326_500m</TileMatrixSet>
+</TileMatrixSetLink>
+<ResourceURL format="image/lerc" resourceType="tile" template="http://skywalker.jpl.nasa.gov/wmts-geo/airs_CldFrcTot/default/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.lerc"/>
+</Layer>
+<Layer>
+<ows:Title xml:lang="en">airs_CO_total_column</ows:Title>
+<ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+<ows:LowerCorner>-180 -90</ows:LowerCorner>
+<ows:UpperCorner>180 90</ows:UpperCorner>
+</ows:WGS84BoundingBox>
+<ows:Identifier>airs_CO_total_column</ows:Identifier>
+<Style isDefault="true">
+<ows:Title xml:lang="en">default</ows:Title>
+<ows:Identifier>default</ows:Identifier>
+</Style>
+<Format>image/lerc</Format>
+<Dimension>
+<ows:Identifier>Time</ows:Identifier>
+<ows:UOM>ISO8601</ows:UOM>
+<Default>2016-07-11T00:00:00Z</Default>
+<Current>false</Current>
+<Value>2016-07-11T00:00:00Z/2016-07-11T00:00:00Z/PT24H</Value>
+</Dimension>
+<TileMatrixSetLink>
+<TileMatrixSet>EPSG4326_500m</TileMatrixSet>
+</TileMatrixSetLink>
+<ResourceURL format="image/lerc" resourceType="tile" template="http://skywalker.jpl.nasa.gov/wmts-geo/airs_CO_total_column/default/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.lerc"/>
+</Layer>
+<Layer>
+<ows:Title xml:lang="en">AIRS_RelHum_A</ows:Title>
+<ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+<ows:LowerCorner>-180 -90</ows:LowerCorner>
+<ows:UpperCorner>180 90</ows:UpperCorner>
+</ows:WGS84BoundingBox>
+<ows:Identifier>AIRS_RelHum_A</ows:Identifier>
+<Style isDefault="true">
+<ows:Title xml:lang="en">default</ows:Title>
+<ows:Identifier>default</ows:Identifier>
+</Style>
+<Style isDefault="false">
+<ows:Title xml:lang="en">encoded</ows:Title>
+<ows:Identifier>encoded</ows:Identifier>
+</Style>
+<Format>image/png</Format>
+<Dimension>
+<ows:Identifier>Time</ows:Identifier>
+<ows:UOM>ISO8601</ows:UOM>
+<Default>2016-06-28</Default>
+<Current>false</Current>
+<Value>2016-06-27/2016-06-28</Value>
+</Dimension>
+<TileMatrixSetLink>
+<TileMatrixSet>EPSG4326_2km</TileMatrixSet>
+</TileMatrixSetLink>
+<ResourceURL format="image/png" resourceType="tile" template="http://skywalker.jpl.nasa.gov/wmts-geo/AIRS_RelHum_A/default/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.png"/>
+</Layer>
+<Layer>
+<ows:Title xml:lang="en">AIRS_Temperature_A_Surface_Air</ows:Title>
+<ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+<ows:LowerCorner>-180 -90</ows:LowerCorner>
+<ows:UpperCorner>180 90</ows:UpperCorner>
+</ows:WGS84BoundingBox>
+<ows:Identifier>AIRS_Temperature_A_Surface_Air</ows:Identifier>
+<Style isDefault="true">
+<ows:Title xml:lang="en">default</ows:Title>
+<ows:Identifier>default</ows:Identifier>
+</Style>
+<Style isDefault="false">
+<ows:Title xml:lang="en">encoded</ows:Title>
+<ows:Identifier>encoded</ows:Identifier>
+</Style>
+<Format>image/png</Format>
+<Dimension>
+<ows:Identifier>Time</ows:Identifier>
+<ows:UOM>ISO8601</ows:UOM>
+<Default>2016-06-28</Default>
+<Current>false</Current>
+<Value>2016-06-27/2016-06-28</Value>
+</Dimension>
+<TileMatrixSetLink>
+<TileMatrixSet>EPSG4326_2km</TileMatrixSet>
+</TileMatrixSetLink>
+<ResourceURL format="image/png" resourceType="tile" template="http://skywalker.jpl.nasa.gov/wmts-geo/AIRS_Temperature_A_Surface_Air/default/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.png"/>
+</Layer>
+<Layer>
+<ows:Title xml:lang="en">Airs Test</ows:Title>
+<ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+<ows:LowerCorner>-180 -90</ows:LowerCorner>
+<ows:UpperCorner>180 90</ows:UpperCorner>
+</ows:WGS84BoundingBox>
+<ows:Identifier>airs_test</ows:Identifier>
+<Style isDefault="true">
+<ows:Title xml:lang="en">default</ows:Title>
+<ows:Identifier>default</ows:Identifier>
+</Style>
+<Format>image/lerc</Format>
+<Dimension>
+<ows:Identifier>Time</ows:Identifier>
+<ows:UOM>ISO8601</ows:UOM>
+<Default>2016-07-11T00:00:00Z</Default>
+<Current>false</Current>
+<Value>2016-07-11T00:00:00Z/2016-07-11T00:00:00Z/PT24H</Value>
+</Dimension>
+<TileMatrixSetLink>
+<TileMatrixSet>EPSG4326_500m</TileMatrixSet>
+</TileMatrixSetLink>
+<ResourceURL format="image/lerc" resourceType="tile" template="http://skywalker.jpl.nasa.gov/wmts-geo/airs_test/default/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.lerc"/>
+</Layer>
+<Layer>
+<ows:Title xml:lang="en">airs_totH2OStd</ows:Title>
+<ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+<ows:LowerCorner>-180 -90</ows:LowerCorner>
+<ows:UpperCorner>180 90</ows:UpperCorner>
+</ows:WGS84BoundingBox>
+<ows:Identifier>airs_totH2OStd</ows:Identifier>
+<Style isDefault="true">
+<ows:Title xml:lang="en">default</ows:Title>
+<ows:Identifier>default</ows:Identifier>
+</Style>
+<Format>image/lerc</Format>
+<Dimension>
+<ows:Identifier>Time</ows:Identifier>
+<ows:UOM>ISO8601</ows:UOM>
+<Default>2016-07-11T00:00:00Z</Default>
+<Current>false</Current>
+<Value>2016-07-11T00:00:00Z/2016-07-11T00:00:00Z/PT24H</Value>
+</Dimension>
+<TileMatrixSetLink>
+<TileMatrixSet>EPSG4326_500m</TileMatrixSet>
+</TileMatrixSetLink>
+<ResourceURL format="image/lerc" resourceType="tile" template="http://skywalker.jpl.nasa.gov/wmts-geo/airs_totH2OStd/default/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.lerc"/>
+</Layer>
+<Layer>
+<ows:Title xml:lang="en">airs_TSurfAir</ows:Title>
+<ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+<ows:LowerCorner>-180 -90</ows:LowerCorner>
+<ows:UpperCorner>180 90</ows:UpperCorner>
+</ows:WGS84BoundingBox>
+<ows:Identifier>airs_TSurfAir</ows:Identifier>
+<Style isDefault="true">
+<ows:Title xml:lang="en">default</ows:Title>
+<ows:Identifier>default</ows:Identifier>
+</Style>
+<Format>image/lerc</Format>
+<Dimension>
+<ows:Identifier>Time</ows:Identifier>
+<ows:UOM>ISO8601</ows:UOM>
+<Default>2016-07-11T00:00:00Z</Default>
+<Current>false</Current>
+<Value>2016-07-11T00:00:00Z/2016-07-11T00:00:00Z/PT24H</Value>
+</Dimension>
+<TileMatrixSetLink>
+<TileMatrixSet>EPSG4326_500m</TileMatrixSet>
+</TileMatrixSetLink>
+<ResourceURL format="image/lerc" resourceType="tile" template="http://skywalker.jpl.nasa.gov/wmts-geo/airs_TSurfAir/default/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.lerc"/>
+</Layer>
+<Layer>
+<ows:Title xml:lang="en">AIS</ows:Title>
+<ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+<ows:LowerCorner>-180 -90</ows:LowerCorner>
+<ows:UpperCorner>180 90</ows:UpperCorner>
+</ows:WGS84BoundingBox>
+<ows:Identifier>AIS</ows:Identifier>
+<Style isDefault="true">
+<ows:Title xml:lang="en">default</ows:Title>
+<ows:Identifier>default</ows:Identifier>
+</Style>
+<Format>application/vnd.mapbox-vector-tile</Format>
+<Dimension>
+<ows:Identifier>Time</ows:Identifier>
+<ows:UOM>ISO8601</ows:UOM>
+<Default>2012-01-01</Default>
+<Current>false</Current>
+<Value>2012-01-01/2012-01-01/P1D</Value>
+</Dimension>
+<TileMatrixSetLink>
+<TileMatrixSet>EPSG4326_1km</TileMatrixSet>
+</TileMatrixSetLink>
+<ResourceURL format="application/vnd.mapbox-vector-tile" resourceType="tile" template="http://skywalker.jpl.nasa.gov/wmts-geo/AIS/default/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.mvt"/>
+</Layer>
+<Layer>
+<ows:Title xml:lang="en">Radiance (Terrain Corrected, v3, Standard, ASTER)</ows:Title>
+<ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+<ows:LowerCorner>-180 -90</ows:LowerCorner>
+<ows:UpperCorner>180 90</ows:UpperCorner>
+</ows:WGS84BoundingBox>
+<ows:Identifier>ASTER_L1T_Radiance_Terrain_Corrected_v3_STD</ows:Identifier>
+<Style isDefault="true">
+<ows:Title xml:lang="en">default</ows:Title>
+<ows:Identifier>default</ows:Identifier>
+</Style>
+<Format>image/png</Format>
+<Dimension>
+<ows:Identifier>Time</ows:Identifier>
+<ows:UOM>ISO8601</ows:UOM>
+<Default>2016-09-17T14:53:22Z</Default>
+<Current>false</Current>
+<Value>2016-09-17T14:50:25Z/2016-09-17T14:53:22Z</Value>
+</Dimension>
+<TileMatrixSetLink>
+<TileMatrixSet>31.25m</TileMatrixSet>
+</TileMatrixSetLink>
+<ResourceURL format="image/png" resourceType="tile" template="http://skywalker.jpl.nasa.gov/wmts-geo/ASTER_L1T_Radiance_Terrain_Corrected_v3_STD/default/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.png"/>
+</Layer>
+<Layer>
+<ows:Title xml:lang="en">aster_z</ows:Title>
+<ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+<ows:LowerCorner>-180 -90</ows:LowerCorner>
+<ows:UpperCorner>180 90</ows:UpperCorner>
+</ows:WGS84BoundingBox>
+<ows:Identifier>aster_z</ows:Identifier>
+<Style isDefault="true">
+<ows:Title xml:lang="en">default</ows:Title>
+<ows:Identifier>default</ows:Identifier>
+</Style>
+<Format>image/png</Format>
+<Dimension>
+<ows:Identifier>Time</ows:Identifier>
+<ows:UOM>ISO8601</ows:UOM>
+<Default>2016-04-06T00:05:01Z</Default>
+<Current>false</Current>
+<Value>2016-04-06T00:05:01Z/2016-04-06T00:05:01Z</Value>
+</Dimension>
+<TileMatrixSetLink>
+<TileMatrixSet>31.25m</TileMatrixSet>
+</TileMatrixSetLink>
+<ResourceURL format="image/png" resourceType="tile" template="http://skywalker.jpl.nasa.gov/wmts-geo/aster_z/default/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.png"/>
+</Layer>
+<Layer>
+<ows:Title xml:lang="en">aster</ows:Title>
+<ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+<ows:LowerCorner>-180 -90</ows:LowerCorner>
+<ows:UpperCorner>180 90</ows:UpperCorner>
+</ows:WGS84BoundingBox>
+<ows:Identifier>aster</ows:Identifier>
+<Style isDefault="true">
+<ows:Title xml:lang="en">default</ows:Title>
+<ows:Identifier>default</ows:Identifier>
+</Style>
+<Format>image/png</Format>
+<Dimension>
+<ows:Identifier>Time</ows:Identifier>
+<ows:UOM>ISO8601</ows:UOM>
+<Default>2015-10-14</Default>
+<Current>false</Current>
+<Value>2015-10-14/2015-10-14/P1D</Value>
+</Dimension>
+<TileMatrixSetLink>
+<TileMatrixSet>31.25m</TileMatrixSet>
+</TileMatrixSetLink>
+<ResourceURL format="image/png" resourceType="tile" template="http://skywalker.jpl.nasa.gov/wmts-geo/aster/default/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.png"/>
+</Layer>
+<Layer>
+<ows:Title xml:lang="en">ASTGTM2</ows:Title>
+<ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+<ows:LowerCorner>-180 -90</ows:LowerCorner>
+<ows:UpperCorner>180 90</ows:UpperCorner>
+</ows:WGS84BoundingBox>
+<ows:Identifier>ASTGTM2</ows:Identifier>
+<Style isDefault="true">
+<ows:Title xml:lang="en">default</ows:Title>
+<ows:Identifier>default</ows:Identifier>
+</Style>
+<Style isDefault="false">
+<ows:Title xml:lang="en">encoded</ows:Title>
+<ows:Identifier>encoded</ows:Identifier>
+</Style>
+<Format>image/png</Format>
+<TileMatrixSetLink>
+<TileMatrixSet>31.25m</TileMatrixSet>
+</TileMatrixSetLink>
+<ResourceURL format="image/png" resourceType="tile" template="http://skywalker.jpl.nasa.gov/wmts-geo/ASTGTM2/default/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.png"/>
+</Layer>
+<Layer>
+<ows:Title xml:lang="en">BlueMarble</ows:Title>
+<ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+<ows:LowerCorner>-180 -90</ows:LowerCorner>
+<ows:UpperCorner>180 90</ows:UpperCorner>
+</ows:WGS84BoundingBox>
+<ows:Identifier>BlueMarble</ows:Identifier>
+<Style isDefault="true">
+<ows:Title xml:lang="en">default</ows:Title>
+<ows:Identifier>default</ows:Identifier>
+</Style>
+<Format>image/jpeg</Format>
+<TileMatrixSetLink>
+<TileMatrixSet>EPSG4326_500m</TileMatrixSet>
+</TileMatrixSetLink>
+<ResourceURL format="image/jpeg" resourceType="tile" template="http://skywalker.jpl.nasa.gov/wmts-geo/BlueMarble/default/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.jpeg"/>
+</Layer>
+<Layer>
+<ows:Title xml:lang="en">BlueMarble16km</ows:Title>
+<ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+<ows:LowerCorner>-180 -90</ows:LowerCorner>
+<ows:UpperCorner>180 90</ows:UpperCorner>
+</ows:WGS84BoundingBox>
+<ows:Identifier>BlueMarble16km</ows:Identifier>
+<Style isDefault="true">
+<ows:Title xml:lang="en">default</ows:Title>
+<ows:Identifier>default</ows:Identifier>
+</Style>
+<Format>image/jpeg</Format>
+<TileMatrixSetLink>
+<TileMatrixSet>EPSG4326_16km</TileMatrixSet>
+</TileMatrixSetLink>
+<ResourceURL format="image/jpeg" resourceType="tile" template="http://skywalker.jpl.nasa.gov/wmts-geo/BlueMarble16km/default/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.jpeg"/>
+</Layer>
+<Layer>
+<ows:Title xml:lang="en">BlueMarblePNG</ows:Title>
+<ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+<ows:LowerCorner>-180 -90</ows:LowerCorner>
+<ows:UpperCorner>180 90</ows:UpperCorner>
+</ows:WGS84BoundingBox>
+<ows:Identifier>BlueMarblePNG</ows:Identifier>
+<Style isDefault="true">
+<ows:Title xml:lang="en">default</ows:Title>
+<ows:Identifier>default</ows:Identifier>
+</Style>
+<Format>image/png</Format>
+<TileMatrixSetLink>
+<TileMatrixSet>EPSG4326_500m</TileMatrixSet>
+</TileMatrixSetLink>
+<ResourceURL format="image/png" resourceType="tile" template="http://skywalker.jpl.nasa.gov/wmts-geo/BlueMarblePNG/default/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.png"/>
+</Layer>
+<Layer>
+<ows:Title xml:lang="en">CHL_CMEMS_OCEANCOLOUR_GLO_CHL_L4_REP_OBSERVATIONS</ows:Title>
+<ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+<ows:LowerCorner>-180 -90</ows:LowerCorner>
+<ows:UpperCorner>180 90</ows:UpperCorner>
+</ows:WGS84BoundingBox>
+<ows:Identifier>CHL_CMEMS_OCEANCOLOUR_GLO_CHL_L4_REP_OBSERVATIONS</ows:Identifier>
+<Style isDefault="true">
+<ows:Title xml:lang="en">default</ows:Title>
+<ows:Identifier>default</ows:Identifier>
+</Style>
+<Format>image/png</Format>
+<Dimension>
+<ows:Identifier>Time</ows:Identifier>
+<ows:UOM>ISO8601</ows:UOM>
+<Default>2017-01-31</Default>
+<Current>false</Current>
+<Value>2017-01-01/2017-01-31/P1D</Value>
+</Dimension>
+<TileMatrixSetLink>
+<TileMatrixSet>EPSG4326_2km</TileMatrixSet>
+</TileMatrixSetLink>
+<ResourceURL format="image/png" resourceType="tile" template="http://skywalker.jpl.nasa.gov/wmts-geo/CHL_CMEMS_OCEANCOLOUR_GLO_CHL_L4_REP_OBSERVATIONS/default/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.png"/>
+</Layer>
+<Layer>
+<ows:Title xml:lang="en">EarthDayPointsGeo_Square</ows:Title>
+<ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+<ows:LowerCorner>-180 -90</ows:LowerCorner>
+<ows:UpperCorner>180 90</ows:UpperCorner>
+</ows:WGS84BoundingBox>
+<ows:Identifier>EarthDayPointsGeo_Square</ows:Identifier>
+<Style isDefault="true">
+<ows:Title xml:lang="en">default</ows:Title>
+<ows:Identifier>default</ows:Identifier>
+</Style>
+<Format>application/vnd.mapbox-vector-tile</Format>
+<TileMatrixSetLink>
+<TileMatrixSet>EPSG4326_1km</TileMatrixSet>
+</TileMatrixSetLink>
+<ResourceURL format="application/vnd.mapbox-vector-tile" resourceType="tile" template="http://skywalker.jpl.nasa.gov/wmts-geo/EarthDayPointsGeo_Square/default/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.mvt"/>
+</Layer>
+<Layer>
+<ows:Title xml:lang="en">global_agb_carbon_1km</ows:Title>
+<ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+<ows:LowerCorner>-180 -90</ows:LowerCorner>
+<ows:UpperCorner>180 90</ows:UpperCorner>
+</ows:WGS84BoundingBox>
+<ows:Identifier>global_agb_carbon_1km</ows:Identifier>
+<Style isDefault="true">
+<ows:Title xml:lang="en">default</ows:Title>
+<ows:Identifier>default</ows:Identifier>
+</Style>
+<Style isDefault="false">
+<ows:Title xml:lang="en">encoded</ows:Title>
+<ows:Identifier>encoded</ows:Identifier>
+</Style>
+<Format>image/png</Format>
+<Dimension>
+<ows:Identifier>Time</ows:Identifier>
+<ows:UOM>ISO8601</ows:UOM>
+<Default>2005-01-01</Default>
+<Current>false</Current>
+<Value>2005-01-01/2005-01-01/P1Y</Value>
+</Dimension>
+<TileMatrixSetLink>
+<TileMatrixSet>EPSG4326_1km</TileMatrixSet>
+</TileMatrixSetLink>
+<ResourceURL format="image/png" resourceType="tile" template="http://skywalker.jpl.nasa.gov/wmts-geo/global_agb_carbon_1km/default/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.png"/>
+</Layer>
+<Layer>
+<ows:Title xml:lang="en">global_bgb_carbon_1km</ows:Title>
+<ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+<ows:LowerCorner>-180 -90</ows:LowerCorner>
+<ows:UpperCorner>180 90</ows:UpperCorner>
+</ows:WGS84BoundingBox>
+<ows:Identifier>global_bgb_carbon_1km</ows:Identifier>
+<Style isDefault="true">
+<ows:Title xml:lang="en">default</ows:Title>
+<ows:Identifier>default</ows:Identifier>
+</Style>
+<Style isDefault="false">
+<ows:Title xml:lang="en">encoded</ows:Title>
+<ows:Identifier>encoded</ows:Identifier>
+</Style>
+<Format>image/png</Format>
+<Dimension>
+<ows:Identifier>Time</ows:Identifier>
+<ows:UOM>ISO8601</ows:UOM>
+<Default>2005-01-01</Default>
+<Current>false</Current>
+<Value>2005-01-01/2005-01-01/P1Y</Value>
+</Dimension>
+<TileMatrixSetLink>
+<TileMatrixSet>EPSG4326_1km</TileMatrixSet>
+</TileMatrixSetLink>
+<ResourceURL format="image/png" resourceType="tile" template="http://skywalker.jpl.nasa.gov/wmts-geo/global_bgb_carbon_1km/default/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.png"/>
+</Layer>
+<Layer>
+<ows:Title xml:lang="en">humanCflux_encoded2</ows:Title>
+<ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+<ows:LowerCorner>-180 -90</ows:LowerCorner>
+<ows:UpperCorner>180 90</ows:UpperCorner>
+</ows:WGS84BoundingBox>
+<ows:Identifier>humanCflux_encoded2</ows:Identifier>
+<Style isDefault="true">
+<ows:Title xml:lang="en">default</ows:Title>
+<ows:Identifier>default</ows:Identifier>
+</Style>
+<Style isDefault="false">
+<ows:Title xml:lang="en">encoded</ows:Title>
+<ows:Identifier>encoded</ows:Identifier>
+</Style>
+<Format>image/png</Format>
+<Dimension>
+<ows:Identifier>Time</ows:Identifier>
+<ows:UOM>ISO8601</ows:UOM>
+<Default>2011-01-01</Default>
+<Current>false</Current>
+<Value>2005-01-01/2011-01-01/P1Y</Value>
+</Dimension>
+<TileMatrixSetLink>
+<TileMatrixSet>EPSG4326_2km</TileMatrixSet>
+</TileMatrixSetLink>
+<ResourceURL format="image/png" resourceType="tile" template="http://skywalker.jpl.nasa.gov/wmts-geo/humanCflux_encoded2/default/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.png"/>
+</Layer>
+<Layer>
+<ows:Title xml:lang="en">humanCflux_encoded</ows:Title>
+<ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+<ows:LowerCorner>-180 -90</ows:LowerCorner>
+<ows:UpperCorner>180 90</ows:UpperCorner>
+</ows:WGS84BoundingBox>
+<ows:Identifier>humanCflux_encoded</ows:Identifier>
+<Style isDefault="true">
+<ows:Title xml:lang="en">default</ows:Title>
+<ows:Identifier>default</ows:Identifier>
+</Style>
+<Format>image/png</Format>
+<Dimension>
+<ows:Identifier>Time</ows:Identifier>
+<ows:UOM>ISO8601</ows:UOM>
+<Default>2005-01-01</Default>
+<Current>false</Current>
+<Value>2005-01-01/2005-01-01/P1Y</Value>
+</Dimension>
+<TileMatrixSetLink>
+<TileMatrixSet>EPSG4326_2km</TileMatrixSet>
+</TileMatrixSetLink>
+<ResourceURL format="image/png" resourceType="tile" template="http://skywalker.jpl.nasa.gov/wmts-geo/humanCflux_encoded/default/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.png"/>
+</Layer>
+<Layer>
+<ows:Title xml:lang="en">humanCflux_lerc</ows:Title>
+<ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+<ows:LowerCorner>-180 -90</ows:LowerCorner>
+<ows:UpperCorner>180 90</ows:UpperCorner>
+</ows:WGS84BoundingBox>
+<ows:Identifier>humanCflux_lerc</ows:Identifier>
+<Style isDefault="true">
+<ows:Title xml:lang="en">default</ows:Title>
+<ows:Identifier>default</ows:Identifier>
+</Style>
+<Format>image/lerc</Format>
+<Dimension>
+<ows:Identifier>Time</ows:Identifier>
+<ows:UOM>ISO8601</ows:UOM>
+<Default>2011-01-01</Default>
+<Current>false</Current>
+<Value>2005-01-01/2011-01-01/P1Y</Value>
+</Dimension>
+<TileMatrixSetLink>
+<TileMatrixSet>EPSG4326_2km</TileMatrixSet>
+</TileMatrixSetLink>
+<ResourceURL format="image/lerc" resourceType="tile" template="http://skywalker.jpl.nasa.gov/wmts-geo/humanCflux_lerc/default/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.lerc"/>
+</Layer>
+<Layer>
+<ows:Title xml:lang="en">humanCflux_png</ows:Title>
+<ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+<ows:LowerCorner>-180 -90</ows:LowerCorner>
+<ows:UpperCorner>180 90</ows:UpperCorner>
+</ows:WGS84BoundingBox>
+<ows:Identifier>humanCflux_png</ows:Identifier>
+<Style isDefault="true">
+<ows:Title xml:lang="en">default</ows:Title>
+<ows:Identifier>default</ows:Identifier>
+</Style>
+<Format>image/png</Format>
+<Dimension>
+<ows:Identifier>Time</ows:Identifier>
+<ows:UOM>ISO8601</ows:UOM>
+<Default>2005-01-01</Default>
+<Current>false</Current>
+<Value>2005-01-01/2005-01-01/P1Y</Value>
+</Dimension>
+<TileMatrixSetLink>
+<TileMatrixSet>EPSG4326_2km</TileMatrixSet>
+</TileMatrixSetLink>
+<ResourceURL format="image/png" resourceType="tile" template="http://skywalker.jpl.nasa.gov/wmts-geo/humanCflux_png/default/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.png"/>
+</Layer>
+<Layer>
+<ows:Title xml:lang="en">humanCflux_tiff</ows:Title>
+<ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+<ows:LowerCorner>-180 -90</ows:LowerCorner>
+<ows:UpperCorner>180 90</ows:UpperCorner>
+</ows:WGS84BoundingBox>
+<ows:Identifier>humanCflux_tiff</ows:Identifier>
+<Style isDefault="true">
+<ows:Title xml:lang="en">default</ows:Title>
+<ows:Identifier>default</ows:Identifier>
+</Style>
+<Format>image/tiff</Format>
+<Dimension>
+<ows:Identifier>Time</ows:Identifier>
+<ows:UOM>ISO8601</ows:UOM>
+<Default>2011-01-01</Default>
+<Current>false</Current>
+<Value>2005-01-01/2011-01-01/P1Y</Value>
+</Dimension>
+<TileMatrixSetLink>
+<TileMatrixSet>EPSG4326_2km</TileMatrixSet>
+</TileMatrixSetLink>
+<ResourceURL format="image/tiff" resourceType="tile" template="http://skywalker.jpl.nasa.gov/wmts-geo/humanCflux_tiff/default/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.tiff"/>
+</Layer>
+<Layer>
+<ows:Title xml:lang="en">humanCflux</ows:Title>
+<ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+<ows:LowerCorner>-180 -90</ows:LowerCorner>
+<ows:UpperCorner>180 90</ows:UpperCorner>
+</ows:WGS84BoundingBox>
+<ows:Identifier>humanCflux</ows:Identifier>
+<Style isDefault="true">
+<ows:Title xml:lang="en">default</ows:Title>
+<ows:Identifier>default</ows:Identifier>
+</Style>
+<Format>image/tiff</Format>
+<Dimension>
+<ows:Identifier>Time</ows:Identifier>
+<ows:UOM>ISO8601</ows:UOM>
+<Default>2005-01-01T00:00:00Z</Default>
+<Current>false</Current>
+<Value>2005-01-01T00:00:00Z/2005-01-01T00:00:00Z/P1Y</Value>
+</Dimension>
+<TileMatrixSetLink>
+<TileMatrixSet>EPSG4326_2km</TileMatrixSet>
+</TileMatrixSetLink>
+<ResourceURL format="image/tiff" resourceType="tile" template="http://skywalker.jpl.nasa.gov/wmts-geo/humanCflux/default/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.tiff"/>
+</Layer>
+<Layer>
+<ows:Title xml:lang="en">IATTC_CE_LL_BET</ows:Title>
+<ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+<ows:LowerCorner>-180 -90</ows:LowerCorner>
+<ows:UpperCorner>180 90</ows:UpperCorner>
+</ows:WGS84BoundingBox>
+<ows:Identifier>IATTC_CE_LL_BET</ows:Identifier>
+<Style isDefault="true">
+<ows:Title xml:lang="en">default</ows:Title>
+<ows:Identifier>default</ows:Identifier>
+</Style>
+<Format>image/png</Format>
+<Dimension>
+<ows:Identifier>Time</ows:Identifier>
+<ows:UOM>ISO8601</ows:UOM>
+<Default>2018-12-01</Default>
+<Current>false</Current>
+<Value>1954-10-01/1955-05-01/P1M</Value>
+<Value>1955-08-01/1956-05-01/P1M</Value>
+<Value>1956-07-01/2018-12-01/P1M</Value>
+</Dimension>
+<TileMatrixSetLink>
+<TileMatrixSet>EPSG4326_16km</TileMatrixSet>
+</TileMatrixSetLink>
+<ResourceURL format="image/png" resourceType="tile" template="http://skywalker.jpl.nasa.gov/wmts-geo/IATTC_CE_LL_BET/default/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.png"/>
+</Layer>
+<Layer>
+<ows:Title xml:lang="en">IATTC_CE_LL_effort</ows:Title>
+<ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+<ows:LowerCorner>-180 -90</ows:LowerCorner>
+<ows:UpperCorner>180 90</ows:UpperCorner>
+</ows:WGS84BoundingBox>
+<ows:Identifier>IATTC_CE_LL_effort</ows:Identifier>
+<Style isDefault="true">
+<ows:Title xml:lang="en">default</ows:Title>
+<ows:Identifier>default</ows:Identifier>
+</Style>
+<Format>image/png</Format>
+<Dimension>
+<ows:Identifier>Time</ows:Identifier>
+<ows:UOM>ISO8601</ows:UOM>
+<Default>2018-12-01</Default>
+<Current>false</Current>
+<Value>1954-10-01/1955-05-01/P1M</Value>
+<Value>1955-08-01/1956-05-01/P1M</Value>
+<Value>1956-07-01/2018-12-01/P1M</Value>
+</Dimension>
+<TileMatrixSetLink>
+<TileMatrixSet>EPSG4326_16km</TileMatrixSet>
+</TileMatrixSetLink>
+<ResourceURL format="image/png" resourceType="tile" template="http://skywalker.jpl.nasa.gov/wmts-geo/IATTC_CE_LL_effort/default/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.png"/>
+</Layer>
+<Layer>
+<ows:Title xml:lang="en">IATTC_CE_LL_YFT</ows:Title>
+<ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+<ows:LowerCorner>-180 -90</ows:LowerCorner>
+<ows:UpperCorner>180 90</ows:UpperCorner>
+</ows:WGS84BoundingBox>
+<ows:Identifier>IATTC_CE_LL_YFT</ows:Identifier>
+<Style isDefault="true">
+<ows:Title xml:lang="en">default</ows:Title>
+<ows:Identifier>default</ows:Identifier>
+</Style>
+<Format>image/png</Format>
+<Dimension>
+<ows:Identifier>Time</ows:Identifier>
+<ows:UOM>ISO8601</ows:UOM>
+<Default>2018-12-01</Default>
+<Current>false</Current>
+<Value>1954-10-01/1955-05-01/P1M</Value>
+<Value>1955-08-01/1956-05-01/P1M</Value>
+<Value>1956-07-01/2018-12-01/P1M</Value>
+</Dimension>
+<TileMatrixSetLink>
+<TileMatrixSet>EPSG4326_16km</TileMatrixSet>
+</TileMatrixSetLink>
+<ResourceURL format="image/png" resourceType="tile" template="http://skywalker.jpl.nasa.gov/wmts-geo/IATTC_CE_LL_YFT/default/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.png"/>
+</Layer>
+<Layer>
+<ows:Title xml:lang="en">IATTC_CE_PS_BET</ows:Title>
+<ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+<ows:LowerCorner>-180 -90</ows:LowerCorner>
+<ows:UpperCorner>180 90</ows:UpperCorner>
+</ows:WGS84BoundingBox>
+<ows:Identifier>IATTC_CE_PS_BET</ows:Identifier>
+<Style isDefault="true">
+<ows:Title xml:lang="en">default</ows:Title>
+<ows:Identifier>default</ows:Identifier>
+</Style>
+<Format>image/png</Format>
+<Dimension>
+<ows:Identifier>Time</ows:Identifier>
+<ows:UOM>ISO8601</ows:UOM>
+<Default>2018-12-01</Default>
+<Current>false</Current>
+<Value>1958-12-01/2018-12-01/P1M</Value>
+</Dimension>
+<TileMatrixSetLink>
+<TileMatrixSet>EPSG4326_16km</TileMatrixSet>
+</TileMatrixSetLink>
+<ResourceURL format="image/png" resourceType="tile" template="http://skywalker.jpl.nasa.gov/wmts-geo/IATTC_CE_PS_BET/default/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.png"/>
+</Layer>
+<Layer>
+<ows:Title xml:lang="en">IATTC_CE_PS_effort</ows:Title>
+<ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+<ows:LowerCorner>-180 -90</ows:LowerCorner>
+<ows:UpperCorner>180 90</ows:UpperCorner>
+</ows:WGS84BoundingBox>
+<ows:Identifier>IATTC_CE_PS_effort</ows:Identifier>
+<Style isDefault="true">
+<ows:Title xml:lang="en">default</ows:Title>
+<ows:Identifier>default</ows:Identifier>
+</Style>
+<Format>image/png</Format>
+<Dimension>
+<ows:Identifier>Time</ows:Identifier>
+<ows:UOM>ISO8601</ows:UOM>
+<Default>2018-12-01</Default>
+<Current>false</Current>
+<Value>1958-12-01/2018-12-01/P1M</Value>
+</Dimension>
+<TileMatrixSetLink>
+<TileMatrixSet>EPSG4326_16km</TileMatrixSet>
+</TileMatrixSetLink>
+<ResourceURL format="image/png" resourceType="tile" template="http://skywalker.jpl.nasa.gov/wmts-geo/IATTC_CE_PS_effort/default/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.png"/>
+</Layer>
+<Layer>
+<ows:Title xml:lang="en">IATTC_CE_PS_YFT</ows:Title>
+<ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+<ows:LowerCorner>-180 -90</ows:LowerCorner>
+<ows:UpperCorner>180 90</ows:UpperCorner>
+</ows:WGS84BoundingBox>
+<ows:Identifier>IATTC_CE_PS_YFT</ows:Identifier>
+<Style isDefault="true">
+<ows:Title xml:lang="en">default</ows:Title>
+<ows:Identifier>default</ows:Identifier>
+</Style>
+<Format>image/png</Format>
+<Dimension>
+<ows:Identifier>Time</ows:Identifier>
+<ows:UOM>ISO8601</ows:UOM>
+<Default>2018-12-01</Default>
+<Current>false</Current>
+<Value>1958-12-01/2018-12-01/P1M</Value>
+</Dimension>
+<TileMatrixSetLink>
+<TileMatrixSet>EPSG4326_16km</TileMatrixSet>
+</TileMatrixSetLink>
+<ResourceURL format="image/png" resourceType="tile" template="http://skywalker.jpl.nasa.gov/wmts-geo/IATTC_CE_PS_YFT/default/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.png"/>
+</Layer>
+<Layer>
+<ows:Title xml:lang="en">
+jpl_ourocean_l4___sst___36000_x_18000___daynight Title µm
+</ows:Title>
+<ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+<ows:LowerCorner>-180 -90</ows:LowerCorner>
+<ows:UpperCorner>180 90</ows:UpperCorner>
+</ows:WGS84BoundingBox>
+<ows:Identifier>jpl_ourocean_l4___sst___36000_x_18000___daynight</ows:Identifier>
+<Style isDefault="true">
+<ows:Title xml:lang="en">default</ows:Title>
+<ows:Identifier>default</ows:Identifier>
+</Style>
+<Format>image/png</Format>
+<Dimension>
+<ows:Identifier>Time</ows:Identifier>
+<ows:UOM>ISO8601</ows:UOM>
+<Default>2016-05-09</Default>
+<Current>false</Current>
+<Value>2016-05-09/2016-05-09/P1D</Value>
+</Dimension>
+<TileMatrixSetLink>
+<TileMatrixSet>EPSG4326_1km</TileMatrixSet>
+</TileMatrixSetLink>
+<ResourceURL format="image/png" resourceType="tile" template="http://skywalker.jpl.nasa.gov/wmts-geo/jpl_ourocean_l4___sst___36000_x_18000___daynight/default/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.png"/>
+</Layer>
+<Layer>
+<ows:Title xml:lang="en">
+MISR_Cloud_Stereo_Height_Histogram_Bin_1.5-2.0km_Monthly
+</ows:Title>
+<ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+<ows:LowerCorner>-180 -90</ows:LowerCorner>
+<ows:UpperCorner>180 90</ows:UpperCorner>
+</ows:WGS84BoundingBox>
+<ows:Identifier>
+MISR_Cloud_Stereo_Height_Histogram_Bin_1.5-2.0km_Monthly
+</ows:Identifier>
+<Style isDefault="true">
+<ows:Title xml:lang="en">default</ows:Title>
+<ows:Identifier>default</ows:Identifier>
+</Style>
+<Format>image/jpeg</Format>
+<Dimension>
+<ows:Identifier>Time</ows:Identifier>
+<ows:UOM>ISO8601</ows:UOM>
+<Default>2017-01-01</Default>
+<Current>false</Current>
+<Value>2017-01-01/2017-01-01/P1M</Value>
+</Dimension>
+<TileMatrixSetLink>
+<TileMatrixSet>EPSG4326_500m</TileMatrixSet>
+</TileMatrixSetLink>
+<ResourceURL format="image/jpeg" resourceType="tile" template="http://skywalker.jpl.nasa.gov/wmts-geo/MISR_Cloud_Stereo_Height_Histogram_Bin_1.5-2.0km_Monthly/default/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.jpeg"/>
+</Layer>
+<Layer>
+<ows:Title xml:lang="en">modis_fires_10day_geographic</ows:Title>
+<ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+<ows:LowerCorner>-180 -90</ows:LowerCorner>
+<ows:UpperCorner>180 90</ows:UpperCorner>
+</ows:WGS84BoundingBox>
+<ows:Identifier>modis_fires_10day_geographic</ows:Identifier>
+<Style isDefault="true">
+<ows:Title xml:lang="en">default</ows:Title>
+<ows:Identifier>default</ows:Identifier>
+</Style>
+<Format>application/vnd.mapbox-vector-tile</Format>
+<TileMatrixSetLink>
+<TileMatrixSet>EPSG4326_250m</TileMatrixSet>
+</TileMatrixSetLink>
+<ResourceURL format="application/vnd.mapbox-vector-tile" resourceType="tile" template="http://skywalker.jpl.nasa.gov/wmts-geo/modis_fires_10day_geographic/default/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.mvt"/>
+</Layer>
+<Layer>
+<ows:Title xml:lang="en">MOR5WVIRLLNT</ows:Title>
+<ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+<ows:LowerCorner>-180 -90</ows:LowerCorner>
+<ows:UpperCorner>180 90</ows:UpperCorner>
+</ows:WGS84BoundingBox>
+<ows:Identifier>MOR5WVIRLLNT</ows:Identifier>
+<Style isDefault="true">
+<ows:Title xml:lang="en">default</ows:Title>
+<ows:Identifier>default</ows:Identifier>
+</Style>
+<Format>image/png</Format>
+<TileMatrixSetLink>
+<TileMatrixSet>EPSG4326_2km</TileMatrixSet>
+</TileMatrixSetLink>
+<ResourceURL format="image/png" resourceType="tile" template="http://skywalker.jpl.nasa.gov/wmts-geo/MOR5WVIRLLNT/default/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.png"/>
+</Layer>
+<Layer>
+<ows:Title xml:lang="en">MOR5WVIRLLNT</ows:Title>
+<ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+<ows:LowerCorner>-180 -90</ows:LowerCorner>
+<ows:UpperCorner>180 90</ows:UpperCorner>
+</ows:WGS84BoundingBox>
+<ows:Identifier>MOR5WVIRLLNT</ows:Identifier>
+<Style isDefault="true">
+<ows:Title xml:lang="en">default</ows:Title>
+<ows:Identifier>default</ows:Identifier>
+</Style>
+<Format>image/png</Format>
+<Dimension>
+<ows:Identifier>Time</ows:Identifier>
+<ows:UOM>ISO8601</ows:UOM>
+<Default>2017-01-01</Default>
+<Current>false</Current>
+<Value>1998-12-01/2001-11-30/P1M</Value>
+<Value>2003-12-01/2006-11-30/P1M</Value>
+<Value>2013-10-01/2015-11-30/P1M</Value>
+<Value>1948-01-01/1948-03-01/P1M</Value>
+<Value>2000-03-03/2000-03-03/P1M</Value>
+<Value>2008-03-01/2008-03-01/P1M</Value>
+<Value>2009-01-01/2009-01-01/P1M</Value>
+<Value>2012-01-01/2012-04-01/P1M</Value>
+<Value>2013-01-01/2013-01-01/P1M</Value>
+<Value>2014-01-01/2014-01-01/P1M</Value>
+<Value>2014-01-05/2014-01-05/P1M</Value>
+<Value>2014-01-09/2014-01-09/P1M</Value>
+<Value>2014-01-15/2014-01-15/P1M</Value>
+<Value>2014-01-23/2014-01-23/P1M</Value>
+<Value>2014-01-30/2014-01-30/P1M</Value>
+<Value>2014-02-01/2014-03-01/P1M</Value>
+<Value>2014-03-21/2014-03-21/P1M</Value>
+<Value>2014-04-01/2014-06-01/P1M</Value>
+<Value>2015-10-01/2015-11-01/P1M</Value>
+<Value>2015-11-05/2015-11-05/P1M</Value>
+<Value>2017-01-01/2017-01-01/P1M</Value>
+<Value>1948-01-01/1948-03-01/P1M</Value>
+<Value>2000-03-03/2000-03-03/P1M</Value>
+<Value>2008-03-01/2009-01-01/P1M</Value>
+<Value>2017-01-01/2017-01-01/P1M</Value>
+</Dimension>
+<TileMatrixSetLink>
+<TileMatrixSet>EPSG4326_2km</TileMatrixSet>
+</TileMatrixSetLink>
+<ResourceURL format="image/png" resourceType="tile" template="http://skywalker.jpl.nasa.gov/wmts-geo/MOR5WVIRLLNT/default/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.png"/>
+</Layer>
+<Layer>
+<ows:Title xml:lang="en">MODIS_Terra_CorrectedReflectance_TrueColor</ows:Title>
+<ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+<ows:LowerCorner>-180 -90</ows:LowerCorner>
+<ows:UpperCorner>180 90</ows:UpperCorner>
+</ows:WGS84BoundingBox>
+<ows:Identifier>MODIS_Terra_CorrectedReflectance_TrueColor</ows:Identifier>
+<Style isDefault="true">
+<ows:Title xml:lang="en">default</ows:Title>
+<ows:Identifier>default</ows:Identifier>
+</Style>
+<Format>image/jpeg</Format>
+<Dimension>
+<ows:Identifier>Time</ows:Identifier>
+<ows:UOM>ISO8601</ows:UOM>
+<Default>2015-11-02</Default>
+<Current>false</Current>
+<Value>2013-01-01/2014-03-28/P10D</Value>
+<Value>2014-04-01/2015-11-02/P2D</Value>
+<Value>1948-01-01/2014-04-01/P3D</Value>
+<Value>2014-04-01/2014-04-02/P4D</Value>
+<Value>1948-01-01/2014-04-02/P5D</Value>
+<Value>2014-04-02/2015-11-02/P6D</Value>
+<Value>2014-04-02/2015-11-02/P1D</Value>
+<Value>1948-01-01/1948-01-01/P1D</Value>
+<Value>2015-11-02/2015-11-02/P1D</Value>
+<Value>1948-01-01/1948-01-01/P3D</Value>
+<Value>2015-11-02/2015-11-02/P3D</Value>
+<Value>1948-01-01/1948-01-01/P1D</Value>
+<Value>2015-11-02/2015-11-02/P1D</Value>
+<Value>2014-04-02/2015-11-05/P1D</Value>
+<Value>2003-01-30/2003-03-01/P1D</Value>
+<Value>1948-01-01/2015-11-02/P5D</Value>
+<Value>2015-10-26/2015-11-02/P7D</Value>
+</Dimension>
+<TileMatrixSetLink>
+<TileMatrixSet>EPSG4326_250m</TileMatrixSet>
+</TileMatrixSetLink>
+<ResourceURL format="image/jpeg" resourceType="tile" template="http://skywalker.jpl.nasa.gov/wmts-geo/MODIS_Terra_CorrectedReflectance_TrueColor/default/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.jpeg"/>
+</Layer>
+<Layer>
+<ows:Title xml:lang="en">MYD_CHR_LL_DY</ows:Title>
+<ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+<ows:LowerCorner>-180 -90</ows:LowerCorner>
+<ows:UpperCorner>180 90</ows:UpperCorner>
+</ows:WGS84BoundingBox>
+<ows:Identifier>MYD_CHR_LL_DY</ows:Identifier>
+<ows:Metadata xlink:type="simple" xlink:role="http://earthdata.nasa.gov/gibs/metadata-type/colormap" xlink:href="http://skywalker.jpl.nasa.gov/colormaps/MODIS_Aqua_Chlorophyll_A.xml" xlink:title="GIBS Color Map: Data - RGB Mapping"/>
+<Style isDefault="true">
+<ows:Title xml:lang="en">default</ows:Title>
+<ows:Identifier>default</ows:Identifier>
+</Style>
+<Format>image/png</Format>
+<Dimension>
+<ows:Identifier>Time</ows:Identifier>
+<ows:UOM>ISO8601</ows:UOM>
+<Default>2009-01-04T01:30:00Z</Default>
+<Current>false</Current>
+<Value>2009-01-04T01:30:00Z/2009-01-04T01:30:00Z/PT5M</Value>
+</Dimension>
+<TileMatrixSetLink>
+<TileMatrixSet>EPSG4326_1km</TileMatrixSet>
+</TileMatrixSetLink>
+<ResourceURL format="image/png" resourceType="tile" template="http://skywalker.jpl.nasa.gov/wmts-geo/MYD_CHR_LL_DY/default/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.png"/>
+</Layer>
+<Layer>
+<ows:Title xml:lang="en">
+Land Surface Reflectance (True Color, v5, Near Real-Time, MODIS, Aqua)
+</ows:Title>
+<ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+<ows:LowerCorner>-180 -90</ows:LowerCorner>
+<ows:UpperCorner>180 90</ows:UpperCorner>
+</ows:WGS84BoundingBox>
+<ows:Identifier>MODIS_Aqua_SurfaceReflectance_Bands143_v5_NRT</ows:Identifier>
+<Style isDefault="true">
+<ows:Title xml:lang="en">default</ows:Title>
+<ows:Identifier>default</ows:Identifier>
+</Style>
+<Format>image/jpeg</Format>
+<Dimension>
+<ows:Identifier>Time</ows:Identifier>
+<ows:UOM>ISO8601</ows:UOM>
+<Default>2016-12-25</Default>
+<Current>false</Current>
+<Value>2016-12-27/2016-12-27/P1D</Value>
+<Value>2016-12-28/2016-12-28/P1D</Value>
+<Value>2016-01-01/2016-12-28/P1D</Value>
+<Value>2016-01-20/2016-12-25/P1D</Value>
+</Dimension>
+<TileMatrixSetLink>
+<TileMatrixSet>EPSG4326_500m</TileMatrixSet>
+</TileMatrixSetLink>
+<ResourceURL format="image/jpeg" resourceType="tile" template="http://skywalker.jpl.nasa.gov/wmts-geo/MODIS_Aqua_SurfaceReflectance_Bands143_v5_NRT/default/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.jpeg"/>
+</Layer>
+<Layer>
+<ows:Title xml:lang="en">OBPG_encoded</ows:Title>
+<ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+<ows:LowerCorner>-180 -90</ows:LowerCorner>
+<ows:UpperCorner>180 90</ows:UpperCorner>
+</ows:WGS84BoundingBox>
+<ows:Identifier>OBPG_encoded</ows:Identifier>
+<Style isDefault="true">
+<ows:Title xml:lang="en">default</ows:Title>
+<ows:Identifier>default</ows:Identifier>
+</Style>
+<Style isDefault="false">
+<ows:Title xml:lang="en">encoded</ows:Title>
+<ows:Identifier>encoded</ows:Identifier>
+</Style>
+<Format>image/png</Format>
+<Dimension>
+<ows:Identifier>Time</ows:Identifier>
+<ows:UOM>ISO8601</ows:UOM>
+<Default>2016-06-23T00:00:00Z</Default>
+<Current>false</Current>
+<Value>2016-06-23T00:00:00Z/2016-06-23T00:00:00Z</Value>
+</Dimension>
+<TileMatrixSetLink>
+<TileMatrixSet>EPSG4326_1km</TileMatrixSet>
+</TileMatrixSetLink>
+<ResourceURL format="image/png" resourceType="tile" template="http://skywalker.jpl.nasa.gov/wmts-geo/OBPG_encoded/default/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.png"/>
+</Layer>
+<Layer>
+<ows:Title xml:lang="en">OBPG_LERC</ows:Title>
+<ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+<ows:LowerCorner>-180 -90</ows:LowerCorner>
+<ows:UpperCorner>180 90</ows:UpperCorner>
+</ows:WGS84BoundingBox>
+<ows:Identifier>OBPG_LERC</ows:Identifier>
+<Style isDefault="true">
+<ows:Title xml:lang="en">default</ows:Title>
+<ows:Identifier>default</ows:Identifier>
+</Style>
+<Format>image/lerc</Format>
+<Dimension>
+<ows:Identifier>Time</ows:Identifier>
+<ows:UOM>ISO8601</ows:UOM>
+<Default>2016-06-01</Default>
+<Current>false</Current>
+<Value>2016-06-01/2016-06-01/P1D</Value>
+</Dimension>
+<TileMatrixSetLink>
+<TileMatrixSet>EPSG4326_1km</TileMatrixSet>
+</TileMatrixSetLink>
+<ResourceURL format="image/lerc" resourceType="tile" template="http://skywalker.jpl.nasa.gov/wmts-geo/OBPG_LERC/default/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.lerc"/>
+</Layer>
+<Layer>
+<ows:Title xml:lang="en">OBPG_rgba</ows:Title>
+<ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+<ows:LowerCorner>-180 -90</ows:LowerCorner>
+<ows:UpperCorner>180 90</ows:UpperCorner>
+</ows:WGS84BoundingBox>
+<ows:Identifier>OBPG_rgba</ows:Identifier>
+<Style isDefault="true">
+<ows:Title xml:lang="en">default</ows:Title>
+<ows:Identifier>default</ows:Identifier>
+</Style>
+<Format>image/png</Format>
+<Dimension>
+<ows:Identifier>Time</ows:Identifier>
+<ows:UOM>ISO8601</ows:UOM>
+<Default>2015-09-10T01:25:00Z</Default>
+<Current>false</Current>
+<Value>2015-09-10T01:25:00Z/2015-09-10T01:25:00Z/PT24H</Value>
+</Dimension>
+<TileMatrixSetLink>
+<TileMatrixSet>EPSG4326_1km</TileMatrixSet>
+</TileMatrixSetLink>
+<ResourceURL format="image/png" resourceType="tile" template="http://skywalker.jpl.nasa.gov/wmts-geo/OBPG_rgba/default/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.png"/>
+</Layer>
+<Layer>
+<ows:Title xml:lang="en">OBPG_subdaily</ows:Title>
+<ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+<ows:LowerCorner>-180 -90</ows:LowerCorner>
+<ows:UpperCorner>180 90</ows:UpperCorner>
+</ows:WGS84BoundingBox>
+<ows:Identifier>OBPG_subdaily</ows:Identifier>
+<ows:Metadata xlink:type="simple" xlink:role="http://earthdata.nasa.gov/gibs/metadata-type/colormap" xlink:href="http://skywalker.jpl.nasa.gov/colormaps/MODIS_Terra_Chlorophyll_A_v6.xml" xlink:title="GIBS Color Map: Data - RGB Mapping"/>
+<Style isDefault="true">
+<ows:Title xml:lang="en">default</ows:Title>
+<ows:Identifier>default</ows:Identifier>
+</Style>
+<Format>image/png</Format>
+<Dimension>
+<ows:Identifier>Time</ows:Identifier>
+<ows:UOM>ISO8601</ows:UOM>
+<Default>2015-09-10T01:25:00Z</Default>
+<Current>false</Current>
+<Value>2015-01-01T11:22:33Z/2015-12-31T23:55:00Z/PT330S</Value>
+<Value>2000-01-01T00:00:00Z/2015-09-10T01:25:00Z/PT330S</Value>
+<Value>2014-10-23T01:25:00Z/2015-09-10T01:25:00Z/PT5M</Value>
+<Value>2014-10-23T01:25:00Z/2014-10-23T01:25:00Z/PT300S</Value>
+<Value>2015-09-10T01:25:00Z/2015-09-10T01:25:00Z/PT300S</Value>
+<Value>2014-10-23T01:25:00Z/2015-09-10T01:25:00Z/PT5M</Value>
+<Value>2014-10-23T01:25:00Z/2014-10-23T01:25:00Z/PT24H</Value>
+<Value>2015-09-10T01:25:00Z/2015-09-10T01:25:00Z/PT24H</Value>
+</Dimension>
+<TileMatrixSetLink>
+<TileMatrixSet>EPSG4326_1km</TileMatrixSet>
+</TileMatrixSetLink>
+<ResourceURL format="image/png" resourceType="tile" template="http://skywalker.jpl.nasa.gov/wmts-geo/OBPG_subdaily/default/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.png"/>
+</Layer>
+<Layer>
+<ows:Title xml:lang="en">OBPG_W10N</ows:Title>
+<ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+<ows:LowerCorner>-180 -90</ows:LowerCorner>
+<ows:UpperCorner>180 90</ows:UpperCorner>
+</ows:WGS84BoundingBox>
+<ows:Identifier>OBPG_W10N</ows:Identifier>
+<ows:Metadata xlink:type="simple" xlink:role="http://earthdata.nasa.gov/gibs/metadata-type/colormap" xlink:href="http://skywalker.jpl.nasa.gov/colormaps/MODIS_Terra_Chlorophyll_A_v6.xml" xlink:title="GIBS Color Map: Data - RGB Mapping"/>
+<Style isDefault="true">
+<ows:Title xml:lang="en">default</ows:Title>
+<ows:Identifier>default</ows:Identifier>
+</Style>
+<Format>image/png</Format>
+<Dimension>
+<ows:Identifier>Time</ows:Identifier>
+<ows:UOM>ISO8601</ows:UOM>
+<Default>2016-06-05T00:30:00Z</Default>
+<Current>false</Current>
+<Value>2016-06-05T00:10:00Z/2016-06-05T00:30:00Z</Value>
+</Dimension>
+<TileMatrixSetLink>
+<TileMatrixSet>EPSG4326_1km</TileMatrixSet>
+</TileMatrixSetLink>
+<ResourceURL format="image/png" resourceType="tile" template="http://skywalker.jpl.nasa.gov/wmts-geo/OBPG_W10N/default/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.png"/>
+</Layer>
+<Layer>
+<ows:Title xml:lang="en">OBPG_z</ows:Title>
+<ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+<ows:LowerCorner>-180 -90</ows:LowerCorner>
+<ows:UpperCorner>180 90</ows:UpperCorner>
+</ows:WGS84BoundingBox>
+<ows:Identifier>OBPG_z</ows:Identifier>
+<ows:Metadata xlink:type="simple" xlink:role="http://earthdata.nasa.gov/gibs/metadata-type/colormap" xlink:href="http://skywalker.jpl.nasa.gov/colormaps/MODIS_Terra_Chlorophyll_A.xml" xlink:title="GIBS Color Map: Data - RGB Mapping"/>
+<Style isDefault="true">
+<ows:Title xml:lang="en">default</ows:Title>
+<ows:Identifier>default</ows:Identifier>
+</Style>
+<Format>image/png</Format>
+<Dimension>
+<ows:Identifier>Time</ows:Identifier>
+<ows:UOM>ISO8601</ows:UOM>
+<Default>2016-10-21T00:35:00Z</Default>
+<Current>false</Current>
+<Value>2015-11-02T00:00:00Z/2016-10-21T00:35:00Z</Value>
+<Value>2015-11-02T00:00:00Z/2016-10-21T00:35:00Z/PT300S</Value>
+<Value>2015-11-02T00:00:00Z/2016-10-21T00:35:00Z</Value>
+</Dimension>
+<TileMatrixSetLink>
+<TileMatrixSet>EPSG4326_1km</TileMatrixSet>
+</TileMatrixSetLink>
+<ResourceURL format="image/png" resourceType="tile" template="http://skywalker.jpl.nasa.gov/wmts-geo/OBPG_z/default/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.png"/>
+</Layer>
+<Layer>
+<ows:Title xml:lang="en">OBPG</ows:Title>
+<ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+<ows:LowerCorner>-180 -90</ows:LowerCorner>
+<ows:UpperCorner>180 90</ows:UpperCorner>
+</ows:WGS84BoundingBox>
+<ows:Identifier>OBPG</ows:Identifier>
+<Style isDefault="true">
+<ows:Title xml:lang="en">default</ows:Title>
+<ows:Identifier>default</ows:Identifier>
+</Style>
+<Format>image/png</Format>
+<Dimension>
+<ows:Identifier>Time</ows:Identifier>
+<ows:UOM>ISO8601</ows:UOM>
+<Default>2016-06-01</Default>
+<Current>false</Current>
+<Value>2016-06-01/2016-06-01/P1D</Value>
+</Dimension>
+<TileMatrixSetLink>
+<TileMatrixSet>EPSG4326_1km</TileMatrixSet>
+</TileMatrixSetLink>
+<ResourceURL format="image/png" resourceType="tile" template="http://skywalker.jpl.nasa.gov/wmts-geo/OBPG/default/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.png"/>
+</Layer>
+<Layer>
+<ows:Title xml:lang="en">
+SSH_CMEMS_AVISO_SEALEVEL_GLO_PHY_L4_REP_OBSERVATIONS_adt
+</ows:Title>
+<ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+<ows:LowerCorner>-180 -90</ows:LowerCorner>
+<ows:UpperCorner>180 90</ows:UpperCorner>
+</ows:WGS84BoundingBox>
+<ows:Identifier>
+SSH_CMEMS_AVISO_SEALEVEL_GLO_PHY_L4_REP_OBSERVATIONS_adt
+</ows:Identifier>
+<Style isDefault="true">
+<ows:Title xml:lang="en">default</ows:Title>
+<ows:Identifier>default</ows:Identifier>
+</Style>
+<Format>image/png</Format>
+<Dimension>
+<ows:Identifier>Time</ows:Identifier>
+<ows:UOM>ISO8601</ows:UOM>
+<Default>2017-01-01</Default>
+<Current>false</Current>
+<Value>2017-01-01/2017-01-01/P1D</Value>
+</Dimension>
+<TileMatrixSetLink>
+<TileMatrixSet>EPSG4326_16km</TileMatrixSet>
+</TileMatrixSetLink>
+<ResourceURL format="image/png" resourceType="tile" template="http://skywalker.jpl.nasa.gov/wmts-geo/SSH_CMEMS_AVISO_SEALEVEL_GLO_PHY_L4_REP_OBSERVATIONS_adt/default/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.png"/>
+</Layer>
+<Layer>
+<ows:Title xml:lang="en">
+SSH_CMEMS_AVISO_SEALEVEL_GLO_PHY_L4_REP_OBSERVATIONS_sla
+</ows:Title>
+<ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+<ows:LowerCorner>-180 -90</ows:LowerCorner>
+<ows:UpperCorner>180 90</ows:UpperCorner>
+</ows:WGS84BoundingBox>
+<ows:Identifier>
+SSH_CMEMS_AVISO_SEALEVEL_GLO_PHY_L4_REP_OBSERVATIONS_sla
+</ows:Identifier>
+<Style isDefault="true">
+<ows:Title xml:lang="en">default</ows:Title>
+<ows:Identifier>default</ows:Identifier>
+</Style>
+<Format>image/png</Format>
+<Dimension>
+<ows:Identifier>Time</ows:Identifier>
+<ows:UOM>ISO8601</ows:UOM>
+<Default>2017-01-01</Default>
+<Current>false</Current>
+<Value>2017-01-01/2017-01-01/P1D</Value>
+</Dimension>
+<TileMatrixSetLink>
+<TileMatrixSet>EPSG4326_16km</TileMatrixSet>
+</TileMatrixSetLink>
+<ResourceURL format="image/png" resourceType="tile" template="http://skywalker.jpl.nasa.gov/wmts-geo/SSH_CMEMS_AVISO_SEALEVEL_GLO_PHY_L4_REP_OBSERVATIONS_sla/default/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.png"/>
+</Layer>
+<Layer>
+<ows:Title xml:lang="en">sst_encoded</ows:Title>
+<ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+<ows:LowerCorner>-180 -90</ows:LowerCorner>
+<ows:UpperCorner>180 90</ows:UpperCorner>
+</ows:WGS84BoundingBox>
+<ows:Identifier>sst_encoded</ows:Identifier>
+<Style isDefault="true">
+<ows:Title xml:lang="en">default</ows:Title>
+<ows:Identifier>default</ows:Identifier>
+</Style>
+<Style isDefault="false">
+<ows:Title xml:lang="en">encoded</ows:Title>
+<ows:Identifier>encoded</ows:Identifier>
+</Style>
+<Format>image/png</Format>
+<Dimension>
+<ows:Identifier>Time</ows:Identifier>
+<ows:UOM>ISO8601</ows:UOM>
+<Default>2016-06-30</Default>
+<Current>false</Current>
+<Value>2016-06-28/2016-06-30</Value>
+</Dimension>
+<TileMatrixSetLink>
+<TileMatrixSet>EPSG4326_1km</TileMatrixSet>
+</TileMatrixSetLink>
+<ResourceURL format="image/png" resourceType="tile" template="http://skywalker.jpl.nasa.gov/wmts-geo/sst_encoded/default/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.png"/>
+</Layer>
+<Layer>
+<ows:Title xml:lang="en">sst_lerc</ows:Title>
+<ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+<ows:LowerCorner>-180 -90</ows:LowerCorner>
+<ows:UpperCorner>180 90</ows:UpperCorner>
+</ows:WGS84BoundingBox>
+<ows:Identifier>sst_lerc</ows:Identifier>
+<Style isDefault="true">
+<ows:Title xml:lang="en">default</ows:Title>
+<ows:Identifier>default</ows:Identifier>
+</Style>
+<Format>image/lerc</Format>
+<Dimension>
+<ows:Identifier>Time</ows:Identifier>
+<ows:UOM>ISO8601</ows:UOM>
+<Default>2016-06-30</Default>
+<Current>false</Current>
+<Value>2016-01-01/2016-01-02/P1D</Value>
+<Value>2016-06-28/2016-06-30/P1D</Value>
+</Dimension>
+<TileMatrixSetLink>
+<TileMatrixSet>EPSG4326_1km</TileMatrixSet>
+</TileMatrixSetLink>
+<ResourceURL format="image/lerc" resourceType="tile" template="http://skywalker.jpl.nasa.gov/wmts-geo/sst_lerc/default/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.lerc"/>
+</Layer>
+<Layer>
+<ows:Title xml:lang="en">sst_tiff</ows:Title>
+<ows:WGS84BoundingBox crs="urn:ogc:def:crs:OGC:2:84">
+<ows:LowerCorner>-180 -90</ows:LowerCorner>
+<ows:UpperCorner>180 90</ows:UpperCorner>
+</ows:WGS84BoundingBox>
+<ows:Identifier>sst_tiff</ows:Identifier>
+<Style isDefault="true">
+<ows:Title xml:lang="en">default</ows:Title>
+<ows:Identifier>default</ows:Identifier>
+</Style>
+<Format>image/tiff</Format>
+<Dimension>
+<ows:Identifier>Time</ows:Identifier>
+<ows:UOM>ISO8601</ows:UOM>
+<Default>2016-06-30</Default>
+<Current>false</Current>
+<Value>2016-06-28/2016-06-30/P1D</Value>
+</Dimension>
+<TileMatrixSetLink>
+<TileMatrixSet>EPSG4326_1km</TileMatrixSet>
+</TileMatrixSetLink>
+<ResourceURL format="image/tiff" resourceType="tile" template="http://skywalker.jpl.nasa.gov/wmts-geo/sst_tiff/default/{Time}/{TileMatrixSet}/{TileMatrix}/{TileRow}/{TileCol}.tiff"/>
+</Layer>
+<TileMatrixSet>
+<ows:Identifier>EPSG4326_16km</ows:Identifier>
+<ows:SupportedCRS>urn:ogc:def:crs:OGC:1.3:CRS84</ows:SupportedCRS>
+<TileMatrix>
+<ows:Identifier>0</ows:Identifier>
+<ScaleDenominator>223632905.6114871</ScaleDenominator>
+<TopLeftCorner>-180 90</TopLeftCorner>
+<TileWidth>512</TileWidth>
+<TileHeight>512</TileHeight>
+<MatrixWidth>2</MatrixWidth>
+<MatrixHeight>1</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>1</ows:Identifier>
+<ScaleDenominator>111816452.8057436</ScaleDenominator>
+<TopLeftCorner>-180 90</TopLeftCorner>
+<TileWidth>512</TileWidth>
+<TileHeight>512</TileHeight>
+<MatrixWidth>3</MatrixWidth>
+<MatrixHeight>2</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>2</ows:Identifier>
+<ScaleDenominator>55908226.40287178</ScaleDenominator>
+<TopLeftCorner>-180 90</TopLeftCorner>
+<TileWidth>512</TileWidth>
+<TileHeight>512</TileHeight>
+<MatrixWidth>5</MatrixWidth>
+<MatrixHeight>3</MatrixHeight>
+</TileMatrix>
+</TileMatrixSet>
+<TileMatrixSet>
+<ows:Identifier>EPSG4326_2km</ows:Identifier>
+<ows:SupportedCRS>urn:ogc:def:crs:OGC:1.3:CRS84</ows:SupportedCRS>
+<TileMatrix>
+<ows:Identifier>0</ows:Identifier>
+<ScaleDenominator>223632905.6114871</ScaleDenominator>
+<TopLeftCorner>-180 90</TopLeftCorner>
+<TileWidth>512</TileWidth>
+<TileHeight>512</TileHeight>
+<MatrixWidth>2</MatrixWidth>
+<MatrixHeight>1</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>1</ows:Identifier>
+<ScaleDenominator>111816452.8057436</ScaleDenominator>
+<TopLeftCorner>-180 90</TopLeftCorner>
+<TileWidth>512</TileWidth>
+<TileHeight>512</TileHeight>
+<MatrixWidth>3</MatrixWidth>
+<MatrixHeight>2</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>2</ows:Identifier>
+<ScaleDenominator>55908226.40287178</ScaleDenominator>
+<TopLeftCorner>-180 90</TopLeftCorner>
+<TileWidth>512</TileWidth>
+<TileHeight>512</TileHeight>
+<MatrixWidth>5</MatrixWidth>
+<MatrixHeight>3</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>3</ows:Identifier>
+<ScaleDenominator>27954113.20143589</ScaleDenominator>
+<TopLeftCorner>-180 90</TopLeftCorner>
+<TileWidth>512</TileWidth>
+<TileHeight>512</TileHeight>
+<MatrixWidth>10</MatrixWidth>
+<MatrixHeight>5</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>4</ows:Identifier>
+<ScaleDenominator>13977056.60071795</ScaleDenominator>
+<TopLeftCorner>-180 90</TopLeftCorner>
+<TileWidth>512</TileWidth>
+<TileHeight>512</TileHeight>
+<MatrixWidth>20</MatrixWidth>
+<MatrixHeight>10</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>5</ows:Identifier>
+<ScaleDenominator>6988528.300358973</ScaleDenominator>
+<TopLeftCorner>-180 90</TopLeftCorner>
+<TileWidth>512</TileWidth>
+<TileHeight>512</TileHeight>
+<MatrixWidth>40</MatrixWidth>
+<MatrixHeight>20</MatrixHeight>
+</TileMatrix>
+</TileMatrixSet>
+<TileMatrixSet>
+<ows:Identifier>EPSG4326_1km</ows:Identifier>
+<ows:SupportedCRS>urn:ogc:def:crs:OGC:1.3:CRS84</ows:SupportedCRS>
+<TileMatrix>
+<ows:Identifier>0</ows:Identifier>
+<ScaleDenominator>223632905.6114871</ScaleDenominator>
+<TopLeftCorner>-180 90</TopLeftCorner>
+<TileWidth>512</TileWidth>
+<TileHeight>512</TileHeight>
+<MatrixWidth>2</MatrixWidth>
+<MatrixHeight>1</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>1</ows:Identifier>
+<ScaleDenominator>111816452.8057436</ScaleDenominator>
+<TopLeftCorner>-180 90</TopLeftCorner>
+<TileWidth>512</TileWidth>
+<TileHeight>512</TileHeight>
+<MatrixWidth>3</MatrixWidth>
+<MatrixHeight>2</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>2</ows:Identifier>
+<ScaleDenominator>55908226.40287178</ScaleDenominator>
+<TopLeftCorner>-180 90</TopLeftCorner>
+<TileWidth>512</TileWidth>
+<TileHeight>512</TileHeight>
+<MatrixWidth>5</MatrixWidth>
+<MatrixHeight>3</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>3</ows:Identifier>
+<ScaleDenominator>27954113.20143589</ScaleDenominator>
+<TopLeftCorner>-180 90</TopLeftCorner>
+<TileWidth>512</TileWidth>
+<TileHeight>512</TileHeight>
+<MatrixWidth>10</MatrixWidth>
+<MatrixHeight>5</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>4</ows:Identifier>
+<ScaleDenominator>13977056.60071795</ScaleDenominator>
+<TopLeftCorner>-180 90</TopLeftCorner>
+<TileWidth>512</TileWidth>
+<TileHeight>512</TileHeight>
+<MatrixWidth>20</MatrixWidth>
+<MatrixHeight>10</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>5</ows:Identifier>
+<ScaleDenominator>6988528.300358973</ScaleDenominator>
+<TopLeftCorner>-180 90</TopLeftCorner>
+<TileWidth>512</TileWidth>
+<TileHeight>512</TileHeight>
+<MatrixWidth>40</MatrixWidth>
+<MatrixHeight>20</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>6</ows:Identifier>
+<ScaleDenominator>3494264.150179486</ScaleDenominator>
+<TopLeftCorner>-180 90</TopLeftCorner>
+<TileWidth>512</TileWidth>
+<TileHeight>512</TileHeight>
+<MatrixWidth>80</MatrixWidth>
+<MatrixHeight>40</MatrixHeight>
+</TileMatrix>
+</TileMatrixSet>
+<TileMatrixSet>
+<ows:Identifier>EPSG4326_500m</ows:Identifier>
+<ows:SupportedCRS>urn:ogc:def:crs:OGC:1.3:CRS84</ows:SupportedCRS>
+<TileMatrix>
+<ows:Identifier>0</ows:Identifier>
+<ScaleDenominator>223632905.6114871</ScaleDenominator>
+<TopLeftCorner>-180 90</TopLeftCorner>
+<TileWidth>512</TileWidth>
+<TileHeight>512</TileHeight>
+<MatrixWidth>2</MatrixWidth>
+<MatrixHeight>1</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>1</ows:Identifier>
+<ScaleDenominator>111816452.8057436</ScaleDenominator>
+<TopLeftCorner>-180 90</TopLeftCorner>
+<TileWidth>512</TileWidth>
+<TileHeight>512</TileHeight>
+<MatrixWidth>3</MatrixWidth>
+<MatrixHeight>2</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>2</ows:Identifier>
+<ScaleDenominator>55908226.40287178</ScaleDenominator>
+<TopLeftCorner>-180 90</TopLeftCorner>
+<TileWidth>512</TileWidth>
+<TileHeight>512</TileHeight>
+<MatrixWidth>5</MatrixWidth>
+<MatrixHeight>3</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>3</ows:Identifier>
+<ScaleDenominator>27954113.20143589</ScaleDenominator>
+<TopLeftCorner>-180 90</TopLeftCorner>
+<TileWidth>512</TileWidth>
+<TileHeight>512</TileHeight>
+<MatrixWidth>10</MatrixWidth>
+<MatrixHeight>5</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>4</ows:Identifier>
+<ScaleDenominator>13977056.60071795</ScaleDenominator>
+<TopLeftCorner>-180 90</TopLeftCorner>
+<TileWidth>512</TileWidth>
+<TileHeight>512</TileHeight>
+<MatrixWidth>20</MatrixWidth>
+<MatrixHeight>10</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>5</ows:Identifier>
+<ScaleDenominator>6988528.300358973</ScaleDenominator>
+<TopLeftCorner>-180 90</TopLeftCorner>
+<TileWidth>512</TileWidth>
+<TileHeight>512</TileHeight>
+<MatrixWidth>40</MatrixWidth>
+<MatrixHeight>20</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>6</ows:Identifier>
+<ScaleDenominator>3494264.150179486</ScaleDenominator>
+<TopLeftCorner>-180 90</TopLeftCorner>
+<TileWidth>512</TileWidth>
+<TileHeight>512</TileHeight>
+<MatrixWidth>80</MatrixWidth>
+<MatrixHeight>40</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>7</ows:Identifier>
+<ScaleDenominator>1747132.075089743</ScaleDenominator>
+<TopLeftCorner>-180 90</TopLeftCorner>
+<TileWidth>512</TileWidth>
+<TileHeight>512</TileHeight>
+<MatrixWidth>160</MatrixWidth>
+<MatrixHeight>80</MatrixHeight>
+</TileMatrix>
+</TileMatrixSet>
+<TileMatrixSet>
+<ows:Identifier>EPSG4326_250m</ows:Identifier>
+<ows:SupportedCRS>urn:ogc:def:crs:OGC:1.3:CRS84</ows:SupportedCRS>
+<TileMatrix>
+<ows:Identifier>0</ows:Identifier>
+<ScaleDenominator>223632905.6114871</ScaleDenominator>
+<TopLeftCorner>-180 90</TopLeftCorner>
+<TileWidth>512</TileWidth>
+<TileHeight>512</TileHeight>
+<MatrixWidth>2</MatrixWidth>
+<MatrixHeight>1</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>1</ows:Identifier>
+<ScaleDenominator>111816452.8057436</ScaleDenominator>
+<TopLeftCorner>-180 90</TopLeftCorner>
+<TileWidth>512</TileWidth>
+<TileHeight>512</TileHeight>
+<MatrixWidth>3</MatrixWidth>
+<MatrixHeight>2</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>2</ows:Identifier>
+<ScaleDenominator>55908226.40287178</ScaleDenominator>
+<TopLeftCorner>-180 90</TopLeftCorner>
+<TileWidth>512</TileWidth>
+<TileHeight>512</TileHeight>
+<MatrixWidth>5</MatrixWidth>
+<MatrixHeight>3</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>3</ows:Identifier>
+<ScaleDenominator>27954113.20143589</ScaleDenominator>
+<TopLeftCorner>-180 90</TopLeftCorner>
+<TileWidth>512</TileWidth>
+<TileHeight>512</TileHeight>
+<MatrixWidth>10</MatrixWidth>
+<MatrixHeight>5</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>4</ows:Identifier>
+<ScaleDenominator>13977056.60071795</ScaleDenominator>
+<TopLeftCorner>-180 90</TopLeftCorner>
+<TileWidth>512</TileWidth>
+<TileHeight>512</TileHeight>
+<MatrixWidth>20</MatrixWidth>
+<MatrixHeight>10</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>5</ows:Identifier>
+<ScaleDenominator>6988528.300358973</ScaleDenominator>
+<TopLeftCorner>-180 90</TopLeftCorner>
+<TileWidth>512</TileWidth>
+<TileHeight>512</TileHeight>
+<MatrixWidth>40</MatrixWidth>
+<MatrixHeight>20</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>6</ows:Identifier>
+<ScaleDenominator>3494264.150179486</ScaleDenominator>
+<TopLeftCorner>-180 90</TopLeftCorner>
+<TileWidth>512</TileWidth>
+<TileHeight>512</TileHeight>
+<MatrixWidth>80</MatrixWidth>
+<MatrixHeight>40</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>7</ows:Identifier>
+<ScaleDenominator>1747132.075089743</ScaleDenominator>
+<TopLeftCorner>-180 90</TopLeftCorner>
+<TileWidth>512</TileWidth>
+<TileHeight>512</TileHeight>
+<MatrixWidth>160</MatrixWidth>
+<MatrixHeight>80</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>8</ows:Identifier>
+<ScaleDenominator>873566.0375448716</ScaleDenominator>
+<TopLeftCorner>-180 90</TopLeftCorner>
+<TileWidth>512</TileWidth>
+<TileHeight>512</TileHeight>
+<MatrixWidth>320</MatrixWidth>
+<MatrixHeight>160</MatrixHeight>
+</TileMatrix>
+</TileMatrixSet>
+<TileMatrixSet>
+<ows:Identifier>31.25m</ows:Identifier>
+<ows:SupportedCRS>urn:ogc:def:crs:OGC:1.3:CRS84</ows:SupportedCRS>
+<TileMatrix>
+<ows:Identifier>0</ows:Identifier>
+<ScaleDenominator>223632905.6114871</ScaleDenominator>
+<TopLeftCorner>-180 90</TopLeftCorner>
+<TileWidth>512</TileWidth>
+<TileHeight>512</TileHeight>
+<MatrixWidth>2</MatrixWidth>
+<MatrixHeight>1</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>1</ows:Identifier>
+<ScaleDenominator>111816452.8057436</ScaleDenominator>
+<TopLeftCorner>-180 90</TopLeftCorner>
+<TileWidth>512</TileWidth>
+<TileHeight>512</TileHeight>
+<MatrixWidth>3</MatrixWidth>
+<MatrixHeight>2</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>2</ows:Identifier>
+<ScaleDenominator>55908226.40287178</ScaleDenominator>
+<TopLeftCorner>-180 90</TopLeftCorner>
+<TileWidth>512</TileWidth>
+<TileHeight>512</TileHeight>
+<MatrixWidth>5</MatrixWidth>
+<MatrixHeight>3</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>3</ows:Identifier>
+<ScaleDenominator>27954113.20143589</ScaleDenominator>
+<TopLeftCorner>-180 90</TopLeftCorner>
+<TileWidth>512</TileWidth>
+<TileHeight>512</TileHeight>
+<MatrixWidth>10</MatrixWidth>
+<MatrixHeight>5</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>4</ows:Identifier>
+<ScaleDenominator>13977056.60071795</ScaleDenominator>
+<TopLeftCorner>-180 90</TopLeftCorner>
+<TileWidth>512</TileWidth>
+<TileHeight>512</TileHeight>
+<MatrixWidth>20</MatrixWidth>
+<MatrixHeight>10</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>5</ows:Identifier>
+<ScaleDenominator>6988528.300358973</ScaleDenominator>
+<TopLeftCorner>-180 90</TopLeftCorner>
+<TileWidth>512</TileWidth>
+<TileHeight>512</TileHeight>
+<MatrixWidth>40</MatrixWidth>
+<MatrixHeight>20</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>6</ows:Identifier>
+<ScaleDenominator>3494264.150179486</ScaleDenominator>
+<TopLeftCorner>-180 90</TopLeftCorner>
+<TileWidth>512</TileWidth>
+<TileHeight>512</TileHeight>
+<MatrixWidth>80</MatrixWidth>
+<MatrixHeight>40</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>7</ows:Identifier>
+<ScaleDenominator>1747132.075089743</ScaleDenominator>
+<TopLeftCorner>-180 90</TopLeftCorner>
+<TileWidth>512</TileWidth>
+<TileHeight>512</TileHeight>
+<MatrixWidth>160</MatrixWidth>
+<MatrixHeight>80</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>8</ows:Identifier>
+<ScaleDenominator>873566.0375448716</ScaleDenominator>
+<TopLeftCorner>-180 90</TopLeftCorner>
+<TileWidth>512</TileWidth>
+<TileHeight>512</TileHeight>
+<MatrixWidth>320</MatrixWidth>
+<MatrixHeight>160</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>9</ows:Identifier>
+<ScaleDenominator>436783.0187724358</ScaleDenominator>
+<TopLeftCorner>-180 90</TopLeftCorner>
+<TileWidth>512</TileWidth>
+<TileHeight>512</TileHeight>
+<MatrixWidth>640</MatrixWidth>
+<MatrixHeight>320</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>10</ows:Identifier>
+<ScaleDenominator>218391.5093862179</ScaleDenominator>
+<TopLeftCorner>-180 90</TopLeftCorner>
+<TileWidth>512</TileWidth>
+<TileHeight>512</TileHeight>
+<MatrixWidth>1280</MatrixWidth>
+<MatrixHeight>640</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>11</ows:Identifier>
+<ScaleDenominator>109195.75469310895</ScaleDenominator>
+<TopLeftCorner>-180 90</TopLeftCorner>
+<TileWidth>512</TileWidth>
+<TileHeight>512</TileHeight>
+<MatrixWidth>2560</MatrixWidth>
+<MatrixHeight>1280</MatrixHeight>
+</TileMatrix>
+</TileMatrixSet>
+<TileMatrixSet>
+<ows:Identifier>15.625m</ows:Identifier>
+<ows:SupportedCRS>urn:ogc:def:crs:OGC:1.3:CRS84</ows:SupportedCRS>
+<TileMatrix>
+<ows:Identifier>0</ows:Identifier>
+<ScaleDenominator>223632905.6114871</ScaleDenominator>
+<TopLeftCorner>-180 90</TopLeftCorner>
+<TileWidth>512</TileWidth>
+<TileHeight>512</TileHeight>
+<MatrixWidth>2</MatrixWidth>
+<MatrixHeight>1</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>1</ows:Identifier>
+<ScaleDenominator>111816452.8057436</ScaleDenominator>
+<TopLeftCorner>-180 90</TopLeftCorner>
+<TileWidth>512</TileWidth>
+<TileHeight>512</TileHeight>
+<MatrixWidth>3</MatrixWidth>
+<MatrixHeight>2</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>2</ows:Identifier>
+<ScaleDenominator>55908226.40287178</ScaleDenominator>
+<TopLeftCorner>-180 90</TopLeftCorner>
+<TileWidth>512</TileWidth>
+<TileHeight>512</TileHeight>
+<MatrixWidth>5</MatrixWidth>
+<MatrixHeight>3</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>3</ows:Identifier>
+<ScaleDenominator>27954113.20143589</ScaleDenominator>
+<TopLeftCorner>-180 90</TopLeftCorner>
+<TileWidth>512</TileWidth>
+<TileHeight>512</TileHeight>
+<MatrixWidth>10</MatrixWidth>
+<MatrixHeight>5</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>4</ows:Identifier>
+<ScaleDenominator>13977056.60071795</ScaleDenominator>
+<TopLeftCorner>-180 90</TopLeftCorner>
+<TileWidth>512</TileWidth>
+<TileHeight>512</TileHeight>
+<MatrixWidth>20</MatrixWidth>
+<MatrixHeight>10</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>5</ows:Identifier>
+<ScaleDenominator>6988528.300358973</ScaleDenominator>
+<TopLeftCorner>-180 90</TopLeftCorner>
+<TileWidth>512</TileWidth>
+<TileHeight>512</TileHeight>
+<MatrixWidth>40</MatrixWidth>
+<MatrixHeight>20</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>6</ows:Identifier>
+<ScaleDenominator>3494264.150179486</ScaleDenominator>
+<TopLeftCorner>-180 90</TopLeftCorner>
+<TileWidth>512</TileWidth>
+<TileHeight>512</TileHeight>
+<MatrixWidth>80</MatrixWidth>
+<MatrixHeight>40</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>7</ows:Identifier>
+<ScaleDenominator>1747132.075089743</ScaleDenominator>
+<TopLeftCorner>-180 90</TopLeftCorner>
+<TileWidth>512</TileWidth>
+<TileHeight>512</TileHeight>
+<MatrixWidth>160</MatrixWidth>
+<MatrixHeight>80</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>8</ows:Identifier>
+<ScaleDenominator>873566.0375448716</ScaleDenominator>
+<TopLeftCorner>-180 90</TopLeftCorner>
+<TileWidth>512</TileWidth>
+<TileHeight>512</TileHeight>
+<MatrixWidth>320</MatrixWidth>
+<MatrixHeight>160</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>9</ows:Identifier>
+<ScaleDenominator>436783.0187724358</ScaleDenominator>
+<TopLeftCorner>-180 90</TopLeftCorner>
+<TileWidth>512</TileWidth>
+<TileHeight>512</TileHeight>
+<MatrixWidth>640</MatrixWidth>
+<MatrixHeight>320</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>10</ows:Identifier>
+<ScaleDenominator>218391.5093862179</ScaleDenominator>
+<TopLeftCorner>-180 90</TopLeftCorner>
+<TileWidth>512</TileWidth>
+<TileHeight>512</TileHeight>
+<MatrixWidth>1280</MatrixWidth>
+<MatrixHeight>640</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>11</ows:Identifier>
+<ScaleDenominator>109195.75469310895</ScaleDenominator>
+<TopLeftCorner>-180 90</TopLeftCorner>
+<TileWidth>512</TileWidth>
+<TileHeight>512</TileHeight>
+<MatrixWidth>2560</MatrixWidth>
+<MatrixHeight>1280</MatrixHeight>
+</TileMatrix>
+<TileMatrix>
+<ows:Identifier>12</ows:Identifier>
+<ScaleDenominator>54597.877346554475</ScaleDenominator>
+<TopLeftCorner>-180 90</TopLeftCorner>
+<TileWidth>512</TileWidth>
+<TileHeight>512</TileHeight>
+<MatrixWidth>5120</MatrixWidth>
+<MatrixHeight>2560</MatrixHeight>
+</TileMatrix>
+</TileMatrixSet>
+</Contents>
+<ServiceMetadataURL xlink:href="http://skywalker.jpl.nasa.gov/wmts-geo/1.0.0/WMTSCapabilities.xml"/>
+</Capabilities>
