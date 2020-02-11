@@ -247,6 +247,36 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
         };
     }
 
+    addEventListener(eventStr, callback) {
+        try {
+            switch (eventStr) {
+                case appStringsCore.EVENT_MOUSE_HOVER:
+                    return this.map.addEventListener("pointermove", position => {
+                        this.miscUtil.throttledCallback(() => {
+                            callback(position.pixel);
+                        });
+                    });
+                case appStringsCore.EVENT_MOUSE_CLICK:
+                    return this.map.addEventListener("click", clickEvt => {
+                        this.miscUtil.throttledCallback(() => {
+                            callback({ pixel: clickEvt.pixel });
+                        });
+                    });
+                case appStringsCore.EVENT_MOVE_END:
+                    return this.map.addEventListener("moveend", e => {
+                        this.miscUtil.throttledCallback(callback);
+                    });
+                default:
+                    return this.map.addEventListener(eventStr, e => {
+                        this.miscUtil.throttledCallback(callback);
+                    });
+            }
+        } catch (err) {
+            console.warn("Error in MapWrapperOpenlayers.addEventListener:", err);
+            return false;
+        }
+    }
+
     setExtent(extent, padView = false) {
         try {
             if (extent) {
@@ -665,7 +695,6 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
         try {
             let options = layer.get("mappingOptions").toJS();
             return new Ol_Layer_VectorTile({
-                declutter: true,
                 transition: 0,
                 source: new Ol_Source_VectorTile({
                     format: new Ol_Format_MVT(),
@@ -705,8 +734,8 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                 width: 1.25
             });
             return new Ol_Layer_VectorTile({
-                declutter: false,
                 transition: 0,
+                renderMode: "image",
                 source: new Ol_Source_VectorTile({
                     format: new Ol_Format_MVT(),
                     projection: "EPSG:4326",
@@ -724,18 +753,28 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                         : layer.get("url")
                 }),
 
-                style: (feature, res) => {
-                    const val = parseFloat(feature.getProperties().vessel_hr);
-                    return new Ol_Style({
-                        image: new Ol_Style_Circle({
-                            fill: fill,
-                            stroke: stroke,
-                            radius: Math.max(5, Math.min(13, val))
-                        }),
+                style: new Ol_Style({
+                    image: new Ol_Style_Circle({
+                        fill: fill,
                         stroke: stroke,
-                        fill: fill
-                    });
-                }
+                        radius: 5
+                    }),
+                    stroke: stroke,
+                    fill: fill
+                })
+
+                // style: (feature, res) => {
+                //     const val = parseFloat(feature.getProperties().vessel_hr);
+                //     return new Ol_Style({
+                //         image: new Ol_Style_Circle({
+                //             fill: fill,
+                //             stroke: stroke,
+                //             radius: Math.max(5, Math.min(13, val))
+                //         }),
+                //         stroke: stroke,
+                //         fill: fill
+                //     });
+                // }
             });
         } catch (err) {
             console.warn("Error in MapWrapperOpenlayers.createVectorTileTrackLayer:", err);
@@ -1108,26 +1147,6 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                             style: drawStyle,
                             wrapX: true
                         });
-                        // let drawInteraction = new Ol_Interaction_Extent({
-                        //     // source: mapLayer.getSource(),
-                        //     boxStyle: [
-                        //         new Ol_Style({
-                        //             stroke: new Ol_Style_Stroke({
-                        //                 lineDash: [15, 10],
-                        //                 color: appConfig.GEOMETRY_OUTLINE_COLOR,
-                        //                 width: appConfig.GEOMETRY_STROKE_WEIGHT + 1
-                        //             })
-                        //         }),
-                        //         new Ol_Style({
-                        //             stroke: new Ol_Style_Stroke({
-                        //                 lineDash: [15, 10],
-                        //                 color: appConfig.GEOMETRY_STROKE_COLOR,
-                        //                 width: appConfig.GEOMETRY_STROKE_WEIGHT
-                        //             })
-                        //         })
-                        //     ],
-                        //     wrapX: true
-                        // });
 
                         // Set callback
                         drawInteraction.on("drawend", event => {
@@ -1139,26 +1158,6 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                                 onDrawEnd(geometry, event);
                             }
                         });
-
-                        // drawInteraction.on("extentchanged", event => {
-                        //     if (typeof onDrawEnd === "function" && event.extent) {
-                        //         // store type of feature and id for later reference
-                        //         // let geometry = this.retrieveGeometryFromEvent(event, geometryType);
-                        //         let geometry = {
-                        //             type: appStrings.GEOMETRY_BOX,
-                        //             id: Math.random(),
-                        //             proj: this.map
-                        //                 .getView()
-                        //                 .getProjection()
-                        //                 .getCode(),
-                        //             coordinates: event.extent.map(x => parseFloat(x.toFixed(3))),
-                        //             coordinateType: appStringsCore.COORDINATE_TYPE_CARTOGRAPHIC
-                        //         };
-                        //         // event.feature.set("interactionType", interactionType);
-                        //         // event.feature.setId(geometry.id);
-                        //         onDrawEnd(geometry, event);
-                        //     }
-                        // });
 
                         // Disable
                         drawInteraction.setActive(false);

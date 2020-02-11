@@ -7,6 +7,25 @@
 
 import MiscUtilCore from "_core/utils/MiscUtil";
 
+function throttle(timer) {
+    if (timer) {
+        let queuedCallback = null;
+        return callback => {
+            if (!queuedCallback) {
+                timer(() => {
+                    const cb = queuedCallback;
+                    queuedCallback = null;
+                    cb();
+                });
+            }
+            queuedCallback = callback;
+        };
+    }
+    return callback => {
+        callback();
+    };
+}
+
 export default class MiscUtil extends MiscUtilCore {
     // Find closest ancestor to dom element el matching selector
     // From: http://stackoverflow.com/questions/18663941/finding-closest-element-without-jquery
@@ -48,4 +67,8 @@ export default class MiscUtil extends MiscUtilCore {
         max = Math.floor(max);
         return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
     }
+
+    static throttledCallback = throttle(
+        typeof window !== "undefined" ? window.requestAnimationFrame : null
+    );
 }

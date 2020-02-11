@@ -42,6 +42,25 @@
             "url": "http://skywalker.jpl.nasa.gov/wmts-geo/AIS/default/{time}/EPSG4326_1km/{z}/{y}/{x}.mvt"
         },
         {
+            "id": "IATTC_CE_LL_effort",
+            "title": "IATTC CE LL Effort",
+            "type": "data",
+            "handleAs": "GIBS_raster",
+            "min": 0.0,
+            "max": 32.0,
+            "units": "°C",
+            "mappingOptions": {
+                "urlFunctions": {
+                    "openlayers": "kvpTimeParam_wmts",
+                    "cesium": "kvpTimeParam_wmts"
+                }
+            },
+            "palette": {
+                "name": "GIBS_SST",
+                "handleAs": "json-fixed"
+            }
+        },
+        {
             "id": "GHRSST_L4_MUR_Sea_Surface_Temperature",
             "title": "Sea Surface Temperature",
             "subtitle": "GHRSST MEaSUREs MUR/PO.DAAC",
