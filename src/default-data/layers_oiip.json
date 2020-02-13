@@ -7,13 +7,21 @@
             "handleAs": "vector_tile_points",
             "mappingOptions": {
                 "displayProps": {
-                    "sizeProp": "vessel_hr"
+                    "size": "vessel_hr",
+                    "color": "geartype"
                 },
                 "urlFunctions": {
                     "openlayers": "kvpTimeParam_wmts",
                     "cesium": "kvpTimeParam_wmts"
                 }
             },
+            "palette": {
+                "name": "AIS",
+                "handleAs": "json-fixed",
+                "min": " ",
+                "max": " "
+            },
+            "units": " gear",
             "metadata": {
                 "hoverDisplayProps": {
                     "title": {
@@ -56,8 +64,8 @@
                 }
             },
             "palette": {
-                "name": "GIBS_SST",
-                "handleAs": "json-fixed"
+                "name": "IATTC_CE_LL_effort",
+                "handleAs": "json-relative"
             }
         },
         {
@@ -75,8 +83,8 @@
                 }
             },
             "palette": {
-                "name": "GIBS_SST",
-                "handleAs": "json-fixed"
+                "name": "IATTC_CE_LL_effort",
+                "handleAs": "json-relative"
             }
         },
         {
@@ -94,8 +102,8 @@
                 }
             },
             "palette": {
-                "name": "GIBS_SST",
-                "handleAs": "json-fixed"
+                "name": "IATTC_CE_LL_effort",
+                "handleAs": "json-relative"
             }
         },
         {
@@ -113,8 +121,8 @@
                 }
             },
             "palette": {
-                "name": "GIBS_SST",
-                "handleAs": "json-fixed"
+                "name": "IATTC_CE_LL_effort",
+                "handleAs": "json-relative"
             }
         },
         {
@@ -132,8 +140,8 @@
                 }
             },
             "palette": {
-                "name": "GIBS_SST",
-                "handleAs": "json-fixed"
+                "name": "IATTC_CE_LL_effort",
+                "handleAs": "json-relative"
             }
         },
         {
@@ -151,8 +159,8 @@
                 }
             },
             "palette": {
-                "name": "GIBS_SST",
-                "handleAs": "json-fixed"
+                "name": "IATTC_CE_LL_effort",
+                "handleAs": "json-relative"
             }
         },
         {
@@ -170,8 +178,8 @@
                 }
             },
             "palette": {
-                "name": "GIBS_SST",
-                "handleAs": "json-fixed"
+                "name": "SSH_CMEMS_AVISO_SEALEVEL_GLO_PHY_L4_REP_OBSERVATIONS_sla",
+                "handleAs": "json-relative"
             }
         },
         {
@@ -189,8 +197,8 @@
                 }
             },
             "palette": {
-                "name": "GIBS_SST",
-                "handleAs": "json-fixed"
+                "name": "CHL_CMEMS_OCEANCOLOUR_GLO_CHL_L4_REP_OBSERVATIONS",
+                "handleAs": "json-relative"
             }
         },
         {
@@ -208,8 +216,8 @@
                 }
             },
             "palette": {
-                "name": "GIBS_SST",
-                "handleAs": "json-fixed"
+                "name": "SSH_CMEMS_AVISO_SEALEVEL_GLO_PHY_L4_REP_OBSERVATIONS_adt",
+                "handleAs": "json-relative"
             }
         },
         {
@@ -227,8 +235,8 @@
                 }
             },
             "palette": {
-                "name": "GIBS_SST",
-                "handleAs": "json-fixed"
+                "name": "SSH_CMEMS_AVISO_SEALEVEL_GLO_PHY_L4_REP_OBSERVATIONS_adt",
+                "handleAs": "json-relative"
             }
         },
         {
@@ -246,8 +254,8 @@
                 }
             },
             "palette": {
-                "name": "GIBS_SST",
-                "handleAs": "json-fixed"
+                "name": "WINDS_CMEMS_IFREMER_WIND_GLO_WIND_L4_REP_OBSERVATIONS_wind_speed",
+                "handleAs": "json-relative"
             }
         },
         {
@@ -265,11 +273,10 @@
                 }
             },
             "palette": {
-                "name": "GIBS_SST",
-                "handleAs": "json-fixed"
+                "name": "WINDS_CMEMS_IFREMER_WIND_GLO_WIND_L4_REP_OBSERVATIONS_wind_stress_curl",
+                "handleAs": "json-relative"
             }
         },
-
         {
             "id": "GHRSST_L4_MUR_Sea_Surface_Temperature",
             "title": "Sea Surface Temperature",

@@ -92,6 +92,8 @@ export class SatelliteLayerSelector extends Component {
                     palette={palette}
                     min={layer.get("min")}
                     max={layer.get("max")}
+                    displayMin={layer.getIn(["palette", "min"])}
+                    displayMax={layer.getIn(["palette", "max"])}
                     units={layer.get("units")}
                     handleAs={layer.getIn(["palette", "handleAs"])}
                     url={layer.getIn(["palette", "url"])}

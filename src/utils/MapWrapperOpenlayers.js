@@ -52,6 +52,26 @@ const NO_LOAD_STATES = [TILE_STATE_LOADING, TILE_STATE_LOADED, TILE_STATE_ERROR,
 const LOAD_COMPLETE_STATES = [TILE_STATE_LOADED, TILE_STATE_ERROR, TILE_STATE_EMPTY];
 let _tilesLoading = 0;
 
+const HACK_AIS_COLORS = [
+    ["dredge_fishing", "#9CF6F6"],
+    ["drifting_longlines", "#a6cee3"],
+    ["driftnets", "#1f78b4"],
+    ["fishing", "#b2df8a"],
+    ["fixed_gear", "#33a02c"],
+    ["other_fishing", "#fb9a99"],
+    ["other_purse_seines", "#e31a1c"],
+    ["other_seines", "#471323"],
+    ["pole_and_line", "#fdbf6f"],
+    ["pots_and_traps", "#ff7f00"],
+    ["purse_seines", "#cab2d6"],
+    ["set_gillnets", "#6a3d9a"],
+    ["set_longlines", "#B5BA72"],
+    ["squid_jigger", "#ffff99"],
+    ["trawlers", "#b15928"],
+    ["trollers", "#2B2118"],
+    ["tuna_purse_seines", "#4C5760"]
+];
+
 export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
     initStaticClasses(container, options) {
         MapWrapperOpenlayersCore.prototype.initStaticClasses.call(this, container, options);
@@ -726,13 +746,55 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
     createVectorTilePointsLayer(layer, fromCache = true) {
         try {
             let options = layer.get("mappingOptions").toJS();
-            const fill = new Ol_Style_Fill({
-                color: "rgba(255,255,255,0.8)"
+            const defFill = new Ol_Style_Fill({
+                color: "rgba(255,255,255,1)"
             });
-            const stroke = new Ol_Style_Stroke({
+            const defStroke = new Ol_Style_Stroke({
                 color: "rgba(0,0,0,1)",
                 width: 1.25
             });
+
+            let style;
+            const sizeProp = layer.getIn(["mappingOptions", "displayProps", "size"]);
+            const colorProp = layer.getIn(["mappingOptions", "displayProps", "color"]);
+            if (sizeProp || colorProp) {
+                style = (feature, res) => {
+                    let size = 5;
+                    if (sizeProp) {
+                        size = parseFloat(feature.getProperties()[sizeProp]);
+                    }
+
+                    let fill = defFill;
+                    if (colorProp) {
+                        const colorRef = feature.getProperties()[colorProp];
+                        const color = HACK_AIS_COLORS.find(x => x[0] === colorRef)[1];
+                        fill = new Ol_Style_Fill({
+                            color: color
+                        });
+                    }
+
+                    return new Ol_Style({
+                        image: new Ol_Style_Circle({
+                            fill: fill,
+                            stroke: defStroke,
+                            radius: Math.max(5, Math.min(13, size))
+                        }),
+                        stroke: defStroke,
+                        fill: fill
+                    });
+                };
+            } else {
+                style = new Ol_Style({
+                    image: new Ol_Style_Circle({
+                        fill: defFill,
+                        stroke: defStroke,
+                        radius: 5
+                    }),
+                    stroke: defStroke,
+                    fill: defFill
+                });
+            }
+
             return new Ol_Layer_VectorTile({
                 transition: 0,
                 renderMode: "image",
@@ -752,29 +814,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                               .replace("{time}", moment.utc(this.mapDate).format("YYYY-MM-DD"))
                         : layer.get("url")
                 }),
-
-                style: new Ol_Style({
-                    image: new Ol_Style_Circle({
-                        fill: fill,
-                        stroke: stroke,
-                        radius: 5
-                    }),
-                    stroke: stroke,
-                    fill: fill
-                })
-
-                // style: (feature, res) => {
-                //     const val = parseFloat(feature.getProperties().vessel_hr);
-                //     return new Ol_Style({
-                //         image: new Ol_Style_Circle({
-                //             fill: fill,
-                //             stroke: stroke,
-                //             radius: Math.max(5, Math.min(13, val))
-                //         }),
-                //         stroke: stroke,
-                //         fill: fill
-                //     });
-                // }
+                style: style
             });
         } catch (err) {
             console.warn("Error in MapWrapperOpenlayers.createVectorTileTrackLayer:", err);
