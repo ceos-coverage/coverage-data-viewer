@@ -42,8 +42,8 @@
             "url": "http://skywalker.jpl.nasa.gov/wmts-geo/AIS/default/{time}/EPSG4326_1km/{z}/{y}/{x}.mvt"
         },
         {
-            "id": "IATTC_CE_LL_effort",
-            "title": "IATTC CE LL Effort",
+            "id": "IATTC_CE_LL_BET",
+            "title": "IATTC_CE_LL_BET",
             "type": "data",
             "handleAs": "GIBS_raster",
             "min": 0.0,
@@ -60,6 +60,216 @@
                 "handleAs": "json-fixed"
             }
         },
+        {
+            "id": "IATTC_CE_LL_effort",
+            "title": "IATTC_CE_LL_effort",
+            "type": "data",
+            "handleAs": "GIBS_raster",
+            "min": 0.0,
+            "max": 32.0,
+            "units": "°C",
+            "mappingOptions": {
+                "urlFunctions": {
+                    "openlayers": "kvpTimeParam_wmts",
+                    "cesium": "kvpTimeParam_wmts"
+                }
+            },
+            "palette": {
+                "name": "GIBS_SST",
+                "handleAs": "json-fixed"
+            }
+        },
+        {
+            "id": "IATTC_CE_LL_YFT",
+            "title": "IATTC_CE_LL_YFT",
+            "type": "data",
+            "handleAs": "GIBS_raster",
+            "min": 0.0,
+            "max": 32.0,
+            "units": "°C",
+            "mappingOptions": {
+                "urlFunctions": {
+                    "openlayers": "kvpTimeParam_wmts",
+                    "cesium": "kvpTimeParam_wmts"
+                }
+            },
+            "palette": {
+                "name": "GIBS_SST",
+                "handleAs": "json-fixed"
+            }
+        },
+        {
+            "id": "IATTC_CE_PS_BET",
+            "title": "IATTC_CE_PS_BET",
+            "type": "data",
+            "handleAs": "GIBS_raster",
+            "min": 0.0,
+            "max": 32.0,
+            "units": "°C",
+            "mappingOptions": {
+                "urlFunctions": {
+                    "openlayers": "kvpTimeParam_wmts",
+                    "cesium": "kvpTimeParam_wmts"
+                }
+            },
+            "palette": {
+                "name": "GIBS_SST",
+                "handleAs": "json-fixed"
+            }
+        },
+        {
+            "id": "IATTC_CE_PS_effort",
+            "title": "IATTC_CE_PS_effort",
+            "type": "data",
+            "handleAs": "GIBS_raster",
+            "min": 0.0,
+            "max": 32.0,
+            "units": "°C",
+            "mappingOptions": {
+                "urlFunctions": {
+                    "openlayers": "kvpTimeParam_wmts",
+                    "cesium": "kvpTimeParam_wmts"
+                }
+            },
+            "palette": {
+                "name": "GIBS_SST",
+                "handleAs": "json-fixed"
+            }
+        },
+        {
+            "id": "IATTC_CE_PS_YFT",
+            "title": "IATTC_CE_PS_YFT",
+            "type": "data",
+            "handleAs": "GIBS_raster",
+            "min": 0.0,
+            "max": 32.0,
+            "units": "°C",
+            "mappingOptions": {
+                "urlFunctions": {
+                    "openlayers": "kvpTimeParam_wmts",
+                    "cesium": "kvpTimeParam_wmts"
+                }
+            },
+            "palette": {
+                "name": "GIBS_SST",
+                "handleAs": "json-fixed"
+            }
+        },
+        {
+            "id": "SSH_CMEMS_AVISO_SEALEVEL_GLO_PHY_L4_REP_OBSERVATIONS_sla",
+            "title": "SSH_CMEMS_AVISO_SEALEVEL_GLO_PHY_L4_REP_OBSERVATIONS_sla",
+            "type": "data",
+            "handleAs": "GIBS_raster",
+            "min": 0.0,
+            "max": 32.0,
+            "units": "°C",
+            "mappingOptions": {
+                "urlFunctions": {
+                    "openlayers": "kvpTimeParam_wmts",
+                    "cesium": "kvpTimeParam_wmts"
+                }
+            },
+            "palette": {
+                "name": "GIBS_SST",
+                "handleAs": "json-fixed"
+            }
+        },
+        {
+            "id": "CHL_CMEMS_OCEANCOLOUR_GLO_CHL_L4_REP_OBSERVATIONS",
+            "title": "CHL_CMEMS_OCEANCOLOUR_GLO_CHL_L4_REP_OBSERVATIONS",
+            "type": "data",
+            "handleAs": "GIBS_raster",
+            "min": 0.0,
+            "max": 32.0,
+            "units": "°C",
+            "mappingOptions": {
+                "urlFunctions": {
+                    "openlayers": "kvpTimeParam_wmts",
+                    "cesium": "kvpTimeParam_wmts"
+                }
+            },
+            "palette": {
+                "name": "GIBS_SST",
+                "handleAs": "json-fixed"
+            }
+        },
+        {
+            "id": "SSH_CMEMS_AVISO_SEALEVEL_GLO_PHY_L4_REP_OBSERVATIONS_adt",
+            "title": "SSH_CMEMS_AVISO_SEALEVEL_GLO_PHY_L4_REP_OBSERVATIONS_adt",
+            "type": "data",
+            "handleAs": "GIBS_raster",
+            "min": 0.0,
+            "max": 32.0,
+            "units": "°C",
+            "mappingOptions": {
+                "urlFunctions": {
+                    "openlayers": "kvpTimeParam_wmts",
+                    "cesium": "kvpTimeParam_wmts"
+                }
+            },
+            "palette": {
+                "name": "GIBS_SST",
+                "handleAs": "json-fixed"
+            }
+        },
+        {
+            "id": "SSH_CMEMS_AVISO_SEALEVEL_GLO_PHY_L4_REP_OBSERVATIONS_adt",
+            "title": "SSH_CMEMS_AVISO_SEALEVEL_GLO_PHY_L4_REP_OBSERVATIONS_adt",
+            "type": "data",
+            "handleAs": "GIBS_raster",
+            "min": 0.0,
+            "max": 32.0,
+            "units": "°C",
+            "mappingOptions": {
+                "urlFunctions": {
+                    "openlayers": "kvpTimeParam_wmts",
+                    "cesium": "kvpTimeParam_wmts"
+                }
+            },
+            "palette": {
+                "name": "GIBS_SST",
+                "handleAs": "json-fixed"
+            }
+        },
+        {
+            "id": "WINDS_CMEMS_IFREMER_WIND_GLO_WIND_L4_REP_OBSERVATIONS_wind_speed",
+            "title": "WINDS_CMEMS_IFREMER_WIND_GLO_WIND_L4_REP_OBSERVATIONS_wind_speed",
+            "type": "data",
+            "handleAs": "GIBS_raster",
+            "min": 0.0,
+            "max": 32.0,
+            "units": "°C",
+            "mappingOptions": {
+                "urlFunctions": {
+                    "openlayers": "kvpTimeParam_wmts",
+                    "cesium": "kvpTimeParam_wmts"
+                }
+            },
+            "palette": {
+                "name": "GIBS_SST",
+                "handleAs": "json-fixed"
+            }
+        },
+        {
+            "id": "WINDS_CMEMS_IFREMER_WIND_GLO_WIND_L4_REP_OBSERVATIONS_wind_stress_curl",
+            "title": "WINDS_CMEMS_IFREMER_WIND_GLO_WIND_L4_REP_OBSERVATIONS_wind_stress_curl",
+            "type": "data",
+            "handleAs": "GIBS_raster",
+            "min": 0.0,
+            "max": 32.0,
+            "units": "°C",
+            "mappingOptions": {
+                "urlFunctions": {
+                    "openlayers": "kvpTimeParam_wmts",
+                    "cesium": "kvpTimeParam_wmts"
+                }
+            },
+            "palette": {
+                "name": "GIBS_SST",
+                "handleAs": "json-fixed"
+            }
+        },
+
         {
             "id": "GHRSST_L4_MUR_Sea_Surface_Temperature",
             "title": "Sea Surface Temperature",

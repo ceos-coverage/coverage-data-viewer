@@ -68,7 +68,9 @@ export class InsituLayerItem extends Component {
                             component="span"
                             className={styles.label}
                         >
-                            {this.props.layer.get("title")}
+                            {`${this.props.layer.get("title")} (id: ${this.props.layer.get(
+                                "shortId"
+                            )})`}
                         </Typography>
                     </EnhancedTooltip>
                 </div>

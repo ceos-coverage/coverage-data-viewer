@@ -70,6 +70,7 @@ export function setTrackSelected(trackId, isSelected) {
             dispatch(
                 mapActions.addLayer({
                     id: track.get("id"),
+                    shortId: track.get("shortId"),
                     title: track.getIn(["insituMeta", titleField]),
                     type: appStrings.LAYER_GROUP_TYPE_INSITU_DATA,
                     handleAs: appStrings.LAYER_VECTOR_POINT_TRACK,

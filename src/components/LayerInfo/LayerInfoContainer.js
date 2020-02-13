@@ -35,10 +35,10 @@ export class LayerInfoContainer extends Component {
             return (
                 <DialogContent className={styles.content}>
                     <Typography variant="h6" className={styles.label}>
-                        Project
+                        Program
                     </Typography>
                     <Divider className={styles.divider} />
-                    <Typography variant="body2">{meta.get("project") || "N/A"}</Typography>
+                    <Typography variant="body2">{meta.get("program") || "N/A"}</Typography>
                     <Typography variant="h6" className={styles.label}>
                         Mission
                     </Typography>

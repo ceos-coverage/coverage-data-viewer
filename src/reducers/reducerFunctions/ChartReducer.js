@@ -52,14 +52,17 @@ export default class ChartReducer {
         }
 
         // resolve labels
-        let axisLabels = ["xAxis", "yAxis", "zAxis"].map(axis => {
+        let axisLabels = ["xAxis", "yAxis", "zAxis"].map((axis, i) => {
             return action.formOptions.variables.shared.reduce((acc, entry) => {
                 if (
                     entry.label === action.formOptions[axis] &&
                     entry.units &&
                     entry.units !== "units"
                 ) {
-                    return entry.label + " (" + entry.units + ")";
+                    if (i < 2) {
+                        return entry.label + " (" + entry.units + ")";
+                    }
+                    return entry.units;
                 }
                 return acc;
             }, action.formOptions[axis] || "");

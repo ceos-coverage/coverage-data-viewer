@@ -37,6 +37,7 @@ export class LayerSearchResult extends Component {
 
         let secondaryText = (
             <span>
+                id: {this.props.layer.get("shortId")} ·{" "}
                 {this.props.layer.getIn(["insituMeta", "instrument"])}
                 <br />
                 {startStr + " – " + endStr}
@@ -54,7 +55,7 @@ export class LayerSearchResult extends Component {
                 <ListItemText
                     primary={this.props.layer.get("title")}
                     secondary={secondaryText}
-                    classes={{ primary: styles.title }}
+                    classes={{ primary: styles.title, secondary: styles.subtitle }}
                 />
                 <ListItemSecondaryAction>
                     <IconButton

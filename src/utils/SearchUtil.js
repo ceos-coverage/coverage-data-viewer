@@ -153,8 +153,11 @@ export default class SearchUtil {
             let entries = dataSet.response.docs;
             for (let i = 0; i < entries.length; ++i) {
                 let entry = Immutable.fromJS(entries[i]);
+                const id = entry.get("id") || entry.get("project") + "_" + entry.get("source_id");
+                const idNumMatch = id.match(/\d+/g);
                 let formattedTrack = Immutable.Map({
-                    id: entry.get("id") || entry.get("project") + "_" + entry.get("source_id"),
+                    id: id,
+                    shortId: entry.get("platform_id") || idNumMatch[0],
                     title: entry.get("title") || entry.get("platform") || entry.get("id"),
                     insituMeta: entry.set(
                         "variables",

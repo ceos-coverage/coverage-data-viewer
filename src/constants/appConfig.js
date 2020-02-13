@@ -101,14 +101,14 @@ const APP_CONFIG = Immutable.fromJS({
             { value: "variables", label: "Variable" },
             { value: "platform", label: "Platform" },
             { value: "instrument", label: "Sensor" },
-            { value: "project", label: "Project" }
+            { value: "program", label: "Program" }
         ],
         SORT_PARAMS: [
             { value: "instrument", label: "Sensor" },
             { value: "platform", label: "Platform" },
-            { value: "project", label: "Project" }
+            { value: "program", label: "Program" }
         ],
-        DEFAULT_SORT_PARAM: "project"
+        DEFAULT_SORT_PARAM: "program"
     },
     DATE_INTERVAL: {
         SCALES: [
