@@ -260,26 +260,7 @@ export class ChartSettings extends Component {
                             />
                         </FormGroup>
                         {this.renderDateIntervalLink()}
-                        <Divider />
-                        <FormGroup className={styles.formMargin}>
-                            <TextField
-                                id={this.props.chartId + "_dec_rate"}
-                                value={displayObj.get("decimationRate").toString()}
-                                label="Decimation Target"
-                                margin="dense"
-                                fullWidth={true}
-                                onChange={evt =>
-                                    this.bufferDisplayOptionsUpdate({
-                                        decimationRate:
-                                            parseFloat(evt.target.value) ||
-                                            appConfig.DEFAULT_DECIMATION_RATE
-                                    })
-                                }
-                                inputProps={{
-                                    type: "number"
-                                }}
-                            />
-                        </FormGroup>
+                        <Divider className={styles.formMargin} />
                         <FormGroup className={styles.formMargin}>
                             <FormControl>
                                 <InputLabel htmlFor="markerType">Display Style</InputLabel>
@@ -309,6 +290,25 @@ export class ChartSettings extends Component {
                                     })}
                                 </Select>
                             </FormControl>
+                        </FormGroup>
+                        <FormGroup className={styles.formMargin}>
+                            <TextField
+                                id={this.props.chartId + "_dec_rate"}
+                                value={displayObj.get("decimationRate").toString()}
+                                label="Decimation Target"
+                                margin="dense"
+                                fullWidth={true}
+                                onChange={evt =>
+                                    this.bufferDisplayOptionsUpdate({
+                                        decimationRate:
+                                            parseFloat(evt.target.value) ||
+                                            appConfig.DEFAULT_DECIMATION_RATE
+                                    })
+                                }
+                                inputProps={{
+                                    type: "number"
+                                }}
+                            />
                         </FormGroup>
                     </div>
                 </Paper>

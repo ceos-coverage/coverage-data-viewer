@@ -32,7 +32,7 @@ export class ChartCreateForm extends Component {
             return trackList.map(track => (
                 <Checkbox
                     key={track.get("id") + "_chart_checkbox"}
-                    label={`${track.get("title")} (ref: ${track.get("shortId")})`}
+                    label={`${track.get("title")} (id: ${track.get("shortId")})`}
                     checked={this.props.formOptions.get("selectedTracks").includes(track.get("id"))}
                     onChange={isSelected =>
                         this.props.chartActions.setTrackSelected(track.get("id"), isSelected)

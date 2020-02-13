@@ -70,7 +70,7 @@ export function createChart() {
                 .map(track => {
                     return {
                         id: track.get("id"),
-                        title: `${track.get("title")} (ref: ${track.get("shortId")})`,
+                        title: `${track.get("title")} (id: ${track.get("shortId")})`,
                         program: track.getIn(["insituMeta", "program"]),
                         project: track.getIn(["insituMeta", "project"]),
                         source_id: track.getIn(["insituMeta", "source_id"])
