@@ -67,7 +67,7 @@ export class SatelliteLayerSelector extends Component {
         return (
             <div className={styles.list}>
                 <Typography variant="subtitle1" className={styles.subheader}>
-                    Satellite Overlay
+                    Overlay
                 </Typography>
                 <FormGroup className={styles.form}>
                     <RadioGroup
@@ -138,6 +138,7 @@ export class SatelliteLayerSelector extends Component {
             <Paper elevation={2} className={styles.root}>
                 <LabelPopover
                     label={this.renderLabel(activeLayer)}
+                    subtitle={activeLayer ? activeLayer.get("subtitle") : undefined}
                     className={styles.label}
                     contentClass={styles.content}
                 >
