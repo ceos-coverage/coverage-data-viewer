@@ -44,7 +44,7 @@ export class TrackDataDisplay extends Component {
                     </Typography>
                     <div className={styles.subtitle}>
                         <Typography variant="caption" className={styles.label}>
-                            {subtitle}
+                            {`${subtitle} (id: ${this.props.data.getIn(["layer", "shortId"])})`}
                         </Typography>
                     </div>
                 </div>
