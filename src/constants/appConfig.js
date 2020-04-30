@@ -31,7 +31,8 @@ const APP_CONFIG = Immutable.fromJS({
                 type: "wmts/xml"
             },
             {
-                url: "default-data/capabilities_oiip_gibs.xml",
+                url:
+                    "https://gibs.earthdata.nasa.gov/wmts/epsg4326/best/wmts.cgi?service=WMTS&request=GetCapabilities",
                 type: "wmts/xml"
             },
             {
@@ -97,6 +98,20 @@ const APP_CONFIG = Immutable.fromJS({
         ]
     },
     LAYER_SEARCH: {
+        FACETS: [
+            { value: "variables", label: "Variable" },
+            { value: "platform", label: "Platform" },
+            { value: "instrument", label: "Sensor" },
+            { value: "program", label: "Program" }
+        ],
+        SORT_PARAMS: [
+            { value: "instrument", label: "Sensor" },
+            { value: "platform", label: "Platform" },
+            { value: "program", label: "Program" }
+        ],
+        DEFAULT_SORT_PARAM: "program"
+    },
+    SATELLITE_LAYER_SEARCH: {
         FACETS: [
             { value: "variables", label: "Variable" },
             { value: "platform", label: "Platform" },

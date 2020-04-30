@@ -46,14 +46,14 @@ export class PointDataDisplay extends Component {
             ""
         );
 
-        const colorProp = layer.getIn(["mappingOptions", "displayProps", "color"]);
-        const colorRef = properties.get(colorProp);
-        const color = HACK_AIS_COLORS.find(x => x[0] === colorRef)[1];
+        // const colorProp = layer.getIn(["mappingOptions", "displayProps", "color"]);
+        // const colorRef = properties.get(colorProp);
+        // const color = HACK_AIS_COLORS.find(x => x[0] === colorRef)[1];
 
         return (
             <div className={styles.root}>
                 <div className={styles.labelRow}>
-                    <div className={styles.color} style={{ background: color }} />
+                    <div className={styles.color} />
                     <Typography variant="body1" className={styles.label}>
                         {properties.get(displayProps.title.value) || layer.get("title")}
                     </Typography>

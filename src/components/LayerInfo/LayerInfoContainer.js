@@ -43,17 +43,32 @@ export class LayerInfoContainer extends Component {
                         Mission
                     </Typography>
                     <Divider className={styles.divider} />
-                    <Typography variant="body2">{meta.get("mission") || "N/A"}</Typography>
+                    <Typography variant="body2">
+                        {meta
+                            .get("mission")
+                            .sort()
+                            .join(", ") || "N/A"}
+                    </Typography>
                     <Typography variant="h6" className={styles.label}>
                         Platform
                     </Typography>
                     <Divider className={styles.divider} />
-                    <Typography variant="body2">{meta.get("platform") || "N/A"}</Typography>
+                    <Typography variant="body2">
+                        {meta
+                            .get("platform")
+                            .sort()
+                            .join(", ") || "N/A"}
+                    </Typography>
                     <Typography variant="h6" className={styles.label}>
                         Instrument
                     </Typography>
                     <Divider className={styles.divider} />
-                    <Typography variant="body2">{meta.get("instrument") || "N/A"}</Typography>
+                    <Typography variant="body2">
+                        {meta
+                            .get("instrument")
+                            .sort()
+                            .join(", ") || "N/A"}
+                    </Typography>
                     <Typography variant="h6" className={styles.label}>
                         Variables
                     </Typography>

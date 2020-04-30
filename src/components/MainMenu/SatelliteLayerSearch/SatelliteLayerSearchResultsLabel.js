@@ -11,11 +11,11 @@ import { connect } from "react-redux";
 import { Typography } from "@material-ui/core";
 import MiscUtil from "utils/MiscUtil";
 
-export class LayerSearchResultsLabel extends Component {
+export class SatelliteLayerSearchResultsLabel extends Component {
     render() {
         let trackList = this.props.searchResults
             .get("results")
-            .filter((val, key) => val.get("isTrack"));
+            .filter((val, key) => !val.get("isTrack"));
 
         let containerClasses = MiscUtil.generateStringFromSet({
             [this.props.className]: typeof this.props.className !== "undefined"
@@ -28,7 +28,7 @@ export class LayerSearchResultsLabel extends Component {
     }
 }
 
-LayerSearchResultsLabel.propTypes = {
+SatelliteLayerSearchResultsLabel.propTypes = {
     className: PropTypes.string,
     searchResults: PropTypes.object.isRequired
 };
@@ -42,4 +42,4 @@ function mapStateToProps(state) {
 export default connect(
     mapStateToProps,
     null
-)(LayerSearchResultsLabel);
+)(SatelliteLayerSearchResultsLabel);

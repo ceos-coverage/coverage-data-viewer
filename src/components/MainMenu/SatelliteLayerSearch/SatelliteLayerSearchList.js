@@ -12,13 +12,13 @@ import { connect } from "react-redux";
 import List from "@material-ui/core/List";
 import ListSubheader from "@material-ui/core/ListSubheader";
 import SearchIcon from "@material-ui/icons/Search";
-import { LayerSearchResult } from "components/MainMenu/LayerSearch";
+import { SatelliteLayerSearchResult } from "components/MainMenu/SatelliteLayerSearch";
 import { AreaDefaultMessage } from "components/Reusables";
 import { LoadingSpinner } from "_core/components/Reusables";
 import * as appActions from "actions/appActions";
-import styles from "components/MainMenu/LayerSearch/LayerSearchList.scss";
+import styles from "components/MainMenu/SatelliteLayerSearch/SatelliteLayerSearchList.scss";
 
-export class LayerSearchList extends Component {
+export class SatelliteLayerSearchList extends Component {
     renderList(trackList) {
         // group the tracks
         let groups = trackList.reduce((acc, track) => {
@@ -47,7 +47,7 @@ export class LayerSearchList extends Component {
                     <ul key={"sublist_" + i} className={styles.dummyList}>
                         <ListSubheader className={styles.subheader}>{group.title}</ListSubheader>
                         {group.tracks.map(track => (
-                            <LayerSearchResult
+                            <SatelliteLayerSearchResult
                                 key={track.get("id") + "_layer_search_result"}
                                 layer={track}
                                 selected={this.props.selectedTracks.includes(track.get("id"))}
@@ -83,7 +83,7 @@ export class LayerSearchList extends Component {
         let trackList = this.props.searchResults
             .get("results")
             .toList()
-            .filter(x => x.get("isTrack"))
+            .filter(x => !x.get("isTrack"))
             .sortBy(entry => entry.getIn(["insituMeta", this.props.sortParam]));
         let totalNum = trackList.size;
         let isLoading = this.props.searchResults.get("isLoading");
@@ -96,7 +96,7 @@ export class LayerSearchList extends Component {
     }
 }
 
-LayerSearchList.propTypes = {
+SatelliteLayerSearchList.propTypes = {
     searchResults: PropTypes.object.isRequired,
     selectedTracks: PropTypes.object.isRequired,
     sortParam: PropTypes.string.isRequired,
@@ -122,4 +122,4 @@ function mapDispatchToProps(dispatch) {
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(LayerSearchList);
+)(SatelliteLayerSearchList);

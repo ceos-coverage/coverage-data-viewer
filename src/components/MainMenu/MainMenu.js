@@ -17,6 +17,7 @@ import Button from "@material-ui/core/Button";
 import ArrowBack from "@material-ui/icons/KeyboardArrowLeft";
 import { ChartMenu } from "components/Chart";
 import { LayerSearchMenu } from "components/MainMenu/LayerSearch";
+import { SatelliteLayerSearchMenu } from "components/MainMenu/SatelliteLayerSearch";
 import * as appActions from "actions/appActions";
 import MiscUtil from "_core/utils/MiscUtil";
 import styles from "components/MainMenu/MainMenu.scss";
@@ -34,9 +35,14 @@ export class MainMenu extends Component {
             [displayStyles.hidden]: this.props.tabIndex !== 0
         });
 
-        let tabChartClasses = MiscUtil.generateStringFromSet({
+        let tabSatelliteDatasetsClasses = MiscUtil.generateStringFromSet({
             [styles.tabContent]: true,
             [displayStyles.hidden]: this.props.tabIndex !== 1
+        });
+
+        let tabChartClasses = MiscUtil.generateStringFromSet({
+            [styles.tabContent]: true,
+            [displayStyles.hidden]: this.props.tabIndex !== 2
         });
 
         return (
@@ -66,7 +72,14 @@ export class MainMenu extends Component {
                                     root: styles.tabLabel,
                                     selected: styles.tabSelected
                                 }}
-                                label="Datasets"
+                                label="In-Situ Datasets"
+                            />
+                            <Tab
+                                classes={{
+                                    root: styles.tabLabel,
+                                    selected: styles.tabSelected
+                                }}
+                                label="Remote Datasets"
                             />
                             <Tab
                                 classes={{
@@ -78,6 +91,9 @@ export class MainMenu extends Component {
                         </Tabs>
                         <div className={tabDatasetsClasses}>
                             <LayerSearchMenu />
+                        </div>
+                        <div className={tabSatelliteDatasetsClasses}>
+                            <SatelliteLayerSearchMenu />
                         </div>
                         <div className={tabChartClasses}>
                             <ChartMenu />

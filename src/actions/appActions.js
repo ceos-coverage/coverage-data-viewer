@@ -67,26 +67,46 @@ export function setTrackSelected(trackId, isSelected) {
             let state = getState();
             let track = state.view.getIn(["layerSearch", "searchResults", "results", trackId]);
             let titleField = state.map.get("insituLayerTitleField");
-            dispatch(
-                mapActions.addLayer({
-                    id: track.get("id"),
-                    shortId: track.get("shortId"),
-                    title: track.getIn(["insituMeta", titleField]),
-                    type: appStrings.LAYER_GROUP_TYPE_INSITU_DATA,
-                    handleAs: appStrings.LAYER_VECTOR_POINT_TRACK,
-                    url: GeoServerUtil.getUrlForTrack(track),
-                    mappingOptions: {
-                        extents: MapUtil.constrainExtent([
-                            track.getIn(["insituMeta", "lon_min"]),
-                            track.getIn(["insituMeta", "lat_min"]),
-                            track.getIn(["insituMeta", "lon_max"]),
-                            track.getIn(["insituMeta", "lat_max"])
-                        ])
-                    },
-                    insituMeta: track.get("insituMeta"),
-                    timeFormat: "YYYY-MM-DDTHH:mm:ssZ"
-                })
-            );
+            if (track.get("isTrack")) {
+                dispatch(
+                    mapActions.addLayer({
+                        id: track.get("id"),
+                        shortId: track.get("shortId"),
+                        title: track.getIn(["insituMeta", titleField]),
+                        type: appStrings.LAYER_GROUP_TYPE_INSITU_DATA,
+                        handleAs: appStrings.LAYER_VECTOR_POINT_TRACK,
+                        url: GeoServerUtil.getUrlForTrack(track),
+                        mappingOptions: {
+                            extents: MapUtil.constrainExtent([
+                                track.getIn(["insituMeta", "lon_min"]),
+                                track.getIn(["insituMeta", "lat_min"]),
+                                track.getIn(["insituMeta", "lon_max"]),
+                                track.getIn(["insituMeta", "lat_max"])
+                            ])
+                        },
+                        insituMeta: track.get("insituMeta"),
+                        timeFormat: "YYYY-MM-DDTHH:mm:ssZ"
+                    })
+                );
+            } else {
+                dispatch(
+                    mapActions.addLayer({
+                        id: track.get("id"),
+                        shortId: track.get("shortId"),
+                        title: track.get("title"),
+                        type: appStringsCore.LAYER_GROUP_TYPE_DATA,
+                        handleAs: appStringsCore.LAYER_GIBS_RASTER,
+                        fromJson: true,
+                        mappingOptions: {
+                            urlFunctions: {
+                                openlayers: "kvpTimeParam_wmts",
+                                cesium: "kvpTimeParam_wmts"
+                            }
+                        },
+                        insituMeta: track.get("insituMeta")
+                    })
+                );
+            }
         } else {
             dispatch(
                 mapActions.removeLayer(
@@ -101,6 +121,14 @@ export function setTrackSelected(trackId, isSelected) {
                     Immutable.Map({
                         id: trackId,
                         type: appStrings.LAYER_GROUP_TYPE_INSITU_DATA
+                    })
+                )
+            );
+            dispatch(
+                mapActions.removeLayer(
+                    Immutable.Map({
+                        id: trackId,
+                        type: appStringsCore.LAYER_GROUP_TYPE_DATA
                     })
                 )
             );
@@ -171,16 +199,20 @@ export function runLayerSearch() {
             facets: searchParams.get("selectedFacets").toJS()
         };
 
-        SearchUtil.searchForTracks(options).then(
-            results => {
+        Promise.all([
+            SearchUtil.searchForTracks(options),
+            SearchUtil.searchForSatelliteSets(options)
+        ])
+            .then(allResults => {
+                console.log(allResults);
+                const results = allResults.flat();
                 dispatch(setSearchResults(results));
                 dispatch(setSearchLoading(false));
-            },
-            err => {
+            })
+            .catch(err => {
                 console.warn("Track search fail: ", err);
                 dispatch(setSearchLoading(false));
-            }
-        );
+            });
 
         updateFacets(dispatch, getState);
     };

@@ -17,7 +17,7 @@ export const viewState = viewStateCore.mergeDeep(
         layerInfo: undefined,
         layerSearch: {
             formOptions: {
-                startDate: moment.utc("2000-01-01", "YYYY-MM-DD").toDate(),
+                startDate: moment.utc("1970-01-01", "YYYY-MM-DD").toDate(),
                 endDate: appConfig.DEFAULT_DATE,
                 selectedArea: [],
                 selectedFacets: appConfig.LAYER_SEARCH.FACETS.reduce((acc, facet) => {

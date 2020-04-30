@@ -317,7 +317,20 @@ export default class MapReducer extends MapReducerCore {
 
     static addLayer(state, action) {
         if (typeof action.layer !== "undefined") {
-            let mergedLayer = this.getLayerModel().mergeDeep(action.layer);
+            let mergedLayer = Immutable.fromJS(action.layer);
+
+            // check for partial match
+            const partials = state.getIn(["layers", appStringsCore.LAYER_GROUP_TYPE_PARTIAL]);
+            const matchingPartials = partials.filter(el => {
+                return el.get("id") === mergedLayer.get("id");
+            });
+            mergedLayer = matchingPartials.reduce((acc, el) => {
+                return el.mergeDeep(acc);
+            }, mergedLayer);
+            mergedLayer = this.getLayerModel().mergeDeep(mergedLayer);
+
+            console.log(mergedLayer.toJS());
+
             if (
                 typeof mergedLayer.get("id") !== "undefined" &&
                 typeof state.getIn(["layers", mergedLayer.get("type")]) !== "undefined"
