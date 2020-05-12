@@ -40,7 +40,8 @@ const APP_CONFIG = Immutable.fromJS({
                 type: "wmts/xml"
             },
             {
-                url: "https://oiip.jpl.nasa.gov/gwc/wmts?Request=GetCapabilities",
+                url:
+                    "https://oiip.jpl.nasa.gov/onearth/wmts/epsg4326/wmts.cgi?service=WMTS&request=GetCapabilities",
                 type: "wmts/xml"
             }
         ],

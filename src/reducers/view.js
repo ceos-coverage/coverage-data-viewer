@@ -37,16 +37,25 @@ export default function view(state = viewState, action, opt_reducer = ViewReduce
             return opt_reducer.setLayerInfo(state, action);
 
         case actionTypes.SET_SEARCH_FACETS:
-            return opt_reducer.setSearchFacets(state, action);
+            return opt_reducer.setTrackSearchFacets(state, action);
+
+        case actionTypes.SET_SATELLITE_SEARCH_FACETS:
+            return opt_reducer.setSatelliteSearchFacets(state, action);
 
         case actionTypes.SET_SEARCH_FACET_SELECTED:
-            return opt_reducer.setSearchFacetSelected(state, action);
+            return opt_reducer.setTrackSearchFacetSelected(state, action);
+
+        case actionTypes.SET_SATELLITE_SEARCH_FACET_SELECTED:
+            return opt_reducer.setSatelliteSearchFacetSelected(state, action);
 
         case actionTypes.SET_SEARCH_SORT_PARAM:
             return opt_reducer.setSearchSortParameter(state, action);
 
-        case actionTypes.CLEAR_SEARCH_FACET:
-            return opt_reducer.clearSearchFacet(state, action);
+        case actionTypes.CLEAR_TRACK_SEARCH_FACET:
+            return opt_reducer.clearTrackSearchFacet(state, action);
+
+        case actionTypes.CLEAR_SATELLITE_SEARCH_FACET:
+            return opt_reducer.clearSatelliteSearchFacet(state, action);
 
         default:
             return viewCore.call(this, state, action, opt_reducer);

@@ -40,13 +40,15 @@ export function setSearchResults(results) {
     return { type: types.SET_SEARCH_RESULTS, results };
 }
 
-export function setSearchFacets(facets) {
+export function setTrackSearchFacets(facets) {
     return { type: types.SET_SEARCH_FACETS, facets };
 }
 
-export function setSearchFacetSelected(facet, isSelected, shouldUpdateFacets = false) {
-    // return { type: types.SET_SEARCH_FACET_SELECTED, facet, isSelected };
+export function setSatelliteSearchFacets(facets) {
+    return { type: types.SET_SATELLITE_SEARCH_FACETS, facets };
+}
 
+export function setTrackSearchFacetSelected(facet, isSelected, shouldUpdateFacets = false) {
     return (dispatch, getState) => {
         dispatch({ type: types.SET_SEARCH_FACET_SELECTED, facet, isSelected });
 
@@ -56,8 +58,22 @@ export function setSearchFacetSelected(facet, isSelected, shouldUpdateFacets = f
     };
 }
 
-export function clearSearchFacet(facetGroup) {
-    return { type: types.CLEAR_SEARCH_FACET, facetGroup };
+export function setSatelliteSearchFacetSelected(facet, isSelected, shouldUpdateFacets = false) {
+    return (dispatch, getState) => {
+        dispatch({ type: types.SET_SATELLITE_SEARCH_FACET_SELECTED, facet, isSelected });
+
+        if (shouldUpdateFacets === true) {
+            updateFacets(dispatch, getState);
+        }
+    };
+}
+
+export function clearTrackSearchFacet(facetGroup) {
+    return { type: types.CLEAR_TRACK_SEARCH_FACET, facetGroup };
+}
+
+export function clearSatelliteSearchFacet(facetGroup) {
+    return { type: types.CLEAR_SATELLITE_SEARCH_FACET, facetGroup };
 }
 
 export function setTrackSelected(trackId, isSelected) {
@@ -193,15 +209,17 @@ export function runLayerSearch() {
 
         dispatch(setSearchLoading(true));
 
-        let options = {
-            area: searchParams.get("selectedArea").toJS(),
-            dateRange: [searchParams.get("startDate"), searchParams.get("endDate")],
-            facets: searchParams.get("selectedFacets").toJS()
-        };
-
         Promise.all([
-            SearchUtil.searchForTracks(options),
-            SearchUtil.searchForSatelliteSets(options)
+            SearchUtil.searchForTracks({
+                area: searchParams.get("selectedArea").toJS(),
+                dateRange: [searchParams.get("startDate"), searchParams.get("endDate")],
+                facets: searchParams.get("trackSelectedFacets").toJS()
+            }),
+            SearchUtil.searchForSatelliteSets({
+                area: searchParams.get("selectedArea").toJS(),
+                dateRange: [searchParams.get("startDate"), searchParams.get("endDate")],
+                facets: searchParams.get("satelliteSelectedFacets").toJS()
+            })
         ])
             .then(allResults => {
                 console.log(allResults);
@@ -230,15 +248,28 @@ export function updateFacets(dispatch, getState) {
     let state = getState();
     let searchParams = state.view.getIn(["layerSearch", "formOptions"]);
 
-    let options = {
+    SearchUtil.searchForFacets({
+        datatype: "datatype:track",
         area: searchParams.get("selectedArea").toJS(),
         dateRange: [searchParams.get("startDate"), searchParams.get("endDate")],
-        facets: searchParams.get("selectedFacets").toJS()
-    };
-
-    SearchUtil.searchForFacets(options).then(
+        facets: searchParams.get("trackSelectedFacets").toJS()
+    }).then(
         results => {
-            dispatch(setSearchFacets(results));
+            dispatch(setTrackSearchFacets(results));
+        },
+        err => {
+            console.warn("Facet search Fail: ", err);
+        }
+    );
+
+    SearchUtil.searchForFacets({
+        datatype: "datatype:layer",
+        area: searchParams.get("selectedArea").toJS(),
+        dateRange: [searchParams.get("startDate"), searchParams.get("endDate")],
+        facets: searchParams.get("satelliteSelectedFacets").toJS()
+    }).then(
+        results => {
+            dispatch(setSatelliteSearchFacets(results));
         },
         err => {
             console.warn("Facet search Fail: ", err);

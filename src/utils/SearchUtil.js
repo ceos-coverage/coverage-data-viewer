@@ -14,7 +14,7 @@ import appConfig from "constants/appConfig";
 export default class SearchUtil {
     static searchForFacets(options) {
         return new Promise((resolve, reject) => {
-            let { area, dateRange, facets } = options;
+            let { area, dateRange, facets, datatype } = options;
 
             let baseUrl = appConfig.URLS.solrBase;
 
@@ -26,7 +26,7 @@ export default class SearchUtil {
             let ur = [area[3], area[2]].join(",");
 
             let query = [
-                "q=datatype:track",
+                "q=" + datatype,
                 "fq=lon_max:[" + area[0] + " TO *]",
                 "fq=lon_min:[* TO " + area[2] + "]",
                 "fq=lat_max:[" + area[1] + " TO *]",
@@ -91,8 +91,8 @@ export default class SearchUtil {
                 "fq=lon_min:[* TO " + area[2] + "]",
                 "fq=lat_max:[" + area[1] + " TO *]",
                 "fq=lat_min:[* TO " + area[3] + "]",
-                "fq=start_date:[" + sDateStr + " TO *]",
-                "fq=end_date:[* TO " + eDateStr + "]",
+                "fq=start_date:[* TO " + eDateStr + "]",
+                "fq=end_date:[" + sDateStr + " TO *]",
                 "rows=1000",
                 "wt=json"
             ];
@@ -144,8 +144,8 @@ export default class SearchUtil {
                 "fq=lon_min:[* TO " + area[2] + "]",
                 "fq=lat_max:[" + area[1] + " TO *]",
                 "fq=lat_min:[* TO " + area[3] + "]",
-                "fq=start_date:[" + sDateStr + " TO *]",
-                "fq=end_date:[* TO " + eDateStr + "]",
+                "fq=start_date:[* TO " + eDateStr + "]",
+                "fq=end_date:[" + sDateStr + " TO *]",
                 "rows=1000",
                 "wt=json"
             ];

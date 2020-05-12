@@ -63,7 +63,7 @@ export class LayerSearchFacets extends Component {
                                     label={facet.get("label")}
                                     rightLabel={facet.get("cnt")}
                                     onChange={(evt, isSelected) =>
-                                        this.props.appActions.setSearchFacetSelected(
+                                        this.props.appActions.setTrackSearchFacetSelected(
                                             { group: configFacet.value, value: facet.get("value") },
                                             isSelected
                                         )
@@ -78,7 +78,7 @@ export class LayerSearchFacets extends Component {
                             variant="text"
                             color="primary"
                             onClick={() =>
-                                this.props.appActions.clearSearchFacet(configFacet.value)
+                                this.props.appActions.clearTrackSearchFacet(configFacet.value)
                             }
                             className={styles.clearBtn}
                         >

@@ -63,7 +63,7 @@ export class SatelliteLayerSearchFacets extends Component {
                                     label={facet.get("label")}
                                     rightLabel={facet.get("cnt")}
                                     onChange={(evt, isSelected) =>
-                                        this.props.appActions.setSearchFacetSelected(
+                                        this.props.appActions.setSatelliteSearchFacetSelected(
                                             { group: configFacet.value, value: facet.get("value") },
                                             isSelected
                                         )
@@ -78,7 +78,7 @@ export class SatelliteLayerSearchFacets extends Component {
                             variant="text"
                             color="primary"
                             onClick={() =>
-                                this.props.appActions.clearSearchFacet(configFacet.value)
+                                this.props.appActions.clearSatelliteSearchFacet(configFacet.value)
                             }
                             className={styles.clearBtn}
                         >
@@ -91,7 +91,7 @@ export class SatelliteLayerSearchFacets extends Component {
     }
 
     renderFacets() {
-        let facets = appConfig.LAYER_SEARCH.FACETS;
+        let facets = appConfig.SATELLITE_LAYER_SEARCH.FACETS;
         return facets.map((facet, i) => {
             return this.renderFacetSelector(facet, this.props.facets.get(facet.value));
         });

@@ -14,7 +14,10 @@ import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import { Divider } from "@material-ui/core";
 import { DateRangePicker, AreaSelectionInput } from "components/Reusables";
-import { SatelliteLayerSearchResultsLabel } from "components/MainMenu/SatelliteLayerSearch";
+import {
+    SatelliteLayerSearchResultsLabel,
+    SatelliteLayerSearchFacets
+} from "components/MainMenu/SatelliteLayerSearch";
 import * as appActions from "actions/appActions";
 import styles from "components/MainMenu/SatelliteLayerSearch/SatelliteLayerSearchForm.scss";
 
@@ -34,7 +37,10 @@ export class SatelliteLayerSearchForm extends Component {
                 />
                 <Grid container alignItems="center" className={styles.facetRow}>
                     <Grid item xs={10} className={styles.rowItem}>
-                        <SatelliteLayerSearchResultsLabel className={styles.resultLabel} />
+                        <SatelliteLayerSearchFacets
+                            facets={this.props.searchOptions.get("satelliteSearchFacets")}
+                            selectedFacets={this.props.searchOptions.get("satelliteSelectedFacets")}
+                        />
                     </Grid>
                     <Grid item xs={2} className={styles.rowItem}>
                         <Button
@@ -48,6 +54,11 @@ export class SatelliteLayerSearchForm extends Component {
                     </Grid>
                 </Grid>
                 <Divider />
+                <Grid container alignItems="center" className={styles.resultsRow}>
+                    <Grid item xs={12} className={styles.rowItem}>
+                        <SatelliteLayerSearchResultsLabel className={styles.resultLabel} />
+                    </Grid>
+                </Grid>
             </Paper>
         );
     }

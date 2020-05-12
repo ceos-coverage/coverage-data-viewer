@@ -79,7 +79,7 @@ export class MainMenu extends Component {
                                     root: styles.tabLabel,
                                     selected: styles.tabSelected
                                 }}
-                                label="Remote Datasets"
+                                label="Satellite Datasets"
                             />
                             <Tab
                                 classes={{
