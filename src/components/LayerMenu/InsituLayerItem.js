@@ -43,6 +43,12 @@ export class InsituLayerItem extends Component {
                 ? this.props.layer.getIn(["insituMeta", "platform"])
                 : this.props.layer.getIn(["insituMeta", "instrument"]);
 
+        let title =
+            this.props.layer.get("title").size > 0
+                ? this.props.layer.getIn(["title", 0])
+                : this.props.layer.get("title");
+        subtitle = subtitle.size > 0 ? subtitle.get(0) : subtitle;
+
         return (
             <div key={this.props.layer.get("id") + "-insitu-menu-item"} className={styles.root}>
                 <div className={styles.leftItem}>{this.renderLeftAction()}</div>
@@ -68,9 +74,7 @@ export class InsituLayerItem extends Component {
                             component="span"
                             className={styles.label}
                         >
-                            {`${this.props.layer.get("title")} (id: ${this.props.layer.get(
-                                "shortId"
-                            )})`}
+                            {`${title} (id: ${this.props.layer.get("shortId")})`}
                         </Typography>
                     </EnhancedTooltip>
                 </div>

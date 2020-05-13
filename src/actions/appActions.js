@@ -14,7 +14,6 @@ import * as appStringsCore from "_core/constants/appStrings";
 import MapUtil from "utils/MapUtil";
 import SearchUtil from "utils/SearchUtil";
 import GeoServerUtil from "utils/GeoServerUtil";
-import shouldUpdate from "recompose/shouldUpdate";
 
 export function setMainMenuTabIndex(tabIndex) {
     return { type: types.SET_MAIN_MENU_TAB_INDEX, tabIndex };
@@ -222,7 +221,6 @@ export function runLayerSearch() {
             })
         ])
             .then(allResults => {
-                console.log(allResults);
                 const results = allResults.flat();
                 dispatch(setSearchResults(results));
                 dispatch(setSearchLoading(false));

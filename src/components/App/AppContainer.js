@@ -25,7 +25,7 @@ import { AlertsContainer } from "_core/components/Alerts";
 import { DatePickerContainer, AnimationLoading } from "components/DatePicker";
 import { MouseFollowerContainer } from "components/MouseFollower";
 import { KeyboardControlsContainer } from "components/KeyboardControls";
-import { SatelliteLayerSelector, InsituLayerMenu } from "components/LayerMenu";
+import { SatelliteLayerMenu, InsituLayerMenu } from "components/LayerMenu";
 import styles from "components/App/AppContainer.scss";
 import stylesCore from "_core/components/App/AppContainer.scss";
 import displayStyles from "_core/styles/display.scss";
@@ -128,7 +128,7 @@ export class AppContainer extends Component {
                     <MapControlsContainer className={mapControlsClasses} />
                     <div className={styles.layers}>
                         <InsituLayerMenu />
-                        <SatelliteLayerSelector />
+                        <SatelliteLayerMenu />
                     </div>
                     <LayerInfoContainer />
                     <MainMenu />

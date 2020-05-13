@@ -127,17 +127,18 @@ export default class MapReducer extends MapReducerCore {
                 actionLayer = this.findLayerById(state, actionLayer);
             }
             if (typeof actionLayer !== "undefined") {
-                if (actionLayer.get("type") === appStringsCore.LAYER_GROUP_TYPE_DATA) {
-                    let dataLayers = state.getIn(["layers", appStringsCore.LAYER_GROUP_TYPE_DATA]);
-                    dataLayers.map((layer, id) => {
-                        if (layer.get("isActive")) {
-                            state = MapReducerCore.setLayerActive(state, {
-                                layer: id,
-                                active: false
-                            });
-                        }
-                    });
-                } else if (actionLayer.get("type") === appStrings.LAYER_GROUP_TYPE_INSITU_DATA) {
+                // if (actionLayer.get("type") === appStringsCore.LAYER_GROUP_TYPE_DATA) {
+                //     let dataLayers = state.getIn(["layers", appStringsCore.LAYER_GROUP_TYPE_DATA]);
+                //     dataLayers.map((layer, id) => {
+                //         if (layer.get("isActive")) {
+                //             state = MapReducerCore.setLayerActive(state, {
+                //                 layer: id,
+                //                 active: false
+                //             });
+                //         }
+                //     });
+                // } else if (actionLayer.get("type") === appStrings.LAYER_GROUP_TYPE_INSITU_DATA) {
+                if (actionLayer.get("type") === appStrings.LAYER_GROUP_TYPE_INSITU_DATA) {
                     // set the color of this vector layer
                     let dataLayers = state.getIn([
                         "layers",
@@ -328,8 +329,6 @@ export default class MapReducer extends MapReducerCore {
                 return el.mergeDeep(acc);
             }, mergedLayer);
             mergedLayer = this.getLayerModel().mergeDeep(mergedLayer);
-
-            console.log(mergedLayer.toJS());
 
             if (
                 typeof mergedLayer.get("id") !== "undefined" &&
