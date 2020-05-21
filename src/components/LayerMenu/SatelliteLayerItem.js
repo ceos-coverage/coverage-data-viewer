@@ -53,30 +53,42 @@ export class SatelliteLayerItem extends Component {
 
         return (
             <div className={styles.root}>
-                <div className={styles.centerItem}>
+                <div className={styles.header}>
+                    <div className={styles.centerItem}>
+                        <Typography
+                            variant="body2"
+                            color="inherit"
+                            component="span"
+                            className={styles.label}
+                        >
+                            {layer.get("title")}
+                        </Typography>
+                        {this.renderColorbar(layer)}
+                    </div>
+                    <div className={styles.rightItem}>
+                        <IconButtonSmall
+                            color="inherit"
+                            className={styles.actionBtn}
+                            onClick={() =>
+                                this.props.appActions.setTrackSelected(
+                                    this.props.layer.get("id"),
+                                    false
+                                )
+                            }
+                        >
+                            <RemoveIcon />
+                        </IconButtonSmall>
+                    </div>
+                </div>
+                <div className={styles.footer}>
                     <Typography
-                        variant="body2"
+                        variant="caption"
                         color="inherit"
                         component="span"
-                        className={styles.label}
+                        className={styles.subtitle}
                     >
-                        {layer.get("title")}
+                        {layer.getIn(["insituMeta", "program"])}
                     </Typography>
-                    {this.renderColorbar(layer)}
-                </div>
-                <div className={styles.rightItem}>
-                    <IconButtonSmall
-                        color="inherit"
-                        className={styles.actionBtn}
-                        onClick={() =>
-                            this.props.appActions.setTrackSelected(
-                                this.props.layer.get("id"),
-                                false
-                            )
-                        }
-                    >
-                        <RemoveIcon />
-                    </IconButtonSmall>
                 </div>
             </div>
         );

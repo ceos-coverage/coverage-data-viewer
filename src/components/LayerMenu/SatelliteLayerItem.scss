@@ -1,7 +1,4 @@
 .root {
-    display: flex;
-    flex-flow: row nowrap;
-    align-items: flex-start;
     padding: 0.5rem 1rem;
     width: 100%;
     overflow: hidden;
@@ -11,6 +8,13 @@
         border-bottom: none;
     }
 }
+.header,
+.footer {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: flex-start;
+}
+
 .leftItem {
     width: 1.2rem;
     height: 1.2rem;
@@ -30,8 +34,15 @@
     color: rgba(0, 0, 0, 0.54);
     margin-top: 0.2rem;
 }
-.label {
+
+.label,
+.subtitle {
     white-space: normal;
+}
+
+.subtitle {
+    margin: 0px 0.5rem;
+    color: darken(white, 50%);
 }
 
 .btnWrapper {
@@ -47,6 +58,7 @@
         color: darken(white, 50%);
     }
 }
+
 .colorbarWrapper {
     margin-top: 0.3rem;
 }
