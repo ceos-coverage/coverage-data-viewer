@@ -16,7 +16,6 @@ import styles from "components/DatePicker/DatePickerContainer.scss";
 export class DatePickerContainer extends Component {
     render() {
         let containerClasses = MiscUtil.generateStringFromSet({
-            [stylesCore.datePickerContainer]: true,
             [styles.root]: true,
             [styles.expanded]: this.props.animationOpen,
             [this.props.className]: typeof this.props.className !== "undefined"

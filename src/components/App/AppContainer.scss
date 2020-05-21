@@ -6,6 +6,13 @@
  */
 
 .mapControls {
+    position: absolute;
+    bottom: 125px;
+    right: 15px;
+    display: flex;
+    flex-flow: column wrap;
+    align-content: flex-start;
+
     right: initial;
     left: 0.7rem;
     bottom: 7rem;

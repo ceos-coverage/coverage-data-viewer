@@ -94,8 +94,8 @@ export class MapControlsContainer extends Component {
                 this.props.mapControlsHidden && this.props.distractionFreeMode,
             [displayStyles.hiddenFadeIn]:
                 !this.props.mapControlsHidden && this.props.distractionFreeMode,
-            [this.props.className]: typeof this.props.className !== "undefined",
-            [stylesCore.mapControlsContainer]: true
+            [this.props.className]: typeof this.props.className !== "undefined"
+            // [stylesCore.mapControlsContainer]: true
         });
         return (
             <div
@@ -177,4 +177,7 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(MapControlsContainer);
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(MapControlsContainer);
