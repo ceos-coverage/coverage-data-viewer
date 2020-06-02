@@ -16,7 +16,7 @@ import * as mapActionsCore from "_core/actions/mapActions";
 import * as appStringsCore from "_core/constants/appStrings";
 import * as appActions from "actions/appActions";
 import appConfig from "constants/appConfig";
-import MiscUtil from "_core/utils/MiscUtil";
+import MiscUtil from "utils/MiscUtil";
 import { MapContainer, MapControlsContainer, RefDataDisplay } from "components/Map";
 import { MainMenu } from "components/MainMenu";
 import { LayerInfoContainer } from "components/LayerInfo";
