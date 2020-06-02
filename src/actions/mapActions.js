@@ -5,13 +5,11 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import Immutable from "immutable";
 import moment from "moment";
 import * as types from "constants/actionTypes";
 import * as typesCore from "_core/constants/actionTypes";
 import * as appActions from "actions/appActions";
 import * as chartActions from "actions/chartActions";
-import * as mapActionsCore from "_core/actions/mapActions";
 
 export function addLayer(layer, setActive = true) {
     return { type: types.ADD_LAYER, layer, setActive };
