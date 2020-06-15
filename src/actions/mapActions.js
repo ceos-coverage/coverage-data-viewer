@@ -6,13 +6,58 @@
  */
 
 import moment from "moment";
+import * as appStringsCore from "_core/constants/appStrings";
 import * as types from "constants/actionTypes";
 import * as typesCore from "_core/constants/actionTypes";
 import * as appActions from "actions/appActions";
 import * as chartActions from "actions/chartActions";
+import { WMTSUtil } from "utils/WMTSUtil";
 
 export function addLayer(layer, setActive = true) {
-    return { type: types.ADD_LAYER, layer, setActive };
+    return dispatch => {
+        const capUrl = layer.insituMeta.get("service_url");
+        if (capUrl) {
+            WMTSUtil.getWMTSData(capUrl)
+                .then(wmtsString => {
+                    dispatch({
+                        type: typesCore.INGEST_LAYER_CONFIG,
+                        config: wmtsString,
+                        options: { url: capUrl, type: appStringsCore.LAYER_CONFIG_WMTS_XML }
+                    });
+
+                    if (wmtsString) {
+                        WMTSUtil.getGIBSColormap(wmtsString, { layer: layer.id })
+                            .then(palette => {
+                                dispatch({
+                                    type: typesCore.INGEST_LAYER_PALETTES,
+                                    paletteConfig: { paletteArray: [palette] }
+                                });
+
+                                layer.palette = {
+                                    name: palette.name,
+                                    handleAs: palette.handleAs,
+                                    min: palette.min,
+                                    max: palette.max
+                                };
+                                layer.units = palette.units;
+
+                                dispatch({ type: types.ADD_LAYER, layer, setActive });
+                            })
+                            .catch(err => {
+                                dispatch({ type: types.ADD_LAYER, layer, setActive });
+                            });
+                    } else {
+                        dispatch({ type: types.ADD_LAYER, layer, setActive });
+                    }
+                })
+                .catch(err => {
+                    console.warn(err);
+                    dispatch({ type: types.ADD_LAYER, layer, setActive });
+                });
+        } else {
+            dispatch({ type: types.ADD_LAYER, layer, setActive });
+        }
+    };
 }
 
 export function removeLayer(layer) {

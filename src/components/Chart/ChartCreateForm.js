@@ -29,16 +29,22 @@ export class ChartCreateForm extends Component {
 
     renderTrackList(trackList) {
         if (trackList.size > 0) {
-            return trackList.map(track => (
-                <Checkbox
-                    key={track.get("id") + "_chart_checkbox"}
-                    label={`${track.get("title")} (id: ${track.get("shortId")})`}
-                    checked={this.props.formOptions.get("selectedTracks").includes(track.get("id"))}
-                    onChange={isSelected =>
-                        this.props.chartActions.setTrackSelected(track.get("id"), isSelected)
-                    }
-                />
-            ));
+            return trackList.map(track => {
+                let title =
+                    track.get("title").size > 0 ? track.getIn(["title", 0]) : track.get("title");
+                return (
+                    <Checkbox
+                        key={track.get("id") + "_chart_checkbox"}
+                        label={`${title} (id: ${track.get("shortId")})`}
+                        checked={this.props.formOptions
+                            .get("selectedTracks")
+                            .includes(track.get("id"))}
+                        onChange={isSelected =>
+                            this.props.chartActions.setTrackSelected(track.get("id"), isSelected)
+                        }
+                    />
+                );
+            });
         }
         return "No datasets selected";
     }

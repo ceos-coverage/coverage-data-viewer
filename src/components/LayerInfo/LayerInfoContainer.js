@@ -28,12 +28,31 @@ export class LayerInfoContainer extends Component {
         this.prevLayer = this.props.layer;
     }
 
+    renderThumbnail(layer) {
+        if (typeof layer !== "undefined") {
+            const meta = layer.get("insituMeta");
+            const url = meta.get("thumbnail_url");
+            console.log(url);
+            if (url) {
+                return (
+                    <div
+                        style={{
+                            backgroundImage: `url(${url})`
+                        }}
+                        className={styles.thumbnail}
+                    />
+                );
+            }
+        }
+    }
+
     renderInfoContent(layer) {
         if (typeof layer !== "undefined") {
             let meta = layer.get("insituMeta");
 
             return (
-                <DialogContent className={styles.content}>
+                <DialogContent classes={{ root: styles.content }}>
+                    {this.renderThumbnail(layer)}
                     <Typography variant="h6" className={styles.label}>
                         Program
                     </Typography>

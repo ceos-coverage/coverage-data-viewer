@@ -68,9 +68,13 @@ export function createChart() {
                 .filter(track => trackIds.contains(track.get("id")))
                 .toList()
                 .map(track => {
+                    let title =
+                        track.get("title").size > 0
+                            ? track.getIn(["title", 0])
+                            : track.get("title");
                     return {
                         id: track.get("id"),
-                        title: `${track.get("title")} (id: ${track.get("shortId")})`,
+                        title: `${title} (id: ${track.get("shortId")})`,
                         program: track.getIn(["insituMeta", "program"]),
                         project: track.getIn(["insituMeta", "project"]),
                         source_id: track.getIn(["insituMeta", "source_id"])

@@ -63,7 +63,6 @@ export class SatelliteLayerItem extends Component {
                         >
                             {layer.get("title")}
                         </Typography>
-                        {this.renderColorbar(layer)}
                     </div>
                     <div className={styles.rightItem}>
                         <IconButtonSmall
@@ -90,6 +89,7 @@ export class SatelliteLayerItem extends Component {
                         {layer.getIn(["insituMeta", "program"])}
                     </Typography>
                 </div>
+                {this.renderColorbar(layer)}
             </div>
         );
     }
