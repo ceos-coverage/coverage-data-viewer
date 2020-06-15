@@ -217,6 +217,16 @@
             "updateParameters": {
                 "time": false
             }
+        },
+        {
+            "id": "ASTER_GDEM_Color_Shaded_Relief",
+            "title": "Digital Elevation Model, Color Shaded Relief",
+            "type": "basemap",
+            "thumbnailImage": "https://gibs.earthdata.nasa.gov/wmts/epsg4326/best/ASTER_GDEM_Color_Shaded_Relief/default/31.25m/2/1/1.jpeg",
+            "handleAs": "GIBS_raster",
+            "updateParameters": {
+                "time": false
+            }
         }
     ]
 }

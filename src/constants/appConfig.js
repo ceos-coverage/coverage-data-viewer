@@ -25,25 +25,30 @@ const APP_CONFIG = Immutable.fromJS({
                 url: "default-data/layers_oiip.json",
                 type: "json"
             },
-            {
-                url:
-                    "https://podaac-tools.jpl.nasa.gov/onearth/wmts/wmts.cgi?Service=WMTS&Request=GetCapabilities",
-                type: "wmts/xml"
-            },
-            {
-                url:
-                    "https://gibs.earthdata.nasa.gov/wmts/epsg4326/best/wmts.cgi?service=WMTS&request=GetCapabilities",
-                type: "wmts/xml"
-            },
+            // {
+            //     url:
+            //         "https://podaac-tools.jpl.nasa.gov/onearth/wmts/wmts.cgi?Service=WMTS&Request=GetCapabilities",
+            //     type: "wmts/xml"
+            // },
+            // {
+            //     url:
+            //         "https://gibs.earthdata.nasa.gov/wmts/epsg4326/best/wmts.cgi?service=WMTS&request=GetCapabilities",
+            //     type: "wmts/xml"
+            // },
+            // TODO - fix data reference layers (FAO Regions etc)
             {
                 url: "default-data/capabilities_oiip_dev.xml",
                 type: "wmts/xml"
             },
             {
-                url:
-                    "https://oiip.jpl.nasa.gov/onearth/wmts/epsg4326/wmts.cgi?service=WMTS&request=GetCapabilities",
+                url: "default-data/capabilities_oiip_gibs.xml",
                 type: "wmts/xml"
             }
+            // {
+            //     url:
+            //         "https://oiip.jpl.nasa.gov/onearth/wmts/epsg4326/wmts.cgi?service=WMTS&request=GetCapabilities",
+            //     type: "wmts/xml"
+            // }
         ],
         paletteConfig: "default-data/palettes_oiip.json",
         geoserverBase: "https://oiip.jpl.nasa.gov/geoserver/ows",
