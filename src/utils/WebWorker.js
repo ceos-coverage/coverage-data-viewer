@@ -163,7 +163,9 @@ export default class WebWorker extends WebWorkerCore {
             // console.time("decimating");
             let dataRows = eventData.dataRows
                 ? eventData.dataRows
-                : eventData.url ? this._remoteData[eventData.url].data : [];
+                : eventData.url
+                ? this._remoteData[eventData.url].data
+                : [];
             let xFunc = this._getReadFuncForKey(eventData.keys.xKey);
             let yFunc = this._getReadFuncForKey(eventData.keys.yKey);
             let zFunc = this._getReadFuncForKey(eventData.keys.zKey);
@@ -280,8 +282,7 @@ export default class WebWorker extends WebWorkerCore {
             let time = Date.parse(entry[key]);
             if (isNaN(time)) {
                 time = parseFloat(entry[key]);
-                let mag = Math.floor(Math.log10(time));
-                if (Math.floor(Math.log10(time)) === 9) {
+                if (Math.floor(Math.log10(time)) <= 9) {
                     time *= 1000;
                 }
             }

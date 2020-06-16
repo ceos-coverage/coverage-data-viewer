@@ -134,17 +134,17 @@ export class ChartCreateForm extends Component {
 
         let datasetsSubtitle = this.props.formOptions.get("selectedTracks").size + " Selected";
         if (this.props.formOptions.get("selectedTracks").size === 1) {
-            datasetsSubtitle = trackList
-                .find(track => {
-                    return (
-                        track.get("id") ===
-                        this.props.formOptions
-                            .get("selectedTracks")
-                            .toList()
-                            .get(0)
-                    );
-                })
-                .get("title");
+            const track = trackList.find(track => {
+                return (
+                    track.get("id") ===
+                    this.props.formOptions
+                        .get("selectedTracks")
+                        .toList()
+                        .get(0)
+                );
+            });
+            datasetsSubtitle =
+                track.get("title").size > 0 ? track.getIn(["title", 0]) : track.get("title");
         }
 
         return (
