@@ -5,7 +5,9 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
+import Immutable from "immutable";
 import moment from "moment";
+import * as appStrings from "constants/appStrings";
 import * as appStringsCore from "_core/constants/appStrings";
 import * as types from "constants/actionTypes";
 import * as typesCore from "_core/constants/actionTypes";
@@ -19,35 +21,45 @@ export function addLayer(layer, setActive = true) {
         if (capUrl) {
             WMTSUtil.getWMTSData(capUrl)
                 .then(wmtsString => {
-                    dispatch({
-                        type: typesCore.INGEST_LAYER_CONFIG,
-                        config: wmtsString,
-                        options: { url: capUrl, type: appStringsCore.LAYER_CONFIG_WMTS_XML }
-                    });
-
                     if (wmtsString) {
-                        WMTSUtil.getGIBSColormap(wmtsString, { layer: layer.id })
-                            .then(palette => {
-                                dispatch({
-                                    type: typesCore.INGEST_LAYER_PALETTES,
-                                    paletteConfig: { paletteArray: [palette] }
-                                });
+                        dispatch({
+                            type: typesCore.INGEST_LAYER_CONFIG,
+                            config: wmtsString,
+                            options: { url: capUrl, type: appStringsCore.LAYER_CONFIG_WMTS_XML }
+                        });
 
-                                layer.palette = {
-                                    name: palette.name,
-                                    handleAs: palette.handleAs,
-                                    min: palette.min,
-                                    max: palette.max
-                                };
-                                layer.units = palette.units;
-
-                                dispatch({ type: types.ADD_LAYER, layer, setActive });
-                            })
-                            .catch(err => {
-                                dispatch({ type: types.ADD_LAYER, layer, setActive });
-                            });
-                    } else {
                         dispatch({ type: types.ADD_LAYER, layer, setActive });
+
+                        let p;
+                        if (layer.palette.handleAs === appStrings.COLORBAR_GIBS_XML) {
+                            p = WMTSUtil.getGIBSColormapFromURL(layer.palette.url, layer.id);
+                        } else {
+                            p = WMTSUtil.getGIBSColormapFromCapabilities(wmtsString, {
+                                layer: layer.id
+                            });
+                        }
+                        p.then(palette => {
+                            dispatch({
+                                type: typesCore.INGEST_LAYER_PALETTES,
+                                paletteConfig: { paletteArray: [palette] }
+                            });
+                            dispatch({
+                                type: types.UPDATE_LAYER,
+                                layer: Immutable.fromJS({
+                                    id: layer.id,
+                                    type: layer.type,
+                                    units: palette.units,
+                                    palette: {
+                                        name: palette.name,
+                                        handleAs: palette.handleAs,
+                                        min: palette.min,
+                                        max: palette.max
+                                    }
+                                })
+                            });
+                        }).catch(err => {
+                            console.warn(err);
+                        });
                     }
                 })
                 .catch(err => {

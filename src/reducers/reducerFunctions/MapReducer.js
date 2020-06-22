@@ -349,6 +349,17 @@ export default class MapReducer extends MapReducerCore {
         return state;
     }
 
+    static updateLayer(state, action) {
+        if (state.hasIn(["layers", action.layer.get("type"), action.layer.get("id")])) {
+            const layer = state.getIn(["layers", action.layer.get("type"), action.layer.get("id")]);
+            return state.setIn(
+                ["layers", action.layer.get("type"), action.layer.get("id")],
+                layer.mergeDeep(action.layer)
+            );
+        }
+        return state;
+    }
+
     static removeLayer(state, action) {
         if (state.hasIn(["layers", action.layer.get("type"), action.layer.get("id")])) {
             state = this.setLayerActive(state, {

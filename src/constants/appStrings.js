@@ -45,6 +45,8 @@ export const INTERACTION_AREA_SELECTION = "SelectArea";
 export const INTERACTION_AREA_DISPLAY = "DisplayArea";
 export const GEOMETRY_BOX = "Box";
 
+export const COLORBAR_GIBS_XML = "gibs-xml";
+
 export const ALERTS = {
     FILL_BUFFER_FAILED: {
         title: "Buffering Animation Failed",

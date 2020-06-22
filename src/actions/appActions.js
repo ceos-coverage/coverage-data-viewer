@@ -112,6 +112,11 @@ export function setTrackSelected(trackId, isSelected) {
                         type: appStringsCore.LAYER_GROUP_TYPE_DATA,
                         handleAs: appStringsCore.LAYER_GIBS_RASTER,
                         fromJson: true,
+                        palette: {
+                            name: track.get("shortId"),
+                            url: track.get("colorbarUrl"),
+                            handleAs: appStrings.COLORBAR_GIBS_XML
+                        },
                         mappingOptions: {
                             urlFunctions: {
                                 openlayers: "kvpTimeParam_wmts",

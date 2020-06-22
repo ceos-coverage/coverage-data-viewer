@@ -242,13 +242,13 @@ export default class SearchUtil {
                     entry.get("layer_id"),
                     extraOps.isTrack
                 );
-                variables.forEach(v => {
+                variables.forEach((v, i) => {
                     const id =
                         v.get("layerId") ||
                         (entry.get("id") || entry.get("project") + "_" + entry.get("source_id")) +
                             v.get("label");
                     const idNumMatch = id.match(/\d+/g);
-                    let formattedTrack = Immutable.Map({
+                    const formattedTrack = Immutable.Map({
                         id: id,
                         shortId: entry.get("platform_id") || idNumMatch[0],
                         title:
@@ -256,6 +256,9 @@ export default class SearchUtil {
                             entry.get("title") ||
                             entry.get("platform") ||
                             entry.get("id"),
+                        colorbarUrl: entry.get("colorbar_url")
+                            ? entry.getIn(["colorbar_url", i])
+                            : "",
                         insituMeta: entry.set("variables", Immutable.Set().add(v))
                     }).mergeDeep(extraOps);
                     results.push(Immutable.fromJS(formattedTrack));
@@ -278,22 +281,24 @@ export default class SearchUtil {
             }
         }
 
-        return varList.reduce((acc, varStr, i) => {
-            if (layerList) {
+        return varList
+            .reduce((acc, varStr, i) => {
+                if (layerList) {
+                    return acc.add(
+                        Immutable.Map({
+                            label: varStr,
+                            units: unitsList.get(i) || "",
+                            layerId: layerList.get(i) || ""
+                        })
+                    );
+                }
                 return acc.add(
                     Immutable.Map({
                         label: varStr,
-                        units: unitsList.get(i) || "",
-                        layerId: layerList.get(i) || ""
+                        units: unitsList.get(i) || ""
                     })
                 );
-            }
-            return acc.add(
-                Immutable.Map({
-                    label: varStr,
-                    units: unitsList.get(i) || ""
-                })
-            );
-        }, Immutable.Set());
+            }, Immutable.OrderedSet())
+            .toList();
     }
 }

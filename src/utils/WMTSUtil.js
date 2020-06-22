@@ -34,7 +34,97 @@ export class WMTSUtil {
         return null;
     }
 
-    static getGIBSColormap(wmtsCapTxt, config) {
+    static getGIBSColormapFromURL(colormapUrl, name = "colorbar") {
+        return new Promise((resolve, reject) => {
+            if (!colormapUrl) {
+                reject(null);
+            }
+
+            // check cache
+            const p = this._WMTS_CACHE[colormapUrl]
+                ? new Promise(resolve => resolve(this._WMTS_CACHE[colormapUrl]))
+                : MiscUtil.asyncFetch({
+                      url: colormapUrl,
+                      handleAs: appStringsCore.FILE_TYPE_XML,
+                      options: { credentials: "same-origin" }
+                  });
+
+            p.then(data => {
+                this._WMTS_CACHE[colormapUrl] = data;
+
+                // parse the document
+                const xmlDoc = this.parseXML(data);
+
+                if (!xmlDoc) {
+                    reject(null);
+                }
+
+                const maps = xmlDoc.getElementsByTagName("ColorMap");
+
+                // attempt to filter out the no data map
+                let map;
+                for (let i = 0; i < maps.length; ++i) {
+                    map = maps[i];
+                    if (
+                        map.getAttribute("title") &&
+                        map.getAttribute("title").toLowerCase() !== "no data"
+                    ) {
+                        break;
+                    }
+                }
+
+                const units = map.getAttribute("units");
+                const legend = map.getElementsByTagName("Legend")[0];
+                if (legend) {
+                    const legendEntries = legend.getElementsByTagName("LegendEntry");
+
+                    const min = legend.getAttribute("minLabel");
+                    const max = legend.getAttribute("maxLabel");
+
+                    const values = [];
+                    for (let i = 0; i < legendEntries.length; ++i) {
+                        const ent = legendEntries[i];
+                        const rgb = ent.getAttribute("rgb");
+                        const value = ent.getAttribute("tooltip");
+                        values.push([value, rgb]);
+                    }
+
+                    resolve({
+                        name,
+                        values,
+                        min,
+                        max,
+                        units,
+                        handleAs: appStringsCore.COLORBAR_JSON_FIXED
+                    });
+                } else {
+                    const colorEntries = map.getElementsByTagName("ColorMapEntry");
+
+                    const values = [];
+                    for (let i = 0; i < colorEntries.length; ++i) {
+                        const ent = colorEntries[i];
+                        const rgb = ent.getAttribute("rgb");
+                        const value = ent.getAttribute("label");
+                        values.push([value, rgb]);
+                    }
+
+                    const min = map.getAttribute("minLabel") || values[0][0];
+                    const max = map.getAttribute("maxLabel") || values[values.length - 1][0];
+
+                    resolve({
+                        name,
+                        values,
+                        min,
+                        max,
+                        units,
+                        handleAs: appStringsCore.COLORBAR_JSON_FIXED
+                    });
+                }
+            }).catch(err => reject(err));
+        });
+    }
+
+    static getGIBSColormapFromCapabilities(wmtsCapTxt, config) {
         return new Promise((resolve, reject) => {
             // parse the document
             const xmlDoc = this.parseXML(wmtsCapTxt);
@@ -75,64 +165,9 @@ export class WMTSUtil {
                 }
             }
 
-            if (!colormapUrl) {
-                reject(null);
-            }
-
-            // check cache
-            const p = this._WMTS_CACHE[colormapUrl]
-                ? new Promise(resolve => resolve(this._WMTS_CACHE[colormapUrl]))
-                : MiscUtil.asyncFetch({
-                      url: colormapUrl,
-                      handleAs: appStringsCore.FILE_TYPE_XML,
-                      options: { credentials: "same-origin" }
-                  });
-
-            p.then(data => {
-                this._WMTS_CACHE[colormapUrl] = data;
-
-                // parse the document
-                const xmlDoc = this.parseXML(data);
-
-                if (!xmlDoc) {
-                    reject(null);
-                }
-
-                const maps = xmlDoc.getElementsByTagName("ColorMap");
-
-                // attempt to filter out the no data map
-                let map;
-                for (let i = 0; i < maps.length; ++i) {
-                    map = maps[i];
-                    if (map.getAttribute("title").toLowerCase() !== "no data") {
-                        break;
-                    }
-                }
-
-                const legend = map.getElementsByTagName("Legend")[0];
-                const legendEntries = legend.getElementsByTagName("LegendEntry");
-
-                const units = map.getAttribute("units");
-                const min = legend.getAttribute("minLabel");
-                const max = legend.getAttribute("maxLabel");
-
-                const values = [];
-                for (let i = 0; i < legendEntries.length; ++i) {
-                    const ent = legendEntries[i];
-                    const rgb = ent.getAttribute("rgb");
-                    const value = ent.getAttribute("tooltip");
-                    values.push([value, rgb]);
-                }
-
-                resolve({
-                    name: config.layer,
-                    values,
-                    min,
-                    max,
-                    units,
-                    handleAs: appStringsCore.COLORBAR_JSON_FIXED
-                });
-            }).catch(err => reject(err));
+            this.getGIBSColormapFromURL(colormapUrl, config.layer)
+                .then(data => resolve(data))
+                .catch(err => reject(err));
         });
     }
 }

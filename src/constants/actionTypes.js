@@ -25,6 +25,7 @@ export const SET_CHART_WARNING = "SET_CHART_WARNING";
 // Layer Actions
 export const ADD_LAYER = "ADD_LAYER";
 export const REMOVE_LAYER = "REMOVE_LAYER";
+export const UPDATE_LAYER = "UPDATE_LAYER";
 export const SET_INSITU_LAYER_COLOR = "SET_INSITU_LAYER_COLOR";
 export const ZOOM_TO_LAYER = "ZOOM_TO_LAYER";
 export const SET_TRACK_SELECTED = "SET_TRACK_SELECTED";
