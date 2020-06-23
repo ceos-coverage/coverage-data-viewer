@@ -73,7 +73,7 @@ export class WMTSUtil {
                     }
                 }
 
-                const units = map.getAttribute("units");
+                const units = decodeURIComponent(map.getAttribute("units"));
                 const legend = map.getElementsByTagName("Legend")[0];
                 if (legend) {
                     const legendEntries = legend.getElementsByTagName("LegendEntry");
