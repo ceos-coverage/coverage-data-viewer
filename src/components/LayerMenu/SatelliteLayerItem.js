@@ -10,17 +10,30 @@ import PropTypes from "prop-types";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import Typography from "@material-ui/core/Typography";
+import Tooltip from "@material-ui/core/Tooltip";
+import ArrowUpIcon from "@material-ui/icons/ArrowUpward";
+import ArrowDownIcon from "@material-ui/icons/ArrowDownward";
 import RemoveIcon from "@material-ui/icons/Close";
 import { IconButtonSmall } from "_core/components/Reusables";
 import { Colorbar } from "_core/components/Colorbar";
+import { OpacityControl } from "components/LayerMenu";
 import * as appActions from "actions/appActions";
 import * as mapActions from "actions/mapActions";
+import * as mapActionsCore from "_core/actions/mapActions";
 import * as appStringsCore from "_core/constants/appStrings";
 import MiscUtil from "_core/utils/MiscUtil";
 import styles from "components/LayerMenu/SatelliteLayerItem.scss";
 import displayStyles from "_core/styles/display.scss";
 
 export class SatelliteLayerItem extends Component {
+    moveUp() {
+        this.props.mapActionsCore.moveLayerUp(this.props.layer.get("id"));
+    }
+
+    moveDown() {
+        this.props.mapActionsCore.moveLayerDown(this.props.layer.get("id"));
+    }
+
     renderColorbar(layer) {
         const palette = this.props.palettes.get(layer.getIn(["palette", "name"]));
         let colorbarClasses = MiscUtil.generateStringFromSet({
@@ -49,7 +62,7 @@ export class SatelliteLayerItem extends Component {
     }
 
     render() {
-        const layer = this.props.layer;
+        const { layer, activeNum } = this.props;
 
         return (
             <div className={styles.root}>
@@ -65,18 +78,41 @@ export class SatelliteLayerItem extends Component {
                         </Typography>
                     </div>
                     <div className={styles.rightItem}>
-                        <IconButtonSmall
-                            color="inherit"
-                            className={styles.actionBtn}
-                            onClick={() =>
-                                this.props.appActions.setTrackSelected(
-                                    this.props.layer.get("id"),
-                                    false
-                                )
-                            }
-                        >
-                            <RemoveIcon />
-                        </IconButtonSmall>
+                        <OpacityControl layerId={layer.get("id")} opacity={layer.get("opacity")} />
+                        <Tooltip title="Move Up" disableFocusListener={true} placement="bottom">
+                            <IconButtonSmall
+                                color="inherit"
+                                disabled={layer.get("displayIndex") === 1}
+                                className={styles.actionBtn}
+                                onClick={() => this.moveUp()}
+                            >
+                                <ArrowUpIcon />
+                            </IconButtonSmall>
+                        </Tooltip>
+                        <Tooltip title="Move Down" disableFocusListener={true} placement="bottom">
+                            <IconButtonSmall
+                                color="inherit"
+                                disabled={layer.get("displayIndex") === activeNum}
+                                className={styles.actionBtn}
+                                onClick={() => this.moveDown()}
+                            >
+                                <ArrowDownIcon />
+                            </IconButtonSmall>
+                        </Tooltip>
+                        <Tooltip title="Remove" disableFocusListener={true} placement="bottom">
+                            <IconButtonSmall
+                                color="inherit"
+                                className={styles.actionBtn}
+                                onClick={() =>
+                                    this.props.appActions.setTrackSelected(
+                                        this.props.layer.get("id"),
+                                        false
+                                    )
+                                }
+                            >
+                                <RemoveIcon />
+                            </IconButtonSmall>
+                        </Tooltip>
                     </div>
                 </div>
                 <div className={styles.footer}>
@@ -99,7 +135,9 @@ SatelliteLayerItem.propTypes = {
     layer: PropTypes.object.isRequired,
     palettes: PropTypes.object.isRequired,
     appActions: PropTypes.object.isRequired,
-    mapActions: PropTypes.object.isRequired
+    mapActions: PropTypes.object.isRequired,
+    mapActionsCore: PropTypes.object.isRequired,
+    activeNum: PropTypes.number.isRequired
 };
 
 function mapStateToProps(state) {
@@ -112,7 +150,8 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
     return {
         appActions: bindActionCreators(appActions, dispatch),
-        mapActions: bindActionCreators(mapActions, dispatch)
+        mapActions: bindActionCreators(mapActions, dispatch),
+        mapActionsCore: bindActionCreators(mapActionsCore, dispatch)
     };
 }
 

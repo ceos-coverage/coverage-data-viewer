@@ -26,6 +26,7 @@ export class SatelliteLayerMenu extends Component {
             <SatelliteLayerItem
                 key={`sate_layer_${i}`}
                 layer={layer}
+                activeNum={layerList.size}
                 palettes={this.props.palettes}
             />
         ));
@@ -35,7 +36,7 @@ export class SatelliteLayerMenu extends Component {
         let layerList = this.props.layers
             .filter(layer => !layer.get("isDisabled") && layer.get("isActive"))
             .toList()
-            .sort(MiscUtil.getImmutableObjectSort("title"));
+            .sort(MiscUtil.getImmutableObjectSort("displayIndex"));
 
         let warningClasses = MiscUtil.generateStringFromSet({
             [styles.empty]: true,
