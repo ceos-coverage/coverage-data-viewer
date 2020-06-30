@@ -104,6 +104,7 @@ export function setTrackSelected(trackId, isSelected) {
                     })
                 );
             } else {
+                const tempRes = track.getIn(["insituMeta", "resolution_temporal"]);
                 dispatch(
                     mapActions.addLayer({
                         id: track.get("id"),
@@ -112,6 +113,10 @@ export function setTrackSelected(trackId, isSelected) {
                         type: appStringsCore.LAYER_GROUP_TYPE_DATA,
                         handleAs: appStringsCore.LAYER_GIBS_RASTER,
                         fromJson: true,
+                        timeFormat:
+                            tempRes && parseFloat(tempRes) % 1 !== 0
+                                ? "YYYY-MM-DD[T]HH:mm:ss[Z]"
+                                : "YYYY-MM-DD",
                         palette: {
                             name: track.get("shortId"),
                             url: track.get("colorbarUrl"),
