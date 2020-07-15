@@ -236,9 +236,9 @@ export function updateAvailableVariables() {
             trackList.size > 0
                 ? trackList.reduce((acc, track) => {
                       if (typeof acc === "undefined") {
-                          return track.getIn(["insituMeta", "variables"]);
+                          return track.getIn(["insituMeta", "variables"]).toSet();
                       }
-                      return acc.intersect(track.getIn(["insituMeta", "variables"]));
+                      return acc.intersect(track.getIn(["insituMeta", "variables"]).toSet());
                   }, undefined)
                 : Immutable.Set();
 
@@ -246,9 +246,9 @@ export function updateAvailableVariables() {
             trackList.size > 0
                 ? trackList.reduce((acc, track) => {
                       if (typeof acc === "undefined") {
-                          return track.getIn(["insituMeta", "variables"]);
+                          return track.getIn(["insituMeta", "variables"]).toSet();
                       }
-                      return acc.subtract(track.getIn(["insituMeta", "variables"]));
+                      return acc.subtract(track.getIn(["insituMeta", "variables"]).toSet());
                   }, undefined)
                 : Immutable.Set();
 

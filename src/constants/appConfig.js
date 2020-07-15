@@ -43,12 +43,11 @@ const APP_CONFIG = Immutable.fromJS({
             {
                 url: "default-data/capabilities_oiip_gibs.xml",
                 type: "wmts/xml"
+            },
+            {
+                url: "https://oiip.jpl.nasa.gov/gwc/wmts?Request=GetCapabilities",
+                type: "wmts/xml"
             }
-            // {
-            //     url:
-            //         "https://oiip.jpl.nasa.gov/onearth/wmts/epsg4326/wmts.cgi?service=WMTS&request=GetCapabilities",
-            //     type: "wmts/xml"
-            // }
         ],
         paletteConfig: "default-data/palettes_oiip.json",
         geoserverBase: "https://oiip.jpl.nasa.gov/geoserver/ows",
