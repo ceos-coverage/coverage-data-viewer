@@ -32,7 +32,6 @@ export class LayerInfoContainer extends Component {
         if (typeof layer !== "undefined") {
             const meta = layer.get("insituMeta");
             const url = meta.get("thumbnail_url");
-            console.log(url);
             if (url) {
                 return (
                     <div

@@ -745,7 +745,6 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
 
     createVectorTilePointsLayer(layer, fromCache = true) {
         try {
-            console.log(layer);
             let options = layer.get("mappingOptions").toJS();
             const defFill = new Ol_Style_Fill({
                 color: "rgba(255,255,255,1)"
@@ -805,7 +804,6 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                 .replace("{TIME}", "{Time}")
                 .replace("{Time}", "{time}")
                 .replace("{time}", moment.utc(this.mapDate).format("YYYY-MM-DD"));
-            console.log(url);
 
             return new Ol_Layer_VectorTile({
                 transition: 0,
