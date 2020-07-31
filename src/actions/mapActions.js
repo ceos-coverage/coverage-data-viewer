@@ -30,36 +30,38 @@ export function addLayer(layer, setActive = true) {
 
                         dispatch({ type: types.ADD_LAYER, layer, setActive });
 
-                        let p;
-                        if (layer.palette.handleAs === appStrings.COLORBAR_GIBS_XML) {
-                            p = WMTSUtil.getGIBSColormapFromURL(layer.palette.url, layer.id);
-                        } else {
-                            p = WMTSUtil.getGIBSColormapFromCapabilities(wmtsString, {
-                                layer: layer.id
+                        if (layer.palette.url) {
+                            let p;
+                            if (layer.palette.handleAs === appStrings.COLORBAR_GIBS_XML) {
+                                p = WMTSUtil.getGIBSColormapFromURL(layer.palette.url, layer.id);
+                            } else {
+                                p = WMTSUtil.getGIBSColormapFromCapabilities(wmtsString, {
+                                    layer: layer.id
+                                });
+                            }
+                            p.then(palette => {
+                                dispatch({
+                                    type: typesCore.INGEST_LAYER_PALETTES,
+                                    paletteConfig: { paletteArray: [palette] }
+                                });
+                                dispatch({
+                                    type: types.UPDATE_LAYER,
+                                    layer: Immutable.fromJS({
+                                        id: layer.id,
+                                        type: layer.type,
+                                        units: palette.units,
+                                        palette: {
+                                            name: palette.name,
+                                            handleAs: palette.handleAs,
+                                            min: palette.min,
+                                            max: palette.max
+                                        }
+                                    })
+                                });
+                            }).catch(err => {
+                                console.warn(err);
                             });
                         }
-                        p.then(palette => {
-                            dispatch({
-                                type: typesCore.INGEST_LAYER_PALETTES,
-                                paletteConfig: { paletteArray: [palette] }
-                            });
-                            dispatch({
-                                type: types.UPDATE_LAYER,
-                                layer: Immutable.fromJS({
-                                    id: layer.id,
-                                    type: layer.type,
-                                    units: palette.units,
-                                    palette: {
-                                        name: palette.name,
-                                        handleAs: palette.handleAs,
-                                        min: palette.min,
-                                        max: palette.max
-                                    }
-                                })
-                            });
-                        }).catch(err => {
-                            console.warn(err);
-                        });
                     }
                 })
                 .catch(err => {

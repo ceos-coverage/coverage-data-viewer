@@ -18,7 +18,10 @@ export class DataDisplayContainer extends Component {
     getDataDisplay(entry, i) {
         if (entry.getIn(["layer", "type"]) === appStrings.LAYER_GROUP_TYPE_INSITU_DATA) {
             return <TrackDataDisplay key={"mouse-follow-data-" + i} data={entry} />;
-        } else if (entry.getIn(["layer", "type"]) === appStringsCore.LAYER_GROUP_TYPE_DATA) {
+        } else if (
+            entry.getIn(["layer", "type"]) === appStringsCore.LAYER_GROUP_TYPE_DATA &&
+            entry.getIn(["layer", "metadata", "hoverDisplayProps"])
+        ) {
             return <PointDataDisplay key={"mouse-follow-data-" + i} data={entry} />;
         }
         return "";

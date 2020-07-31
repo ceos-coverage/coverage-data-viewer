@@ -745,6 +745,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
 
     createVectorTilePointsLayer(layer, fromCache = true) {
         try {
+            console.log(layer);
             let options = layer.get("mappingOptions").toJS();
             const defFill = new Ol_Style_Fill({
                 color: "rgba(255,255,255,1)"
@@ -795,6 +796,17 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                 });
             }
 
+            const url = layer
+                .getIn(["mappingOptions", "url"])
+                .replace("{TileRow}", "{y}")
+                .replace("{TileCol}", "{x}")
+                .replace("{TileMatrix}", "{z}")
+                .replace("{TileMatrixSet}", layer.getIn(["mappingOptions", "matrixSet"]))
+                .replace("{TIME}", "{Time}")
+                .replace("{Time}", "{time}")
+                .replace("{time}", moment.utc(this.mapDate).format("YYYY-MM-DD"));
+            console.log(url);
+
             return new Ol_Layer_VectorTile({
                 transition: 0,
                 renderMode: "image",
@@ -808,11 +820,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                         matrixIds: options.tileGrid.matrixIds,
                         tileSize: options.tileGrid.tileSize
                     }),
-                    url: layer.getIn(["updateParameters", "time"])
-                        ? layer
-                              .get("url")
-                              .replace("{time}", moment.utc(this.mapDate).format("YYYY-MM-DD"))
-                        : layer.get("url")
+                    url
                 }),
                 style: style
             });
@@ -850,10 +858,11 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
         // customize the layer url if needed
         if (
             typeof options.url !== "undefined" &&
-            typeof layer.getIn(["urlFunctions", appStringsCore.MAP_LIB_2D]) !== "undefined"
+            typeof layer.getIn(["mappingOptions", "urlFunctions", appStringsCore.MAP_LIB_2D]) !==
+                "undefined"
         ) {
             let urlFunction = this.tileHandler.getUrlFunction(
-                layer.getIn(["urlFunctions", appStringsCore.MAP_LIB_2D])
+                layer.getIn(["mappingOptions", "urlFunctions", appStringsCore.MAP_LIB_2D])
             );
             options.url = urlFunction({
                 layer: layer,

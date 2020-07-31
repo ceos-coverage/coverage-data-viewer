@@ -330,6 +330,15 @@ export default class MapReducer extends MapReducerCore {
             }, mergedLayer);
             mergedLayer = this.getLayerModel().mergeDeep(mergedLayer);
 
+            // last minute check for special layer type
+            // TODO - get this moved into a different area/handle better
+            if (
+                mergedLayer.get("type") === appStringsCore.LAYER_GROUP_TYPE_DATA &&
+                mergedLayer.getIn(["mappingOptions", "url"]).endsWith(".mvt")
+            ) {
+                mergedLayer = mergedLayer.set("handleAs", appStrings.LAYER_VECTOR_TILE_POINTS);
+            }
+
             if (
                 typeof mergedLayer.get("id") !== "undefined" &&
                 typeof state.getIn(["layers", mergedLayer.get("type")]) !== "undefined"
