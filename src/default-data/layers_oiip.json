@@ -1,19 +1,12 @@
 {
     "layers": [
         {
-            "id": "AIS",
-            "title": "Daily Fishing Effort",
-            "subtitle": "AIS/GlobalFishingWatch",
-            "type": "data",
+            "id": "AIS_VMS_FishingVesselLocations_GlobalFishingWatch",
             "handleAs": "vector_tile_points",
             "mappingOptions": {
                 "displayProps": {
                     "size": "vessel_hr",
                     "color": "geartype"
-                },
-                "urlFunctions": {
-                    "openlayers": "kvpTimeParam_wmts",
-                    "cesium": "kvpTimeParam_wmts"
                 }
             },
             "units": " gear",
@@ -41,8 +34,7 @@
                         }
                     ]
                 }
-            },
-            "url": "http://skywalker.jpl.nasa.gov/wmts-geo/AIS/default/{time}/EPSG4326_1km/{z}/{y}/{x}.mvt"
+            }
         },
         {
             "id": "IATTC_CE_LL_BET",

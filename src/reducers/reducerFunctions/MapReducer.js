@@ -127,17 +127,6 @@ export default class MapReducer extends MapReducerCore {
                 actionLayer = this.findLayerById(state, actionLayer);
             }
             if (typeof actionLayer !== "undefined") {
-                // if (actionLayer.get("type") === appStringsCore.LAYER_GROUP_TYPE_DATA) {
-                //     let dataLayers = state.getIn(["layers", appStringsCore.LAYER_GROUP_TYPE_DATA]);
-                //     dataLayers.map((layer, id) => {
-                //         if (layer.get("isActive")) {
-                //             state = MapReducerCore.setLayerActive(state, {
-                //                 layer: id,
-                //                 active: false
-                //             });
-                //         }
-                //     });
-                // } else if (actionLayer.get("type") === appStrings.LAYER_GROUP_TYPE_INSITU_DATA) {
                 if (actionLayer.get("type") === appStrings.LAYER_GROUP_TYPE_INSITU_DATA) {
                     // set the color of this vector layer
                     let dataLayers = state.getIn([
@@ -318,17 +307,17 @@ export default class MapReducer extends MapReducerCore {
 
     static addLayer(state, action) {
         if (typeof action.layer !== "undefined") {
-            let mergedLayer = Immutable.fromJS(action.layer);
+            const actionLayer = Immutable.fromJS(action.layer);
 
             // check for partial match
             const partials = state.getIn(["layers", appStringsCore.LAYER_GROUP_TYPE_PARTIAL]);
             const matchingPartials = partials.filter(el => {
-                return el.get("id") === mergedLayer.get("id");
+                return el.get("id") === actionLayer.get("id");
             });
-            mergedLayer = matchingPartials.reduce((acc, el) => {
-                return el.mergeDeep(acc);
-            }, mergedLayer);
-            mergedLayer = this.getLayerModel().mergeDeep(mergedLayer);
+            let mergedLayer = matchingPartials.reduce((acc, el) => {
+                return acc.mergeDeep(el);
+            }, this.getLayerModel());
+            mergedLayer = mergedLayer.mergeDeep(actionLayer);
 
             // last minute check for special layer type
             // TODO - get this moved into a different area/handle better
@@ -558,8 +547,6 @@ export default class MapReducer extends MapReducerCore {
     }
 
     static setAnimationOpen(state, action) {
-        // state = this.setAnimationStartDate(state, { date: moment.utc(state.get("date")).subtract(1, 'week').toDate() });
-        // state = this.setAnimationEndDate(state, { date: moment.utc(state.get("date")).add(1, 'week').toDate() });
         if (action.isOpen && action.updateRange) {
             state = this.setAnimationStartDate(state, {
                 date: moment
@@ -669,18 +656,6 @@ export default class MapReducer extends MapReducerCore {
                 // begin checking the initial buffer
                 state = this.checkInitialAnimationBuffer(state, {});
             }
-            // }
-            // else {
-            //     state = this.stopAnimation(state, {});
-            //     alerts = alerts.push(
-            //         alertCore.merge({
-            //             title: appStrings.ALERTS.NO_ANIMATION_LAYERS.title,
-            //             body: appStrings.ALERTS.NO_ANIMATION_LAYERS.formatString,
-            //             severity: appStrings.ALERTS.NO_ANIMATION_LAYERS.severity,
-            //             time: new Date()
-            //         })
-            //     );
-            // }
         } else {
             state = this.stopAnimation(state, {});
             alerts = alerts.push(
