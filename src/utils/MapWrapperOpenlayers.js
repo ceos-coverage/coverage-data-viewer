@@ -757,7 +757,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
             let style;
             const sizeProp = layer.getIn(["mappingOptions", "displayProps", "size"]);
             const colorProp = layer.getIn(["mappingOptions", "displayProps", "color"]);
-            if (sizeProp == 1000 && (sizeProp || colorProp)) {
+            if (sizeProp === 1000 && (sizeProp || colorProp)) {
                 style = (feature, res) => {
                     let size = 5;
                     if (sizeProp) {

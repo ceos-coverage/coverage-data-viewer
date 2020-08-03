@@ -41,7 +41,7 @@ export class SatelliteLayerItem extends Component {
             [displayStyles.hidden]:
                 typeof layer === "undefined" || layer.getIn(["palette", "handleAs"]) === ""
         });
-        if (layer) {
+        if (layer && palette) {
             return (
                 <div className={colorbarClasses}>
                     <Colorbar
