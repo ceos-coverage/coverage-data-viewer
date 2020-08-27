@@ -15,6 +15,7 @@ export const viewState = viewStateCore.mergeDeep(
         mainMenuTabIndex: 0,
         isMainMenuOpen: true,
         layerInfo: undefined,
+        extraToolsOpen: false,
         layerSearch: {
             formOptions: {
                 startDate: moment.utc("1970-01-01", "YYYY-MM-DD").toDate(),

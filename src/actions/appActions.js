@@ -15,6 +15,10 @@ import MapUtil from "utils/MapUtil";
 import SearchUtil from "utils/SearchUtil";
 import GeoServerUtil from "utils/GeoServerUtil";
 
+export function setExtraToolsOpen(open) {
+    return { type: types.SET_EXTRA_TOOLS_OPEN, open };
+}
+
 export function setMainMenuTabIndex(tabIndex) {
     return { type: types.SET_MAIN_MENU_TAB_INDEX, tabIndex };
 }

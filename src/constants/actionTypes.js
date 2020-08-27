@@ -5,6 +5,9 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
+//  View actions
+export const SET_EXTRA_TOOLS_OPEN = "SET_EXTRA_TOOLS_OPEN";
+
 // Main menu actions
 export const SET_MAIN_MENU_TAB_INDEX = "SET_MAIN_MENU_TAB_INDEX";
 export const SET_MAIN_MENU_OPEN = "SET_MAIN_MENU_OPEN";
@@ -68,3 +71,7 @@ export const CHECK_INITIAL_ANIMATION_BUFFER = "CHECK_INITIAL_ANIMATION_BUFFER";
 export const CHECK_NEXT_FRAME = "CHECK_NEXT_FRAME";
 export const DISPLAY_CURRENT_FRAME = "DISPLAY_CURRENT_FRAME";
 export const SET_ANIMATION_SPEED = "SET_ANIMATION_SPEED";
+
+// Subsetting
+export const SET_SUBSETTING_OPTIONS = "SET_SUBSETTING_OPTIONS";
+export const SET_SUBSET_TRACK_SELECTED = "SET_SUBSET_TRACK_SELECTED";

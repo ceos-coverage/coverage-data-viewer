@@ -17,6 +17,10 @@ import SearchUtil from "utils/SearchUtil";
 //create a copy of the state passed and set new values on the copy.
 
 export default class ViewReducer extends ViewReducerCore {
+    static setExtraToolsOpen(state, action) {
+        return state.set("extraToolsOpen", action.open);
+    }
+
     static setMainMenuTabIndex(state, action) {
         return state.set("mainMenuTabIndex", action.tabIndex);
     }

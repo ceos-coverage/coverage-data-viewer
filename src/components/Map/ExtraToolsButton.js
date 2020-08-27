@@ -9,14 +9,14 @@ import React from "react";
 import PropTypes from "prop-types";
 import Grow from "@material-ui/core/Grow";
 import Tooltip from "@material-ui/core/Tooltip";
-import StraightenIcon from "@material-ui/icons/Straighten";
+import BuildIcon from "@material-ui/icons/Build";
 import { Manager, Target, Popper } from "react-popper";
 import { MapButton, ClickAwayListener } from "_core/components/Reusables";
-import { MapToolsMenu } from "components/Reusables";
+import { ExtraToolsMenu } from "components/Reusables";
 import MiscUtil from "_core/utils/MiscUtil";
 import displayStyles from "_core/styles/display.scss";
 
-const MapToolsButton = props => {
+const ExtraToolsButton = props => {
     let btnClasses = MiscUtil.generateStringFromSet({
         [props.className]: typeof props.className !== "undefined"
     });
@@ -30,16 +30,16 @@ const MapToolsButton = props => {
         >
             <Manager>
                 <Target>
-                    <Tooltip disableFocusListener={true} title="Measure" placement="left">
+                    <Tooltip disableFocusListener={true} title="Tools" placement="left">
                         <MapButton
                             color={props.isOpen ? "primary" : "default"}
                             onClick={() => {
                                 props.setOpen(!props.isOpen);
                             }}
-                            aria-label="Measure"
+                            aria-label="Tools"
                             className={btnClasses}
                         >
-                            <StraightenIcon />
+                            <BuildIcon />
                         </MapButton>
                     </Tooltip>
                 </Target>
@@ -56,7 +56,7 @@ const MapToolsButton = props => {
                 >
                     <Grow style={{ transformOrigin: "left bottom" }} in={props.isOpen}>
                         <div>
-                            <MapToolsMenu
+                            <ExtraToolsMenu
                                 handleRequestClose={() => {
                                     if (props.isOpen) {
                                         props.setOpen(false);
@@ -71,10 +71,10 @@ const MapToolsButton = props => {
     );
 };
 
-MapToolsButton.propTypes = {
+ExtraToolsButton.propTypes = {
     isOpen: PropTypes.bool.isRequired,
     setOpen: PropTypes.func.isRequired,
     className: PropTypes.string
 };
 
-export default MapToolsButton;
+export default ExtraToolsButton;

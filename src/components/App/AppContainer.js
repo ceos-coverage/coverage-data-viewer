@@ -26,6 +26,7 @@ import { DatePickerContainer, AnimationLoading } from "components/DatePicker";
 import { MouseFollowerContainer } from "components/MouseFollower";
 import { KeyboardControlsContainer } from "components/KeyboardControls";
 import { SatelliteLayerMenu, InsituLayerMenu } from "components/LayerMenu";
+import { DataSubsetting } from "components/DataSubsetting";
 import styles from "components/App/AppContainer.scss";
 import stylesCore from "_core/components/App/AppContainer.scss";
 import displayStyles from "_core/styles/display.scss";
@@ -116,15 +117,16 @@ export class AppContainer extends Component {
             [styles.lifted]: this.props.animationOpen
         });
 
-        let dataDisplayClasses = MiscUtil.generateStringFromSet({
+        let dataSubsettingClasses = MiscUtil.generateStringFromSet({
             [styles.lifted]: this.props.animationOpen
         });
 
         return (
             <MuiThemeProvider theme={theme}>
                 <div className={containerClasses}>
-                    <DatePickerContainer />
                     <MapContainer />
+                    <DatePickerContainer />
+                    <DataSubsetting className={dataSubsettingClasses} />
                     <MapControlsContainer className={mapControlsClasses} />
                     <div className={styles.layers}>
                         <InsituLayerMenu />

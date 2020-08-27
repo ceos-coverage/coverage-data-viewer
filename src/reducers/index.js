@@ -17,6 +17,7 @@ import asynchronous from "_core/reducers/async";
 import analytics from "_core/reducers/analytics";
 import alerts from "_core/reducers/alerts";
 import chart from "reducers/chart";
+import subsetting from "reducers/subsetting";
 import webWorker from "_core/reducers/webWorker";
 
 const rootReducer = combineReducers({
@@ -31,6 +32,7 @@ const rootReducer = combineReducers({
     analytics,
     alerts,
     chart,
+    subsetting,
     webWorker
 });
 

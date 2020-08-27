@@ -57,6 +57,9 @@ export default function view(state = viewState, action, opt_reducer = ViewReduce
         case actionTypes.CLEAR_SATELLITE_SEARCH_FACET:
             return opt_reducer.clearSatelliteSearchFacet(state, action);
 
+        case actionTypes.SET_EXTRA_TOOLS_OPEN:
+            return opt_reducer.setExtraToolsOpen(state, action);
+
         default:
             return viewCore.call(this, state, action, opt_reducer);
     }

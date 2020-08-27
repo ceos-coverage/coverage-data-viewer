@@ -73,7 +73,7 @@ export class LabelPopover extends Component {
                         color={this.popoverOpen ? "primary" : "inherit"}
                         className={styles.label}
                     >
-                        {this.props.label}
+                        <span className={styles.labelText}>{this.props.label}</span>
                         <ArrowDropDown />
                     </Typography>
                     {typeof this.props.subtitle !== "undefined" && (

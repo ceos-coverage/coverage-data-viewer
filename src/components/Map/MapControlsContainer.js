@@ -14,14 +14,19 @@ import PlusIcon from "@material-ui/icons/Add";
 import RemoveIcon from "@material-ui/icons/Remove";
 import HomeIcon from "@material-ui/icons/Home";
 import Paper from "@material-ui/core/Paper";
+import * as appActions from "actions/appActions";
+import * as appActionsCore from "_core/actions/appActions";
 import * as mapActions from "_core/actions/mapActions";
-import * as appActions from "_core/actions/appActions";
 import * as appStrings from "_core/constants/appStrings";
 import appConfig from "constants/appConfig";
 import MiscUtil from "_core/utils/MiscUtil";
 import { MapButton } from "_core/components/Reusables";
-import { MapLabelsButton } from "_core/components/Map";
-import { BasemapPicker, MapToolsButton, ReferenceLayerPicker } from "components/Map";
+import {
+    BasemapPicker,
+    MapToolsButton,
+    ExtraToolsButton,
+    ReferenceLayerPicker
+} from "components/Map";
 import stylesCore from "_core/components/Map/MapControlsContainer.scss";
 import styles from "components/Map/MapControlsContainer.scss";
 import displayStyles from "_core/styles/display.scss";
@@ -53,7 +58,7 @@ export class MapControlsContainer extends Component {
             this.hideMapControlsTimeout = null;
             this.hideMapControlsEnabled = false;
             this.startListeningToMouseMovement();
-            this.props.appActions.hideMapControls(false);
+            this.props.appActionsCore.hideMapControls(false);
         };
     }
     stopListeningToMouseMovement() {
@@ -61,13 +66,13 @@ export class MapControlsContainer extends Component {
         this.hideMapControlsTimeout = null;
         this.hideMapControlsEnabled = false;
         window.onmousemove = null;
-        this.props.appActions.hideMapControls(false);
+        this.props.appActionsCore.hideMapControls(false);
     }
     hideMapControls() {
         if (!this.hideMapControlsEnabled) {
             this.hideMapControlsEnabled = true;
             this.hideMapControlsTimeout = null;
-            this.props.appActions.hideMapControls(true);
+            this.props.appActionsCore.hideMapControls(true);
         }
     }
     onMapControlsMouseEnter() {
@@ -107,8 +112,17 @@ export class MapControlsContainer extends Component {
                     <MapToolsButton
                         isOpen={this.props.mapControlsToolsOpen}
                         className={stylesCore.lineButton}
-                        setOpen={isOpen => this.props.appActions.setMapControlsToolsOpen(isOpen)}
+                        setOpen={isOpen =>
+                            this.props.appActionsCore.setMapControlsToolsOpen(isOpen)
+                        }
                     />
+                    <ExtraToolsButton
+                        isOpen={this.props.extraToolsOpen}
+                        className={stylesCore.lineButton}
+                        setOpen={isOpen => this.props.appActions.setExtraToolsOpen(isOpen)}
+                    />
+                </Paper>
+                <Paper elevation={2} className={stylesCore.buttonGroup}>
                     <BasemapPicker className={styles.basemapPicker} />
                     <ReferenceLayerPicker />
                 </Paper>
@@ -156,8 +170,10 @@ MapControlsContainer.propTypes = {
     distractionFreeMode: PropTypes.bool.isRequired,
     mapControlsHidden: PropTypes.bool.isRequired,
     mapControlsToolsOpen: PropTypes.bool.isRequired,
+    extraToolsOpen: PropTypes.bool.isRequired,
     mapActions: PropTypes.object.isRequired,
     appActions: PropTypes.object.isRequired,
+    appActionsCore: PropTypes.object.isRequired,
     className: PropTypes.string
 };
 
@@ -166,6 +182,7 @@ function mapStateToProps(state) {
         in3DMode: state.map.getIn(["view", "in3DMode"]),
         distractionFreeMode: state.view.get("distractionFreeMode"),
         mapControlsToolsOpen: state.view.get("mapControlsToolsOpen"),
+        extraToolsOpen: state.view.get("extraToolsOpen"),
         mapControlsHidden: state.view.get("mapControlsHidden")
     };
 }
@@ -173,7 +190,8 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
     return {
         mapActions: bindActionCreators(mapActions, dispatch),
-        appActions: bindActionCreators(appActions, dispatch)
+        appActions: bindActionCreators(appActions, dispatch),
+        appActionsCore: bindActionCreators(appActionsCore, dispatch)
     };
 }
 

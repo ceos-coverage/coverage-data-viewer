@@ -82,8 +82,8 @@ export class IconPopover extends Component {
         });
 
         let anchorOrigin = this.props.anchorOrigin || {
-            vertical: "bottom",
-            horizontal: "left"
+            vertical: "center",
+            horizontal: "right"
         };
         let transformOrigin = this.props.transformOrigin || {
             vertical: "top",
