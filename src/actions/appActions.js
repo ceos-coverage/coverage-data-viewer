@@ -9,6 +9,7 @@ import Immutable from "immutable";
 import * as types from "constants/actionTypes";
 import * as mapActions from "actions/mapActions";
 import * as chartActions from "actions/chartActions";
+import * as subsettingActions from "actions/subsettingActions";
 import * as appStrings from "constants/appStrings";
 import * as appStringsCore from "_core/constants/appStrings";
 import MapUtil from "utils/MapUtil";
@@ -162,6 +163,7 @@ export function setTrackSelected(trackId, isSelected) {
                 )
             );
             dispatch(chartActions.setTrackSelected(trackId, isSelected));
+            dispatch(subsettingActions.setTrackSelected(trackId, isSelected));
         }
     };
 }

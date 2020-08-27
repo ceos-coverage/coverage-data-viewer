@@ -131,12 +131,12 @@ export class AppContainer extends Component {
                     <div className={styles.layers}>
                         <InsituLayerMenu />
                         <SatelliteLayerMenu />
+                        <RefDataDisplay />
                     </div>
                     <LayerInfoContainer />
                     <MainMenu />
                     <AlertsContainer />
                     <MouseFollowerContainer />
-                    <RefDataDisplay />
                     <AnimationLoading />
                     <LoadingContainer />
                     <KeyboardControlsContainer />

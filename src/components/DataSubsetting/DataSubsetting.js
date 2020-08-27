@@ -9,6 +9,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
+import moment from "moment";
 import FormGroup from "@material-ui/core/FormGroup";
 import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
@@ -42,18 +43,40 @@ export class DataSubsetting extends Component {
                 );
             });
         }
-        return "No datasets selected";
+        return "No THREDDS supported datasets selected";
     }
 
     handleDateRangeUpdate = (startDate, endDate) => {
         this.props.subsettingActions.setSubsettingOptions({
-            startDate,
-            endDate
+            startDate: moment.utc(startDate).toDate(),
+            endDate: moment.utc(endDate).toDate()
         });
     };
 
     submitSubsetRequest = () => {
-        console.log("herer");
+        const aTracks = this.props.availableTracks;
+        const sTracks = this.props.subsettingOptions.get("selectedTracks");
+        const startDate = this.props.subsettingOptions.get("startDate");
+        const endDate = this.props.subsettingOptions.get("endDate");
+        const area = this.props.searchOptions.get("selectedArea");
+
+        aTracks.forEach(track => {
+            if (sTracks.includes(track.get("id"))) {
+                const tdsUrl = track.getIn(["insituMeta", "tds_url"]);
+                if (tdsUrl) {
+                    const reqUrl = tdsUrl
+                        .replace("LONmin", area.get(0))
+                        .replace("LATmin", area.get(1))
+                        .replace("LONmax", area.get(2))
+                        .replace("LATmax", area.get(3))
+                        .replace("DATETIMEmin", moment.utc(startDate).toISOString())
+                        .replace("DATETIMEmax", moment.utc(endDate).toISOString());
+
+                    console.log(`fetching ${reqUrl}`);
+                    fetch(reqUrl);
+                }
+            }
+        });
     };
 
     close = () => {
@@ -62,7 +85,12 @@ export class DataSubsetting extends Component {
 
     render() {
         let trackList = this.props.availableTracks
-            .filter(track => !track.get("isDisabled") && track.get("isActive"))
+            .filter(
+                track =>
+                    !track.get("isDisabled") &&
+                    track.get("isActive") &&
+                    track.getIn(["insituMeta", "tds_url"])
+            )
             .toList()
             .sort(MiscUtil.getImmutableObjectSort("title"));
 
