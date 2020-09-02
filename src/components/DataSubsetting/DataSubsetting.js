@@ -10,6 +10,7 @@ import PropTypes from "prop-types";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import moment from "moment";
+import { saveAs } from "file-saver";
 import FormGroup from "@material-ui/core/FormGroup";
 import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
@@ -21,6 +22,12 @@ import * as appStringsCore from "_core/constants/appStrings";
 import MiscUtil from "utils/MiscUtil";
 
 export class DataSubsetting extends Component {
+    constructor(props) {
+        super(props);
+
+        this.state = { loading: false };
+    }
+
     renderTrackList(trackList) {
         if (trackList.size > 0) {
             return trackList.map(track => {
@@ -60,22 +67,51 @@ export class DataSubsetting extends Component {
         const endDate = this.props.subsettingOptions.get("endDate");
         const area = this.props.searchOptions.get("selectedArea");
 
-        aTracks.forEach(track => {
+        const promises = aTracks.reduce((acc, track) => {
             if (sTracks.includes(track.get("id"))) {
                 const tdsUrl = track.getIn(["insituMeta", "tds_url"]);
                 if (tdsUrl) {
                     const reqUrl = tdsUrl
                         .replace("LONmin", area.get(0))
-                        .replace("LATmin", area.get(1))
                         .replace("LONmax", area.get(2))
+                        .replace("LATmin", area.get(1))
                         .replace("LATmax", area.get(3))
                         .replace("DATETIMEmin", moment.utc(startDate).toISOString())
-                        .replace("DATETIMEmax", moment.utc(endDate).toISOString());
+                        .replace("DATETIMEstart", moment.utc(startDate).toISOString())
+                        .replace("DATETIMEmax", moment.utc(endDate).toISOString())
+                        .replace("DATETIMEend", moment.utc(endDate).toISOString());
 
-                    console.log(`fetching ${reqUrl}`);
-                    fetch(reqUrl);
+                    const p = new Promise(resolve => {
+                        fetch(reqUrl)
+                            .then(response => {
+                                if (response.status >= 400) {
+                                    console.warn("Bad response from server");
+                                } else {
+                                    return response.blob();
+                                }
+                            })
+                            .then(parsedResponse => {
+                                const fName = tdsUrl
+                                    .split("?")[0]
+                                    .split("/")
+                                    .splice(-1)[0];
+                                saveAs(parsedResponse, fName);
+                                resolve(true);
+                            })
+                            .catch(err => {
+                                console.warn(err);
+                                resolve(false);
+                            });
+                    });
+                    acc.push(p);
                 }
             }
+            return acc;
+        }, []);
+
+        this.setState({ loading: true });
+        Promise.all(promises).then(results => {
+            this.setState({ loading: false });
         });
     };
 
@@ -112,7 +148,8 @@ export class DataSubsetting extends Component {
 
         const couldSubmit =
             this.props.subsettingOptions.get("selectedTracks").size > 0 &&
-            this.props.searchOptions.get("selectedArea").size === 4;
+            this.props.searchOptions.get("selectedArea").size === 4 &&
+            !this.state.loading;
 
         const rootClasses = MiscUtil.generateStringFromSet({
             [styles.root]: true,
