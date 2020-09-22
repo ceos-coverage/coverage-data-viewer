@@ -94,7 +94,8 @@ export class DataSubsetting extends Component {
                                 const fName = tdsUrl
                                     .split("?")[0]
                                     .split("/")
-                                    .splice(-1)[0];
+                                    .splice(-1)[0]
+                                    .replace(".ncml", ".nc");
                                 saveAs(parsedResponse, fName);
                                 resolve(true);
                             })
