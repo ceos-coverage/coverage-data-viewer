@@ -16,6 +16,7 @@ import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
 import { LabelPopover, Checkbox, DateRangePicker, AreaSelectionInput } from "components/Reusables";
+import { LoadingSpinner } from "_core/components/Reusables";
 import styles from "components/DataSubsetting/DataSubsetting.scss";
 import * as subsettingActions from "actions/subsettingActions";
 import * as appStringsCore from "_core/constants/appStrings";
@@ -164,6 +165,14 @@ export class DataSubsetting extends Component {
                     <Typography variant="body2" className={styles.title}>
                         Data Subsetting
                     </Typography>
+                    {this.state.loading && (
+                        <div className={styles.loadingWrapper}>
+                            <LoadingSpinner className={styles.spinner} />
+                            <Typography variant="caption" className={styles.loadingCaption}>
+                                loading
+                            </Typography>
+                        </div>
+                    )}
                 </div>
                 <div className={styles.content}>
                     <div className={styles.formInput}>
