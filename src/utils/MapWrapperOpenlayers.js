@@ -1356,17 +1356,19 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
             return false;
         }
 
-        if (typeof mapLayer.getLayers === "function") {
+        if (layer.get("handleAs") === appStrings.LAYER_VECTOR_POINTS_WFS) {
             const layers = mapLayer.getLayers();
             layers.forEach(l => {
                 if (typeof l.setStyle === "function") {
                     l.setStyle(this.createVectorPointLayerStyles(color));
                 }
             });
+            // update the layer
+            this.setLayerRefInfo(layer, mapLayer);
         } else {
             mapLayer.setStyle(this.createVectorPointTrackLayerStyles(color));
+            this.updateLayer(layer, color);
         }
-        this.updateLayer(layer, color);
         return true;
     }
 
