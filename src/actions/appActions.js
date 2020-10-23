@@ -94,18 +94,29 @@ export function setTrackSelected(trackId, isSelected) {
                         shortId: track.get("shortId"),
                         title: track.getIn(["insituMeta", titleField]),
                         type: appStrings.LAYER_GROUP_TYPE_INSITU_DATA,
-                        handleAs: appStrings.LAYER_VECTOR_POINT_TRACK,
+                        handleAs:
+                            track.getIn(["insituMeta", "handle_as"]) ||
+                            appStrings.LAYER_VECTOR_POINT_TRACK,
                         url: GeoServerUtil.getUrlForTrack(track),
                         mappingOptions: {
+                            url: GeoServerUtil.getUrlForTrack(track),
                             extents: MapUtil.constrainExtent([
                                 track.getIn(["insituMeta", "lon_min"]),
                                 track.getIn(["insituMeta", "lat_min"]),
                                 track.getIn(["insituMeta", "lon_max"]),
                                 track.getIn(["insituMeta", "lat_max"])
-                            ])
+                            ]),
+                            urlFunctions:
+                                track.getIn(["insituMeta", "handle_as"]) ===
+                                appStrings.LAYER_VECTOR_POINTS_WFS
+                                    ? {
+                                          [appStringsCore.MAP_LIB_2D]:
+                                              appStrings.URL_FUNC_WFS_AREA_TIME_FILTER
+                                      }
+                                    : {}
                         },
                         insituMeta: track.get("insituMeta"),
-                        timeFormat: "YYYY-MM-DDTHH:mm:ssZ"
+                        timeFormat: "YYYY-MM-DD[T]HH:mm:ss[Z]"
                     })
                 );
             } else {

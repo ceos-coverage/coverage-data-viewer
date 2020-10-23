@@ -21,8 +21,13 @@ import styles from "components/MainMenu/LayerSearch/LayerSearchList.scss";
 export class LayerSearchList extends Component {
     renderList(trackList) {
         // group the tracks
-        let groups = trackList.reduce((acc, track) => {
+        const groups = trackList.reduce((acc, track) => {
             let title = track.getIn(["insituMeta", this.props.sortParam]);
+            if (typeof title !== "string") {
+                // assume its an Immutable List
+                title = title.get(0);
+            }
+
             if (acc.length === 0) {
                 acc.push({ title: title, tracks: [track] });
                 return acc;
@@ -80,13 +85,13 @@ export class LayerSearchList extends Component {
     }
 
     render() {
-        let trackList = this.props.searchResults
+        const trackList = this.props.searchResults
             .get("results")
             .toList()
             .filter(x => x.get("isTrack"))
             .sortBy(entry => entry.getIn(["insituMeta", this.props.sortParam]));
-        let totalNum = trackList.size;
-        let isLoading = this.props.searchResults.get("isLoading");
+        const totalNum = trackList.size;
+        const isLoading = this.props.searchResults.get("isLoading");
 
         return isLoading
             ? this.renderLoading()

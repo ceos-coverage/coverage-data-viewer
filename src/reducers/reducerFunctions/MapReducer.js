@@ -134,11 +134,11 @@ export default class MapReducer extends MapReducerCore {
                         appStrings.LAYER_GROUP_TYPE_INSITU_DATA
                     ]);
 
-                    let colorIndex = MiscUtil.getRandomInt(
+                    const colorIndex = MiscUtil.getRandomInt(
                         0,
                         appConfig.INSITU_VECTOR_COLORS.length
                     );
-                    let color = appConfig.INSITU_VECTOR_COLORS[colorIndex];
+                    const color = appConfig.INSITU_VECTOR_COLORS[colorIndex];
                     state = state
                         .setIn(
                             [

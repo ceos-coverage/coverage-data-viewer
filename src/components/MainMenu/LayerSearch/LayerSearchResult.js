@@ -26,16 +26,16 @@ export class LayerSearchResult extends Component {
         }
     }
     render() {
-        let startStr = moment
+        const startStr = moment
             .unix(this.props.layer.getIn(["insituMeta", "start_date"]))
             .utc()
             .format("MMM DD, YYYY");
-        let endStr = moment
+        const endStr = moment
             .unix(this.props.layer.getIn(["insituMeta", "end_date"]))
             .utc()
             .format("MMM DD, YYYY");
 
-        let secondaryText = (
+        const secondaryText = (
             <span>
                 id: {this.props.layer.get("shortId")} ·{" "}
                 {this.props.layer.getIn(["insituMeta", "instrument"])}

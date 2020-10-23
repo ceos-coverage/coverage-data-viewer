@@ -36,8 +36,8 @@ export class MapContainer2D extends MapContainer2DCore {
             );
 
             // add layer load callback
-            map.setLayerLoadCallback(layer => {
-                this.props.setLayerLoading(layer.get("id"), false);
+            map.setLayerLoadCallback((layer, loaded = false) => {
+                this.props.setLayerLoading(layer.get("id"), loaded);
             });
         } else {
             console.error("Cannot initialize event listeners: 2D MAP NOT AVAILABLE");

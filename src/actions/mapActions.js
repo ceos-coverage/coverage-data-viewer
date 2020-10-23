@@ -18,7 +18,8 @@ import { WMTSUtil } from "utils/WMTSUtil";
 export function addLayer(layer, setActive = true) {
     return dispatch => {
         const capUrl = layer.insituMeta.get("service_url");
-        if (capUrl) {
+        const handleAs = layer.handleAs;
+        if (handleAs === appStringsCore.LAYER_GIBS_RASTER && capUrl) {
             WMTSUtil.getWMTSData(capUrl)
                 .then(wmtsString => {
                     if (wmtsString) {

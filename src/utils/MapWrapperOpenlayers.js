@@ -39,6 +39,7 @@ import * as appStrings from "constants/appStrings";
 import * as appStringsCore from "_core/constants/appStrings";
 import MiscUtil from "utils/MiscUtil";
 import MapUtil from "utils/MapUtil";
+import TileHandler from "utils/TileHandler";
 
 import kmlText from "default-data/kmlExtents.json";
 const kmlLayerExtents = JSON.parse(kmlText);
@@ -77,6 +78,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
         MapWrapperOpenlayersCore.prototype.initStaticClasses.call(this, container, options);
         this.miscUtil = MiscUtil;
         this.mapUtil = MapUtil;
+        this.tileHandler = TileHandler;
     }
 
     initObjects(container, options) {
@@ -353,7 +355,10 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                 );
             }
 
-            if (cachedLayer.getSource().get("_hasLoaded")) {
+            if (
+                typeof cachedLayer.getSource === "function" &&
+                cachedLayer.getSource().get("_hasLoaded")
+            ) {
                 // run async to avoid reducer block
                 window.requestAnimationFrame(() => {
                     // run the call back (if it exists)
@@ -386,6 +391,9 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
             case appStrings.LAYER_VECTOR_TILE_OUTLINE:
                 mapLayer = this.createVectorTileOutline(layer, fromCache);
                 break;
+            case appStrings.LAYER_VECTOR_POINTS_WFS:
+                mapLayer = this.createDynamicVectorPointLayer(layer, fromCache);
+                break;
             default:
                 mapLayer = MapWrapperOpenlayersCore.prototype.createLayer.call(
                     this,
@@ -412,6 +420,210 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
         }
 
         return mapLayer;
+    }
+
+    createDynamicVectorPointLayer(layer, fromCache = true) {
+        try {
+            // pull from cache if possible
+            let cacheHash = this.getCacheHash(layer);
+            if (fromCache && this.layerCache.get(cacheHash)) {
+                let cachedLayer = this.layerCache.get(cacheHash);
+                cachedLayer.setOpacity(layer.get("opacity"));
+                cachedLayer.setVisible(layer.get("isActive"));
+                return cachedLayer;
+            }
+
+            // create a layer grouping
+            let mapLayer = new Ol_Layer_Group({
+                opacity: layer.get("opacity"),
+                visible: layer.get("isActive")
+            });
+
+            // source for dummy canvas layer
+            let imageSource = new Ol_Source_ImageCanvas({
+                canvasFunction: (extent, resolution, pixelRatio, size, projection) => {
+                    return this.dynamicVectorPointCanvasFunction(
+                        layer,
+                        mapLayer,
+                        extent,
+                        resolution,
+                        pixelRatio,
+                        size,
+                        projection
+                    );
+                },
+                projection: this.map.getView().getProjection(),
+                ratio: 1
+            });
+            imageSource.set("_dummyCanvas", true);
+
+            // dummy canvas image layer to track map movements
+            let imageLayer = new Ol_Layer_Image({
+                source: imageSource
+            });
+
+            // add a canvas layer that will find intersecting KMLs on each map move
+            mapLayer.setLayers(new Ol_Collection([imageLayer]));
+
+            // return the layer group
+            return mapLayer;
+        } catch (err) {
+            console.warn("Error in MapWrapperOpenlayers.createDynamicVectorPointLayer:", err);
+            return false;
+        }
+    }
+
+    dynamicVectorPointCanvasFunction(
+        layer,
+        mapLayer,
+        extent,
+        resolution,
+        pixelRatio,
+        size,
+        projection
+    ) {
+        // manage extent wrapping
+        let viewExtentsArr = [];
+        let cExtentA = this.mapUtil.constrainCoordinates([extent[0], extent[1]]);
+        let cExtentB = this.mapUtil.constrainCoordinates([extent[2], extent[3]]);
+        let cExtent = [cExtentA[0], cExtentA[1], cExtentB[0], cExtentB[1]];
+        let extentWidth = extent[2] - extent[0];
+        if (extentWidth >= 360) {
+            viewExtentsArr = [[-180, cExtent[1], 180, cExtent[3]]];
+        } else {
+            // check for extents  across the dateline
+            if (cExtent[0] > cExtent[2]) {
+                viewExtentsArr = [
+                    [cExtent[0], cExtent[1], 180, cExtent[3]],
+                    [-180, cExtent[1], cExtent[2], cExtent[3]]
+                ];
+            } else {
+                viewExtentsArr = [cExtent];
+            }
+        }
+
+        // create the canvas
+        let canvas = document.createElement("canvas");
+        let canvasWidth = size[0],
+            canvasHeight = size[1];
+        canvas.setAttribute("width", canvasWidth);
+        canvas.setAttribute("height", canvasHeight);
+
+        // remove all vector layers currently in the layer group
+        let prevLayers = {};
+        let layerGroup = mapLayer.getLayers();
+        while (layerGroup.getLength() > 1) {
+            try {
+                let tmpLayer = layerGroup.pop();
+                prevLayers[tmpLayer.getSource().getUrl()] = tmpLayer;
+            } catch (e) {
+                console.warn("Error in MapWrapperOpenlayers.dynamicVectorPointCanvasFunction: ", e);
+            }
+        }
+
+        // reformat the URL
+        let url = layer.get("url");
+        let urlFunction = false;
+        if (
+            typeof url !== "undefined" &&
+            typeof layer.getIn(["mappingOptions", "urlFunctions", appStringsCore.MAP_LIB_2D]) !==
+                "undefined"
+        ) {
+            urlFunction = this.tileHandler.getUrlFunction(
+                layer.getIn(["mappingOptions", "urlFunctions", appStringsCore.MAP_LIB_2D])
+            );
+        }
+
+        // pull the current date interval
+        const date = moment.utc(this.mapDate);
+        const endTime = date.valueOf();
+        const startTime = date.subtract(this.dateInterval.size, this.dateInterval.scale).valueOf();
+
+        // define a function to generate vector layers for each section of the view
+        const _context = this;
+        const genVectorLayer = extent => {
+            const url = urlFunction({
+                layer: layer,
+                url: layer.get("url"),
+                extent: extent,
+                endTime,
+                startTime
+            });
+            const source = new Ol_Source_Vector({
+                loader: function(e, r, p) {
+                    MiscUtil.asyncFetch({
+                        url: url,
+                        handleAs: appStringsCore.FILE_TYPE_JSON
+                    }).then(
+                        data => {
+                            const featuresToAdd = [];
+                            const features = data.features;
+                            const featureMap = {};
+
+                            for (let i = 0; i < features.length; ++i) {
+                                const feature = features[i];
+                                const coords = feature.geometry.coordinates;
+                                const coordsStr = coords.join(",");
+
+                                let combinedFeature = featureMap[coordsStr];
+                                if (typeof combinedFeature === "undefined") {
+                                    combinedFeature = new Ol_Feature({
+                                        geometry: new Ol_Geom_Point(coords)
+                                    });
+                                    combinedFeature.set("oiipFeatureCollection", [feature]);
+                                    combinedFeature.set("_layerId", layer.get("id"));
+                                    featuresToAdd.push(combinedFeature);
+                                    featureMap[coordsStr] = combinedFeature;
+                                } else {
+                                    combinedFeature.get("oiipFeatureCollection").push(feature);
+                                }
+                            }
+
+                            // add features to the layer
+                            if (featuresToAdd.length > 0) {
+                                this.addFeatures(featuresToAdd);
+                            }
+
+                            source.set("_hasLoaded", true);
+
+                            // run the call back (if it exists)
+                            if (typeof _context.layerLoadCallback === "function") {
+                                _context.layerLoadCallback(layer);
+                            }
+                        },
+                        err => {
+                            console.warn("Error fetching vector data", err);
+                        }
+                    );
+                },
+                format: new Ol_Format_GeoJSON()
+            });
+            source.set("_loadingState", TILE_STATE_IDLE);
+
+            return new Ol_Layer_Vector({
+                opacity: 1,
+                visible: true,
+                renderMode: "vector",
+                source: source,
+                style: this.createVectorPointLayerStyles(layer.get("vectorColor"))
+            });
+        };
+
+        // build a vector layer for each section of the view
+        viewExtentsArr.forEach(extent => {
+            const layer = genVectorLayer(extent);
+            layerGroup.push(layer);
+        });
+
+        // update the map layers
+        mapLayer.setLayers(layerGroup);
+
+        // run the call back (if it exists)
+        if (typeof _context.layerLoadCallback === "function") {
+            _context.layerLoadCallback(layer, true);
+        }
+
+        return canvas;
     }
 
     createMultiFileKmlLayer(layer, fromCache = true) {
@@ -947,7 +1159,100 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
 
                         source.set("_hasLoaded", true);
 
-                        // console.log("Point Reduction", features.length, featuresToAdd.length);
+                        // run the call back (if it exists)
+                        if (typeof _context.layerLoadCallback === "function") {
+                            _context.layerLoadCallback(layer);
+                        }
+                    },
+                    err => {
+                        console.warn("Error fetching vector data", err);
+                    }
+                );
+            },
+            format: geojsonFormat
+        });
+
+        // cache the source
+        this.layerCache.set(cacheHash, source);
+
+        return source;
+    }
+
+    createVectorPointSource(layer, options, fromCache = true) {
+        // try to pull from cache
+        let cacheHash = this.getCacheHash(layer) + "_source";
+        let cacheSource = this.layerCache.get(cacheHash);
+        if (fromCache && cacheSource) {
+            if (cacheSource.get("_hasLoaded")) {
+                // run async to avoid reducer block
+                window.requestAnimationFrame(() => {
+                    // run the call back (if it exists)
+                    if (typeof this.layerLoadCallback === "function") {
+                        this.layerLoadCallback(layer);
+                    }
+                });
+            }
+
+            return cacheSource;
+        }
+
+        // customize the layer url if needed
+        let urlFunction = false;
+        if (
+            typeof options.url !== "undefined" &&
+            typeof layer.getIn(["mappingOptions", "urlFunctions", appStringsCore.MAP_LIB_2D]) !==
+                "undefined"
+        ) {
+            urlFunction = this.tileHandler.getUrlFunction(
+                layer.getIn(["mappingOptions", "urlFunctions", appStringsCore.MAP_LIB_2D])
+            );
+        }
+
+        const geojsonFormat = new Ol_Format_GeoJSON();
+        const _context = this;
+        const source = new Ol_Source_Vector({
+            url: options.url,
+            loader: function(extent, resolution, projection) {
+                const date = moment.utc(_context.mapDate);
+                const endTime = date.valueOf();
+                const startTime = date
+                    .subtract(_context.dateInterval.size, _context.dateInterval.scale)
+                    .valueOf();
+                const url = urlFunction({
+                    layer: layer,
+                    url: options.url,
+                    extent: _context.getExtent(),
+                    endTime,
+                    startTime
+                });
+                MiscUtil.asyncFetch({
+                    url: url,
+                    handleAs: appStringsCore.FILE_TYPE_JSON
+                }).then(
+                    data => {
+                        const featuresToAdd = [];
+                        const features = data.features;
+                        for (let i = 0; i < features.length; ++i) {
+                            const feature = features[i];
+                            const coords = feature.geometry.coordinates;
+
+                            if (Math.abs(coords[0]) <= 180 && Math.abs(coords[1]) <= 90) {
+                                const dateStr = new Date(feature.properties["dates"]);
+                                const olFeature = new Ol_Feature({
+                                    geometry: new Ol_Geom_Point(coords)
+                                });
+                                olFeature.set("_layerId", layer.get("id"));
+                                olFeature.set("position_date_time", [dateStr]);
+                                featuresToAdd.push(olFeature);
+                            }
+                        }
+
+                        // add features to the layer
+                        if (featuresToAdd.length > 0) {
+                            this.addFeatures(featuresToAdd);
+                        }
+
+                        source.set("_hasLoaded", true);
 
                         // run the call back (if it exists)
                         if (typeof _context.layerLoadCallback === "function") {
@@ -966,6 +1271,17 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
         this.layerCache.set(cacheHash, source);
 
         return source;
+    }
+
+    createVectorPointLayerStyles(color = false) {
+        return new Ol_Style({
+            image: new Ol_Style_Circle({
+                radius: 4,
+                fill: new Ol_Style_Fill({
+                    color: color
+                })
+            })
+        });
     }
 
     createVectorPointTrackLayerStyles(color = false) {
@@ -1040,7 +1356,16 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
             return false;
         }
 
-        mapLayer.setStyle(this.createVectorPointTrackLayerStyles(color));
+        if (typeof mapLayer.getLayers === "function") {
+            const layers = mapLayer.getLayers();
+            layers.forEach(l => {
+                if (typeof l.setStyle === "function") {
+                    l.setStyle(this.createVectorPointLayerStyles(color));
+                }
+            });
+        } else {
+            mapLayer.setStyle(this.createVectorPointTrackLayerStyles(color));
+        }
         this.updateLayer(layer, color);
         return true;
     }
@@ -1974,9 +2299,16 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
 
     getCacheHash(layer, date = false) {
         if (date) {
-            return layer.get("id") + moment.utc(date).format(layer.get("timeFormat"));
+            return `${layer.get("id")}_${moment
+                .utc(date)
+                .format(layer.get("timeFormat"))}_${layer.get("vectorColor")}`;
         } else {
-            return layer.get("id") + moment.utc(this.mapDate).format(layer.get("timeFormat"));
+            const date = moment.utc(this.mapDate);
+            const endTime = date.format(layer.get("timeFormat"));
+            const startTime = date
+                .subtract(this.dateInterval.size, this.dateInterval.scale)
+                .format(layer.get("timeFormat"));
+            return `${layer.get("id")}_${startTime}_${endTime}_${layer.get("vectorColor")}`;
         }
     }
 
