@@ -18,15 +18,15 @@ export default class MapUtil extends MapUtilCore {
         );
     }
 
-    static formatLatLon(lat, lon, isValid, padChar = "&nbsp;") {
+    static formatLatLon(lat, lon, isValid, padChar = "&nbsp;", fixedLen = 3) {
         let latUnit = lat >= 0 ? "°E" : "°W";
         let lonUnit = lon >= 0 ? "°N" : "°S";
 
         let currCoord =
-            MiscUtil.padNumber(Math.abs(lon).toFixed(3), 5, padChar) +
+            MiscUtil.padNumber(Math.abs(lon).toFixed(fixedLen), 5, padChar) +
             lonUnit +
             "," +
-            MiscUtil.padNumber(Math.abs(lat).toFixed(3), 6, padChar) +
+            MiscUtil.padNumber(Math.abs(lat).toFixed(fixedLen), 6, padChar) +
             latUnit;
 
         return isValid ? currCoord : " ------" + lonUnit + ", ------" + latUnit;

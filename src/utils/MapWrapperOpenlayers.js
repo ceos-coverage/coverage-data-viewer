@@ -600,13 +600,19 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
             });
             source.set("_loadingState", TILE_STATE_IDLE);
 
-            return new Ol_Layer_Vector({
+            const vecLayer = new Ol_Layer_Vector({
                 opacity: 1,
                 visible: true,
-                renderMode: "vector",
+                renderMode: "image",
                 source: source,
-                style: this.createVectorPointLayerStyles(layer.get("vectorColor"))
+                style: this.createVectorPointLayerStyles(layer, layer.get("vectorColor"))
             });
+
+            vecLayer.set("_layerId", layer.get("id"));
+            vecLayer.set("_layerType", layer.get("type"));
+            vecLayer.set("_layerRef", layer);
+
+            return vecLayer;
         };
 
         // build a vector layer for each section of the view
@@ -1273,15 +1279,43 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
         return source;
     }
 
-    createVectorPointLayerStyles(color = false) {
-        return new Ol_Style({
-            image: new Ol_Style_Circle({
-                radius: 4,
-                fill: new Ol_Style_Fill({
-                    color: color
+    createVectorPointLayerStyles(layer, color = false) {
+        // TODO - start here and scale shapes according to layer variable
+        const variables = layer.getIn(["insituMeta", "variables"]);
+        if (variables.size > 0) {
+            const variable = variables.get(0);
+            const label = variable.get("label");
+            return (feature, resolution) => {
+                const subFeatures = feature.get("oiipFeatureCollection");
+                const value = subFeatures.reduce((acc, feat) => {
+                    return acc + feat.properties[label];
+                }, 0);
+                // const radius = this.miscUtil.logScaleValue(value);
+                const radius = 2 + 2 * Math.log(Math.max(1, value));
+
+                return new Ol_Style({
+                    image: new Ol_Style_Circle({
+                        radius: radius,
+                        fill: new Ol_Style_Fill({
+                            color: color
+                        }),
+                        stroke: new Ol_Style_Stroke({
+                            color: "#000000",
+                            width: 0.5
+                        })
+                    })
+                });
+            };
+        } else {
+            return new Ol_Style({
+                image: new Ol_Style_Circle({
+                    radius: 4,
+                    fill: new Ol_Style_Fill({
+                        color: color
+                    })
                 })
-            })
-        });
+            });
+        }
     }
 
     createVectorPointTrackLayerStyles(color = false) {
@@ -1360,7 +1394,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
             const layers = mapLayer.getLayers();
             layers.forEach(l => {
                 if (typeof l.setStyle === "function") {
-                    l.setStyle(this.createVectorPointLayerStyles(color));
+                    l.setStyle(this.createVectorPointLayerStyles(mapLayer.get("_layerRef"), color));
                 }
             });
             // update the layer

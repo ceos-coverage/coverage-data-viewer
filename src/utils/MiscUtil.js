@@ -71,4 +71,19 @@ export default class MiscUtil extends MiscUtilCore {
     static throttledCallback = throttle(
         typeof window !== "undefined" ? window.requestAnimationFrame : null
     );
+
+    static logScaleValue(value) {
+        // position will be between 0 and 100
+        const minp = 0;
+        const maxp = 100;
+
+        // The result should be between 2 an 15
+        const minv = Math.log(2);
+        const maxv = Math.log(15);
+
+        // calculate adjustment factor
+        const scale = (maxv - minv) / (maxp - minp);
+
+        return Math.exp(minv + scale * (value - minp));
+    }
 }
