@@ -21,7 +21,7 @@ export class BubblePointDataDisplay extends Component {
             const variable = this.props.data.getIn(["layer", "insituMeta", "variables", 0]);
             return {
                 dateStr: moment.utc(properties.get("dates")).format("MMM DD, YYYY"),
-                dataStr: `${properties.get(variable.get("label")).toFixed(2)} ${variable.get(
+                dataStr: `${(properties.get(variable.get("label")) || 0).toFixed(2)} ${variable.get(
                     "units"
                 )}`
             };

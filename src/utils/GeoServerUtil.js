@@ -11,28 +11,18 @@ import * as appStrings from "constants/appStrings";
 export default class GeoServerUtil {
     static getUrlForTrack(track) {
         if (track.getIn(["insituMeta", "handle_as"]) === appStrings.LAYER_VECTOR_POINTS_WFS) {
-            // query = query.concat([
-            //     "count=1000000",
-            //     `typeName=${track.getIn(["insituMeta", "layer_id", 0])}`,
-            //     `CQL_FILTER=fishery='${track.getIn([
-            //         "insituMeta",
-            //         "instrument",
-            //         0
-            //     ])}' AND species='${track.getIn([
-            //         "insituMeta",
-            //         "platform",
-            //         0
-            //     ])}' AND dates AFTER {DATETIMEmin} AND dates BEFORE {DATETIMEmax} AND BBOX(geom,{LONmin},{LATmin},{LONmax},{LATmax})`
-            // ]);
             return track.getIn(["insituMeta", "service_url"]);
         } else {
-            let baseUrl = appConfig.URLS.geoserverBase;
-            let query = ["service=WFS", "version=2.0.0", "request=GetFeature", "outputFormat=json"];
-            query = query.concat([
-                `typeName=${track.getIn(["insituMeta", "project"])}`,
-                `CQL_FILTER=source_id=${track.getIn(["insituMeta", "source_id"])}`
-            ]);
-            return `${baseUrl}?${query.join("&")}`;
+            const baseUrl = appConfig.URLS.geoserverBase;
+            const query = [
+                "service=WFS",
+                "version=1.0.0",
+                "request=GetFeature",
+                "outputFormat=json",
+                "typeName=oiip:mview_vis_geom_" + track.getIn(["insituMeta", "project"]),
+                "CQL_FILTER=source_id=" + track.getIn(["insituMeta", "source_id"])
+            ].join("&");
+            return `${baseUrl}?${query}`;
         }
     }
 

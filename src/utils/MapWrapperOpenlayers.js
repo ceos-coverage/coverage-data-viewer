@@ -1288,7 +1288,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
             return (feature, resolution) => {
                 const subFeatures = feature.get("oiipFeatureCollection");
                 const value = subFeatures.reduce((acc, feat) => {
-                    return acc + feat.properties[label];
+                    return acc + (feat.properties[label] || 0);
                 }, 0);
                 // const radius = this.miscUtil.logScaleValue(value);
                 const radius = 2 + 2 * Math.log(Math.max(1, value));
