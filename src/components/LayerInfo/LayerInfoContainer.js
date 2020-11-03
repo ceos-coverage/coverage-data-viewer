@@ -53,6 +53,11 @@ export class LayerInfoContainer extends Component {
                 <DialogContent classes={{ root: styles.content }}>
                     {this.renderThumbnail(layer)}
                     <Typography variant="h6" className={styles.label}>
+                        Title
+                    </Typography>
+                    <Divider className={styles.divider} />
+                    <Typography variant="body2">{meta.get("title") || "N/A"}</Typography>
+                    <Typography variant="h6" className={styles.label}>
                         Program
                     </Typography>
                     <Divider className={styles.divider} />

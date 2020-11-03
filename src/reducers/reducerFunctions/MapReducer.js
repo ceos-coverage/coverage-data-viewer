@@ -376,9 +376,12 @@ export default class MapReducer extends MapReducerCore {
             actionLayer = this.findLayerById(state, actionLayer);
         }
 
+        const newLayer = state
+            .getIn(["layers", actionLayer.get("type"), actionLayer.get("id")])
+            .set("vectorColor", action.color);
         if (typeof actionLayer !== "undefined") {
             let anySucceed = state.get("maps").reduce((acc, map) => {
-                if (map.setVectorLayerColor(actionLayer, action.color)) {
+                if (map.setVectorLayerColor(newLayer, action.color)) {
                     return true;
                 }
                 return acc;
@@ -386,8 +389,8 @@ export default class MapReducer extends MapReducerCore {
 
             if (anySucceed) {
                 state = state.setIn(
-                    ["layers", actionLayer.get("type"), actionLayer.get("id"), "vectorColor"],
-                    action.color
+                    ["layers", actionLayer.get("type"), actionLayer.get("id")],
+                    newLayer
                 );
             }
         }

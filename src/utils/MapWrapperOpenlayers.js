@@ -103,6 +103,11 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
         }
     }
 
+    setLayerRefInfo(layer, mapLayer) {
+        mapLayer.set("_layerRef", layer);
+        return MapWrapperOpenlayersCore.prototype.setLayerRefInfo.call(this, layer, mapLayer);
+    }
+
     createMap(container, options) {
         let map = MapWrapperOpenlayersCore.prototype.createMap.call(this, container, options);
 
@@ -442,8 +447,9 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
             // source for dummy canvas layer
             let imageSource = new Ol_Source_ImageCanvas({
                 canvasFunction: (extent, resolution, pixelRatio, size, projection) => {
+                    const layerObj = mapLayer.get("_layerRef") || layer;
                     return this.dynamicVectorPointCanvasFunction(
-                        layer,
+                        layerObj,
                         mapLayer,
                         extent,
                         resolution,
@@ -1282,6 +1288,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
     createVectorPointLayerStyles(layer, color = false) {
         // TODO - start here and scale shapes according to layer variable
         const variables = layer.getIn(["insituMeta", "variables"]);
+        color = color || layer.get("vectorColor");
         if (variables.size > 0) {
             const variable = variables.get(0);
             const label = variable.get("label");
@@ -1291,7 +1298,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                     return acc + (feat.properties[label] || 0);
                 }, 0);
                 // const radius = this.miscUtil.logScaleValue(value);
-                const radius = 2 + 2 * Math.log(Math.max(1, value));
+                const radius = 2 + 2 * Math.log(value + 1);
 
                 return new Ol_Style({
                     image: new Ol_Style_Circle({
@@ -1394,7 +1401,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
             const layers = mapLayer.getLayers();
             layers.forEach(l => {
                 if (typeof l.setStyle === "function") {
-                    l.setStyle(this.createVectorPointLayerStyles(mapLayer.get("_layerRef"), color));
+                    l.setStyle(this.createVectorPointLayerStyles(layer, color));
                 }
             });
             // update the layer
