@@ -92,7 +92,9 @@ export function setTrackSelected(trackId, isSelected) {
                     mapActions.addLayer({
                         id: track.get("id"),
                         shortId: track.get("shortId"),
-                        title: track.getIn(["insituMeta", titleField]),
+                        title:
+                            track.getIn(["insituMeta", "title"]) ||
+                            track.getIn(["insituMeta", titleField]),
                         type: appStrings.LAYER_GROUP_TYPE_INSITU_DATA,
                         handleAs:
                             track.getIn(["insituMeta", "handle_as"]) ||

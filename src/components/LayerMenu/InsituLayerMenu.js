@@ -39,13 +39,10 @@ export class InsituLayerMenu extends Component {
         return (
             <Paper elevation={2} className={styles.root}>
                 <Grid container className={styles.header} alignItems="center">
-                    <Grid item xs={10}>
+                    <Grid item xs={12}>
                         <Typography variant="body2" color="inherit" className={styles.title}>
                             In-Situ Datasets
                         </Typography>
-                    </Grid>
-                    <Grid item xs={2} className={styles.sortBtnWrapper}>
-                        <InsituLayerItemSort />
                     </Grid>
                 </Grid>
                 <div className={styles.listWrapper}>
