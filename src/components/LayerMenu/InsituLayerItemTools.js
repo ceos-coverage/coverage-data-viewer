@@ -25,6 +25,7 @@ import { IconPopover } from "components/Reusables";
 import * as appActions from "actions/appActions";
 import * as mapActions from "actions/mapActions";
 import * as mapActionsCore from "_core/actions/mapActions";
+import * as appStrings from "constants/appStrings";
 import styles from "components/LayerMenu/InsituLayerItemTools.scss";
 
 export class InsituLayerItemTools extends Component {
@@ -42,6 +43,8 @@ export class InsituLayerItemTools extends Component {
     }
 
     render() {
+        const isPointTrack =
+            this.props.layer.get("handleAs") === appStrings.LAYER_VECTOR_POINT_TRACK;
         return (
             <IconPopover
                 icon={<BuildIcon />}
@@ -61,46 +64,50 @@ export class InsituLayerItemTools extends Component {
                     <MenuItem
                         className={styles.toolItem}
                         onClick={() => this.props.appActions.setLayerInfo(this.props.layer)}
-                        aria-label="Track info"
+                        aria-label="Dataset info"
                     >
                         <ListItemIcon classes={{ root: styles.listItemIcon }}>
                             <InfoIcon />
                         </ListItemIcon>
-                        <ListItemText inset primary="Track Info" />
+                        <ListItemText inset primary="Dataset Info" />
                     </MenuItem>
-                    <MenuItem
-                        className={styles.toolItem}
-                        onClick={() =>
-                            this.props.mapActions.zoomToLayer(this.props.layer.get("id"))
-                        }
-                        aria-label="Zoom-to Track"
-                    >
-                        <ListItemIcon classes={{ root: styles.listItemIcon }}>
-                            <TargetIcon />
-                        </ListItemIcon>
-                        <ListItemText inset primary="Zoom-To Track" />
-                    </MenuItem>
-                    <MenuItem
-                        className={styles.toolItem}
-                        onClick={() =>
-                            this.props.appActions.setTrackErrorActive(
-                                this.props.layer.get("id"),
-                                !this.props.layer.get("isErrorActive")
-                            )
-                        }
-                        aria-label="Track Error Ellipses"
-                    >
-                        <ListItemIcon classes={{ root: styles.listItemIcon }}>
-                            <PointErrorIcon />
-                        </ListItemIcon>
-                        <ListItemText
-                            inset
-                            primary={
-                                (this.props.layer.get("isErrorActive") ? "Disable" : "Enable") +
-                                " Error Ellipses"
+                    {isPointTrack ? (
+                        <MenuItem
+                            className={styles.toolItem}
+                            onClick={() =>
+                                this.props.mapActions.zoomToLayer(this.props.layer.get("id"))
                             }
-                        />
-                    </MenuItem>
+                            aria-label="Zoom-to Track"
+                        >
+                            <ListItemIcon classes={{ root: styles.listItemIcon }}>
+                                <TargetIcon />
+                            </ListItemIcon>
+                            <ListItemText inset primary="Zoom-To Track" />
+                        </MenuItem>
+                    ) : null}
+                    {isPointTrack ? (
+                        <MenuItem
+                            className={styles.toolItem}
+                            onClick={() =>
+                                this.props.appActions.setTrackErrorActive(
+                                    this.props.layer.get("id"),
+                                    !this.props.layer.get("isErrorActive")
+                                )
+                            }
+                            aria-label="Track Error Ellipses"
+                        >
+                            <ListItemIcon classes={{ root: styles.listItemIcon }}>
+                                <PointErrorIcon />
+                            </ListItemIcon>
+                            <ListItemText
+                                inset
+                                primary={
+                                    (this.props.layer.get("isErrorActive") ? "Disable" : "Enable") +
+                                    " Error Ellipses"
+                                }
+                            />
+                        </MenuItem>
+                    ) : null}
                     <MenuItem
                         className={styles.toolItem}
                         onClick={() => this.handleSetAnimationRange()}

@@ -10,13 +10,17 @@ import PropTypes from "prop-types";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import RemoveIcon from "@material-ui/icons/Close";
+import VisibilityIcon from "@material-ui/icons/Visibility";
+import VisibilityOffIcon from "@material-ui/icons/VisibilityOff";
 import Typography from "@material-ui/core/Typography";
 import { IconButtonSmall, EnhancedTooltip, LoadingSpinner } from "_core/components/Reusables";
 import { SingleColorSelector } from "components/Reusables";
 import { InsituLayerItemTools } from "components/LayerMenu";
 import * as appActions from "actions/appActions";
 import * as mapActions from "actions/mapActions";
+import * as mapActionsCore from "_core/actions/mapActions";
 import styles from "components/LayerMenu/InsituLayerItem.scss";
+import MiscUtil from "utils/MiscUtil";
 
 export class InsituLayerItem extends Component {
     renderLeftAction() {
@@ -49,8 +53,16 @@ export class InsituLayerItem extends Component {
                 : this.props.layer.get("title");
         subtitle = subtitle.size > 0 ? subtitle.get(0) : subtitle;
 
+        const visible = this.props.layer.get("opacity") === 1;
+        const visIcon = visible ? <VisibilityIcon /> : <VisibilityOffIcon />;
+
+        const rootClasses = MiscUtil.generateStringFromSet({
+            [styles.root]: true,
+            [styles.visibilityOff]: !visible
+        });
+
         return (
-            <div key={this.props.layer.get("id") + "-insitu-menu-item"} className={styles.root}>
+            <div key={this.props.layer.get("id") + "-insitu-menu-item"} className={rootClasses}>
                 <div className={styles.leftItem}>{this.renderLeftAction()}</div>
                 <div className={styles.centerItem}>
                     <EnhancedTooltip
@@ -85,13 +97,10 @@ export class InsituLayerItem extends Component {
                         className={styles.actionBtn}
                         disabled={this.props.layer.get("isLoading")}
                         onClick={() =>
-                            this.props.appActions.setTrackSelected(
-                                this.props.layer.get("id"),
-                                false
-                            )
+                            this.props.setLayerOpacity(this.props.layer, visible ? 0 : 1)
                         }
                     >
-                        <RemoveIcon />
+                        {visIcon}
                     </IconButtonSmall>
                 </div>
             </div>
@@ -102,13 +111,15 @@ export class InsituLayerItem extends Component {
 InsituLayerItem.propTypes = {
     layer: PropTypes.object.isRequired,
     appActions: PropTypes.object.isRequired,
-    mapActions: PropTypes.object.isRequired
+    mapActions: PropTypes.object.isRequired,
+    setLayerOpacity: PropTypes.func.isRequired
 };
 
 function mapDispatchToProps(dispatch) {
     return {
         appActions: bindActionCreators(appActions, dispatch),
-        mapActions: bindActionCreators(mapActions, dispatch)
+        mapActions: bindActionCreators(mapActions, dispatch),
+        setLayerOpacity: bindActionCreators(mapActionsCore.setLayerOpacity, dispatch)
     };
 }
 
