@@ -225,7 +225,8 @@ export default class MapReducer extends MapReducerCore {
                         .filterNot(entry => {
                             return (
                                 entry.getIn(["layer", "type"]) ===
-                                appStrings.LAYER_GROUP_TYPE_DATA_REFERENCE
+                                    appStrings.LAYER_GROUP_TYPE_DATA_REFERENCE ||
+                                entry.getIn(["layer", "opacity"]) === 0
                             );
                         })
                         .slice(0, 1);
