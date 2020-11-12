@@ -1475,7 +1475,9 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                     layerFilter: mapLayer => {
                         return (
                             mapLayer.getVisible() &&
-                            mapLayer.get("_layerType") === appStrings.LAYER_GROUP_TYPE_INSITU_DATA
+                            mapLayer.get("_layerType") ===
+                                appStrings.LAYER_GROUP_TYPE_INSITU_DATA &&
+                            mapLayer.get("opacity") > 0
                         );
                     }
                 }

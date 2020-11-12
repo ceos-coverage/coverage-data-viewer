@@ -20,6 +20,7 @@ import { LoadingSpinner } from "_core/components/Reusables";
 import styles from "components/DataSubsetting/DataSubsetting.scss";
 import * as subsettingActions from "actions/subsettingActions";
 import * as appStringsCore from "_core/constants/appStrings";
+import * as appStrings from "constants/appStrings";
 import MiscUtil from "utils/MiscUtil";
 
 export class DataSubsetting extends Component {
@@ -80,8 +81,9 @@ export class DataSubsetting extends Component {
                         .replace("DATETIMEmin", moment.utc(startDate).toISOString())
                         .replace("DATETIMEstart", moment.utc(startDate).toISOString())
                         .replace("DATETIMEmax", moment.utc(endDate).toISOString())
-                        .replace("DATETIMEend", moment.utc(endDate).toISOString());
-
+                        .replace("DATETIMEend", moment.utc(endDate).toISOString())
+                        .replace("DEPTHmin", -10000)
+                        .replace("DEPTHmax", 10000);
                     const p = new Promise(resolve => {
                         fetch(reqUrl)
                             .then(response => {
@@ -130,6 +132,16 @@ export class DataSubsetting extends Component {
                     track.getIn(["insituMeta", "tds_url"])
             )
             .toList()
+            .concat(
+                this.props.availableRemotes
+                    .filter(
+                        track =>
+                            !track.get("isDisabled") &&
+                            track.get("isActive") &&
+                            track.getIn(["insituMeta", "tds_url"])
+                    )
+                    .toList()
+            )
             .sort(MiscUtil.getImmutableObjectSort("title"));
 
         let datasetsSubtitle =
@@ -226,13 +238,15 @@ DataSubsetting.propTypes = {
     searchOptions: PropTypes.object.isRequired,
     subsettingActions: PropTypes.object.isRequired,
     subsettingOptions: PropTypes.object.isRequired,
-    availableTracks: PropTypes.object.isRequired
+    availableTracks: PropTypes.object.isRequired,
+    availableRemotes: PropTypes.object.isRequired
 };
 
 function mapStateToProps(state) {
     return {
         subsettingOptions: state.subsetting,
-        availableTracks: state.map.getIn(["layers", appStringsCore.LAYER_GROUP_TYPE_DATA]),
+        availableTracks: state.map.getIn(["layers", appStrings.LAYER_GROUP_TYPE_INSITU_DATA]),
+        availableRemotes: state.map.getIn(["layers", appStringsCore.LAYER_GROUP_TYPE_DATA]),
         searchOptions: state.view.getIn(["layerSearch", "formOptions"])
     };
 }
