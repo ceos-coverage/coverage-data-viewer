@@ -541,7 +541,8 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
         }
 
         // pull the current date interval
-        const date = moment.utc(this.mapDate);
+        // hack the dates to snap to the 15th - TODO: fix up backend to support arbitrary interval
+        const date = moment.utc(moment.utc(this.mapDate).format("YYYY-MM-15T00:00:01Z"));
         const endTime = date.valueOf();
         const startTime = date.subtract(this.dateInterval.size, this.dateInterval.scale).valueOf();
 
