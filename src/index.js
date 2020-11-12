@@ -22,6 +22,8 @@ import { Provider } from "react-redux";
 import configureStore from "store/configureStore";
 import { AppContainer } from "components/App"; // Replace this with your own non-core version src/components/AppContainer/AppContainer.js
 require("styles/resources/favicon.ico");
+require("styles/resources/favicon-32x32.ico");
+require("styles/resources/favicon-96x96.ico");
 require("_core/styles/resources/img/layer_thumbnails/BlueMarble_ShadedRelief_Bathymetry.jpeg");
 require("_core/styles/resources/img/layer_thumbnails/OSM_Land_Water_Map.png");
 require("_core/styles/resources/img/layer_thumbnails/ASTER_GDEM_Color_Shaded_Relief.jpeg");
