@@ -63,7 +63,7 @@ export class DataSubsetting extends Component {
     };
 
     submitSubsetRequest = () => {
-        const aTracks = this.props.availableTracks;
+        const aTracks = this.props.availableTracks.concat(this.props.availableRemotes);
         const sTracks = this.props.subsettingOptions.get("selectedTracks");
         const startDate = this.props.subsettingOptions.get("startDate");
         const endDate = this.props.subsettingOptions.get("endDate");
