@@ -35,6 +35,11 @@ export class IconPopover extends Component {
     }
 
     renderButton() {
+        const buttonClass = MiscUtil.generateStringFromSet({
+            [styles.button]: true,
+            [this.props.buttonClass]: typeof this.props.buttonClass !== "undefined"
+        });
+
         if (typeof this.props.tooltip !== "undefined") {
             return (
                 <Tooltip
@@ -44,7 +49,7 @@ export class IconPopover extends Component {
                 >
                     <IconButtonSmall
                         color={this.popoverOpen ? "primary" : "inherit"}
-                        className={styles.button}
+                        className={buttonClass}
                         disabled={this.props.disabled}
                         onClick={evt => this.handleClickButton(evt)}
                     >
@@ -56,7 +61,7 @@ export class IconPopover extends Component {
         return (
             <IconButtonSmall
                 color={this.popoverOpen ? "primary" : "inherit"}
-                className={styles.button}
+                className={buttonClass}
                 disabled={this.props.disabled}
                 onClick={evt => this.handleClickButton(evt)}
             >
@@ -77,8 +82,8 @@ export class IconPopover extends Component {
         });
 
         let anchorOrigin = this.props.anchorOrigin || {
-            vertical: "bottom",
-            horizontal: "left"
+            vertical: "center",
+            horizontal: "right"
         };
         let transformOrigin = this.props.transformOrigin || {
             vertical: "top",
@@ -110,6 +115,7 @@ IconPopover.propTypes = {
     tooltip: PropTypes.string,
     tooltipPlacement: PropTypes.string,
     contentClass: PropTypes.string,
+    buttonClass: PropTypes.string,
     disabled: PropTypes.bool,
     anchorOrigin: PropTypes.object,
     transformOrigin: PropTypes.object,

@@ -37,7 +37,6 @@ export class RefDataDisplay extends Component {
 
         let containerClasses = MiscUtil.generateStringFromSet({
             [styles.root]: true,
-            [styles.lifted]: this.props.animationOpen,
             [displayStyles.hidden]: this.props.data.size === 0 || !this.props.pixelIsValid
         });
 
@@ -52,16 +51,17 @@ export class RefDataDisplay extends Component {
 
 RefDataDisplay.propTypes = {
     data: PropTypes.object.isRequired,
-    pixelIsValid: PropTypes.bool.isRequired,
-    animationOpen: PropTypes.bool.isRequired
+    pixelIsValid: PropTypes.bool.isRequired
 };
 
 function mapStateToProps(state) {
     return {
         data: state.map.getIn(["view", "refHoverData"]),
-        pixelIsValid: state.map.getIn(["view", "pixelHoverCoordinate", "isValid"]),
-        animationOpen: state.map.getIn(["animation", "isOpen"])
+        pixelIsValid: state.map.getIn(["view", "pixelHoverCoordinate", "isValid"])
     };
 }
 
-export default connect(mapStateToProps, null)(RefDataDisplay);
+export default connect(
+    mapStateToProps,
+    null
+)(RefDataDisplay);

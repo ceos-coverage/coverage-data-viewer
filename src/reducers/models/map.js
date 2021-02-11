@@ -61,6 +61,7 @@ export const mapState = mapStateCore.mergeDeep(
 export const layerModel = layerModelCore.mergeDeep(
     Immutable.fromJS({
         insituMeta: {},
+        shortId: "",
         isLoading: false,
         isErrorActive: false,
         vectorColor: appConfig.INSITU_VECTOR_COLORS[0]

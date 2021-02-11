@@ -41,7 +41,7 @@ export class Chart extends Component {
                 .map(track => track.title)
                 .toJS(),
             seriesNum: this.props.chart.getIn(["formOptions", "selectedTracks"]).size,
-            note: "decimation unknown",
+            // note: "decimation unknown",
             keys: {
                 xKey: this.props.chart.getIn(["formOptions", "xAxis"]),
                 xLabel: this.props.chart.getIn(["formOptions", "xAxisLabel"]),
@@ -146,7 +146,7 @@ export class Chart extends Component {
                     node: node,
                     data: data,
                     dataExtremes: extremes,
-                    note: (dec_size / sub_size * 100).toFixed(1) + "% of points shown",
+                    // note: ((dec_size / sub_size) * 100).toFixed(1) + "% of points shown",
                     chartType: this.props.chart.get("chartType"),
                     displayOptions: this.props.chart.get("displayOptions")
                 });
@@ -214,7 +214,7 @@ export class Chart extends Component {
                     error={this.props.chart.getIn(["dataError", "error"])}
                 />
                 <div className={loadingClasses}>
-                    <Typography variant="title" component="div" className={styles.loading}>
+                    <Typography variant="h6" component="div" className={styles.loading}>
                         {this.props.chart.getIn(["warning", "active"])
                             ? this.props.chart.getIn(["warning", "text"])
                             : "loading data..."}
@@ -259,4 +259,7 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Chart);
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(Chart);

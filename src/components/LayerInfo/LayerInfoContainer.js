@@ -28,48 +28,86 @@ export class LayerInfoContainer extends Component {
         this.prevLayer = this.props.layer;
     }
 
+    renderThumbnail(layer) {
+        if (typeof layer !== "undefined") {
+            const meta = layer.get("insituMeta");
+            const url = meta.get("thumbnail_url");
+            if (url) {
+                return (
+                    <div
+                        style={{
+                            backgroundImage: `url(${url})`
+                        }}
+                        className={styles.thumbnail}
+                    />
+                );
+            }
+        }
+    }
+
     renderInfoContent(layer) {
         if (typeof layer !== "undefined") {
             let meta = layer.get("insituMeta");
 
             return (
-                <DialogContent className={styles.content}>
-                    <Typography variant="title" className={styles.label}>
-                        Project
+                <DialogContent classes={{ root: styles.content }}>
+                    {this.renderThumbnail(layer)}
+                    <Typography variant="h6" className={styles.label}>
+                        Title
                     </Typography>
                     <Divider className={styles.divider} />
-                    <Typography variant="body1">{meta.get("project") || "N/A"}</Typography>
-                    <Typography variant="title" className={styles.label}>
+                    <Typography variant="body2">{meta.get("title") || "N/A"}</Typography>
+                    <Typography variant="h6" className={styles.label}>
+                        Program
+                    </Typography>
+                    <Divider className={styles.divider} />
+                    <Typography variant="body2">{meta.get("program") || "N/A"}</Typography>
+                    <Typography variant="h6" className={styles.label}>
                         Mission
                     </Typography>
                     <Divider className={styles.divider} />
-                    <Typography variant="body1">{meta.get("mission") || "N/A"}</Typography>
-                    <Typography variant="title" className={styles.label}>
+                    <Typography variant="body2">
+                        {meta
+                            .get("mission")
+                            .sort()
+                            .join(", ") || "N/A"}
+                    </Typography>
+                    <Typography variant="h6" className={styles.label}>
                         Platform
                     </Typography>
                     <Divider className={styles.divider} />
-                    <Typography variant="body1">{meta.get("platform") || "N/A"}</Typography>
-                    <Typography variant="title" className={styles.label}>
+                    <Typography variant="body2">
+                        {meta
+                            .get("platform")
+                            .sort()
+                            .join(", ") || "N/A"}
+                    </Typography>
+                    <Typography variant="h6" className={styles.label}>
                         Instrument
                     </Typography>
                     <Divider className={styles.divider} />
-                    <Typography variant="body1">{meta.get("instrument") || "N/A"}</Typography>
-                    <Typography variant="title" className={styles.label}>
+                    <Typography variant="body2">
+                        {meta
+                            .get("instrument")
+                            .sort()
+                            .join(", ") || "N/A"}
+                    </Typography>
+                    <Typography variant="h6" className={styles.label}>
                         Variables
                     </Typography>
                     <Divider className={styles.divider} />
-                    <Typography variant="body1">
+                    <Typography variant="body2">
                         {meta
                             .get("variables")
                             .map(x => x.get("label"))
                             .sort()
                             .join(", ") || "N/A"}
                     </Typography>
-                    <Typography variant="title" className={styles.label}>
+                    <Typography variant="h6" className={styles.label}>
                         Time Range
                     </Typography>
                     <Divider className={styles.divider} />
-                    <Typography variant="body1">
+                    <Typography variant="body2">
                         {moment
                             .unix(meta.get("start_date"))
                             .utc()
@@ -80,11 +118,11 @@ export class LayerInfoContainer extends Component {
                             .utc()
                             .format("YYYY MMM DD, HH:mm UTC")}
                     </Typography>
-                    <Typography variant="title" className={styles.label}>
+                    <Typography variant="h6" className={styles.label}>
                         Spatial Range
                     </Typography>
                     <Divider className={styles.divider} />
-                    <Typography variant="body1">
+                    <Typography variant="body2">
                         {[
                             meta.get("lon_min"),
                             meta.get("lat_min"),
@@ -92,11 +130,11 @@ export class LayerInfoContainer extends Component {
                             meta.get("lat_max")
                         ].join(", ")}
                     </Typography>
-                    <Typography variant="title" className={styles.label}>
+                    <Typography variant="h6" className={styles.label}>
                         Description
                     </Typography>
                     <Divider className={styles.divider} />
-                    <Typography variant="body1">{meta.get("description") || "N/A"}</Typography>
+                    <Typography variant="body2">{meta.get("description") || "N/A"}</Typography>
                 </DialogContent>
             );
         }
@@ -134,4 +172,7 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(LayerInfoContainer);
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(LayerInfoContainer);

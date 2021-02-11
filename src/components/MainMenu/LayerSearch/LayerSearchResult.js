@@ -13,7 +13,7 @@ import moment from "moment";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import ListItemText from "@material-ui/core/ListItemText";
-import InfoIcon from "@material-ui/icons/InfoOutline";
+import InfoIcon from "mdi-material-ui/InformationOutline";
 import Checkbox from "@material-ui/core/Checkbox";
 import IconButton from "@material-ui/core/IconButton";
 import * as appActions from "actions/appActions";
@@ -26,17 +26,18 @@ export class LayerSearchResult extends Component {
         }
     }
     render() {
-        let startStr = moment
+        const startStr = moment
             .unix(this.props.layer.getIn(["insituMeta", "start_date"]))
             .utc()
             .format("MMM DD, YYYY");
-        let endStr = moment
+        const endStr = moment
             .unix(this.props.layer.getIn(["insituMeta", "end_date"]))
             .utc()
             .format("MMM DD, YYYY");
 
-        let secondaryText = (
+        const secondaryText = (
             <span>
+                id: {this.props.layer.get("shortId")} ·{" "}
                 {this.props.layer.getIn(["insituMeta", "instrument"])}
                 <br />
                 {startStr + " – " + endStr}
@@ -54,7 +55,7 @@ export class LayerSearchResult extends Component {
                 <ListItemText
                     primary={this.props.layer.get("title")}
                     secondary={secondaryText}
-                    classes={{ primary: styles.title }}
+                    classes={{ primary: styles.title, secondary: styles.subtitle }}
                 />
                 <ListItemSecondaryAction>
                     <IconButton
@@ -82,4 +83,7 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-export default connect(null, mapDispatchToProps)(LayerSearchResult);
+export default connect(
+    null,
+    mapDispatchToProps
+)(LayerSearchResult);

@@ -7,14 +7,72 @@
 
 import Immutable from "immutable";
 import moment from "moment";
+import * as appStrings from "constants/appStrings";
+import * as appStringsCore from "_core/constants/appStrings";
 import * as types from "constants/actionTypes";
 import * as typesCore from "_core/constants/actionTypes";
 import * as appActions from "actions/appActions";
 import * as chartActions from "actions/chartActions";
-import * as mapActionsCore from "_core/actions/mapActions";
+import { WMTSUtil } from "utils/WMTSUtil";
 
 export function addLayer(layer, setActive = true) {
-    return { type: types.ADD_LAYER, layer, setActive };
+    return dispatch => {
+        const capUrl = layer.insituMeta.get("service_url");
+        const handleAs = layer.handleAs;
+        if (handleAs === appStringsCore.LAYER_GIBS_RASTER && capUrl) {
+            WMTSUtil.getWMTSData(capUrl)
+                .then(wmtsString => {
+                    if (wmtsString) {
+                        dispatch({
+                            type: typesCore.INGEST_LAYER_CONFIG,
+                            config: wmtsString,
+                            options: { url: capUrl, type: appStringsCore.LAYER_CONFIG_WMTS_XML }
+                        });
+
+                        dispatch({ type: types.ADD_LAYER, layer, setActive });
+
+                        if (layer.palette.url) {
+                            let p;
+                            if (layer.palette.handleAs === appStrings.COLORBAR_GIBS_XML) {
+                                p = WMTSUtil.getGIBSColormapFromURL(layer.palette.url, layer.id);
+                            } else {
+                                p = WMTSUtil.getGIBSColormapFromCapabilities(wmtsString, {
+                                    layer: layer.id
+                                });
+                            }
+                            p.then(palette => {
+                                dispatch({
+                                    type: typesCore.INGEST_LAYER_PALETTES,
+                                    paletteConfig: { paletteArray: [palette] }
+                                });
+                                dispatch({
+                                    type: types.UPDATE_LAYER,
+                                    layer: Immutable.fromJS({
+                                        id: layer.id,
+                                        type: layer.type,
+                                        units: palette.units,
+                                        palette: {
+                                            name: palette.name,
+                                            handleAs: palette.handleAs,
+                                            min: palette.min,
+                                            max: palette.max
+                                        }
+                                    })
+                                });
+                            }).catch(err => {
+                                console.warn(err);
+                            });
+                        }
+                    }
+                })
+                .catch(err => {
+                    console.warn(err);
+                    dispatch({ type: types.ADD_LAYER, layer, setActive });
+                });
+        } else {
+            dispatch({ type: types.ADD_LAYER, layer, setActive });
+        }
+    };
 }
 
 export function removeLayer(layer) {
@@ -151,27 +209,6 @@ export function checkNextFrame() {
 // update the delay between animation frames
 export function setAnimationSpeed(speed) {
     return { type: types.SET_ANIMATION_SPEED, speed };
-}
-
-// update the step size between animation frames
-export function setAnimationStepSize(stepSize) {
-    return { type: types.SET_ANIMATION_STEP_SIZE, stepSize };
-}
-
-export function setAnimationExportOpen(isOpen) {
-    return { type: types.SET_ANIMATION_EXPORT_OPEN, isOpen };
-}
-
-export function setAnimationExportSelectedArea(area, allowEmpty = false) {
-    return { type: types.SET_ANIMATION_EXPORT_SELECTED_AREA, area: Immutable.List(area) };
-}
-
-export function setAnimationExportFileFormat(format) {
-    return { type: types.SET_ANIMATION_EXPORT_FILE_FORMAT, format };
-}
-
-export function setAnimationExportResolution(resolution) {
-    return { type: types.SET_ANIMATION_EXPORT_RESOLUTION, resolution };
 }
 
 export function setInsituLayerTitles(titleField) {

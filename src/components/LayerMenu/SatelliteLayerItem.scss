@@ -1,0 +1,62 @@
+.root {
+    padding: 0.5rem 1rem;
+    width: 100%;
+    overflow: hidden;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    &:last-of-type {
+        // padding-bottom: 0px;
+        border-bottom: none;
+    }
+}
+.header,
+.footer {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: flex-start;
+}
+
+.leftItem {
+    width: 1.2rem;
+    height: 1.2rem;
+    margin-top: 0.4rem;
+}
+
+.centerItem {
+    flex: 1 1;
+    overflow: hidden;
+    margin: 0px 0.5rem;
+}
+
+.rightItem {
+    text-align: right;
+    width: 8rem;
+    height: 1.8rem;
+    color: rgba(0, 0, 0, 0.54);
+    margin-top: 0.2rem;
+}
+
+.label,
+.subtitle {
+    white-space: normal;
+    word-break: break;
+}
+
+.subtitle {
+    margin: 0px 0.5rem;
+    color: darken(white, 50%);
+}
+
+.btnWrapper {
+    display: inline-block;
+}
+
+.actionBtn {
+    width: 1.8rem !important;
+    height: 1.8rem !important;
+    line-height: 1.8rem !important;
+    font-size: 1.8rem !important;
+}
+
+.colorbarWrapper {
+    margin-top: 0.3rem;
+}

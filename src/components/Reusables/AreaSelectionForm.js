@@ -163,7 +163,7 @@ export class AreaSelectionForm extends Component {
                 </Grid>
                 <Grid container justify="flex-end" className={styles.btnRow}>
                     <Button
-                        variant="flat"
+                        variant="text"
                         size="small"
                         color="default"
                         onClick={() => this.clearBounds()}
@@ -171,7 +171,7 @@ export class AreaSelectionForm extends Component {
                         Clear
                     </Button>
                     <Button
-                        variant="flat"
+                        variant="text"
                         size="small"
                         color="default"
                         onClick={() => this.startDrawing()}
@@ -179,7 +179,7 @@ export class AreaSelectionForm extends Component {
                         Draw
                     </Button>
                     <Button
-                        variant="flat"
+                        variant="text"
                         size="small"
                         color="primary"
                         onClick={() => this.submitArea()}
@@ -209,4 +209,7 @@ function mapDisatchToProps(dispatch) {
     };
 }
 
-export default connect(null, mapDisatchToProps)(AreaSelectionForm);
+export default connect(
+    null,
+    mapDisatchToProps
+)(AreaSelectionForm);

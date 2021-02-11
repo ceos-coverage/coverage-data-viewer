@@ -13,7 +13,9 @@ import MiscUtil from "utils/MiscUtil";
 
 export class LayerSearchResultsLabel extends Component {
     render() {
-        let trackList = this.props.searchResults.get("results");
+        let trackList = this.props.searchResults
+            .get("results")
+            .filter((val, key) => val.get("isTrack"));
 
         let containerClasses = MiscUtil.generateStringFromSet({
             [this.props.className]: typeof this.props.className !== "undefined"
@@ -37,4 +39,7 @@ function mapStateToProps(state) {
     };
 }
 
-export default connect(mapStateToProps, null)(LayerSearchResultsLabel);
+export default connect(
+    mapStateToProps,
+    null
+)(LayerSearchResultsLabel);

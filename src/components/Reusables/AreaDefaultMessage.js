@@ -29,7 +29,7 @@ export class AreaDefaultMessage extends Component {
         return (
             <div className={containerClasses}>
                 <div className={styles.icon}>{icon}</div>
-                <Typography variant="title" color="inherit" className={styles.label}>
+                <Typography variant="h6" color="inherit" className={styles.label}>
                     {this.props.label}
                 </Typography>
                 <Typography variant="caption" color="inherit" className={sublabelClasses}>

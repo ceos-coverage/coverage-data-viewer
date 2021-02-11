@@ -25,9 +25,19 @@ const APP_CONFIG = Immutable.fromJS({
                 url: "default-data/layers_oiip.json",
                 type: "json"
             },
+            // {
+            //     url:
+            //         "https://podaac-tools.jpl.nasa.gov/onearth/wmts/wmts.cgi?Service=WMTS&Request=GetCapabilities",
+            //     type: "wmts/xml"
+            // },
+            // {
+            //     url:
+            //         "https://gibs.earthdata.nasa.gov/wmts/epsg4326/best/wmts.cgi?service=WMTS&request=GetCapabilities",
+            //     type: "wmts/xml"
+            // },
+            // TODO - fix data reference layers (FAO Regions etc)
             {
-                url:
-                    "https://podaac-tools.jpl.nasa.gov/onearth/wmts/wmts.cgi?Service=WMTS&Request=GetCapabilities",
+                url: "default-data/capabilities_oiip_dev.xml",
                 type: "wmts/xml"
             },
             {
@@ -97,14 +107,28 @@ const APP_CONFIG = Immutable.fromJS({
             { value: "variables", label: "Variable" },
             { value: "platform", label: "Platform" },
             { value: "instrument", label: "Sensor" },
-            { value: "project", label: "Project" }
+            { value: "program", label: "Program" }
         ],
         SORT_PARAMS: [
             { value: "instrument", label: "Sensor" },
             { value: "platform", label: "Platform" },
-            { value: "project", label: "Project" }
+            { value: "program", label: "Program" }
         ],
-        DEFAULT_SORT_PARAM: "project"
+        DEFAULT_SORT_PARAM: "program"
+    },
+    SATELLITE_LAYER_SEARCH: {
+        FACETS: [
+            { value: "variables", label: "Variable" },
+            { value: "platform", label: "Platform" },
+            { value: "instrument", label: "Sensor" },
+            { value: "program", label: "Program" }
+        ],
+        SORT_PARAMS: [
+            { value: "instrument", label: "Sensor" },
+            { value: "platform", label: "Platform" },
+            { value: "program", label: "Program" }
+        ],
+        DEFAULT_SORT_PARAM: "program"
     },
     DATE_INTERVAL: {
         SCALES: [

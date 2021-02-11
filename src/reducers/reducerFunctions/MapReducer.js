@@ -127,28 +127,18 @@ export default class MapReducer extends MapReducerCore {
                 actionLayer = this.findLayerById(state, actionLayer);
             }
             if (typeof actionLayer !== "undefined") {
-                if (actionLayer.get("type") === appStringsCore.LAYER_GROUP_TYPE_DATA) {
-                    let dataLayers = state.getIn(["layers", appStringsCore.LAYER_GROUP_TYPE_DATA]);
-                    dataLayers.map((layer, id) => {
-                        if (layer.get("isActive")) {
-                            state = MapReducerCore.setLayerActive(state, {
-                                layer: id,
-                                active: false
-                            });
-                        }
-                    });
-                } else if (actionLayer.get("type") === appStrings.LAYER_GROUP_TYPE_INSITU_DATA) {
+                if (actionLayer.get("type") === appStrings.LAYER_GROUP_TYPE_INSITU_DATA) {
                     // set the color of this vector layer
                     let dataLayers = state.getIn([
                         "layers",
                         appStrings.LAYER_GROUP_TYPE_INSITU_DATA
                     ]);
 
-                    let colorIndex = MiscUtil.getRandomInt(
+                    const colorIndex = MiscUtil.getRandomInt(
                         0,
                         appConfig.INSITU_VECTOR_COLORS.length
                     );
-                    let color = appConfig.INSITU_VECTOR_COLORS[colorIndex];
+                    const color = appConfig.INSITU_VECTOR_COLORS[colorIndex];
                     state = state
                         .setIn(
                             [
@@ -235,7 +225,8 @@ export default class MapReducer extends MapReducerCore {
                         .filterNot(entry => {
                             return (
                                 entry.getIn(["layer", "type"]) ===
-                                appStrings.LAYER_GROUP_TYPE_DATA_REFERENCE
+                                    appStrings.LAYER_GROUP_TYPE_DATA_REFERENCE ||
+                                entry.getIn(["layer", "opacity"]) === 0
                             );
                         })
                         .slice(0, 1);
@@ -317,7 +308,27 @@ export default class MapReducer extends MapReducerCore {
 
     static addLayer(state, action) {
         if (typeof action.layer !== "undefined") {
-            let mergedLayer = this.getLayerModel().mergeDeep(action.layer);
+            const actionLayer = Immutable.fromJS(action.layer);
+
+            // check for partial match
+            const partials = state.getIn(["layers", appStringsCore.LAYER_GROUP_TYPE_PARTIAL]);
+            const matchingPartials = partials.filter(el => {
+                return el.get("id") === actionLayer.get("id");
+            });
+            let mergedLayer = matchingPartials.reduce((acc, el) => {
+                return acc.mergeDeep(el);
+            }, this.getLayerModel());
+            mergedLayer = mergedLayer.mergeDeep(actionLayer);
+
+            // last minute check for special layer type
+            // TODO - get this moved into a different area/handle better
+            if (
+                mergedLayer.get("type") === appStringsCore.LAYER_GROUP_TYPE_DATA &&
+                mergedLayer.getIn(["mappingOptions", "url"]).endsWith(".mvt")
+            ) {
+                mergedLayer = mergedLayer.set("handleAs", appStrings.LAYER_VECTOR_TILE_POINTS);
+            }
+
             if (
                 typeof mergedLayer.get("id") !== "undefined" &&
                 typeof state.getIn(["layers", mergedLayer.get("type")]) !== "undefined"
@@ -334,6 +345,17 @@ export default class MapReducer extends MapReducerCore {
             });
         }
 
+        return state;
+    }
+
+    static updateLayer(state, action) {
+        if (state.hasIn(["layers", action.layer.get("type"), action.layer.get("id")])) {
+            const layer = state.getIn(["layers", action.layer.get("type"), action.layer.get("id")]);
+            return state.setIn(
+                ["layers", action.layer.get("type"), action.layer.get("id")],
+                layer.mergeDeep(action.layer)
+            );
+        }
         return state;
     }
 
@@ -355,9 +377,12 @@ export default class MapReducer extends MapReducerCore {
             actionLayer = this.findLayerById(state, actionLayer);
         }
 
+        const newLayer = state
+            .getIn(["layers", actionLayer.get("type"), actionLayer.get("id")])
+            .set("vectorColor", action.color);
         if (typeof actionLayer !== "undefined") {
             let anySucceed = state.get("maps").reduce((acc, map) => {
-                if (map.setVectorLayerColor(actionLayer, action.color)) {
+                if (map.setVectorLayerColor(newLayer, action.color)) {
                     return true;
                 }
                 return acc;
@@ -365,8 +390,8 @@ export default class MapReducer extends MapReducerCore {
 
             if (anySucceed) {
                 state = state.setIn(
-                    ["layers", actionLayer.get("type"), actionLayer.get("id"), "vectorColor"],
-                    action.color
+                    ["layers", actionLayer.get("type"), actionLayer.get("id")],
+                    newLayer
                 );
             }
         }
@@ -526,8 +551,6 @@ export default class MapReducer extends MapReducerCore {
     }
 
     static setAnimationOpen(state, action) {
-        // state = this.setAnimationStartDate(state, { date: moment.utc(state.get("date")).subtract(1, 'week').toDate() });
-        // state = this.setAnimationEndDate(state, { date: moment.utc(state.get("date")).add(1, 'week').toDate() });
         if (action.isOpen && action.updateRange) {
             state = this.setAnimationStartDate(state, {
                 date: moment
@@ -637,18 +660,6 @@ export default class MapReducer extends MapReducerCore {
                 // begin checking the initial buffer
                 state = this.checkInitialAnimationBuffer(state, {});
             }
-            // }
-            // else {
-            //     state = this.stopAnimation(state, {});
-            //     alerts = alerts.push(
-            //         alertCore.merge({
-            //             title: appStrings.ALERTS.NO_ANIMATION_LAYERS.title,
-            //             body: appStrings.ALERTS.NO_ANIMATION_LAYERS.formatString,
-            //             severity: appStrings.ALERTS.NO_ANIMATION_LAYERS.severity,
-            //             time: new Date()
-            //         })
-            //     );
-            // }
         } else {
             state = this.stopAnimation(state, {});
             alerts = alerts.push(

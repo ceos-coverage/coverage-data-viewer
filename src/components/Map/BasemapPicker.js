@@ -20,7 +20,6 @@ import * as appStrings from "_core/constants/appStrings";
 import { BaseMapList } from "_core/components/Settings";
 import { MapButton } from "_core/components/Reusables";
 import MiscUtil from "_core/utils/MiscUtil";
-import styles from "_core/components/Map/BasemapPicker.scss";
 import mapControlsStyles from "_core/components/Map/MapControlsContainer.scss";
 import displayStyles from "_core/styles/display.scss";
 
@@ -57,7 +56,6 @@ export class BasemapPicker extends Component {
         });
 
         let containerClasses = MiscUtil.generateStringFromSet({
-            [styles.basemapPicker]: true,
             [this.props.className]: typeof this.props.className !== "undefined"
         });
         let popperClasses = MiscUtil.generateStringFromSet({
@@ -150,4 +148,7 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(BasemapPicker);
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(BasemapPicker);

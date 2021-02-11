@@ -12,12 +12,10 @@ import { CurrentDatePickerContainer, AnimationContainer } from "components/DateP
 import MiscUtil from "_core/utils/MiscUtil";
 import stylesCore from "_core/components/DatePicker/DatePickerContainer.scss";
 import styles from "components/DatePicker/DatePickerContainer.scss";
-import displayStyles from "_core/styles/display.scss";
 
 export class DatePickerContainer extends Component {
     render() {
         let containerClasses = MiscUtil.generateStringFromSet({
-            [stylesCore.datePickerContainer]: true,
             [styles.root]: true,
             [styles.expanded]: this.props.animationOpen,
             [this.props.className]: typeof this.props.className !== "undefined"
@@ -44,4 +42,7 @@ function mapStateToProps(state) {
     };
 }
 
-export default connect(mapStateToProps, null)(DatePickerContainer);
+export default connect(
+    mapStateToProps,
+    null
+)(DatePickerContainer);

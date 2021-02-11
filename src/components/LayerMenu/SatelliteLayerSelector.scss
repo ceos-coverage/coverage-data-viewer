@@ -11,7 +11,7 @@
     // left: 0.7rem;
     width: 27.5rem;
     min-height: 3.5rem;
-    max-height: 6.5rem;
+    max-height: 8rem;
     margin-top: 0.7rem;
     background: white;
     padding: 0.5rem 1rem 0.5rem 1rem;
@@ -44,6 +44,8 @@
 .content {
     padding: 0px;
     position: relative;
+    width: 320px;
+    max-height: auto;
     overflow: hidden;
 }
 
@@ -51,6 +53,7 @@
     width: 100%;
     position: relative;
     height: 100%;
+    max-height: 30rem;
     display: flex;
     flex-flow: column nowrap;
 }

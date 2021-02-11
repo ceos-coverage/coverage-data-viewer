@@ -17,6 +17,10 @@ import SearchUtil from "utils/SearchUtil";
 //create a copy of the state passed and set new values on the copy.
 
 export default class ViewReducer extends ViewReducerCore {
+    static setExtraToolsOpen(state, action) {
+        return state.set("extraToolsOpen", action.open);
+    }
+
     static setMainMenuTabIndex(state, action) {
         return state.set("mainMenuTabIndex", action.tabIndex);
     }
@@ -51,13 +55,27 @@ export default class ViewReducer extends ViewReducerCore {
         return state.setIn(["layerSearch", "searchResults", "results"], results);
     }
 
-    static setSearchFacets(state, action) {
+    static setTrackSearchFacets(state, action) {
         let facets = appConfig.LAYER_SEARCH.FACETS;
         for (let i = 0; i < facets.length; ++i) {
             let values = action.facets.get(facets[i].value);
 
             state = state.setIn(
-                ["layerSearch", "formOptions", "searchFacets", facets[i].value],
+                ["layerSearch", "formOptions", "trackSearchFacets", facets[i].value],
+                values.sortBy(entry => entry.get("label"))
+            );
+        }
+
+        return state;
+    }
+
+    static setSatelliteSearchFacets(state, action) {
+        let facets = appConfig.LAYER_SEARCH.FACETS;
+        for (let i = 0; i < facets.length; ++i) {
+            let values = action.facets.get(facets[i].value);
+
+            state = state.setIn(
+                ["layerSearch", "formOptions", "satelliteSearchFacets", facets[i].value],
                 values.sortBy(entry => entry.get("label"))
             );
         }
@@ -75,10 +93,24 @@ export default class ViewReducer extends ViewReducerCore {
         return state.setIn(["layerSearch", "selectedTracks"], selected);
     }
 
-    static setSearchFacetSelected(state, action) {
+    static setTrackSearchFacetSelected(state, action) {
         if (typeof action.facet !== "undefined") {
             let facet = action.facet;
-            let path = ["layerSearch", "formOptions", "selectedFacets", facet.group];
+            let path = ["layerSearch", "formOptions", "trackSelectedFacets", facet.group];
+            let set = state.getIn(path);
+            if (action.isSelected) {
+                return state.setIn(path, set.add(facet.value));
+            } else {
+                return state.setIn(path, set.delete(facet.value));
+            }
+        }
+        return state;
+    }
+
+    static setSatelliteSearchFacetSelected(state, action) {
+        if (typeof action.facet !== "undefined") {
+            let facet = action.facet;
+            let path = ["layerSearch", "formOptions", "satelliteSelectedFacets", facet.group];
             let set = state.getIn(path);
             if (action.isSelected) {
                 return state.setIn(path, set.add(facet.value));
@@ -96,17 +128,35 @@ export default class ViewReducer extends ViewReducerCore {
         return state;
     }
 
-    static clearSearchFacet(state, action) {
+    static clearTrackSearchFacet(state, action) {
         if (typeof action.facetGroup !== "undefined") {
             return state.setIn(
-                ["layerSearch", "formOptions", "selectedFacets", action.facetGroup],
+                ["layerSearch", "formOptions", "trackSelectedFacets", action.facetGroup],
                 Immutable.Set()
             );
         } else {
             let facets = appConfig.LAYER_SEARCH.FACETS;
             for (let i = 0; i < facets.length; ++i) {
                 state = state.setIn(
-                    ["layerSearch", "formOptions", "selectedFacets", facets[i].value],
+                    ["layerSearch", "formOptions", "trackSelectedFacets", facets[i].value],
+                    Immutable.Set()
+                );
+            }
+            return state;
+        }
+    }
+
+    static clearSatelliteSearchFacet(state, action) {
+        if (typeof action.facetGroup !== "undefined") {
+            return state.setIn(
+                ["layerSearch", "formOptions", "satelliteSelectedFacets", action.facetGroup],
+                Immutable.Set()
+            );
+        } else {
+            let facets = appConfig.LAYER_SEARCH.FACETS;
+            for (let i = 0; i < facets.length; ++i) {
+                state = state.setIn(
+                    ["layerSearch", "formOptions", "satelliteSelectedFacets", facets[i].value],
                     Immutable.Set()
                 );
             }

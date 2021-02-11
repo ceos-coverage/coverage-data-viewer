@@ -9,7 +9,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import Grow from "@material-ui/core/Grow";
 import Tooltip from "@material-ui/core/Tooltip";
-import BuildIcon from "@material-ui/icons/Build";
+import StraightenIcon from "@material-ui/icons/Straighten";
 import { Manager, Target, Popper } from "react-popper";
 import { MapButton, ClickAwayListener } from "_core/components/Reusables";
 import { MapToolsMenu } from "components/Reusables";
@@ -30,16 +30,16 @@ const MapToolsButton = props => {
         >
             <Manager>
                 <Target>
-                    <Tooltip disableFocusListener={true} title="Tools" placement="left">
+                    <Tooltip disableFocusListener={true} title="Measure" placement="left">
                         <MapButton
                             color={props.isOpen ? "primary" : "default"}
                             onClick={() => {
                                 props.setOpen(!props.isOpen);
                             }}
-                            aria-label="Tools"
+                            aria-label="Measure"
                             className={btnClasses}
                         >
-                            <BuildIcon />
+                            <StraightenIcon />
                         </MapButton>
                     </Tooltip>
                 </Target>

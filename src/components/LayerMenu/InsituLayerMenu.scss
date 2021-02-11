@@ -9,7 +9,7 @@
     position: relative;
     // top: 7.9rem;
     // left: 0.7rem;
-    width: 27.5rem;
+    width: 29rem;
     max-height: calc(100vh - 35rem);
     // background: #3f3f3f;
     background: white;
@@ -28,8 +28,12 @@
     border-bottom: 1px solid darken(white, 10%);
 }
 
+.title {
+    font-weight: 500;
+}
+
 .listWrapper {
-    padding: 0.5rem 0px;
+    padding: 0px;
     flex: 1 1;
     overflow: hidden;
     overflow-y: scroll;
@@ -37,7 +41,7 @@
 
 .empty {
     line-height: 2rem;
-    padding: 0px 1rem;
+    padding: 0.5rem 1rem;
 }
 
 .sortBtnWrapper {

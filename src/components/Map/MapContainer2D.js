@@ -36,8 +36,8 @@ export class MapContainer2D extends MapContainer2DCore {
             );
 
             // add layer load callback
-            map.setLayerLoadCallback(layer => {
-                this.props.setLayerLoading(layer.get("id"), false);
+            map.setLayerLoadCallback((layer, loaded = false) => {
+                this.props.setLayerLoading(layer.get("id"), loaded);
             });
         } else {
             console.error("Cannot initialize event listeners: 2D MAP NOT AVAILABLE");
@@ -55,27 +55,6 @@ export class MapContainer2D extends MapContainer2DCore {
         );
         // Update the selected area in state
         this.props.setSelectedArea(geometry.coordinates, shapeType);
-
-        // if (typeof this.drawTimeout !== "undefined") {
-        //     clearTimeout(this.drawTimeout);
-        //     this.drawTimeout = undefined;
-        // }
-
-        // this.drawTimeout = setTimeout(() => {
-        //     // Disable area selection
-        //     this.props.disableAreaSelection();
-        //     // Add geometry to other maps
-        //     this.props.mapActions.addGeometryToMap(
-        //         geometry,
-        //         appStrings.INTERACTION_AREA_SELECTION,
-        //         false
-        //     );
-        //     // Update the selected area in state
-        //     this.props.setSelectedArea(geometry.coordinates, shapeType);
-
-        //     clearTimeout(this.drawTimeout);
-        //     this.drawTimeout = undefined;
-        // }, 250);
     }
 
     handlePixelClick(map, clickEvt) {
@@ -113,4 +92,7 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(MapContainer2D);
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(MapContainer2D);

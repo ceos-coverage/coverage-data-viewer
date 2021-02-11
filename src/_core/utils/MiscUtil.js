@@ -336,7 +336,9 @@ export default class MiscUtil {
         let protocol = a.protocol;
 
         a.href = url;
+        /* eslint-disable no-self-assign */
         a.href = a.href; // IE only absolutizes href on get, not set
+        /* eslint-enable no-self-assign */
 
         return protocol !== a.protocol || host !== a.host;
     }
@@ -430,6 +432,8 @@ export default class MiscUtil {
                             case appStrings.LAYER_CONFIG_JSON:
                                 return response.json();
                             case appStrings.LAYER_CONFIG_WMTS_XML:
+                                return response.text();
+                            case appStrings.LAYER_CONFIG_WMS_XML:
                                 return response.text();
                             case appStrings.FILE_TYPE_TEXT:
                                 return response.text();

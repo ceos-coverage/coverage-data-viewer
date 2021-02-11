@@ -29,16 +29,22 @@ export class ChartCreateForm extends Component {
 
     renderTrackList(trackList) {
         if (trackList.size > 0) {
-            return trackList.map(track => (
-                <Checkbox
-                    key={track.get("id") + "_chart_checkbox"}
-                    label={track.get("title")}
-                    checked={this.props.formOptions.get("selectedTracks").includes(track.get("id"))}
-                    onChange={isSelected =>
-                        this.props.chartActions.setTrackSelected(track.get("id"), isSelected)
-                    }
-                />
-            ));
+            return trackList.map(track => {
+                let title =
+                    track.get("title").size > 0 ? track.getIn(["title", 0]) : track.get("title");
+                return (
+                    <Checkbox
+                        key={track.get("id") + "_chart_checkbox"}
+                        label={`${title} (id: ${track.get("shortId")})`}
+                        checked={this.props.formOptions
+                            .get("selectedTracks")
+                            .includes(track.get("id"))}
+                        onChange={isSelected =>
+                            this.props.chartActions.setTrackSelected(track.get("id"), isSelected)
+                        }
+                    />
+                );
+            });
         }
         return "No datasets selected";
     }
@@ -128,17 +134,17 @@ export class ChartCreateForm extends Component {
 
         let datasetsSubtitle = this.props.formOptions.get("selectedTracks").size + " Selected";
         if (this.props.formOptions.get("selectedTracks").size === 1) {
-            datasetsSubtitle = trackList
-                .find(track => {
-                    return (
-                        track.get("id") ===
-                        this.props.formOptions
-                            .get("selectedTracks")
-                            .toList()
-                            .get(0)
-                    );
-                })
-                .get("title");
+            const track = trackList.find(track => {
+                return (
+                    track.get("id") ===
+                    this.props.formOptions
+                        .get("selectedTracks")
+                        .toList()
+                        .get(0)
+                );
+            });
+            datasetsSubtitle =
+                track.get("title").size > 0 ? track.getIn(["title", 0]) : track.get("title");
         }
 
         return (
@@ -154,7 +160,7 @@ export class ChartCreateForm extends Component {
                     {this.renderVariableSelections(sharedVariableSet, nonSharedVariableSet)}
                 </div>
                 <Button
-                    variant="raised"
+                    variant="contained"
                     size="small"
                     color="primary"
                     disabled={!couldCreateChart}
@@ -186,4 +192,7 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ChartCreateForm);
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(ChartCreateForm);

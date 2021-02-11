@@ -69,11 +69,11 @@ export class LabelPopover extends Component {
                     }}
                 >
                     <Typography
-                        variant="body2"
+                        variant="body1"
                         color={this.popoverOpen ? "primary" : "inherit"}
                         className={styles.label}
                     >
-                        {this.props.label}
+                        <span className={styles.labelText}>{this.props.label}</span>
                         <ArrowDropDown />
                     </Typography>
                     {typeof this.props.subtitle !== "undefined" && (

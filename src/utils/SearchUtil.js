@@ -14,7 +14,7 @@ import appConfig from "constants/appConfig";
 export default class SearchUtil {
     static searchForFacets(options) {
         return new Promise((resolve, reject) => {
-            let { area, dateRange, facets } = options;
+            let { area, dateRange, facets, datatype } = options;
 
             let baseUrl = appConfig.URLS.solrBase;
 
@@ -26,13 +26,14 @@ export default class SearchUtil {
             let ur = [area[3], area[2]].join(",");
 
             let query = [
-                "q=datatype:track",
+                "q=" + datatype,
                 "fq=lon_max:[" + area[0] + " TO *]",
                 "fq=lon_min:[* TO " + area[2] + "]",
                 "fq=lat_max:[" + area[1] + " TO *]",
                 "fq=lat_min:[* TO " + area[3] + "]",
-                "fq=start_date:[" + sDateStr + " TO *]",
-                "fq=end_date:[* TO " + eDateStr + "]",
+                "fq=start_date:[* TO " + eDateStr + "]",
+                "fq=end_date:[" + sDateStr + " TO *]",
+                "facet.mincount=1",
                 "facet=on",
                 "rows=0",
                 "wt=json"
@@ -90,8 +91,8 @@ export default class SearchUtil {
                 "fq=lon_min:[* TO " + area[2] + "]",
                 "fq=lat_max:[" + area[1] + " TO *]",
                 "fq=lat_min:[* TO " + area[3] + "]",
-                "fq=start_date:[" + sDateStr + " TO *]",
-                "fq=end_date:[* TO " + eDateStr + "]",
+                "fq=start_date:[* TO " + eDateStr + "]",
+                "fq=end_date:[" + sDateStr + " TO *]",
                 "rows=1000",
                 "wt=json"
             ];
@@ -114,7 +115,62 @@ export default class SearchUtil {
                 handleAs: appStringsCore.FILE_TYPE_JSON
             }).then(
                 data => {
-                    let results = SearchUtil.processLayerSearchResults([data]);
+                    let results = SearchUtil.processLayerSearchResults([data], { isTrack: true });
+                    resolve(results);
+                },
+                err => {
+                    reject(err);
+                }
+            );
+        });
+    }
+
+    static searchForSatelliteSets(options) {
+        return new Promise((resolve, reject) => {
+            let { area, dateRange, facets } = options;
+
+            let baseUrl = appConfig.URLS.solrBase;
+
+            let sDateStr = moment.utc(dateRange[0]).unix();
+            let eDateStr = moment.utc(dateRange[1]).unix();
+
+            area = area.length === 4 ? area : [-180, -90, 180, 90];
+            let bl = [area[1], area[0]].join(",");
+            let ur = [area[3], area[2]].join(",");
+
+            let query = [
+                "q=datatype:layer",
+                "fq=lon_max:[" + area[0] + " TO *]",
+                "fq=lon_min:[* TO " + area[2] + "]",
+                "fq=lat_max:[" + area[1] + " TO *]",
+                "fq=lat_min:[* TO " + area[3] + "]",
+                "fq=start_date:[* TO " + eDateStr + "]",
+                "fq=end_date:[" + sDateStr + " TO *]",
+                "rows=1000",
+                "wt=json"
+            ];
+
+            // add facet queries
+            let keys = Object.keys(facets);
+            for (let i = 0; i < keys.length; ++i) {
+                let key = keys[i];
+                if (facets[key].length > 0) {
+                    query.push(
+                        "fq=" + key + ":(" + facets[key].map(x => '"' + x + '"').join(" OR ") + ")"
+                    );
+                }
+            }
+
+            let url = encodeURI(baseUrl + "?" + query.join("&"));
+
+            MiscUtil.asyncFetch({
+                url: url,
+                handleAs: appStringsCore.FILE_TYPE_JSON
+            }).then(
+                data => {
+                    let results = SearchUtil.processSatelliteLayerSearchResults([data], {
+                        isSatellite: true
+                    });
                     resolve(results);
                 },
                 err => {
@@ -148,30 +204,71 @@ export default class SearchUtil {
         }
     }
 
-    static processLayerSearchResults(data) {
+    static processLayerSearchResults(data, extraOps = {}) {
         return data.reduce((results, dataSet) => {
             let entries = dataSet.response.docs;
             for (let i = 0; i < entries.length; ++i) {
                 let entry = Immutable.fromJS(entries[i]);
+                const id = entry.get("id") || entry.get("project") + "_" + entry.get("source_id");
+                const idNumMatch = id.match(/\d+/g);
                 let formattedTrack = Immutable.Map({
-                    id: entry.get("id") || entry.get("project") + "_" + entry.get("source_id"),
+                    id: id,
+                    shortId: entry.get("platform_id") || idNumMatch[0],
                     title: entry.get("title") || entry.get("platform") || entry.get("id"),
                     insituMeta: entry.set(
                         "variables",
                         SearchUtil.readVariables(
                             entry.get("variables"),
                             entry.get("variables_units"),
-                            true
+                            false,
+                            extraOps.isTrack
                         )
                     )
-                });
+                }).mergeDeep(extraOps);
                 results.push(Immutable.fromJS(formattedTrack));
             }
             return results;
         }, []);
     }
 
-    static readVariables(varList, unitsList, addMissing = false) {
+    static processSatelliteLayerSearchResults(data, extraOps = {}) {
+        return data.reduce((results, dataSet) => {
+            let entries = dataSet.response.docs;
+            for (let i = 0; i < entries.length; ++i) {
+                let entry = Immutable.fromJS(entries[i]);
+                const variables = SearchUtil.readVariables(
+                    entry.get("variables"),
+                    entry.get("variables_units"),
+                    entry.get("layer_id"),
+                    extraOps.isTrack
+                );
+                variables.forEach((v, i) => {
+                    const id =
+                        v.get("layerId") ||
+                        (entry.get("id") || entry.get("project") + "_" + entry.get("source_id")) +
+                            v.get("label");
+                    const idNumMatch = id.match(/\d+/g);
+                    const formattedTrack = Immutable.Map({
+                        id: id,
+                        shortId: entry.get("platform_id") || idNumMatch[0],
+                        title:
+                            v.get("label") ||
+                            entry.get("title") ||
+                            entry.get("platform") ||
+                            entry.get("id"),
+                        colorbarUrl: entry.get("colorbar_url")
+                            ? entry.getIn(["colorbar_url", i])
+                            : "",
+                        insituMeta: entry.set("variables", Immutable.Set().add(v))
+                    }).mergeDeep(extraOps);
+                    results.push(Immutable.fromJS(formattedTrack));
+                });
+            }
+            return results;
+        }, []);
+    }
+
+    static readVariables(varList, unitsList, layerList = false, addMissing = false) {
         // hack: add in known variables
         if (addMissing) {
             if (!varList.contains("time")) {
@@ -184,13 +281,24 @@ export default class SearchUtil {
             }
         }
 
-        return varList.reduce((acc, varStr, i) => {
-            return acc.add(
-                Immutable.Map({
-                    label: varStr,
-                    units: unitsList.get(i) || ""
-                })
-            );
-        }, Immutable.Set());
+        return varList
+            .reduce((acc, varStr, i) => {
+                if (layerList) {
+                    return acc.add(
+                        Immutable.Map({
+                            label: varStr,
+                            units: unitsList.get(i) || "",
+                            layerId: layerList.get(i) || ""
+                        })
+                    );
+                }
+                return acc.add(
+                    Immutable.Map({
+                        label: varStr,
+                        units: unitsList.get(i) || ""
+                    })
+                );
+            }, Immutable.OrderedSet())
+            .toList();
     }
 }

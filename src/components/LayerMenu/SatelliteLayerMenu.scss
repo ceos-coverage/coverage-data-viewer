@@ -1,0 +1,37 @@
+.root {
+    position: relative;
+    width: 29rem;
+    min-height: 3.5rem;
+    // max-height: 8rem;
+    overflow: hidden;
+    margin-top: 0.7rem;
+    background: white;
+    color: rgba(0, 0, 0, 0.87);
+}
+
+.header {
+    height: 4rem;
+    padding: 0.5rem 1rem;
+    background: darken(white, 3%);
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
+    border-bottom: 1px solid darken(white, 10%);
+}
+
+.title {
+    font-weight: 500;
+}
+
+.empty {
+    line-height: 2rem;
+    padding: 0px 1rem;
+}
+.listWrapper {
+    padding: 0.5rem 0px;
+    flex: 1 1;
+    overflow: hidden;
+    overflow-y: scroll;
+}
+.colorbarWrapper {
+    margin-top: 0.3rem;
+}

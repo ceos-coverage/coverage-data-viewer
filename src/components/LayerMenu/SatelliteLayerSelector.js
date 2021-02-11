@@ -66,8 +66,8 @@ export class SatelliteLayerSelector extends Component {
 
         return (
             <div className={styles.list}>
-                <Typography variant="subheading" className={styles.subheader}>
-                    Satellite Overlay
+                <Typography variant="subtitle1" className={styles.subheader}>
+                    Overlay
                 </Typography>
                 <FormGroup className={styles.form}>
                     <RadioGroup
@@ -92,6 +92,8 @@ export class SatelliteLayerSelector extends Component {
                     palette={palette}
                     min={layer.get("min")}
                     max={layer.get("max")}
+                    displayMin={layer.getIn(["palette", "min"])}
+                    displayMax={layer.getIn(["palette", "max"])}
                     units={layer.get("units")}
                     handleAs={layer.getIn(["palette", "handleAs"])}
                     url={layer.getIn(["palette", "url"])}
@@ -136,6 +138,7 @@ export class SatelliteLayerSelector extends Component {
             <Paper elevation={2} className={styles.root}>
                 <LabelPopover
                     label={this.renderLabel(activeLayer)}
+                    subtitle={activeLayer ? activeLayer.get("subtitle") : undefined}
                     className={styles.label}
                     contentClass={styles.content}
                 >
@@ -168,4 +171,7 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(SatelliteLayerSelector);
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(SatelliteLayerSelector);

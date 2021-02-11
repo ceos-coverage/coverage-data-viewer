@@ -20,10 +20,16 @@
     display: flex;
     height: 2.4rem;
     line-height: 2.4rem;
+    font-size: 1.4rem;
+    font-weight: 500;
     flex-flow: row nowrap;
     align-content: flex-start;
     align-items: center;
     text-transform: capitalize;
+}
+.labelText {
+    flex: 1 1;
+    text-align: left;
 }
 .subtitle {
     display: block;
@@ -31,6 +37,11 @@
     max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
+
+    font-size: 1.2rem;
+    font-weight: 400;
+    line-height: 1.375em;
+    color: rgba(0, 0, 0, 0.54);
 }
 .content {
     padding: 1rem;

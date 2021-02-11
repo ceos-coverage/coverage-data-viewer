@@ -5,37 +5,37 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import Immutable from "immutable";
 import moment from "moment";
-import Ol_Map from "ol/map";
-import Ol_View from "ol/view";
-import Ol_Layer_Vector from "ol/layer/vector";
-import Ol_Layer_Tile from "ol/layer/tile";
-import Ol_Source_WMTS from "ol/source/wmts";
-import Ol_Source_Cluster from "ol/source/cluster";
-import Ol_Source_Vector from "ol/source/vector";
-import Ol_Source_XYZ from "ol/source/xyz";
-import Ol_Tilegrid_WMTS from "ol/tilegrid/wmts";
-import Ol_Style_Fill from "ol/style/fill";
-import Ol_Style from "ol/style/style";
-import Ol_Style_Circle from "ol/style/circle";
-import Ol_Style_Stroke from "ol/style/stroke";
-import Ol_Proj from "ol/proj";
-import Ol_Proj_Projection from "ol/proj/projection";
-import Ol_Interaction from "ol/interaction";
-import Ol_Interaction_Draw from "ol/interaction/draw";
-import Ol_Interaction_DoubleClickZoom from "ol/interaction/doubleclickzoom";
-import Ol_Overlay from "ol/overlay";
-import Ol_Feature from "ol/feature";
-import Ol_Geom_Circle from "ol/geom/circle";
-import Ol_Geom_Linestring from "ol/geom/linestring";
-import Ol_Geom_Polygon from "ol/geom/polygon";
-import OL_Geom_GeometryType from "ol/geom/geometrytype";
-import Ol_Format_GeoJSON from "ol/format/geojson";
-import Ol_Format_TopoJSON from "ol/format/topojson";
-import Ol_Format_KML from "ol/format/kml";
-import Ol_Easing from "ol/easing";
-import proj4js from "proj4";
+import Ol_Map from "ol/Map";
+import Ol_View from "ol/View";
+import Ol_Layer_Vector from "ol/layer/Vector";
+import Ol_Layer_Tile from "ol/layer/Tile";
+import Ol_Layer_Image from "ol/layer/Image";
+import Ol_Source_WMTS from "ol/source/WMTS";
+import Ol_Source_Cluster from "ol/source/Cluster";
+import Ol_Source_Vector from "ol/source/Vector";
+import Ol_Source_XYZ from "ol/source/XYZ";
+import Ol_Source_WMS from "ol/source/ImageWMS";
+import Ol_Tilegrid_WMTS from "ol/tilegrid/WMTS";
+import Ol_Style_Fill from "ol/style/Fill";
+import Ol_Style from "ol/style/Style";
+import Ol_Style_Circle from "ol/style/Circle";
+import Ol_Style_Stroke from "ol/style/Stroke";
+import * as Ol_Proj from "ol/proj";
+import { defaults as Ol_Interaction_Defaults } from "ol/interaction";
+import Ol_Interaction_Draw, { createBox } from "ol/interaction/Draw";
+import Ol_Interaction_DoubleClickZoom from "ol/interaction/DoubleClickZoom";
+import Ol_Overlay from "ol/Overlay";
+import Ol_Feature from "ol/Feature";
+import Ol_Geom_Circle from "ol/geom/Circle";
+import Ol_Geom_Linestring from "ol/geom/LineString";
+import Ol_Geom_Polygon from "ol/geom/Polygon";
+import Ol_Geom_Point from "ol/geom/Point";
+import OL_Geom_GeometryType from "ol/geom/GeometryType";
+import Ol_Format_GeoJSON from "ol/format/GeoJSON";
+import Ol_Format_TopoJSON from "ol/format/TopoJSON";
+import Ol_Format_KML from "ol/format/KML";
+import * as Ol_Easing from "ol/easing";
 import * as appStrings from "_core/constants/appStrings";
 import appConfig from "constants/appConfig";
 import MapWrapper from "_core/utils/MapWrapper";
@@ -143,11 +143,9 @@ export default class MapWrapperOpenlayers extends MapWrapper {
             // get the view options for the map
             let viewOptions = options.get("view").toJS();
             let mapProjection = Ol_Proj.get(appConfig.DEFAULT_PROJECTION.code);
-            let center = viewOptions.center;
 
             return new Ol_Map({
                 target: container,
-                renderer: ["canvas", "dom"],
                 layers: [vectorLayer],
                 view: new Ol_View({
                     maxZoom: viewOptions.maxZoom,
@@ -156,7 +154,7 @@ export default class MapWrapperOpenlayers extends MapWrapper {
                     maxResolution: viewOptions.maxResolution
                 }),
                 controls: [],
-                interactions: Ol_Interaction.defaults({
+                interactions: Ol_Interaction_Defaults({
                     altShiftDragRotate: false,
                     pinchRotate: false,
                     shiftDragZoom: false,
@@ -380,6 +378,9 @@ export default class MapWrapperOpenlayers extends MapWrapper {
             case appStrings.LAYER_XYZ_RASTER:
                 mapLayer = this.createWMTSLayer(layer, fromCache);
                 break;
+            case appStrings.LAYER_WMS_RASTER:
+                mapLayer = this.createWMSLayer(layer, fromCache);
+                break;
             case appStrings.LAYER_VECTOR_GEOJSON:
                 mapLayer = this.createVectorLayer(layer, fromCache);
                 break;
@@ -425,6 +426,38 @@ export default class MapWrapperOpenlayers extends MapWrapper {
     }
 
     /**
+     * create an openlayers wms raster layer
+     *
+     * @param {ImmutableJS.Map} layer layer object from map state in redux
+     * @param {boolean} [fromCache=true] true if the layer may be pulled from the cache
+     * @returns {object|boolean} openlayers layer wms layer object or false if it fails
+     * @memberof MapWrapperOpenlayers
+     */
+    createWMSLayer(layer, fromCache) {
+        try {
+            if (layer && layer.get("mappingOptions")) {
+                let options = layer.get("mappingOptions").toJS();
+                let layerSource = this.createLayerSource(layer, options, fromCache);
+
+                let mapLayer = new Ol_Layer_Image({
+                    opacity: layer.get("opacity"),
+                    visible: layer.get("isActive"),
+                    source: layerSource,
+                    extent: appConfig.DEFAULT_MAP_EXTENT
+                });
+
+                this.setWMSLayerOverrides(layer, mapLayer, layerSource);
+
+                return mapLayer;
+            }
+            return false;
+        } catch (err) {
+            console.warn("Error in MapWrapperOpenlayers.createWMSLayer:", err);
+            return false;
+        }
+    }
+
+    /**
      * create an openlayers wmts raster layer
      *
      * @param {ImmutableJS.Map} layer layer object from map state in redux
@@ -434,8 +467,8 @@ export default class MapWrapperOpenlayers extends MapWrapper {
      */
     createWMTSLayer(layer, fromCache = true) {
         try {
-            if (layer && layer.get("wmtsOptions")) {
-                let options = layer.get("wmtsOptions").toJS();
+            if (layer && layer.get("mappingOptions")) {
+                let options = layer.get("mappingOptions").toJS();
                 let layerSource = this.createLayerSource(layer, options, fromCache);
 
                 // set up wrap around extents
@@ -448,7 +481,7 @@ export default class MapWrapperOpenlayers extends MapWrapper {
                     extent: appConfig.DEFAULT_MAP_EXTENT
                 });
 
-                this.setWMTSLayerOverrides(layerSource, layer, mapLayer);
+                this.setWMTSLayerOverrides(layer, mapLayer, layerSource);
 
                 return mapLayer;
             }
@@ -460,16 +493,45 @@ export default class MapWrapperOpenlayers extends MapWrapper {
     }
 
     /**
+     * override the url generation function and tile/image loading
+     * functions for an openlayers layer in order to customize urls
+     * and tile/image load handling
+     *
+     * @param {ImmutableJS.Map} layer layer object from map state in redux
+     * @param {object} mapLayer openlayers layer
+     * @param {object} layerSource openlayers layer source
+     * @memberof MapWrapperOpenlayers
+     */
+    setLayerOverrides(layer, mapLayer, source) {
+        switch (layer.get("handleAs")) {
+            case appStrings.LAYER_GIBS_RASTER:
+                this.setWMTSLayerOverrides(layer, mapLayer, source);
+                break;
+            case appStrings.LAYER_WMTS_RASTER:
+                this.setWMTSLayerOverrides(layer, mapLayer, source);
+                break;
+            case appStrings.LAYER_XYZ_RASTER:
+                this.setWMTSLayerOverrides(layer, mapLayer, source);
+                break;
+            case appStrings.LAYER_WMS_RASTER:
+                this.setWMSLayerOverrides(layer, mapLayer, source);
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
      * override the url generation function and tile loading functions
      * for an openlayers wmts layer in order to customize urls and
      * tile load handling
      *
-     * @param {object} layerSource openlayers wmts layer source
      * @param {ImmutableJS.Map} layer layer object from map state in redux
      * @param {object} mapLayer openlayers wmts layer
+     * @param {object} layerSource openlayers wmts layer source
      * @memberof MapWrapperOpenlayers
      */
-    setWMTSLayerOverrides(layerSource, layer, mapLayer) {
+    setWMTSLayerOverrides(layer, mapLayer, layerSource) {
         // make sure we have these set
         if (
             typeof layerSource.get("_defaultUrlFunc") === "undefined" &&
@@ -495,6 +557,28 @@ export default class MapWrapperOpenlayers extends MapWrapper {
         });
         layerSource.setTileLoadFunction((tile, url) => {
             return this.handleTileLoad(layer, mapLayer, tile, url, origTileLoadFunc);
+        });
+    }
+
+    /**
+     * override the url generation function and image loading functions
+     * for an openlayers wms layer in order to customize urls and
+     * image load handling
+     *
+     * @param {ImmutableJS.Map} layer layer object from map state in redux
+     * @param {object} mapLayer openlayers wms layer
+     * @param {object} layerSource openlayers wms layer source
+     * @memberof MapWrapperOpenlayers
+     */
+    setWMSLayerOverrides(layer, mapLayer, layerSource) {
+        if (typeof layerSource.get("_defaultImgLoadFunc") === "undefined") {
+            layerSource.set("_defaultImgLoadFunc", layerSource.getImageLoadFunction());
+        }
+
+        layerSource.setImageLoadFunction((image, src) => {
+            const url = this.generateWMSImageUrl(layer, mapLayer, layerSource, src);
+
+            return this.handleImageLoad(layer, mapLayer, layerSource, image, url);
         });
     }
 
@@ -695,7 +779,7 @@ export default class MapWrapperOpenlayers extends MapWrapper {
     /**
      * activate a drawing interaction
      *
-     * @param {string} geometryType (Circle|LineString|Polygon)
+     * @param {string} geometryType (Circle|LineString|Polygon|Point|Line|Box)
      * @returns {boolean} true if it succeeds
      * @memberof MapWrapperOpenlayers
      */
@@ -790,7 +874,7 @@ export default class MapWrapperOpenlayers extends MapWrapper {
     /**
      * enable a measuring interaction
      *
-     * @param {string} geometryType (Circle|LineString|Polygon)
+     * @param {string} geometryType (Circle|LineString|Polygon|Point|Line|Box)
      * @param {string} measurementType (Distance|Area)
      * @returns {boolean} true if it succeeds
      * @memberof MapWrapperOpenlayers
@@ -929,7 +1013,7 @@ export default class MapWrapperOpenlayers extends MapWrapper {
      * add a geometry to the map
      *
      * @param {object} geometry geometry to add to the map
-     * - type - {string} (Circle|LineString|Polygon)
+     * - type - {string} (Circle|LineString|Polygon|Point|Line|Box)
      * - coordinateType - {string} (Cartesian|Cartographic)
      * - center - {object} center coordinate of circle {lon,lat}
      * - radius - {number} radius of circle
@@ -946,6 +1030,23 @@ export default class MapWrapperOpenlayers extends MapWrapper {
             console.warn("could not find drawing layer in openlayers map");
             return false;
         }
+        const warnUnsupportedCoordType = geometry => {
+            console.warn(
+                "Unsupported geometry coordinateType ",
+                geometry.coordinateType,
+                " for openlayers ",
+                geometry.type
+            );
+        };
+        const addGeomFeatureToMap = olGeometry => {
+            let olFeature = new Ol_Feature({
+                geometry: olGeometry
+            });
+            olFeature.set("interactionType", interactionType);
+            olFeature.setId(geometry.id);
+            mapLayer.getSource().addFeature(olFeature);
+        };
+
         if (geometry.type === appStrings.GEOMETRY_CIRCLE) {
             let circleGeom = null;
             if (geometry.coordinateType === appStrings.COORDINATE_TYPE_CARTOGRAPHIC) {
@@ -960,22 +1061,15 @@ export default class MapWrapperOpenlayers extends MapWrapper {
                         ]
                 );
             } else {
-                console.warn(
-                    "Unsupported geometry coordinateType ",
-                    geometry.coordinateType,
-                    " for openlayers circle"
-                );
+                warnUnsupportedCoordType(geometry);
                 return false;
             }
-            let circleFeature = new Ol_Feature({
-                geometry: circleGeom
-            });
-            circleFeature.set("interactionType", interactionType);
-            circleFeature.setId(geometry.id);
-            mapLayer.getSource().addFeature(circleFeature);
+            addGeomFeatureToMap(circleGeom);
             return true;
-        }
-        if (geometry.type === appStrings.GEOMETRY_LINE_STRING) {
+        } else if (
+            geometry.type === appStrings.GEOMETRY_LINE_STRING ||
+            geometry.type === appStrings.GEOMETRY_LINE
+        ) {
             let lineStringGeom = null;
             if (geometry.coordinateType === appStrings.COORDINATE_TYPE_CARTOGRAPHIC) {
                 let geomCoords = geometry.coordinates.map(x => {
@@ -989,23 +1083,15 @@ export default class MapWrapperOpenlayers extends MapWrapper {
 
                 lineStringGeom = new Ol_Geom_Linestring(geomCoords);
             } else {
-                console.warn(
-                    "Unsupported geometry coordinateType ",
-                    geometry.coordinateType,
-                    " for openlayers lineString"
-                );
+                warnUnsupportedCoordType(geometry);
                 return false;
             }
-
-            let lineStringFeature = new Ol_Feature({
-                geometry: lineStringGeom
-            });
-            lineStringFeature.set("interactionType", interactionType);
-            lineStringFeature.setId(geometry.id);
-            mapLayer.getSource().addFeature(lineStringFeature);
+            addGeomFeatureToMap(lineStringGeom);
             return true;
-        }
-        if (geometry.type === appStrings.GEOMETRY_POLYGON) {
+        } else if (
+            geometry.type === appStrings.GEOMETRY_POLYGON ||
+            geometry.type === appStrings.GEOMETRY_BOX
+        ) {
             let polygonGeom = null;
             if (geometry.coordinateType === appStrings.COORDINATE_TYPE_CARTOGRAPHIC) {
                 // Map obj to array
@@ -1023,21 +1109,24 @@ export default class MapWrapperOpenlayers extends MapWrapper {
                 // Put these coordinates into a ring by adding to array
                 polygonGeom = new Ol_Geom_Polygon([geomCoords]);
             } else {
-                console.warn(
-                    "Unsupported geometry coordinateType ",
-                    geometry.coordinateType,
-                    " for openlayers polygon"
-                );
+                warnUnsupportedCoordType(geometry);
                 return false;
             }
-            let polygonFeature = new Ol_Feature({
-                geometry: polygonGeom
-            });
-            polygonFeature.set("interactionType", interactionType);
-            polygonFeature.setId(geometry.id);
-            mapLayer.getSource().addFeature(polygonFeature);
+            addGeomFeatureToMap(polygonGeom);
+            return true;
+        } else if (geometry.type === appStrings.GEOMETRY_POINT) {
+            let pointGeom = null;
+            if (geometry.coordinateType === appStrings.COORDINATE_TYPE_CARTOGRAPHIC) {
+                pointGeom = new Ol_Geom_Point([geometry.coordinates.lon, geometry.coordinates.lat]);
+            } else {
+                warnUnsupportedCoordType(geometry);
+                return false;
+            }
+            addGeomFeatureToMap(pointGeom);
             return true;
         }
+
+        console.warn("Unsupported geometry type ", geometry.type, "in openlayers addGeometry");
         return false;
     }
 
@@ -1157,14 +1246,16 @@ export default class MapWrapperOpenlayers extends MapWrapper {
     /**
      * add a handler to the map for a given type of drawing
      *
-     * @param {string} geometryType (Circle|LineString|Polygon)
+     * @param {string} geometryType (Circle|LineString|Polygon|Line|Box)
      * @param {function} onDrawEnd callback for when the drawing completes
      * @param {string} interactionType (Draw|Measure)
+     * @param {object} userDrawOptions additional options to be passed to OpenLayers Draw object
      * @returns {boolean} true if it succeeds
      * @memberof MapWrapperOpenlayers
      */
-    addDrawHandler(geometryType, onDrawEnd, interactionType) {
+    addDrawHandler(geometryType, onDrawEnd, interactionType, userDrawOptions = {}) {
         try {
+            const olGeometryType = appStrings.OL_GEOMETRY_TYPES[geometryType];
             let mapLayers = this.map.getLayers().getArray();
             let mapLayer = this.miscUtil.findObjectInArray(
                 mapLayers,
@@ -1174,8 +1265,6 @@ export default class MapWrapperOpenlayers extends MapWrapper {
             let mapProjection = Ol_Proj.get(appConfig.DEFAULT_PROJECTION.code);
             if (mapLayer) {
                 let measureDistGeom = (coords, opt_geom) => {
-                    let geom = opt_geom ? opt_geom : new Ol_Geom_Linestring();
-
                     // remove duplicates
                     let newCoords = coords.reduce((acc, coord, i) => {
                         let prev = acc[i - 1];
@@ -1198,13 +1287,14 @@ export default class MapWrapperOpenlayers extends MapWrapper {
                     let transformedOriginalCoords = newCoords.map(coords =>
                         Ol_Proj.transform(coords, appStrings.PROJECTIONS.latlon.code, mapProjection)
                     );
+
+                    let geom = opt_geom ? opt_geom : new Ol_Geom_Linestring(transformedLineCoords);
                     geom.setCoordinates(transformedLineCoords);
                     geom.set("originalCoordinates", transformedOriginalCoords, true);
                     return geom;
                 };
                 let measureAreaGeom = (coords, opt_geom) => {
                     coords = coords[0]; // TODO: find case where this isn't what we want
-                    let geom = opt_geom ? opt_geom : new Ol_Geom_Polygon();
 
                     // remove duplicates
                     let newCoords = coords.reduce((acc, coord, i) => {
@@ -1233,6 +1323,7 @@ export default class MapWrapperOpenlayers extends MapWrapper {
                     let transformedOriginalCoords = newCoords.map(coords =>
                         Ol_Proj.transform(coords, appStrings.PROJECTIONS.latlon.code, mapProjection)
                     );
+                    let geom = opt_geom ? opt_geom : new Ol_Geom_Polygon([transformedLineCoords]);
                     geom.setCoordinates([transformedLineCoords]);
                     geom.set("originalCoordinates", transformedOriginalCoords, true);
                     return geom;
@@ -1240,6 +1331,7 @@ export default class MapWrapperOpenlayers extends MapWrapper {
 
                 let geometryFunction = undefined;
                 let shapeType = appStrings.SHAPE_AREA;
+                let additionalDrawOptions = {};
                 if (interactionType === appStrings.INTERACTION_MEASURE) {
                     if (geometryType === appStrings.GEOMETRY_LINE_STRING) {
                         geometryFunction = measureDistGeom;
@@ -1258,17 +1350,28 @@ export default class MapWrapperOpenlayers extends MapWrapper {
                         shapeType = appStrings.SHAPE_AREA;
                     } else if (geometryType === appStrings.GEOMETRY_CIRCLE) {
                         shapeType = appStrings.SHAPE_DISTANCE;
+                    } else if (geometryType === appStrings.GEOMETRY_POINT) {
+                        shapeType = appStrings.SHAPE_DISTANCE;
+                    } else if (geometryType === appStrings.GEOMETRY_LINE) {
+                        shapeType = appStrings.SHAPE_DISTANCE;
+                        additionalDrawOptions.maxPoints = 2;
+                    } else if (geometryType === appStrings.GEOMETRY_BOX) {
+                        shapeType = appStrings.SHAPE_AREA;
+                        geometryFunction = createBox();
                     }
                 }
                 let drawStyle = (feature, resolution) => {
                     return this.defaultDrawingStyle(feature, resolution, shapeType);
                 };
+
                 let drawInteraction = new Ol_Interaction_Draw({
                     source: mapLayer.getSource(),
-                    type: geometryType,
+                    type: olGeometryType,
                     geometryFunction: geometryFunction,
                     style: drawStyle,
-                    wrapX: true
+                    wrapX: true,
+                    ...userDrawOptions,
+                    ...additionalDrawOptions
                 });
 
                 if (appConfig.DEFAULT_MAP_EXTENT) {
@@ -1318,9 +1421,9 @@ export default class MapWrapperOpenlayers extends MapWrapper {
      * event
      *
      * @param {object} event openalyers draw complete event
-     * @param {string} geometryType (Circle|LineString|Polygon)
+     * @param {string} geometryType (Circle|LineString|Polygon|Line|Box)
      * @returns {object} standard geometry object
-     * - type - {string} (Circle|LineString|Polygon)
+     * - type - {string} (Circle|LineString|Polygon|Line|Box)
      * - coordinateType - {string} (Cartesian|Cartographic)
      * - center - {object} center coordinate of circle {lon,lat}
      * - radius - {number} radius of circle
@@ -1328,20 +1431,34 @@ export default class MapWrapperOpenlayers extends MapWrapper {
      * @memberof MapWrapperOpenlayers
      */
     retrieveGeometryFromEvent(event, geometryType) {
+        // Base attributes common to all geometry types
+        const baseGeometry = {
+            type: geometryType,
+            id: Math.random(),
+            proj: this.map
+                .getView()
+                .getProjection()
+                .getCode(),
+            coordinateType: appStrings.COORDINATE_TYPE_CARTOGRAPHIC
+        };
+
         if (geometryType === appStrings.GEOMETRY_CIRCLE) {
             let center = event.feature.getGeometry().getCenter();
             return {
-                type: appStrings.GEOMETRY_CIRCLE,
-                id: Math.random(),
+                ...baseGeometry,
                 center: { lon: center[0], lat: center[1] },
-                radius: event.feature.getGeometry().getRadius(),
-                proj: this.map
-                    .getView()
-                    .getProjection()
-                    .getCode(),
-                coordinateType: appStrings.COORDINATE_TYPE_CARTOGRAPHIC
+                radius: event.feature.getGeometry().getRadius()
             };
-        } else if (geometryType === appStrings.GEOMETRY_LINE_STRING) {
+        } else if (geometryType === appStrings.GEOMETRY_POINT) {
+            const coords = event.feature.getGeometry().getCoordinates();
+            return {
+                ...baseGeometry,
+                coordinates: { lon: coords[0], lat: coords[1] }
+            };
+        } else if (
+            geometryType === appStrings.GEOMETRY_LINE_STRING ||
+            geometryType === appStrings.GEOMETRY_LINE
+        ) {
             let tmpCoords = [];
             if (event.feature.getGeometry().get("originalCoordinates")) {
                 tmpCoords = event.feature
@@ -1359,16 +1476,13 @@ export default class MapWrapperOpenlayers extends MapWrapper {
                     });
             }
             return {
-                type: appStrings.GEOMETRY_LINE_STRING,
-                id: Math.random(),
-                proj: this.map
-                    .getView()
-                    .getProjection()
-                    .getCode(),
-                coordinates: tmpCoords,
-                coordinateType: appStrings.COORDINATE_TYPE_CARTOGRAPHIC
+                ...baseGeometry,
+                coordinates: tmpCoords
             };
-        } else if (geometryType === appStrings.GEOMETRY_POLYGON) {
+        } else if (
+            geometryType === appStrings.GEOMETRY_POLYGON ||
+            geometryType === appStrings.GEOMETRY_BOX
+        ) {
             let tmpCoords = [];
             if (event.feature.getGeometry().get("originalCoordinates")) {
                 tmpCoords = event.feature
@@ -1386,14 +1500,8 @@ export default class MapWrapperOpenlayers extends MapWrapper {
                     });
             }
             return {
-                type: appStrings.GEOMETRY_POLYGON,
-                id: Math.random(),
-                proj: this.map
-                    .getView()
-                    .getProjection()
-                    .getCode(),
-                coordinates: tmpCoords,
-                coordinateType: appStrings.COORDINATE_TYPE_CARTOGRAPHIC
+                ...baseGeometry,
+                coordinates: tmpCoords
             };
         }
 
@@ -1740,6 +1848,7 @@ export default class MapWrapperOpenlayers extends MapWrapper {
                     [
                         appStrings.LAYER_GIBS_RASTER,
                         appStrings.LAYER_WMTS_RASTER,
+                        appStrings.LAYER_WMS_RASTER,
                         appStrings.LAYER_XYZ_RASTER
                     ].indexOf(layer.get("handleAs")) !== -1
                 ) {
@@ -1753,11 +1862,15 @@ export default class MapWrapperOpenlayers extends MapWrapper {
                     let source = this.layerCache.get(cacheHash);
                     if (!source) {
                         // create a new source
-                        let options = layer.get("wmtsOptions").toJS();
+                        let options = layer.get("mappingOptions").toJS();
                         source = this.createLayerSource(layer, options, false);
 
-                        this.setWMTSLayerOverrides(source, layer, mapLayer);
-                    } else if (appConfig.DEFAULT_TILE_TRANSITION_TIME !== 0) {
+                        this.setLayerOverrides(layer, mapLayer, source);
+                        // this.setWMTSLayerOverrides(layer, mapLayer, source);
+                    } else if (
+                        appConfig.DEFAULT_TILE_TRANSITION_TIME !== 0 &&
+                        typeof source.getTileCacheForProjection === "function"
+                    ) {
                         // reset the transition tracking for the tiles to enable crossfade
                         let tileCache = source.getTileCacheForProjection(source.getProjection());
                         tileCache.forEach(tile => {
@@ -2043,6 +2156,38 @@ export default class MapWrapperOpenlayers extends MapWrapper {
     /* functions for openlayers only */
 
     /**
+     * generate a url for a wms raster layer
+     *
+     * @param {ImmutableJS.Map} layer layer object from map state in redux
+     * @param {object} mapLayer openlayers layer object
+     * @param {object} layerSource openlayers layer source object
+     * @param {string} defaultUrl the url coming out of openlayers for this image
+     * @returns {string} url for this tile
+     * @memberof MapWrapperOpenlayers
+     */
+    generateWMSImageUrl(layer, mapLayer, layerSource, defaultUrl) {
+        try {
+            let origUrl = layer.getIn(["mappingOptions", "url"]);
+            let customUrlFunction = this.tileHandler.getUrlFunction(
+                layer.getIn(["mappingOptions", "urlFunctions", appStrings.MAP_LIB_2D])
+            );
+            if (typeof customUrlFunction === "function") {
+                return customUrlFunction({
+                    layer,
+                    mapLayer,
+                    defaultUrl,
+                    origUrl,
+                    context: appStrings.MAP_LIB_2D
+                });
+            }
+            return defaultUrl;
+        } catch (err) {
+            console.warn("Error in MapWrapperOpenlayers.generateWMSImageUrl:", err);
+            return false;
+        }
+    }
+
+    /**
      * generate a url for a tile for a wmts raster layer
      *
      * @param {ImmutableJS.Map} layer layer object from map state in redux
@@ -2065,9 +2210,9 @@ export default class MapWrapperOpenlayers extends MapWrapper {
         origFunc
     ) {
         try {
-            let origUrl = layer.getIn(["wmtsOptions", "url"]);
+            let origUrl = layer.getIn(["mappingOptions", "url"]);
             let customUrlFunction = this.tileHandler.getUrlFunction(
-                layer.getIn(["wmtsOptions", "urlFunctions", appStrings.MAP_LIB_2D])
+                layer.getIn(["mappingOptions", "urlFunctions", appStrings.MAP_LIB_2D])
             );
             let tileMatrixIds =
                 typeof layerSource.getTileGrid === "function" &&
@@ -2107,7 +2252,7 @@ export default class MapWrapperOpenlayers extends MapWrapper {
     handleTileLoad(layer, mapLayer, tile, url, origFunc) {
         try {
             let customTileFunction = this.tileHandler.getTileFunction(
-                layer.getIn(["wmtsOptions", "tileFunctions", appStrings.MAP_LIB_2D])
+                layer.getIn(["mappingOptions", "tileFunctions", appStrings.MAP_LIB_2D])
             );
             if (typeof customTileFunction === "function") {
                 return customTileFunction({
@@ -2123,6 +2268,42 @@ export default class MapWrapperOpenlayers extends MapWrapper {
             return origFunc(tile, url);
         } catch (err) {
             console.warn("Error in MapWrapperOpenlayers.handleTileLoad:", err);
+            return false;
+        }
+    }
+
+    /**
+     * load in a wms raster image
+     *
+     * @param {ImmutableJS.Map} layer layer object from map state in redux
+     * @param {object} mapLayer openlayers layer object
+     * @param {object} layerSource openlayers source object
+     * @param {object} image openlayers image object
+     * @param {string} url url for this image raster
+     * @returns undefined
+     * @memberof MapWrapperOpenlayers
+     */
+    handleImageLoad(layer, mapLayer, layerSource, image, url) {
+        try {
+            let customImageFunction = this.tileHandler.getTileFunction(
+                layer.getIn(["mappingOptions", "tileFunctions", appStrings.MAP_LIB_2D])
+            );
+            const defaultFunc = () => {
+                image.getImage().src = url;
+            };
+            if (typeof customImageFunction === "function") {
+                return customImageFunction({
+                    layer,
+                    mapLayer,
+                    layerSource,
+                    image,
+                    url,
+                    defaultFunc
+                });
+            }
+            defaultFunc();
+        } catch (err) {
+            console.warn("Error in MapWrapperOpenlayers.handleImageLoad:", err);
             return false;
         }
     }
@@ -2164,6 +2345,8 @@ export default class MapWrapperOpenlayers extends MapWrapper {
                 return this.createWMTSSource(layer, options);
             case appStrings.LAYER_XYZ_RASTER:
                 return this.createXYZSource(layer, options);
+            case appStrings.LAYER_WMS_RASTER:
+                return this.createWMSSource(layer, options);
             case appStrings.LAYER_VECTOR_GEOJSON:
                 return this.createVectorGeojsonSource(layer, options);
             case appStrings.LAYER_VECTOR_TOPOJSON:
@@ -2217,6 +2400,28 @@ export default class MapWrapperOpenlayers extends MapWrapper {
             transition: appConfig.DEFAULT_TILE_TRANSITION_TIME,
             crossOrigin: "anonymous",
             wrapX: true
+        });
+    }
+
+    /**
+     * creates an openlayers wms layer source
+     *
+     * @param {ImmutableJS.Map} layer layer object from map state in redux
+     * @param {object} options raster imagery options for layer from redux state
+     * - url - {string} base url for this layer
+     * - layer - {string} layer identifier
+     * - projection - {string} projection string
+     * - extents - {array} bounding box extents for this layer
+     * @returns {object} openlayers source object
+     * @memberof MapWrapperOpenlayers
+     */
+    createWMSSource(layer, options) {
+        return new Ol_Source_WMS({
+            url: options.url,
+            params: {
+                LAYERS: options.layer
+            },
+            crossOrigin: "anonymous"
         });
     }
 

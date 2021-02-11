@@ -18,6 +18,9 @@ export default function map(state = mapState, action, opt_reducer = MapReducer) 
         case actionTypes.REMOVE_LAYER:
             return opt_reducer.removeLayer(state, action);
 
+        case actionTypes.UPDATE_LAYER:
+            return opt_reducer.updateLayer(state, action);
+
         case actionTypes.SET_LAYER_LOADING:
             return opt_reducer.setLayerLoading(state, action);
 

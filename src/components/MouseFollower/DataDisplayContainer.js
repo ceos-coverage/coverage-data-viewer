@@ -10,14 +10,26 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import MiscUtil from "utils/MiscUtil";
 import * as appStrings from "constants/appStrings";
-import { TrackDataDisplay } from "components/MouseFollower";
-import displayStyles from "_core/styles/display.scss";
+import * as appStringsCore from "_core/constants/appStrings";
+import {
+    TrackDataDisplay,
+    PointDataDisplay,
+    BubblePointDataDisplay
+} from "components/MouseFollower";
 import styles from "components/MouseFollower/DataDisplayContainer.scss";
 
 export class DataDisplayContainer extends Component {
     getDataDisplay(entry, i) {
         if (entry.getIn(["layer", "type"]) === appStrings.LAYER_GROUP_TYPE_INSITU_DATA) {
+            if (entry.getIn(["layer", "handleAs"]) === appStrings.LAYER_VECTOR_POINTS_WFS) {
+                return <BubblePointDataDisplay key={"mouse-follow-data-" + i} data={entry} />;
+            }
             return <TrackDataDisplay key={"mouse-follow-data-" + i} data={entry} />;
+        } else if (
+            entry.getIn(["layer", "type"]) === appStringsCore.LAYER_GROUP_TYPE_DATA &&
+            entry.getIn(["layer", "metadata", "hoverDisplayProps"])
+        ) {
+            return <PointDataDisplay key={"mouse-follow-data-" + i} data={entry} />;
         }
         return "";
     }

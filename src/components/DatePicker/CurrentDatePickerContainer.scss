@@ -5,9 +5,12 @@
 }
 
 .intervalDate {
-    composes: fontRobotoMono from "_core/styles/text.scss";
+    composes: fontRobotoMono from "../../_core/styles/text.scss";
     font-size: 1.2rem;
     padding-left: 0.6rem;
+    font-weight: 400;
+    line-height: 1.375em;
+    color: rgba(0, 0, 0, 0.54);
 }
 
 .inlineRow {

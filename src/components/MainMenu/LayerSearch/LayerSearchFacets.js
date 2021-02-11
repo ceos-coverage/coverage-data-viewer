@@ -24,53 +24,70 @@ export class LayerSearchFacets extends Component {
             selected.size === 0
                 ? "Any"
                 : selected.size === 1
-                  ? propFacet.find(f => selected.contains(f.get("value"))).get("label")
-                  : selected.size + " Selected";
-        return (
-            <LabelPopover
-                key={"facet_" + configFacet.value}
-                label={configFacet.label}
-                subtitle={subTitle}
-                className={styles.facet}
-                contentClass={styles.facetContent}
-            >
-                <div className={styles.optionsList}>
-                    <FormGroup>
-                        {propFacet.map((facet, i) => (
-                            <EnhancedFormControlLabel
-                                key={configFacet.value + "_" + i}
-                                control={
-                                    <Checkbox
-                                        color="primary"
-                                        checked={selected.contains(facet.get("value"))}
-                                        value={facet.get("value")}
-                                    />
-                                }
-                                label={facet.get("label")}
-                                rightLabel={facet.get("cnt")}
-                                onChange={(evt, isSelected) =>
-                                    this.props.appActions.setSearchFacetSelected(
-                                        { group: configFacet.value, value: facet.get("value") },
-                                        isSelected
-                                    )
-                                }
-                            />
-                        ))}
-                    </FormGroup>
-                </div>
-                <div className={styles.clearRow}>
-                    <Button
-                        size="small"
-                        variant="flat"
-                        color="primary"
-                        onClick={() => this.props.appActions.clearSearchFacet(configFacet.value)}
-                        className={styles.clearBtn}
-                    >
-                        clear
-                    </Button>
-                </div>
-            </LabelPopover>
-        );
+                ? propFacet.find(f => selected.contains(f.get("value"))).get("label")
+                : selected.size + " Selected";
+
+        if (propFacet.size === 0) {
+            return (
+                <LabelPopover
+                    key={"facet_" + configFacet.value}
+                    label={configFacet.label}
+                    subtitle={subTitle}
+                    className={styles.facet}
+                    contentClass={`${styles.facetContent} ${styles.empty}`}
+                >
+                    <div className={`${styles.optionsList} ${styles.empty}`}>No values found</div>
+                </LabelPopover>
+            );
+        } else {
+            return (
+                <LabelPopover
+                    key={"facet_" + configFacet.value}
+                    label={configFacet.label}
+                    subtitle={subTitle}
+                    className={styles.facet}
+                    contentClass={styles.facetContent}
+                >
+                    <div className={styles.optionsList}>
+                        <FormGroup>
+                            {propFacet.map((facet, i) => (
+                                <EnhancedFormControlLabel
+                                    key={configFacet.value + "_" + i}
+                                    control={
+                                        <Checkbox
+                                            color="primary"
+                                            checked={selected.contains(facet.get("value"))}
+                                            value={facet.get("value")}
+                                        />
+                                    }
+                                    label={facet.get("label")}
+                                    rightLabel={facet.get("cnt")}
+                                    onChange={(evt, isSelected) =>
+                                        this.props.appActions.setTrackSearchFacetSelected(
+                                            { group: configFacet.value, value: facet.get("value") },
+                                            isSelected
+                                        )
+                                    }
+                                />
+                            ))}
+                        </FormGroup>
+                    </div>
+                    <div className={styles.clearRow}>
+                        <Button
+                            size="small"
+                            variant="text"
+                            color="primary"
+                            onClick={() =>
+                                this.props.appActions.clearTrackSearchFacet(configFacet.value)
+                            }
+                            className={styles.clearBtn}
+                        >
+                            clear
+                        </Button>
+                    </div>
+                </LabelPopover>
+            );
+        }
     }
 
     renderFacets() {
@@ -97,4 +114,7 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-export default connect(null, mapDispatchToProps)(LayerSearchFacets);
+export default connect(
+    null,
+    mapDispatchToProps
+)(LayerSearchFacets);

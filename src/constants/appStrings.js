@@ -28,12 +28,16 @@ export const LAYER_GROUP_TYPE_INSITU_DATA = "insitu_data";
 export const LAYER_GROUP_TYPE_INSITU_DATA_ERROR = "insitu_data_error";
 export const LAYER_GROUP_TYPE_DATA_REFERENCE = "data_reference";
 
-export const LAYER_VECTOR_POINT_TRACK = "vector_point_track";
+export const LAYER_VECTOR_POINT_TRACK = "vector_tile_points";
 export const LAYER_VECTOR_TILE_TRACK = "vector_tile_track";
 export const LAYER_VECTOR_TILE_TRACK_ERROR = "vector_tile_track_error";
-export const LAYER_VECTOR_TILE_POINTS = "vector_tile_points";
+export const LAYER_VECTOR_TILE_POINTS = "vector_tile_points_mvt";
 export const LAYER_MULTI_FILE_VECTOR_KML = "multi_file_vector_kml";
 export const LAYER_VECTOR_TILE_OUTLINE = "vector_tile_outline";
+export const LAYER_VECTOR_POINTS_WFS = "vector_points_wfs_pie";
+
+export const URL_FUNC_WFS_AREA_TIME_FILTER = "url_func_wfs_area_time_filter";
+
 export const VECTOR_FEATURE_LOAD = "vector_feature_load";
 
 export const CURRENTS_VECTOR_COLOR = "oscar_l4_oc_third_deg___oceancurrent_dir_color";
@@ -44,6 +48,8 @@ export const NO_DATA = "No Data";
 export const INTERACTION_AREA_SELECTION = "SelectArea";
 export const INTERACTION_AREA_DISPLAY = "DisplayArea";
 export const GEOMETRY_BOX = "Box";
+
+export const COLORBAR_GIBS_XML = "gibs-xml";
 
 export const ALERTS = {
     FILL_BUFFER_FAILED: {

@@ -20,7 +20,7 @@ export class CurrentDateDisplay extends Component {
             [this.props.className]: typeof this.props.className !== "undefined"
         });
         return (
-            <Typography variant="body1" className={containerClasses}>
+            <Typography variant="body2" className={containerClasses}>
                 {moment.utc(this.props.date).format("YYYY MMM DD, HH:mm UTC")}
             </Typography>
         );
@@ -38,4 +38,7 @@ function mapStateToProps(state) {
     };
 }
 
-export default connect(mapStateToProps, null)(CurrentDateDisplay);
+export default connect(
+    mapStateToProps,
+    null
+)(CurrentDateDisplay);

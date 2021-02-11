@@ -9,12 +9,16 @@ import Immutable from "immutable";
 import * as types from "constants/actionTypes";
 import * as mapActions from "actions/mapActions";
 import * as chartActions from "actions/chartActions";
+import * as subsettingActions from "actions/subsettingActions";
 import * as appStrings from "constants/appStrings";
 import * as appStringsCore from "_core/constants/appStrings";
 import MapUtil from "utils/MapUtil";
 import SearchUtil from "utils/SearchUtil";
 import GeoServerUtil from "utils/GeoServerUtil";
-import shouldUpdate from "recompose/shouldUpdate";
+
+export function setExtraToolsOpen(open) {
+    return { type: types.SET_EXTRA_TOOLS_OPEN, open };
+}
 
 export function setMainMenuTabIndex(tabIndex) {
     return { type: types.SET_MAIN_MENU_TAB_INDEX, tabIndex };
@@ -40,13 +44,15 @@ export function setSearchResults(results) {
     return { type: types.SET_SEARCH_RESULTS, results };
 }
 
-export function setSearchFacets(facets) {
+export function setTrackSearchFacets(facets) {
     return { type: types.SET_SEARCH_FACETS, facets };
 }
 
-export function setSearchFacetSelected(facet, isSelected, shouldUpdateFacets = false) {
-    // return { type: types.SET_SEARCH_FACET_SELECTED, facet, isSelected };
+export function setSatelliteSearchFacets(facets) {
+    return { type: types.SET_SATELLITE_SEARCH_FACETS, facets };
+}
 
+export function setTrackSearchFacetSelected(facet, isSelected, shouldUpdateFacets = false) {
     return (dispatch, getState) => {
         dispatch({ type: types.SET_SEARCH_FACET_SELECTED, facet, isSelected });
 
@@ -56,8 +62,22 @@ export function setSearchFacetSelected(facet, isSelected, shouldUpdateFacets = f
     };
 }
 
-export function clearSearchFacet(facetGroup) {
-    return { type: types.CLEAR_SEARCH_FACET, facetGroup };
+export function setSatelliteSearchFacetSelected(facet, isSelected, shouldUpdateFacets = false) {
+    return (dispatch, getState) => {
+        dispatch({ type: types.SET_SATELLITE_SEARCH_FACET_SELECTED, facet, isSelected });
+
+        if (shouldUpdateFacets === true) {
+            updateFacets(dispatch, getState);
+        }
+    };
+}
+
+export function clearTrackSearchFacet(facetGroup) {
+    return { type: types.CLEAR_TRACK_SEARCH_FACET, facetGroup };
+}
+
+export function clearSatelliteSearchFacet(facetGroup) {
+    return { type: types.CLEAR_SATELLITE_SEARCH_FACET, facetGroup };
 }
 
 export function setTrackSelected(trackId, isSelected) {
@@ -67,25 +87,69 @@ export function setTrackSelected(trackId, isSelected) {
             let state = getState();
             let track = state.view.getIn(["layerSearch", "searchResults", "results", trackId]);
             let titleField = state.map.get("insituLayerTitleField");
-            dispatch(
-                mapActions.addLayer({
-                    id: track.get("id"),
-                    title: track.getIn(["insituMeta", titleField]),
-                    type: appStrings.LAYER_GROUP_TYPE_INSITU_DATA,
-                    handleAs: appStrings.LAYER_VECTOR_POINT_TRACK,
-                    url: GeoServerUtil.getUrlForTrack(track),
-                    wmtsOptions: {
-                        extents: MapUtil.constrainExtent([
-                            track.getIn(["insituMeta", "lon_min"]),
-                            track.getIn(["insituMeta", "lat_min"]),
-                            track.getIn(["insituMeta", "lon_max"]),
-                            track.getIn(["insituMeta", "lat_max"])
-                        ])
-                    },
-                    insituMeta: track.get("insituMeta"),
-                    timeFormat: "YYYY-MM-DDTHH:mm:ssZ"
-                })
-            );
+            if (track.get("isTrack")) {
+                dispatch(
+                    mapActions.addLayer({
+                        id: track.get("id"),
+                        shortId: track.get("shortId"),
+                        title:
+                            track.getIn(["insituMeta", "title"]) ||
+                            track.getIn(["insituMeta", titleField]),
+                        type: appStrings.LAYER_GROUP_TYPE_INSITU_DATA,
+                        handleAs:
+                            track.getIn(["insituMeta", "handle_as"]) ||
+                            appStrings.LAYER_VECTOR_POINT_TRACK,
+                        url: GeoServerUtil.getUrlForTrack(track),
+                        mappingOptions: {
+                            url: GeoServerUtil.getUrlForTrack(track),
+                            extents: MapUtil.constrainExtent([
+                                track.getIn(["insituMeta", "lon_min"]),
+                                track.getIn(["insituMeta", "lat_min"]),
+                                track.getIn(["insituMeta", "lon_max"]),
+                                track.getIn(["insituMeta", "lat_max"])
+                            ]),
+                            urlFunctions:
+                                track.getIn(["insituMeta", "handle_as"]) ===
+                                appStrings.LAYER_VECTOR_POINTS_WFS
+                                    ? {
+                                          [appStringsCore.MAP_LIB_2D]:
+                                              appStrings.URL_FUNC_WFS_AREA_TIME_FILTER
+                                      }
+                                    : {}
+                        },
+                        insituMeta: track.get("insituMeta"),
+                        timeFormat: "YYYY-MM-DD[T]HH:mm:ss[Z]"
+                    })
+                );
+            } else {
+                const tempRes = track.getIn(["insituMeta", "resolution_temporal"]);
+                dispatch(
+                    mapActions.addLayer({
+                        id: track.get("id"),
+                        shortId: track.get("shortId"),
+                        title: track.get("title"),
+                        type: appStringsCore.LAYER_GROUP_TYPE_DATA,
+                        handleAs: appStringsCore.LAYER_GIBS_RASTER,
+                        fromJson: true,
+                        timeFormat:
+                            tempRes && parseFloat(tempRes) % 1 !== 0
+                                ? "YYYY-MM-DD[T]HH:mm:ss[Z]"
+                                : "YYYY-MM-DD",
+                        palette: {
+                            name: track.get("shortId"),
+                            url: track.get("colorbarUrl"),
+                            handleAs: appStrings.COLORBAR_GIBS_XML
+                        },
+                        mappingOptions: {
+                            urlFunctions: {
+                                openlayers: "kvpTimeParam_wmts",
+                                cesium: "kvpTimeParam_wmts"
+                            }
+                        },
+                        insituMeta: track.get("insituMeta")
+                    })
+                );
+            }
         } else {
             dispatch(
                 mapActions.removeLayer(
@@ -103,7 +167,16 @@ export function setTrackSelected(trackId, isSelected) {
                     })
                 )
             );
+            dispatch(
+                mapActions.removeLayer(
+                    Immutable.Map({
+                        id: trackId,
+                        type: appStringsCore.LAYER_GROUP_TYPE_DATA
+                    })
+                )
+            );
             dispatch(chartActions.setTrackSelected(trackId, isSelected));
+            dispatch(subsettingActions.setTrackSelected(trackId, isSelected));
         }
     };
 }
@@ -135,9 +208,9 @@ export function setTrackErrorActive(trackId, isActive) {
                         url: GeoServerUtil.getUrlForTrackError(track, errTrackId),
                         insituMeta: track.get("insituMeta"),
                         updateParameters: { time: false },
-                        wmtsOptions: {
-                            extents: track.getIn(["wmtsOptions", "extents"]).toJS(),
-                            tileGrid: errTrackPartial.getIn(["wmtsOptions", "tileGrid"]).toJS()
+                        mappingOptions: {
+                            extents: track.getIn(["mappingOptions", "extents"]).toJS(),
+                            tileGrid: errTrackPartial.getIn(["mappingOptions", "tileGrid"]).toJS()
                         },
                         timeFormat: "YYYY-MM-DDTHH:mm:ssZ"
                     })
@@ -164,22 +237,27 @@ export function runLayerSearch() {
 
         dispatch(setSearchLoading(true));
 
-        let options = {
-            area: searchParams.get("selectedArea").toJS(),
-            dateRange: [searchParams.get("startDate"), searchParams.get("endDate")],
-            facets: searchParams.get("selectedFacets").toJS()
-        };
-
-        SearchUtil.searchForTracks(options).then(
-            results => {
+        Promise.all([
+            SearchUtil.searchForTracks({
+                area: searchParams.get("selectedArea").toJS(),
+                dateRange: [searchParams.get("startDate"), searchParams.get("endDate")],
+                facets: searchParams.get("trackSelectedFacets").toJS()
+            }),
+            SearchUtil.searchForSatelliteSets({
+                area: searchParams.get("selectedArea").toJS(),
+                dateRange: [searchParams.get("startDate"), searchParams.get("endDate")],
+                facets: searchParams.get("satelliteSelectedFacets").toJS()
+            })
+        ])
+            .then(allResults => {
+                const results = allResults.flat();
                 dispatch(setSearchResults(results));
                 dispatch(setSearchLoading(false));
-            },
-            err => {
+            })
+            .catch(err => {
                 console.warn("Track search fail: ", err);
                 dispatch(setSearchLoading(false));
-            }
-        );
+            });
 
         updateFacets(dispatch, getState);
     };
@@ -197,15 +275,28 @@ export function updateFacets(dispatch, getState) {
     let state = getState();
     let searchParams = state.view.getIn(["layerSearch", "formOptions"]);
 
-    let options = {
+    SearchUtil.searchForFacets({
+        datatype: "datatype:track",
         area: searchParams.get("selectedArea").toJS(),
         dateRange: [searchParams.get("startDate"), searchParams.get("endDate")],
-        facets: searchParams.get("selectedFacets").toJS()
-    };
-
-    SearchUtil.searchForFacets(options).then(
+        facets: searchParams.get("trackSelectedFacets").toJS()
+    }).then(
         results => {
-            dispatch(setSearchFacets(results));
+            dispatch(setTrackSearchFacets(results));
+        },
+        err => {
+            console.warn("Facet search Fail: ", err);
+        }
+    );
+
+    SearchUtil.searchForFacets({
+        datatype: "datatype:layer",
+        area: searchParams.get("selectedArea").toJS(),
+        dateRange: [searchParams.get("startDate"), searchParams.get("endDate")],
+        facets: searchParams.get("satelliteSelectedFacets").toJS()
+    }).then(
+        results => {
+            dispatch(setSatelliteSearchFacets(results));
         },
         err => {
             console.warn("Facet search Fail: ", err);

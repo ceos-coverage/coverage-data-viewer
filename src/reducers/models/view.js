@@ -15,19 +15,34 @@ export const viewState = viewStateCore.mergeDeep(
         mainMenuTabIndex: 0,
         isMainMenuOpen: true,
         layerInfo: undefined,
+        extraToolsOpen: false,
         layerSearch: {
             formOptions: {
-                startDate: moment.utc("2000-01-01", "YYYY-MM-DD").toDate(),
+                startDate: moment.utc("1970-01-01", "YYYY-MM-DD").toDate(),
                 endDate: appConfig.DEFAULT_DATE,
                 selectedArea: [],
-                selectedFacets: appConfig.LAYER_SEARCH.FACETS.reduce((acc, facet) => {
+                trackSelectedFacets: appConfig.LAYER_SEARCH.FACETS.reduce((acc, facet) => {
                     acc[facet.value] = Immutable.Set();
                     return acc;
                 }, {}),
-                searchFacets: appConfig.LAYER_SEARCH.FACETS.reduce((acc, facet) => {
+                trackSearchFacets: appConfig.LAYER_SEARCH.FACETS.reduce((acc, facet) => {
                     acc[facet.value] = [];
                     return acc;
-                }, {})
+                }, {}),
+                satelliteSelectedFacets: appConfig.SATELLITE_LAYER_SEARCH.FACETS.reduce(
+                    (acc, facet) => {
+                        acc[facet.value] = Immutable.Set();
+                        return acc;
+                    },
+                    {}
+                ),
+                satelliteSearchFacets: appConfig.SATELLITE_LAYER_SEARCH.FACETS.reduce(
+                    (acc, facet) => {
+                        acc[facet.value] = [];
+                        return acc;
+                    },
+                    {}
+                )
             },
             searchResults: {
                 isLoading: false,

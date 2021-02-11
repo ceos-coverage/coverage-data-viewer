@@ -11,26 +11,37 @@ import moment from "moment";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import MapUtil from "utils/MapUtil";
-import styles from "components/MouseFollower/TrackDataDisplay.scss";
+import styles from "components/MouseFollower/DataDisplay.scss";
 
 export class TrackDataDisplay extends Component {
     render() {
-        let timeStrList = this.props.data.getIn(["properties", "position_date_time"]);
-        let firstTime = moment.utc(timeStrList.get(0)).format("MMM DD, YYYY");
-        let lastTime = moment.utc(timeStrList.get(timeStrList.size - 1)).format("MMM DD, YYYY");
+        const timeStrList = this.props.data.getIn(["properties", "position_date_time"]);
+        const firstTime = moment.utc(timeStrList.get(0)).format("MMM DD, YYYY");
+        const lastTime = moment.utc(timeStrList.get(timeStrList.size - 1)).format("MMM DD, YYYY");
 
-        let isSameTime = firstTime === lastTime;
-        let timeStr = !isSameTime ? firstTime + " – " + lastTime : firstTime;
-        let connectStr = isSameTime ? "on" : "between";
+        const isSameTime = firstTime === lastTime;
+        const timeStr = !isSameTime ? firstTime + " – " + lastTime : firstTime;
+        const connectStr = isSameTime ? "on" : "between";
 
-        let coords = this.props.data.get("coords");
-        let displayCoords = MapUtil.formatLatLon(coords.get(0), coords.get(1), true, "");
+        const coords = this.props.data.get("coords");
+        const displayCoords = MapUtil.formatLatLon(coords.get(0), coords.get(1), true, "");
 
-        let subtitle =
-            this.props.data.getIn(["layer", "title"]) ===
-            this.props.data.getIn(["layer", "insituMeta", "instrument"])
-                ? this.props.data.getIn(["layer", "insituMeta", "platform"])
+        const title =
+            this.props.data.getIn(["layer", "title"]).size > 0
+                ? this.props.data.getIn(["layer", "title", 0])
+                : this.props.data.getIn(["layer", "title"]);
+
+        const instrument =
+            this.props.data.getIn(["layer", "insituMeta", "instrument"]).size > 0
+                ? this.props.data.getIn(["layer", "insituMeta", "instrument", 0])
                 : this.props.data.getIn(["layer", "insituMeta", "instrument"]);
+
+        const platform =
+            this.props.data.getIn(["layer", "insituMeta", "platform"]).size > 0
+                ? this.props.data.getIn(["layer", "insituMeta", "platform", 0])
+                : this.props.data.getIn(["layer", "insituMeta", "platform"]);
+
+        const subtitle = title === instrument ? platform : instrument;
 
         return (
             <div className={styles.root}>
@@ -39,12 +50,12 @@ export class TrackDataDisplay extends Component {
                         className={styles.color}
                         style={{ background: this.props.data.getIn(["layer", "vectorColor"]) }}
                     />
-                    <Typography variant="body2" className={styles.label}>
-                        {this.props.data.getIn(["layer", "title"])}
+                    <Typography variant="body1" className={styles.label}>
+                        {title}
                     </Typography>
                     <div className={styles.subtitle}>
                         <Typography variant="caption" className={styles.label}>
-                            {subtitle}
+                            {`${subtitle} (id: ${this.props.data.getIn(["layer", "shortId"])})`}
                         </Typography>
                     </div>
                 </div>

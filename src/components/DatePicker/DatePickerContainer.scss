@@ -6,6 +6,11 @@
  */
 
 .root {
+    position: absolute;
+    z-index: 2;
+    padding: 0px;
+    background: white;
+
     height: 5.4rem;
     left: 0.7rem;
     bottom: 0.7rem;

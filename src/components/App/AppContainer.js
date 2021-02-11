@@ -10,13 +10,13 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
-import { cyan, grey } from "@material-ui/core/colors";
+import cyan from "@material-ui/core/colors/cyan";
 import * as appActionsCore from "_core/actions/appActions";
 import * as mapActionsCore from "_core/actions/mapActions";
 import * as appStringsCore from "_core/constants/appStrings";
 import * as appActions from "actions/appActions";
 import appConfig from "constants/appConfig";
-import MiscUtil from "_core/utils/MiscUtil";
+import MiscUtil from "utils/MiscUtil";
 import { MapContainer, MapControlsContainer, RefDataDisplay } from "components/Map";
 import { MainMenu } from "components/MainMenu";
 import { LayerInfoContainer } from "components/LayerInfo";
@@ -25,23 +25,19 @@ import { AlertsContainer } from "_core/components/Alerts";
 import { DatePickerContainer, AnimationLoading } from "components/DatePicker";
 import { MouseFollowerContainer } from "components/MouseFollower";
 import { KeyboardControlsContainer } from "components/KeyboardControls";
-import { SatelliteLayerSelector, InsituLayerMenu } from "components/LayerMenu";
+import { SatelliteLayerMenu, InsituLayerMenu } from "components/LayerMenu";
+import { DataSubsetting } from "components/DataSubsetting";
 import styles from "components/App/AppContainer.scss";
 import stylesCore from "_core/components/App/AppContainer.scss";
 import displayStyles from "_core/styles/display.scss";
 
 const theme = createMuiTheme({
     typography: {
+        useNextVariants: true,
         htmlFontSize: 10
     },
     palette: {
         primary: cyan,
-        // secondary: {
-        //     light: "#88ffff",
-        //     main: "#4dd0e1",
-        //     dark: "#009faf",
-        //     contrastText: "#000"
-        // }
         secondary: {
             light: "#ffffff",
             main: "#f5f5f5",
@@ -121,25 +117,26 @@ export class AppContainer extends Component {
             [styles.lifted]: this.props.animationOpen
         });
 
-        let dataDisplayClasses = MiscUtil.generateStringFromSet({
+        let dataSubsettingClasses = MiscUtil.generateStringFromSet({
             [styles.lifted]: this.props.animationOpen
         });
 
         return (
             <MuiThemeProvider theme={theme}>
                 <div className={containerClasses}>
-                    <DatePickerContainer />
                     <MapContainer />
+                    <DatePickerContainer />
+                    <DataSubsetting className={dataSubsettingClasses} />
                     <MapControlsContainer className={mapControlsClasses} />
                     <div className={styles.layers}>
                         <InsituLayerMenu />
-                        <SatelliteLayerSelector />
+                        <SatelliteLayerMenu />
+                        <RefDataDisplay />
                     </div>
                     <LayerInfoContainer />
                     <MainMenu />
                     <AlertsContainer />
                     <MouseFollowerContainer />
-                    <RefDataDisplay />
                     <AnimationLoading />
                     <LoadingContainer />
                     <KeyboardControlsContainer />
@@ -187,4 +184,7 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(AppContainer);
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(AppContainer);

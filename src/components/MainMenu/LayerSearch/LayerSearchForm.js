@@ -39,14 +39,14 @@ export class LayerSearchForm extends Component {
                 <Grid container alignItems="center" className={styles.facetRow}>
                     <Grid item xs={10} className={styles.rowItem}>
                         <LayerSearchFacets
-                            facets={this.props.searchOptions.get("searchFacets")}
-                            selectedFacets={this.props.searchOptions.get("selectedFacets")}
+                            facets={this.props.searchOptions.get("trackSearchFacets")}
+                            selectedFacets={this.props.searchOptions.get("trackSelectedFacets")}
                         />
                     </Grid>
                     <Grid item xs={2} className={styles.rowItem}>
                         <Button
                             size="small"
-                            variant="raised"
+                            variant="contained"
                             color="primary"
                             onClick={this.props.appActions.runLayerSearch}
                         >
@@ -85,4 +85,7 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(LayerSearchForm);
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(LayerSearchForm);
