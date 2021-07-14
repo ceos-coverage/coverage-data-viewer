@@ -5,6 +5,7 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
+import queryString from "query-string";
 import MiscUtilCore from "_core/utils/MiscUtil";
 
 function throttle(timer) {
@@ -26,7 +27,11 @@ function throttle(timer) {
     };
 }
 
-export default class MiscUtil extends MiscUtilCore {
+export class MiscUtil extends MiscUtilCore {
+    static getUrlParams() {
+        return queryString.parse(window.location.search);
+    }
+
     // Find closest ancestor to dom element el matching selector
     // From: http://stackoverflow.com/questions/18663941/finding-closest-element-without-jquery
     // A replacement for JQuery.closest
@@ -87,3 +92,5 @@ export default class MiscUtil extends MiscUtilCore {
         return Math.exp(minv + scale * (value - minp));
     }
 }
+
+export default MiscUtil;

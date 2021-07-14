@@ -12,6 +12,7 @@
 import { createStore, compose, applyMiddleware } from "redux";
 import rootReducer from "reducers";
 import thunkMiddleware from "redux-thunk";
+import { urlParamMiddleware } from "urlParamMiddleware";
 
 export default function configureStore(initialState) {
     let store = createStore(
@@ -19,7 +20,7 @@ export default function configureStore(initialState) {
         initialState,
         compose(
             // Add other middleware on this line...
-            applyMiddleware(thunkMiddleware),
+            applyMiddleware(thunkMiddleware, urlParamMiddleware),
             window.devToolsExtension ? window.devToolsExtension() : f => f //add support for Redux dev tools
         )
     );

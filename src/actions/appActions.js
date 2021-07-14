@@ -6,15 +6,50 @@
  */
 
 import Immutable from "immutable";
+import appConfig from "constants/appConfig";
+import * as typesCore from "_core/constants/actionTypes";
 import * as types from "constants/actionTypes";
 import * as mapActions from "actions/mapActions";
 import * as chartActions from "actions/chartActions";
 import * as subsettingActions from "actions/subsettingActions";
+import * as alertActions from "_core/actions/alertActions";
 import * as appStrings from "constants/appStrings";
 import * as appStringsCore from "_core/constants/appStrings";
 import MapUtil from "utils/MapUtil";
 import SearchUtil from "utils/SearchUtil";
 import GeoServerUtil from "utils/GeoServerUtil";
+
+export function runUrlConfig(params) {
+    // Takes an array of key value pairs and dispatches associated actions for each
+    // one.
+
+    return dispatch => {
+        console.log(params);
+        const keys = Object.keys(params);
+        return Promise.all(
+            keys.map(key => {
+                return dispatch(translateUrlParamToActionDispatch({ key, value: params[key] }));
+            })
+        ).catch(err => {
+            console.warn("Error in appActions.runUrlConfig:", err);
+            dispatch(
+                alertActions.addAlert({
+                    title: appStrings.ALERTS.URL_CONFIG_FAILED.title,
+                    body: appStrings.ALERTS.URL_CONFIG_FAILED.formatString,
+                    severity: appStrings.ALERTS.URL_CONFIG_FAILED.severity,
+                    time: new Date()
+                })
+            );
+        });
+    };
+}
+
+export function translateUrlParamToActionDispatch(param) {
+    switch (param.key) {
+        default:
+            return { type: typesCore.NO_ACTION };
+    }
+}
 
 export function setExtraToolsOpen(open) {
     return { type: types.SET_EXTRA_TOOLS_OPEN, open };

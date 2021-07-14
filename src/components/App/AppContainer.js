@@ -58,7 +58,7 @@ export class AppContainer extends Component {
 
         // Generally speaking, however, it is not recommended to rely on instance variables inside of
         // components since they lie outside of the application state and Redux paradigm.
-        this.urlParams = MiscUtil.getUrlParams();
+        this.urlParams = [];
     }
 
     componentDidMount() {
@@ -87,10 +87,12 @@ export class AppContainer extends Component {
                     // set initial view
                     this.props.setMapView({ extent: appConfig.DEFAULT_BBOX_EXTENT }, true);
 
-                    // activate default/url params
-                    if (this.urlParams.length === 0) {
-                        this.props.activateDefaultLayers();
-                    } else {
+                    // activate default params
+                    this.props.activateDefaultLayers();
+
+                    // activate url params
+                    this.urlParams = MiscUtil.getUrlParams();
+                    if (Object.keys(this.urlParams).length > 0) {
                         this.props.runUrlConfig(this.urlParams);
                     }
 
@@ -177,7 +179,7 @@ function mapDispatchToProps(dispatch) {
         ),
         loadInitialData: bindActionCreators(mapActionsCore.loadInitialData, dispatch),
         activateDefaultLayers: bindActionCreators(mapActionsCore.activateDefaultLayers, dispatch),
-        runUrlConfig: bindActionCreators(appActionsCore.runUrlConfig, dispatch),
+        runUrlConfig: bindActionCreators(appActions.runUrlConfig, dispatch),
         initializeMap: bindActionCreators(mapActionsCore.initializeMap, dispatch),
         setMapView: bindActionCreators(mapActionsCore.setMapView, dispatch),
         runLayerSearch: bindActionCreators(appActions.runLayerSearch, dispatch)

@@ -153,7 +153,24 @@ const APP_CONFIG = Immutable.fromJS({
         { value: "instrument", label: "Sensor" }
     ],
     TILE_LAYER_UPDATE_STRATEGY: appStringsCore.TILE_LAYER_UPDATE_STRATEGIES.LAYER,
-    DEFAULT_TILE_TRANSITION_TIME: 0
+    DEFAULT_TILE_TRANSITION_TIME: 0,
+    URL_KEYS: {
+        INSITU_LAYERS: "il",
+        SATELLITE_LAYERS: "sl",
+        BASEMAP: "b",
+        VIEW_EXTENT: "ve",
+        DATE: "d",
+        DATE_INTERVAL_SIZE: "disi",
+        DATE_INTERVAL_SCALE: "disc",
+        SEARCH_AREA: "sa",
+        SEARCH_TIME: "st",
+        INSITU_SEARCH_PARAMS: "isp",
+        SATELLITE_SEARCH_PARAMS: "ssp",
+        REFERENCE_LAYER: "rl",
+        ANIMATION_DATE_RANGE: "adr",
+        ANIMATION_OPEN: "ao",
+        LAYER_INFO: "li"
+    }
 });
 
 // define and export the final config

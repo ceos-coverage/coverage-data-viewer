@@ -8,7 +8,12 @@
 import { createStore, applyMiddleware } from "redux";
 import rootReducer from "reducers";
 import thunkMiddleware from "redux-thunk";
+import { urlParamMiddleware } from "urlParamMiddleware";
 
 export default function configureStore(initialState) {
-    return createStore(rootReducer, initialState, applyMiddleware(thunkMiddleware));
+    return createStore(
+        rootReducer,
+        initialState,
+        applyMiddleware(thunkMiddleware, urlParamMiddleware)
+    );
 }
