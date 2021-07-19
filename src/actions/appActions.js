@@ -128,11 +128,25 @@ function setReferenceLayer(layerId) {
 }
 
 function setTrackSearchFacetsFromUrl(params) {
-    return dispatch => {};
+    return dispatch => {
+        for (let group in params) {
+            const values = params[group];
+            values.forEach(value => {
+                dispatch(setTrackSearchFacetSelected({ group, value }, true));
+            });
+        }
+    };
 }
 
 function setSatelliteSearchFacetsFromUrl(params) {
-    return dispatch => {};
+    return dispatch => {
+        for (let group in params) {
+            const values = params[group];
+            values.forEach(value => {
+                dispatch(setSatelliteSearchFacetSelected({ group, value }, true));
+            });
+        }
+    };
 }
 
 export function setExtraToolsOpen(open) {

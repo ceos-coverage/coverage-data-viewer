@@ -23,7 +23,7 @@ export class SatelliteLayerSearchFacets extends Component {
         let subTitle =
             selected.size === 0
                 ? "Any"
-                : selected.size === 1
+                : selected.size === 1 && propFacet.size > 0
                 ? propFacet.find(f => selected.contains(f.get("value"))).get("label")
                 : selected.size + " Selected";
 
