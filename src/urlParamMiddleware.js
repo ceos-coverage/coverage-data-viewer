@@ -47,10 +47,12 @@ const updateUrl = store => {
     const dateIntervalScale = state.map.get("dateIntervalScale");
     const dateIntervalSize = state.map.get("dateIntervalSize");
     const animationInfo = state.map.get("animation");
-    const animationRange = [animationInfo.get("startDate"), animationInfo.get("startDate")]
-        .map(x => moment.utc(x).toISOString())
-        .join(",");
     const animationOpen = animationInfo.get("isOpen");
+    const animationRange = animationOpen
+        ? [animationInfo.get("startDate"), animationInfo.get("endDate")]
+              .map(x => moment.utc(x).toISOString())
+              .join(",")
+        : undefined;
 
     // extract active layer information
     const layers = state.map.get("layers");
@@ -92,18 +94,17 @@ const updateUrl = store => {
     const parsed = {
         [appConfig.URL_KEYS.INSITU_LAYERS]: insituLayers || undefined,
         [appConfig.URL_KEYS.SATELLITE_LAYERS]: satelliteLayers || undefined,
-        [appConfig.URL_KEYS.BASEMAP]: basemapLayers || undefined,
+        [appConfig.URL_KEYS.BASEMAP]: basemapLayers || "__NONE__",
         [appConfig.URL_KEYS.VIEW_EXTENT]: viewExtent || undefined,
         [appConfig.URL_KEYS.DATE]: date || undefined,
-        [appConfig.URL_KEYS.DATE_INTERVAL_SIZE]: dateIntervalSize || undefined,
-        [appConfig.URL_KEYS.DATE_INTERVAL_SCALE]: dateIntervalScale || undefined,
+        [appConfig.URL_KEYS.DATE_INTERVAL]:
+            `${dateIntervalSize}__${dateIntervalScale}` || undefined,
         [appConfig.URL_KEYS.SEARCH_AREA]: searchSelectedArea || undefined,
         [appConfig.URL_KEYS.SEARCH_TIME]: searchDateRange || undefined,
         [appConfig.URL_KEYS.INSITU_SEARCH_PARAMS]: trackSelectedFacets || undefined,
         [appConfig.URL_KEYS.SATELLITE_SEARCH_PARAMS]: satelliteSelectedFacets || undefined,
         [appConfig.URL_KEYS.REFERENCE_LAYER]: referenceLayers || undefined,
         [appConfig.URL_KEYS.ANIMATION_DATE_RANGE]: animationRange || undefined,
-        [appConfig.URL_KEYS.ANIMATION_OPEN]: animationOpen || undefined,
         [appConfig.URL_KEYS.LAYER_INFO]: layerInfo || undefined
     };
     const newurl = constructFullURLWithParams(parsed);
@@ -132,6 +133,7 @@ const actionsTriggeringURLUpdate = {
     SET_SATELLITE_SEARCH_FACET_SELECTED: true,
     SET_SEARCH_SORT_PARAM: true,
     SET_BASEMAP: true,
+    HIDE_BASEMAP: true,
     SET_LAYER_ACTIVE: true,
     SET_MAP_DATE: true,
     SET_DATE_INTERVAL: true,

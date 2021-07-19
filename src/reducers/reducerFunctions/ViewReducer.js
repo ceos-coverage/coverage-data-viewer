@@ -10,7 +10,6 @@ import moment from "moment";
 import appConfig from "constants/appConfig";
 import ViewReducerCore from "_core/reducers/reducerFunctions/ViewReducer";
 import { trackModel } from "reducers/models/view";
-import SearchUtil from "utils/SearchUtil";
 
 //IMPORTANT: Note that with Redux, state should NEVER be changed.
 //State is considered immutable. Instead,

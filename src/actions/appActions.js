@@ -6,10 +6,12 @@
  */
 
 import Immutable from "immutable";
+import moment from "moment";
 import appConfig from "constants/appConfig";
 import * as typesCore from "_core/constants/actionTypes";
 import * as types from "constants/actionTypes";
 import * as mapActions from "actions/mapActions";
+import * as mapActionsCore from "_core/actions/mapActions";
 import * as chartActions from "actions/chartActions";
 import * as subsettingActions from "actions/subsettingActions";
 import * as alertActions from "_core/actions/alertActions";
@@ -46,9 +48,91 @@ export function runUrlConfig(params) {
 
 export function translateUrlParamToActionDispatch(param) {
     switch (param.key) {
+        case appConfig.URL_KEYS.INSITU_LAYERS:
+            return { type: typesCore.NO_ACTION };
+        case appConfig.URL_KEYS.SATELLITE_LAYERS:
+            return { type: typesCore.NO_ACTION };
+        case appConfig.URL_KEYS.BASEMAP:
+            return param.value === "__NONE__"
+                ? mapActionsCore.hideBasemap()
+                : mapActionsCore.setBasemap(param.value);
+        case appConfig.URL_KEYS.VIEW_EXTENT:
+            return mapActionsCore.setMapView({ extent: param.value.split(",") }, true);
+        case appConfig.URL_KEYS.DATE:
+            return mapActions.setDate(moment.utc(param.value).toDate());
+        case appConfig.URL_KEYS.DATE_INTERVAL:
+            return mapActions.setDateInterval(
+                parseInt(param.value.split("__")[0]),
+                param.value.split("__")[1]
+            );
+        case appConfig.URL_KEYS.SEARCH_AREA:
+            return setSearchArea(param.value.split(",").map(x => parseFloat(x)));
+        case appConfig.URL_KEYS.SEARCH_TIME:
+            return setSearchDateRange(
+                moment(param.value.split(",")[0], "YYYY-MM-DD").toDate(),
+                moment(param.value.split(",")[1], "YYYY-MM-DD").toDate()
+            );
+        case appConfig.URL_KEYS.INSITU_SEARCH_PARAMS:
+            return setTrackSearchFacetsFromUrl(JSON.parse(param.value));
+        case appConfig.URL_KEYS.SATELLITE_SEARCH_PARAMS:
+            return setSatelliteSearchFacetsFromUrl(JSON.parse(param.value));
+        case appConfig.URL_KEYS.REFERENCE_LAYER:
+            return setReferenceLayer(param.value);
+        case appConfig.URL_KEYS.ANIMATION_DATE_RANGE:
+            return setAnimationRange(
+                moment.utc(param.value.split(",")[0]).toDate(),
+                moment.utc(param.value.split(",")[1]).toDate()
+            );
+        case appConfig.URL_KEYS.LAYER_INFO:
+            return { type: typesCore.NO_ACTION };
         default:
             return { type: typesCore.NO_ACTION };
     }
+}
+
+function setAnimationRange(start, end) {
+    return dispatch => {
+        dispatch(mapActions.setAnimationOpen(true, false));
+        dispatch(mapActions.setAnimationDateRange(start, end));
+    };
+}
+
+function setSearchArea(area) {
+    return dispatch => {
+        dispatch(setSearchSelectedArea(area, appStrings.GEOMETRY_BOX));
+
+        dispatch(
+            mapActionsCore.addGeometryToMap(
+                {
+                    type: appStrings.GEOMETRY_BOX,
+                    id: "area-selection_" + Math.random(),
+                    proj: appConfig.DEFAULT_PROJECTION,
+                    coordinates: area,
+                    coordinateType: appStringsCore.COORDINATE_TYPE_CARTOGRAPHIC
+                },
+                appStrings.INTERACTION_AREA_SELECTION,
+                false
+            )
+        );
+    };
+}
+
+function setReferenceLayer(layerId) {
+    return (dispatch, getState) => {
+        const state = getState();
+        state.map.getIn(["layers", appStrings.LAYER_GROUP_TYPE_DATA_REFERENCE]).forEach(layer => {
+            dispatch(mapActionsCore.setLayerActive(layer.get("id"), false));
+        });
+        dispatch(mapActionsCore.setLayerActive(layerId, true));
+    };
+}
+
+function setTrackSearchFacetsFromUrl(params) {
+    return dispatch => {};
+}
+
+function setSatelliteSearchFacetsFromUrl(params) {
+    return dispatch => {};
 }
 
 export function setExtraToolsOpen(open) {
