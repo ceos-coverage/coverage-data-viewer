@@ -84,7 +84,7 @@ export function translateUrlParamToActionDispatch(param) {
                 moment.utc(param.value.split(",")[1]).toDate()
             );
         case appConfig.URL_KEYS.LAYER_INFO:
-            return { type: typesCore.NO_ACTION };
+            return setLayerInfoFromUrl(param.value);
         default:
             return { type: typesCore.NO_ACTION };
     }
@@ -163,9 +163,26 @@ function addSatellitesFromUrl(trackIds) {
     return dispatch => {
         trackIds.forEach(id => {
             SearchUtil.searchForSingleSatellite(id).then(layer => {
-                console.log(layer);
                 dispatch(setTrackSelected(id, true, layer));
             });
+        });
+    };
+}
+
+function setLayerInfoFromUrl(id) {
+    return dispatch => {
+        // attempt resolving the info layer as both a track and satellite layer
+        // because the IDs shouldn't be duplicated between the two
+        console.log(id);
+        SearchUtil.searchForSingleTrack(id).then(layer => {
+            if (layer) {
+                dispatch(setLayerInfo(layer));
+            }
+        });
+        SearchUtil.searchForSingleSatellite(id).then(layer => {
+            if (layer) {
+                dispatch(setLayerInfo(layer));
+            }
         });
     };
 }

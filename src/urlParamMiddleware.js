@@ -36,10 +36,10 @@ const updateUrl = store => {
         .map(x => moment.utc(x).format("YYYY-MM-DD"))
         .join(",");
     const trackSelectedFacets = JSON.stringify(
-        layerSearch.getIn(["formOptions", "trackSelectedFacets"])
+        layerSearch.getIn(["formOptions", "trackSelectedFacets"]).filter(x => x.size > 0)
     );
     const satelliteSelectedFacets = JSON.stringify(
-        layerSearch.getIn(["formOptions", "satelliteSelectedFacets"])
+        layerSearch.getIn(["formOptions", "satelliteSelectedFacets"]).filter(x => x.size > 0)
     );
 
     // extract date information
@@ -89,7 +89,7 @@ const updateUrl = store => {
     const viewExtent = state.map.getIn(["view", "extent"]).join(",");
 
     // extract additional info
-    const layerInfo = state.layerInfo.get("isOpen") ? state.layerInfo.get("activeLayerId") : "";
+    const layerInfo = state.view.get("layerInfo") ? state.view.getIn(["layerInfo", "id"]) : "";
 
     const parsed = {
         [appConfig.URL_KEYS.INSITU_LAYERS]: insituLayers || undefined,
