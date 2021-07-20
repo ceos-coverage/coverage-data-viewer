@@ -6,13 +6,13 @@
  */
 
 import Immutable from "immutable";
+import moment from "moment";
 import * as appStrings from "constants/appStrings";
 import * as types from "constants/actionTypes";
 import DataStore from "utils/DataStore";
 import ChartUtil from "utils/ChartUtil";
 import TrackDataUtil from "utils/TrackDataUtil";
 import appConfig from "constants/appConfig";
-import { moment } from "../../node_modules/vis/index-timeline-graph2d";
 
 export function setTrackSelected(trackId, isSelected) {
     return dispatch => {
@@ -83,6 +83,13 @@ export function createChart() {
                 .sortBy(track => track.title)
         );
 
+        dispatch(createChartFromOptions(formOptions));
+    };
+}
+
+export function createChartFromOptions(formOptions) {
+    return (dispatch, getState) => {
+        let state = getState();
         let urls = TrackDataUtil.getUrlsForQuery(
             formOptions.set("target", appConfig.DEFAULT_DECIMATION_RATE).toJS()
         );

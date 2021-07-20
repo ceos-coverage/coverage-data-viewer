@@ -175,6 +175,18 @@ export default class SearchUtil {
         });
     }
 
+    static searchForSingleItem(id) {
+        return new Promise((resolve, reject) => {
+            // attempt resolving the info layer as both a track and satellite layer
+            // because the IDs shouldn't be duplicated between the two
+            Promise.all([this.searchForSingleTrack(id), this.searchForSingleSatellite(id)])
+                .then(items => {
+                    resolve(items.find(i => !!i));
+                })
+                .catch(err => reject(err));
+        });
+    }
+
     static searchForSatelliteSets(options) {
         return new Promise((resolve, reject) => {
             let { area, dateRange, facets } = options;

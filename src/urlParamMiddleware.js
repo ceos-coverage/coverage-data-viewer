@@ -90,6 +90,30 @@ const updateUrl = store => {
 
     // extract additional info
     const layerInfo = state.view.get("layerInfo") ? state.view.getIn(["layerInfo", "id"]) : "";
+    const tabIndex = state.view.get("mainMenuTabIndex");
+
+    // extract charting info
+    const charts = state.chart
+        .get("charts")
+        .reduce((acc, chart) => {
+            const formOptions = chart.get("formOptions");
+            const tracks = formOptions
+                .get("selectedTracks")
+                .map(t => t.id)
+                .join("|");
+            const xAxis = formOptions.get("xAxis");
+            const xAxisLabel = formOptions.get("xAxisLabel");
+            const yAxis = formOptions.get("yAxis");
+            const yAxisLabel = formOptions.get("yAxisLabel");
+            const zAxis = formOptions.get("zAxis") || "";
+            const zAxisLabel = formOptions.get("zAxisLabel") || "";
+
+            acc.push(
+                `${tracks}:${xAxis}|${xAxisLabel}|${yAxis}|${yAxisLabel}|${zAxis}|${zAxisLabel}`
+            );
+            return acc;
+        }, [])
+        .join(",");
 
     const parsed = {
         [appConfig.URL_KEYS.INSITU_LAYERS]: insituLayers || undefined,
@@ -105,7 +129,9 @@ const updateUrl = store => {
         [appConfig.URL_KEYS.SATELLITE_SEARCH_PARAMS]: satelliteSelectedFacets || undefined,
         [appConfig.URL_KEYS.REFERENCE_LAYER]: referenceLayers || undefined,
         [appConfig.URL_KEYS.ANIMATION_DATE_RANGE]: animationRange || undefined,
-        [appConfig.URL_KEYS.LAYER_INFO]: layerInfo || undefined
+        [appConfig.URL_KEYS.LAYER_INFO]: layerInfo || undefined,
+        [appConfig.URL_KEYS.CHARTS]: charts || undefined,
+        [appConfig.URL_KEYS.MENU_TAB]: tabIndex || undefined
     };
     const newurl = constructFullURLWithParams(parsed);
 
@@ -142,7 +168,9 @@ const actionsTriggeringURLUpdate = {
     SET_ANIMATION_DATE_RANGE: true,
     SET_ANIMATION_OPEN: true,
     SET_ANIMATION_SPEED: true,
-    SET_LAYER_INFO: true
+    SET_LAYER_INFO: true,
+    INITIALIZE_CHART: true,
+    SET_MAIN_MENU_TAB_INDEX: true
 };
 
 export const urlParamMiddleware = store => next => action => {

@@ -167,7 +167,9 @@ const APP_CONFIG = Immutable.fromJS({
         SATELLITE_SEARCH_PARAMS: "ssp",
         REFERENCE_LAYER: "rl",
         ANIMATION_DATE_RANGE: "adr",
-        LAYER_INFO: "li"
+        LAYER_INFO: "li",
+        CHARTS: "c",
+        MENU_TAB: "m"
     }
 });
 

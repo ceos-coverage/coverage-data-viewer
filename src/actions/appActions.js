@@ -85,6 +85,10 @@ export function translateUrlParamToActionDispatch(param) {
             );
         case appConfig.URL_KEYS.LAYER_INFO:
             return setLayerInfoFromUrl(param.value);
+        case appConfig.URL_KEYS.CHARTS:
+            return setChartsFromUrl(param.value.split(","));
+        case appConfig.URL_KEYS.MENU_TAB:
+            return setMainMenuTabIndex(parseInt(param.value));
         default:
             return { type: typesCore.NO_ACTION };
     }
@@ -171,18 +175,56 @@ function addSatellitesFromUrl(trackIds) {
 
 function setLayerInfoFromUrl(id) {
     return dispatch => {
-        // attempt resolving the info layer as both a track and satellite layer
-        // because the IDs shouldn't be duplicated between the two
-        console.log(id);
-        SearchUtil.searchForSingleTrack(id).then(layer => {
+        SearchUtil.searchForSingleItem(id).then(layer => {
             if (layer) {
                 dispatch(setLayerInfo(layer));
             }
         });
-        SearchUtil.searchForSingleSatellite(id).then(layer => {
-            if (layer) {
-                dispatch(setLayerInfo(layer));
-            }
+    };
+}
+
+function setChartsFromUrl(chartStrs) {
+    return (dispatch, getState) => {
+        chartStrs.forEach(chartStr => {
+            const ids = chartStr.split(":")[0].split("|");
+            const vars = chartStr.split(":")[1].split("|");
+
+            Promise.all(ids.map(id => SearchUtil.searchForSingleTrack(id))).then(tracks => {
+                const state = getState();
+                let formOptions = state.chart.get("formOptions");
+                formOptions = formOptions.set(
+                    "selectedTracks",
+                    tracks.map(track => {
+                        let title =
+                            track.get("title").size > 0
+                                ? track.getIn(["title", 0])
+                                : track.get("title");
+                        return {
+                            id: track.get("id"),
+                            title: `${title} (id: ${track.get("shortId")})`,
+                            program: track.getIn(["insituMeta", "program"]),
+                            project: track.getIn(["insituMeta", "project"]),
+                            source_id: track.getIn(["insituMeta", "source_id"])
+                        };
+                    })
+                );
+                const xAxis = vars[0];
+                const xAxisLabel = vars[1];
+                const yAxis = vars[2];
+                const yAxisLabel = vars[3];
+                const zAxis = vars[4];
+                const zAxisLabel = vars[5];
+                formOptions = formOptions.set("xAxis", xAxis);
+                formOptions = formOptions.set("xAxisLabel", xAxisLabel);
+                formOptions = formOptions.set("yAxis", yAxis);
+                formOptions = formOptions.set("yAxisLabel", yAxisLabel);
+                if (zAxis && zAxisLabel) {
+                    formOptions = formOptions.set("zAxis", zAxis);
+                    formOptions = formOptions.set("zAxisLabel", zAxisLabel);
+                }
+
+                dispatch(chartActions.createChartFromOptions(formOptions));
+            });
         });
     };
 }
