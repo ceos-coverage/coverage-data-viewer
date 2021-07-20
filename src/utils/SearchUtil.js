@@ -125,6 +125,56 @@ export default class SearchUtil {
         });
     }
 
+    static searchForSingleTrack(id) {
+        return new Promise((resolve, reject) => {
+            const baseUrl = appConfig.URLS.solrBase;
+            const query = ["q=datatype:track", `fq=id:${id}`, "wt=json"];
+            const url = encodeURI(baseUrl + "?" + query.join("&"));
+            MiscUtil.asyncFetch({
+                url: url,
+                handleAs: appStringsCore.FILE_TYPE_JSON
+            }).then(
+                data => {
+                    const results = SearchUtil.processLayerSearchResults([data], { isTrack: true });
+                    if (results.length > 0) {
+                        resolve(results[0]);
+                    } else {
+                        resolve(null);
+                    }
+                },
+                err => {
+                    reject(err);
+                }
+            );
+        });
+    }
+
+    static searchForSingleSatellite(id) {
+        return new Promise((resolve, reject) => {
+            const baseUrl = appConfig.URLS.solrBase;
+            const query = ["q=datatype:layer", `fq=layer_id:${id}`, "wt=json"];
+            const url = encodeURI(baseUrl + "?" + query.join("&"));
+            MiscUtil.asyncFetch({
+                url: url,
+                handleAs: appStringsCore.FILE_TYPE_JSON
+            }).then(
+                data => {
+                    const results = SearchUtil.processSatelliteLayerSearchResults([data], {
+                        isSatellite: true
+                    });
+                    if (results.length > 0) {
+                        resolve(results.find(x => x.get("id") === id));
+                    } else {
+                        resolve(null);
+                    }
+                },
+                err => {
+                    reject(err);
+                }
+            );
+        });
+    }
+
     static searchForSatelliteSets(options) {
         return new Promise((resolve, reject) => {
             let { area, dateRange, facets } = options;

@@ -49,9 +49,9 @@ export function runUrlConfig(params) {
 export function translateUrlParamToActionDispatch(param) {
     switch (param.key) {
         case appConfig.URL_KEYS.INSITU_LAYERS:
-            return { type: typesCore.NO_ACTION };
+            return addTracksFromUrl(param.value.split(","));
         case appConfig.URL_KEYS.SATELLITE_LAYERS:
-            return { type: typesCore.NO_ACTION };
+            return addSatellitesFromUrl(param.value.split(","));
         case appConfig.URL_KEYS.BASEMAP:
             return param.value === "__NONE__"
                 ? mapActionsCore.hideBasemap()
@@ -149,6 +149,27 @@ function setSatelliteSearchFacetsFromUrl(params) {
     };
 }
 
+function addTracksFromUrl(trackIds) {
+    return dispatch => {
+        trackIds.forEach(id => {
+            SearchUtil.searchForSingleTrack(id).then(layer => {
+                dispatch(setTrackSelected(id, true, layer));
+            });
+        });
+    };
+}
+
+function addSatellitesFromUrl(trackIds) {
+    return dispatch => {
+        trackIds.forEach(id => {
+            SearchUtil.searchForSingleSatellite(id).then(layer => {
+                console.log(layer);
+                dispatch(setTrackSelected(id, true, layer));
+            });
+        });
+    };
+}
+
 export function setExtraToolsOpen(open) {
     return { type: types.SET_EXTRA_TOOLS_OPEN, open };
 }
@@ -213,12 +234,12 @@ export function clearSatelliteSearchFacet(facetGroup) {
     return { type: types.CLEAR_SATELLITE_SEARCH_FACET, facetGroup };
 }
 
-export function setTrackSelected(trackId, isSelected) {
+export function setTrackSelected(trackId, isSelected, track = null) {
     return (dispatch, getState) => {
         dispatch({ type: types.SET_TRACK_SELECTED, trackId, isSelected });
         if (isSelected) {
             let state = getState();
-            let track = state.view.getIn(["layerSearch", "searchResults", "results", trackId]);
+            track = track || state.view.getIn(["layerSearch", "searchResults", "results", trackId]);
             let titleField = state.map.get("insituLayerTitleField");
             if (track.get("isTrack")) {
                 dispatch(
