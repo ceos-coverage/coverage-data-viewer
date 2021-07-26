@@ -26,7 +26,6 @@ export function runUrlConfig(params) {
     // one.
 
     return dispatch => {
-        console.log(params);
         const keys = Object.keys(params);
         return Promise.all(
             keys.map(key => {
