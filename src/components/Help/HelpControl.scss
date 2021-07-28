@@ -1,0 +1,39 @@
+.root {
+    position: absolute;
+    left: -6.2rem;
+    top: 0.7rem;
+}
+
+.modalRoot {
+    background: white;
+    width: calc(100% - 150px);
+    max-width: calc(100% - 150px);
+    height: calc(100% - 150px);
+    max-height: calc(100% - 150px);
+}
+
+.content {
+    display: flex;
+    flex-flow: row nowrap;
+    padding: 0px !important;
+    overflow: hidden;
+}
+
+.leftContent {
+    flex-basis: 300px;
+    width: 300px;
+    max-width: 300px;
+    min-width: 300px;
+    overflow: hidden;
+    overflow-y: auto;
+}
+.rightContent {
+    flex: 1 1;
+    overflow: hidden;
+    overflow-y: auto;
+}
+
+.markdown p {
+    margin-bottom: 0px;
+    padding-bottom: 1.4rem;
+}

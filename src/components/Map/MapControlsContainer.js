@@ -27,6 +27,7 @@ import {
     ExtraToolsButton,
     ReferenceLayerPicker
 } from "components/Map";
+import { HelpControl } from "components/Help";
 import stylesCore from "_core/components/Map/MapControlsContainer.scss";
 import styles from "components/Map/MapControlsContainer.scss";
 import displayStyles from "_core/styles/display.scss";
@@ -108,6 +109,15 @@ export class MapControlsContainer extends Component {
                 onMouseLeave={() => this.onMapControlsMouseLeave()}
                 onMouseEnter={() => this.onMapControlsMouseEnter()}
             >
+                <Paper elevation={2} className={stylesCore.buttonGroup}>
+                    <HelpControl
+                        isOpen={this.props.mapControlsToolsOpen}
+                        className={stylesCore.lineButton}
+                        setOpen={isOpen =>
+                            this.props.appActionsCore.setMapControlsToolsOpen(isOpen)
+                        }
+                    />
+                </Paper>
                 <Paper elevation={2} className={stylesCore.buttonGroup}>
                     <MapToolsButton
                         isOpen={this.props.mapControlsToolsOpen}

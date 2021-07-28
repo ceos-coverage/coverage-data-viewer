@@ -6,3 +6,4 @@
  */
 
 export { default as HelpContainer } from "components/Help/HelpContainer.js";
+export { default as HelpControl } from "components/Help/HelpControl.js";
