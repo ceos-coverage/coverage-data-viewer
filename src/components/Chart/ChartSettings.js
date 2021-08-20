@@ -295,7 +295,7 @@ export class ChartSettings extends Component {
                             <TextField
                                 id={this.props.chartId + "_dec_rate"}
                                 value={displayObj.get("decimationRate").toString()}
-                                label="Decimation Target"
+                                label="Downsample Target"
                                 margin="dense"
                                 fullWidth={true}
                                 onChange={evt =>

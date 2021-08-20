@@ -26,6 +26,7 @@
     min-width: 300px;
     overflow: hidden;
     overflow-y: auto;
+    border-right: 1px solid rgba(0, 0, 0, 0.3);
 }
 .rightContent {
     flex: 1 1;
@@ -33,7 +34,21 @@
     overflow-y: auto;
 }
 
+.list {
+    background: white;
+}
+
 .markdown p {
     margin-bottom: 0px;
     padding-bottom: 1.4rem;
+}
+
+.markdown h3 {
+    border-top: 1px solid rgba(0, 0, 0, 0.3);
+    margin-top: 1.2rem;
+    padding-top: 1.2rem;
+}
+
+.markdown h3:first-of-type {
+    border-top: none;
 }

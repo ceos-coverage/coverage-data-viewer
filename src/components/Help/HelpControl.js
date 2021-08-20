@@ -39,22 +39,122 @@ export class HelpControl extends Component {
         cvt.setFlavor("github");
 
         // set up our pages config
-        this.helpPageConfig = {
-            ABOUT: {
-                key: "ABOUT",
+        this.helpPageConfig = [
+            {
                 label: "About",
-                content: cvt.makeHtml(require("default-data/help/about.md"))
+                items: [
+                    {
+                        key: "ABOUT",
+                        label: "About",
+                        content: cvt.makeHtml(require("default-data/help/about.md"))
+                    }
+                ]
             },
-            FAQ: {
-                key: "FAQ",
-                label: "FAQ",
-                content: cvt.makeHtml(require("default-data/help/faq.md"))
+            {
+                label: "Interface",
+                items: [
+                    {
+                        key: "ui-insitu-search",
+                        label: "In-Situ Search",
+                        content: cvt.makeHtml(require("default-data/help/ui-insitu-search.md"))
+                    },
+                    {
+                        key: "ui-satellite-search",
+                        label: "Satellite Search",
+                        content: cvt.makeHtml(require("default-data/help/ui-satellite-search.md"))
+                    },
+                    {
+                        key: "ui-insitu-datasets",
+                        label: "In-Situ Datasets",
+                        content: cvt.makeHtml(require("default-data/help/ui-insitu-datasets.md"))
+                    },
+                    {
+                        key: "ui-satellite-datasets",
+                        label: "Satellite Datasets",
+                        content: cvt.makeHtml(require("default-data/help/ui-satellite-datasets.md"))
+                    },
+                    {
+                        key: "ui-map-controls",
+                        label: "Map Controls",
+                        content: cvt.makeHtml(require("default-data/help/ui-map-controls.md"))
+                    },
+                    {
+                        key: "ui-charting",
+                        label: "Charting",
+                        content: cvt.makeHtml(require("default-data/help/ui-charting.md"))
+                    }
+                ]
+            },
+            {
+                label: "Search",
+                items: [
+                    {
+                        key: "search-insitu",
+                        label: "In-Situ Search",
+                        content: cvt.makeHtml(require("default-data/help/search-insitu.md"))
+                    },
+                    {
+                        key: "search-satellite",
+                        label: "Satellite Search",
+                        content: cvt.makeHtml(require("default-data/help/search-satellite.md"))
+                    }
+                ]
+            },
+            {
+                label: "Mapping",
+                items: [
+                    {
+                        key: "mapping-general",
+                        label: "General Mapping",
+                        content: cvt.makeHtml(require("default-data/help/mapping-general.md"))
+                    },
+                    {
+                        key: "mapping-insitu",
+                        label: "In-Situ Data",
+                        content: cvt.makeHtml(require("default-data/help/mapping-insitu.md"))
+                    },
+                    {
+                        key: "mapping-satellite",
+                        label: "Satellite Data",
+                        content: cvt.makeHtml(require("default-data/help/mapping-satellite.md"))
+                    }
+                ]
+            },
+            {
+                label: "Time & Animation",
+                items: [
+                    {
+                        key: "time-current",
+                        label: "Current Date",
+                        content: cvt.makeHtml(require("default-data/help/time-current.md"))
+                    },
+                    {
+                        key: "time-animation",
+                        label: "Animation",
+                        content: cvt.makeHtml(require("default-data/help/time-animation.md"))
+                    }
+                ]
+            },
+            {
+                label: "Charting",
+                items: [
+                    {
+                        key: "charting-create",
+                        label: "Creating Charts",
+                        content: cvt.makeHtml(require("default-data/help/charting-create.md"))
+                    },
+                    {
+                        key: "charting-usage",
+                        label: "Using Charts",
+                        content: cvt.makeHtml(require("default-data/help/charting-usage.md"))
+                    }
+                ]
             }
-        };
+        ];
 
         this.state = {
             modalOpen: false,
-            helpPage: this.helpPageConfig.FAQ.key
+            helpPage: "ABOUT"
         };
     }
 
@@ -70,10 +170,22 @@ export class HelpControl extends Component {
         this.setState({ modalOpen: false });
     };
 
+    getPage = key => {
+        let ret = null;
+        this.helpPageConfig.forEach(section => {
+            section.items.forEach(item => {
+                if (item.key === key) {
+                    ret = item;
+                }
+            });
+        });
+        return ret;
+    };
+
     render() {
         const { modalOpen, helpPage } = this.state;
 
-        let pageContent = helpPage ? this.helpPageConfig[helpPage].content : "";
+        let pageContent = helpPage ? this.getPage(helpPage).content : "";
 
         let containerClasses = MiscUtil.generateStringFromSet({
             [this.props.className]: typeof this.props.className !== "undefined"
@@ -98,38 +210,22 @@ export class HelpControl extends Component {
                     >
                         <DialogContent classes={{ root: styles.content }}>
                             <div className={styles.leftContent}>
-                                <List>
-                                    <ListSubheader>Help</ListSubheader>
-                                    <ListItem
-                                        button
-                                        selected={helpPage === this.helpPageConfig.ABOUT.key}
-                                        onClick={() =>
-                                            this.selectHelpPage(this.helpPageConfig.ABOUT.key)
-                                        }
-                                    >
-                                        <ListItemIcon>
-                                            <DescriptionIcon />
-                                        </ListItemIcon>
-                                        <ListItemText
-                                            inset
-                                            primary={this.helpPageConfig.ABOUT.label}
-                                        />
-                                    </ListItem>
-                                    <ListItem
-                                        button
-                                        selected={helpPage === this.helpPageConfig.FAQ.key}
-                                        onClick={() =>
-                                            this.selectHelpPage(this.helpPageConfig.FAQ.key)
-                                        }
-                                    >
-                                        <ListItemIcon>
-                                            <DescriptionIcon />
-                                        </ListItemIcon>
-                                        <ListItemText
-                                            inset
-                                            primary={this.helpPageConfig.FAQ.label}
-                                        />
-                                    </ListItem>
+                                <List className={styles.list}>
+                                    {this.helpPageConfig.map((section, i) => (
+                                        <React.Fragment key={`help_sec_${i}`}>
+                                            <ListSubheader>{section.label}</ListSubheader>
+                                            {section.items.map((item, j) => (
+                                                <ListItem
+                                                    key={`help_item_${i}_${j}`}
+                                                    button
+                                                    selected={helpPage === item.key}
+                                                    onClick={() => this.selectHelpPage(item.key)}
+                                                >
+                                                    <ListItemText inset primary={item.label} />
+                                                </ListItem>
+                                            ))}
+                                        </React.Fragment>
+                                    ))}
                                 </List>
                             </div>
                             <div className={styles.rightContent}>
