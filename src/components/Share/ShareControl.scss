@@ -6,15 +6,60 @@
 
 .modalRoot {
     background: white;
-    width: calc(100% - 150px);
-    max-width: calc(100% - 150px);
-    height: calc(100% - 150px);
-    max-height: calc(100% - 150px);
+    width: 315px;
+    max-width: 315px;
+    height: 185px;
+    max-height: 185px;
 }
 
 .content {
     display: flex;
-    flex-flow: row nowrap;
+    flex-flow: column nowrap;
     padding: 0px !important;
     overflow: hidden;
+}
+
+.header {
+    height: 4rem;
+    flex-basis: 4rem;
+    padding: 0.5rem 1rem;
+    background: darken(white, 3%);
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
+    border-bottom: 1px solid darken(white, 10%);
+}
+
+.title {
+    font-weight: 500;
+}
+
+.innerContent {
+    flex: 1 1;
+    padding: 0.7rem;
+}
+
+.subheader {
+    padding-bottom: 0.7rem;
+}
+
+.permalink {
+    width: 100%;
+    font-size: 1.5rem;
+    padding: 0.8rem;
+}
+
+.copyHint {
+    text-align: right;
+}
+
+.footer {
+    height: 3.3rem;
+    flex-basis: 3.3rem;
+    padding: 0.4rem;
+    text-align: right;
+}
+
+.button {
+    padding: 2px 4px;
+    font-size: 1.2rem;
 }

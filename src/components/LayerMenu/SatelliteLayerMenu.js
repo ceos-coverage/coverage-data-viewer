@@ -12,7 +12,6 @@ import { connect } from "react-redux";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
-import { Colorbar } from "_core/components/Colorbar";
 import { SatelliteLayerItem } from "components/LayerMenu";
 import * as mapActionsCore from "_core/actions/mapActions";
 import * as appStringsCore from "_core/constants/appStrings";

@@ -13,34 +13,49 @@ import Tooltip from "@material-ui/core/Tooltip";
 import ShareIcon from "@material-ui/icons/Share";
 import Dialog from "@material-ui/core/Dialog";
 import DialogContent from "@material-ui/core/DialogContent";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import ListSubheader from "@material-ui/core/ListSubheader";
+import Grid from "@material-ui/core/Grid";
+import Button from "@material-ui/core/Button";
+import Typography from "@material-ui/core/Typography";
 import * as appActions from "actions/appActions";
 import MiscUtil from "utils/MiscUtil";
-import { MapButton, MarkdownPage } from "_core/components/Reusables";
+import { MapButton } from "_core/components/Reusables";
 import styles from "components/Share/ShareControl.scss";
 
 export class ShareControl extends Component {
     constructor(props) {
         super(props);
 
+        this.inputRef = React.createRef();
         this.state = {
-            modalOpen: false
+            currentUrl: window.location.href,
+            modalOpen: false,
+            showCopy: false
         };
     }
 
     openModal = () => {
-        this.setState({ modalOpen: true });
+        this.setState({ modalOpen: true, currentUrl: window.location.href });
     };
 
     closeModal = () => {
-        this.setState({ modalOpen: false });
+        this.setState({ modalOpen: false, showCopy: false });
+    };
+
+    copyText = () => {
+        if (this.inputRef.current) {
+            /* Select the text field */
+            this.inputRef.current.select();
+            this.inputRef.current.setSelectionRange(0, 99999); /* For mobile devices */
+
+            /* Copy the text inside the text field */
+            navigator.clipboard.writeText(this.inputRef.current.value);
+
+            this.setState({ showCopy: true });
+        }
     };
 
     render() {
-        const { modalOpen } = this.state;
+        const { modalOpen, showCopy, currentUrl } = this.state;
 
         let containerClasses = MiscUtil.generateStringFromSet({
             [this.props.className]: typeof this.props.className !== "undefined"
@@ -63,7 +78,46 @@ export class ShareControl extends Component {
                         open={modalOpen}
                         onClose={this.closeModal}
                     >
-                        <DialogContent classes={{ root: styles.content }}>boats</DialogContent>
+                        <DialogContent classes={{ root: styles.content }}>
+                            <Grid container className={styles.header} alignItems="center">
+                                <Grid item xs={12}>
+                                    <Typography
+                                        variant="body2"
+                                        color="inherit"
+                                        className={styles.title}
+                                    >
+                                        Share
+                                    </Typography>
+                                </Grid>
+                            </Grid>
+                            <div className={styles.innerContent}>
+                                <Typography variant="body2" className={styles.subheader}>
+                                    copy this URL and share it however you like
+                                </Typography>
+                                <input
+                                    type="text"
+                                    ref={this.inputRef}
+                                    readOnly="readonly"
+                                    value={currentUrl}
+                                    className={styles.permalink}
+                                    onClick={this.copyText}
+                                />
+                                <Typography variant="caption" className={styles.copyHint}>
+                                    {showCopy ? "URL copied to clipboard!" : ""}
+                                </Typography>
+                            </div>
+                            <div className={styles.footer}>
+                                <Button
+                                    variant="text"
+                                    size="small"
+                                    color="primary"
+                                    className={styles.button}
+                                    onClick={this.closeModal}
+                                >
+                                    Done
+                                </Button>
+                            </div>
+                        </DialogContent>
                     </Dialog>
                 ) : null}
             </>
