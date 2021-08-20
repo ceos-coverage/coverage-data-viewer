@@ -17,17 +17,10 @@ import DialogContent from "@material-ui/core/DialogContent";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListSubheader from "@material-ui/core/ListSubheader";
-import DescriptionIcon from "@material-ui/icons/Description";
-import Divider from "@material-ui/core/Divider";
-import Typography from "@material-ui/core/Typography";
 import * as appActions from "actions/appActions";
-import * as appStrings from "_core/constants/appStrings";
-import appConfig from "constants/appConfig";
 import MiscUtil from "utils/MiscUtil";
 import { MapButton, MarkdownPage } from "_core/components/Reusables";
-import mapStylesCore from "_core/components/Map/MapControlsContainer.scss";
 import styles from "components/Help/HelpControl.scss";
 
 export class HelpControl extends Component {

@@ -28,6 +28,7 @@ import {
     ReferenceLayerPicker
 } from "components/Map";
 import { HelpControl } from "components/Help";
+import { ShareControl } from "components/Share";
 import stylesCore from "_core/components/Map/MapControlsContainer.scss";
 import styles from "components/Map/MapControlsContainer.scss";
 import displayStyles from "_core/styles/display.scss";
@@ -110,13 +111,8 @@ export class MapControlsContainer extends Component {
                 onMouseEnter={() => this.onMapControlsMouseEnter()}
             >
                 <Paper elevation={2} className={stylesCore.buttonGroup}>
-                    <HelpControl
-                        isOpen={this.props.mapControlsToolsOpen}
-                        className={stylesCore.lineButton}
-                        setOpen={isOpen =>
-                            this.props.appActionsCore.setMapControlsToolsOpen(isOpen)
-                        }
-                    />
+                    <HelpControl className={stylesCore.lineButton} />
+                    <ShareControl className={stylesCore.lineButton} />
                 </Paper>
                 <Paper elevation={2} className={stylesCore.buttonGroup}>
                     <MapToolsButton
