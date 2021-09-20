@@ -144,23 +144,18 @@ export class HelpControl extends Component {
                 ]
             }
         ];
-
-        this.state = {
-            modalOpen: false,
-            helpPage: "ABOUT"
-        };
     }
 
     selectHelpPage = page => {
-        this.setState({ helpPage: page });
+        this.props.appActions.setHelpPage(page);
     };
 
     openModal = () => {
-        this.setState({ modalOpen: true });
+        this.props.appActions.setHelpPage("ABOUT");
     };
 
     closeModal = () => {
-        this.setState({ modalOpen: false });
+        this.props.appActions.setHelpPage(null);
     };
 
     getPage = key => {
@@ -176,7 +171,9 @@ export class HelpControl extends Component {
     };
 
     render() {
-        const { modalOpen, helpPage } = this.state;
+        const { helpPage } = this.props;
+
+        const isOpen = !!helpPage;
 
         let pageContent = helpPage ? this.getPage(helpPage).content : "";
 
@@ -195,10 +192,10 @@ export class HelpControl extends Component {
                         <HelpIcon />
                     </MapButton>
                 </Tooltip>
-                {modalOpen ? (
+                {isOpen ? (
                     <Dialog
                         classes={{ paper: styles.modalRoot }}
-                        open={modalOpen}
+                        open={isOpen}
                         onClose={this.closeModal}
                     >
                         <DialogContent classes={{ root: styles.content }}>
@@ -237,9 +234,16 @@ export class HelpControl extends Component {
 }
 
 HelpControl.propTypes = {
+    helpPage: PropTypes.string,
     appActions: PropTypes.object.isRequired,
     className: PropTypes.string
 };
+
+function mapStateToProps(state) {
+    return {
+        helpPage: state.view.get("helpPage")
+    };
+}
 
 function mapDispatchToProps(dispatch) {
     return {
@@ -248,6 +252,6 @@ function mapDispatchToProps(dispatch) {
 }
 
 export default connect(
-    null,
+    mapStateToProps,
     mapDispatchToProps
 )(HelpControl);

@@ -60,6 +60,9 @@ export default function view(state = viewState, action, opt_reducer = ViewReduce
         case actionTypes.SET_EXTRA_TOOLS_OPEN:
             return opt_reducer.setExtraToolsOpen(state, action);
 
+        case actionTypes.SET_HELP_PAGE_KEY:
+            return opt_reducer.setHelpPageKey(state, action);
+
         default:
             return viewCore.call(this, state, action, opt_reducer);
     }

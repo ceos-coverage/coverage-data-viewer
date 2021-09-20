@@ -50,7 +50,8 @@ export const viewState = viewStateCore.mergeDeep(
             },
             sortParameter: appConfig.LAYER_SEARCH.DEFAULT_SORT_PARAM,
             selectedTracks: Immutable.Set()
-        }
+        },
+        helpPage: null
     })
 );
 

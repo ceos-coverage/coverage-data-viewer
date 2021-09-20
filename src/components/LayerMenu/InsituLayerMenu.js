@@ -12,7 +12,8 @@ import { connect } from "react-redux";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
-import { InsituLayerItem, InsituLayerItemSort } from "components/LayerMenu";
+import { InsituLayerItem } from "components/LayerMenu";
+import HelpButton from "components/Help/HelpButton";
 import * as mapActions from "actions/mapActions";
 import * as appStrings from "constants/appStrings";
 import MiscUtil from "utils/MiscUtil";
@@ -39,10 +40,13 @@ export class InsituLayerMenu extends Component {
         return (
             <Paper elevation={2} className={styles.root}>
                 <Grid container className={styles.header} alignItems="center">
-                    <Grid item xs={12}>
+                    <Grid item xs={11}>
                         <Typography variant="body2" color="inherit" className={styles.title}>
                             In-Situ Datasets
                         </Typography>
+                    </Grid>
+                    <Grid item xs={1}>
+                        <HelpButton pageKey="ui-insitu-datasets" />
                     </Grid>
                 </Grid>
                 <div className={styles.listWrapper}>

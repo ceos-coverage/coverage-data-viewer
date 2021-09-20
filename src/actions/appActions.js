@@ -483,7 +483,7 @@ export function setSearchSortParameter(param) {
     return { type: types.SET_SEARCH_SORT_PARAM, param };
 }
 
-export function updateFacets(dispatch, getState) {
+function updateFacets(dispatch, getState) {
     let state = getState();
     let searchParams = state.view.getIn(["layerSearch", "formOptions"]);
 
@@ -514,4 +514,8 @@ export function updateFacets(dispatch, getState) {
             console.warn("Facet search Fail: ", err);
         }
     );
+}
+
+export function setHelpPage(pageKey) {
+    return { type: types.SET_HELP_PAGE_KEY, pageKey };
 }

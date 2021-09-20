@@ -177,4 +177,8 @@ export default class ViewReducer extends ViewReducerCore {
     static setLayerInfo(state, action) {
         return state.set("layerInfo", action.layer);
     }
+
+    static setHelpPageKey(state, action) {
+        return state.set("helpPage", action.pageKey);
+    }
 }

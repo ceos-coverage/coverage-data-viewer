@@ -38,6 +38,10 @@
     background: white;
 }
 
+.markdown {
+    max-height: unset;
+}
+
 .markdown p {
     margin-bottom: 0px;
     padding-bottom: 1.4rem;
@@ -51,4 +55,9 @@
 
 .markdown h3:first-of-type {
     border-top: none;
+}
+
+:global(.helpContainer-iframe) {
+    display: block;
+    text-align: center;
 }
