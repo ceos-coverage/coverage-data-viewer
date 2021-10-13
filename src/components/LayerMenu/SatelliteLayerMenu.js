@@ -13,6 +13,7 @@ import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import { SatelliteLayerItem } from "components/LayerMenu";
+import HelpButton from "components/Help/HelpButton";
 import * as mapActionsCore from "_core/actions/mapActions";
 import * as appStringsCore from "_core/constants/appStrings";
 import MiscUtil from "_core/utils/MiscUtil";
@@ -45,10 +46,13 @@ export class SatelliteLayerMenu extends Component {
         return (
             <Paper elevation={2} className={styles.root}>
                 <Grid container className={styles.header} alignItems="center">
-                    <Grid item xs={12}>
+                    <Grid item xs={11}>
                         <Typography variant="body2" color="inherit" className={styles.title}>
                             Satellite Datasets
                         </Typography>
+                    </Grid>
+                    <Grid item xs={1}>
+                        <HelpButton pageKey="ui-satellite-datasets" />
                     </Grid>
                 </Grid>
                 <div className={styles.listWrapper}>

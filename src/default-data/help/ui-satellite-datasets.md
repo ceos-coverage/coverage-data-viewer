@@ -1,5 +1,7 @@
 ### How do I use this satellite datasets menu?
 
+First: for this menu to be populated, you must select one or more satellite datasets from the **SATELLITE DATASETS** search on the right side of the application.
+
 The **Satellite Datasets** menu provides controls for viewing selected satellite datasets on the map. Each item will display:
 
 1. The dataset title

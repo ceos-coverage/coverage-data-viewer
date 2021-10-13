@@ -1,6 +1,6 @@
 ### How do I use this in-situ datasets menu?
 
-First: for this menu to be populated, you must select one or more insitu dataset from the insitu dataset search on the right side of the application.
+First: for this menu to be populated, you must select one or more insitu datasets from the **IN-SITU DATASET** search on the right side of the application.
 
 The **In-Situ Datasets** menu provides controls for viewing selected in-situ datasets on the map. Each item will display:
 

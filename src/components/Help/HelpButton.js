@@ -5,11 +5,15 @@ import { connect } from "react-redux";
 import HelpOutlineIcon from "@material-ui/icons/HelpOutline";
 import { IconButtonSmall } from "_core/components/Reusables";
 import * as appActions from "actions/appActions";
+import styles from "components/Help/HelpButton.scss";
 
 export class HelpButton extends Component {
     render() {
         return (
-            <IconButtonSmall onClick={() => this.props.setHelpPage(this.props.pageKey)}>
+            <IconButtonSmall
+                className={styles.root}
+                onClick={() => this.props.setHelpPage(this.props.pageKey)}
+            >
                 <HelpOutlineIcon />
             </IconButtonSmall>
         );
