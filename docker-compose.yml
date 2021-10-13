@@ -1,5 +1,5 @@
 oiip-data-viewer:
-  image: nginx:1.17.7
+  image: nginx:1.20.1
   ports:
     - 8102:80
   volumes:
