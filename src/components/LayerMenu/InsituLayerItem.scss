@@ -6,9 +6,6 @@
  */
 
 .root {
-    display: flex;
-    flex-flow: row nowrap;
-    align-items: flex-start;
     padding: 0.5rem 1rem;
     width: 100%;
     overflow: hidden;
@@ -21,6 +18,13 @@
 
 .root.visibilityOff {
     color: darken(white, 50%);
+}
+
+.main {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: flex-start;
+    width: 100%;
 }
 
 .leftItem {
@@ -70,4 +74,68 @@
 .loader {
     width: 1.2rem;
     height: 1.2rem;
+}
+
+.bubbleLegend {
+    width: 100%;
+    margin-top: 4px;
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: baseline;
+}
+
+.bubbleWrapper {
+    flex: 1 1;
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+    text-align: center;
+}
+
+.bubble {
+    border-radius: 50%;
+    margin-right: auto;
+    margin-left: auto;
+    border: 1px solid black;
+}
+
+.bubbleSize1 {
+    width: 4px;
+    height: 4px;
+}
+
+.bubbleSize2 {
+    width: 7px;
+    height: 7px;
+}
+
+.bubbleSize3 {
+    width: 10px;
+    height: 10px;
+}
+
+.bubbleSize4 {
+    width: 13px;
+    height: 13px;
+}
+
+.bubbleSize5 {
+    width: 16px;
+    height: 16px;
+}
+
+.bubbleSize6 {
+    width: 19px;
+    height: 19px;
+}
+
+.invisibleBubble {
+    color: none;
+    border: none;
+    opacity: 0;
+}
+
+.value {
+    font-size: 11px;
+    margin-top: 3px;
 }
