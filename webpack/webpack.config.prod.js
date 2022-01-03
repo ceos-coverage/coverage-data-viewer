@@ -13,4 +13,4 @@ const options = {
 const config = require("./webpack.config.helper")(options);
 const modConfig = require("./webpack.config.mod")(config);
 
-export default modConfig;
+module.exports = modConfig;

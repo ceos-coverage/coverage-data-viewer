@@ -8,7 +8,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import ChartIcon from "mdi-material-ui/PollBox";
+import ChartIcon from "mdi-material-ui/ChartBox";
 import { Chart } from "components/Chart";
 import { AreaDefaultMessage } from "components/Reusables";
 import MiscUtil from "utils/MiscUtil";
@@ -17,7 +17,7 @@ import styles from "components/Chart/ChartsList.scss";
 export class ChartsList extends Component {
     render() {
         let containerClasses = MiscUtil.generateStringFromSet({
-            [styles.root]: true
+            [styles.root]: true,
         });
         let chartsList = this.props.charts.reduceRight((acc, chart) => {
             acc.push(<Chart key={"chart_container_" + chart.get("id")} chart={chart} />);
@@ -38,12 +38,12 @@ export class ChartsList extends Component {
 }
 
 ChartsList.propTypes = {
-    charts: PropTypes.object.isRequired
+    charts: PropTypes.object.isRequired,
 };
 
 function mapStateToProps(state) {
     return {
-        charts: state.chart.get("charts")
+        charts: state.chart.get("charts"),
     };
 }
 

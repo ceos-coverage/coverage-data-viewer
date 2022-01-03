@@ -35,6 +35,9 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500|Roboto+Mono:300,400,700">
     <link rel="stylesheet" href="assets/mapskin/css/mapskin.min.css">
     <link rel="stylesheet" href="assets/normalize/normalize.css">
+    <style type="text/css">
+        <%= compilation.assets['inlineStyles.css'].source() %>
+    </style>
 </head>
 
 <body>
@@ -58,12 +61,8 @@
     </div>
     <div id="app" class="app"></div>
     <script src="config.js"></script>
-    <script src="<%= htmlWebpackPlugin.files.js %>"></script>
-    <% if (htmlWebpackPlugin.options.isProduction) { %>
-        <% for (var chunk in htmlWebpackPlugin.files.chunks) { %>
-            <link rel="stylesheet" href="<%= htmlWebpackPlugin.files.chunks[chunk].css %>"></link>
-        <% } %>
-    <% } %>
+    <link rel="stylesheet" href="<%= htmlWebpackPlugin.files.css[0] %>" />
+    <script src="<%= htmlWebpackPlugin.files.js[0] %>"></script>
 </body>
 
 </html>

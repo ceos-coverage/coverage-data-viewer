@@ -1,0 +1,11 @@
+{
+  "minify": true,
+  "options": [
+    "setClasses"
+  ],
+  "feature-detects": [
+    "webgl/webgl",
+    "fullscreen-api",
+    "event/forcetouch"
+  ]
+}

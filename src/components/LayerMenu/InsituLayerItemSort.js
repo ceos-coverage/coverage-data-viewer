@@ -16,7 +16,7 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
 // import SortIcon from "mdi-material-ui/Sort";
-import SortIcon from "mdi-material-ui/SortAlphabetical";
+import SortIcon from "mdi-material-ui/SortAlphabeticalVariant";
 import { IconPopover } from "components/Reusables";
 import * as mapActions from "actions/mapActions";
 import appConfig from "constants/appConfig";
@@ -37,11 +37,11 @@ export class InsituLayerItemSort extends Component {
                                 onChange={(evt, val) =>
                                     this.props.mapActions.setInsituLayerTitles(val)
                                 }
-                                onClick={evt =>
+                                onClick={(evt) =>
                                     this.props.mapActions.setInsituLayerTitles(evt.target.value)
                                 }
                             >
-                                {appConfig.INSITU_TITLE_FIELDS.map(entry => (
+                                {appConfig.INSITU_TITLE_FIELDS.map((entry) => (
                                     <FormControlLabel
                                         key={"sort_" + entry.value}
                                         value={entry.value}
@@ -60,18 +60,18 @@ export class InsituLayerItemSort extends Component {
 
 InsituLayerItemSort.propTypes = {
     sortParam: PropTypes.string.isRequired,
-    mapActions: PropTypes.object.isRequired
+    mapActions: PropTypes.object.isRequired,
 };
 
 function mapStateToProps(state) {
     return {
-        sortParam: state.map.get("insituLayerTitleField")
+        sortParam: state.map.get("insituLayerTitleField"),
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        mapActions: bindActionCreators(mapActions, dispatch)
+        mapActions: bindActionCreators(mapActions, dispatch),
     };
 }
 

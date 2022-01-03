@@ -39,9 +39,9 @@ export class HelpControl extends Component {
                     {
                         key: "ABOUT",
                         label: "About",
-                        content: cvt.makeHtml(require("default-data/help/about.md"))
-                    }
-                ]
+                        content: cvt.makeHtml(require("default-data/help/about.md").default),
+                    },
+                ],
             },
             {
                 label: "Interface",
@@ -49,34 +49,44 @@ export class HelpControl extends Component {
                     {
                         key: "ui-insitu-search",
                         label: "In-Situ Search",
-                        content: cvt.makeHtml(require("default-data/help/ui-insitu-search.md"))
+                        content: cvt.makeHtml(
+                            require("default-data/help/ui-insitu-search.md").default
+                        ),
                     },
                     {
                         key: "ui-satellite-search",
                         label: "Satellite Search",
-                        content: cvt.makeHtml(require("default-data/help/ui-satellite-search.md"))
+                        content: cvt.makeHtml(
+                            require("default-data/help/ui-satellite-search.md").default
+                        ),
                     },
                     {
                         key: "ui-insitu-datasets",
                         label: "In-Situ Datasets",
-                        content: cvt.makeHtml(require("default-data/help/ui-insitu-datasets.md"))
+                        content: cvt.makeHtml(
+                            require("default-data/help/ui-insitu-datasets.md").default
+                        ),
                     },
                     {
                         key: "ui-satellite-datasets",
                         label: "Satellite Datasets",
-                        content: cvt.makeHtml(require("default-data/help/ui-satellite-datasets.md"))
+                        content: cvt.makeHtml(
+                            require("default-data/help/ui-satellite-datasets.md").default
+                        ),
                     },
                     {
                         key: "ui-map-controls",
                         label: "Map Controls",
-                        content: cvt.makeHtml(require("default-data/help/ui-map-controls.md"))
+                        content: cvt.makeHtml(
+                            require("default-data/help/ui-map-controls.md").default
+                        ),
                     },
                     {
                         key: "ui-charting",
                         label: "Charting",
-                        content: cvt.makeHtml(require("default-data/help/ui-charting.md"))
-                    }
-                ]
+                        content: cvt.makeHtml(require("default-data/help/ui-charting.md").default),
+                    },
+                ],
             },
             {
                 label: "Search",
@@ -84,14 +94,18 @@ export class HelpControl extends Component {
                     {
                         key: "search-insitu",
                         label: "In-Situ Search",
-                        content: cvt.makeHtml(require("default-data/help/search-insitu.md"))
+                        content: cvt.makeHtml(
+                            require("default-data/help/search-insitu.md").default
+                        ),
                     },
                     {
                         key: "search-satellite",
                         label: "Satellite Search",
-                        content: cvt.makeHtml(require("default-data/help/search-satellite.md"))
-                    }
-                ]
+                        content: cvt.makeHtml(
+                            require("default-data/help/search-satellite.md").default
+                        ),
+                    },
+                ],
             },
             {
                 label: "Mapping",
@@ -99,19 +113,25 @@ export class HelpControl extends Component {
                     {
                         key: "mapping-general",
                         label: "General Mapping",
-                        content: cvt.makeHtml(require("default-data/help/mapping-general.md"))
+                        content: cvt.makeHtml(
+                            require("default-data/help/mapping-general.md").default
+                        ),
                     },
                     {
                         key: "mapping-insitu",
                         label: "In-Situ Data",
-                        content: cvt.makeHtml(require("default-data/help/mapping-insitu.md"))
+                        content: cvt.makeHtml(
+                            require("default-data/help/mapping-insitu.md").default
+                        ),
                     },
                     {
                         key: "mapping-satellite",
                         label: "Satellite Data",
-                        content: cvt.makeHtml(require("default-data/help/mapping-satellite.md"))
-                    }
-                ]
+                        content: cvt.makeHtml(
+                            require("default-data/help/mapping-satellite.md").default
+                        ),
+                    },
+                ],
             },
             {
                 label: "Time & Animation",
@@ -119,14 +139,16 @@ export class HelpControl extends Component {
                     {
                         key: "time-current",
                         label: "Current Date",
-                        content: cvt.makeHtml(require("default-data/help/time-current.md"))
+                        content: cvt.makeHtml(require("default-data/help/time-current.md").default),
                     },
                     {
                         key: "time-animation",
                         label: "Animation",
-                        content: cvt.makeHtml(require("default-data/help/time-animation.md"))
-                    }
-                ]
+                        content: cvt.makeHtml(
+                            require("default-data/help/time-animation.md").default
+                        ),
+                    },
+                ],
             },
             {
                 label: "Charting",
@@ -134,19 +156,23 @@ export class HelpControl extends Component {
                     {
                         key: "charting-create",
                         label: "Creating Charts",
-                        content: cvt.makeHtml(require("default-data/help/charting-create.md"))
+                        content: cvt.makeHtml(
+                            require("default-data/help/charting-create.md").default
+                        ),
                     },
                     {
                         key: "charting-usage",
                         label: "Using Charts",
-                        content: cvt.makeHtml(require("default-data/help/charting-usage.md"))
-                    }
-                ]
-            }
+                        content: cvt.makeHtml(
+                            require("default-data/help/charting-usage.md").default
+                        ),
+                    },
+                ],
+            },
         ];
     }
 
-    selectHelpPage = page => {
+    selectHelpPage = (page) => {
         this.props.appActions.setHelpPage(page);
     };
 
@@ -158,10 +184,10 @@ export class HelpControl extends Component {
         this.props.appActions.setHelpPage(null);
     };
 
-    getPage = key => {
+    getPage = (key) => {
         let ret = null;
-        this.helpPageConfig.forEach(section => {
-            section.items.forEach(item => {
+        this.helpPageConfig.forEach((section) => {
+            section.items.forEach((item) => {
                 if (item.key === key) {
                     ret = item;
                 }
@@ -178,7 +204,7 @@ export class HelpControl extends Component {
         let pageContent = helpPage ? this.getPage(helpPage).content : "";
 
         let containerClasses = MiscUtil.generateStringFromSet({
-            [this.props.className]: typeof this.props.className !== "undefined"
+            [this.props.className]: typeof this.props.className !== "undefined",
         });
 
         return (
@@ -236,22 +262,19 @@ export class HelpControl extends Component {
 HelpControl.propTypes = {
     helpPage: PropTypes.string,
     appActions: PropTypes.object.isRequired,
-    className: PropTypes.string
+    className: PropTypes.string,
 };
 
 function mapStateToProps(state) {
     return {
-        helpPage: state.view.get("helpPage")
+        helpPage: state.view.get("helpPage"),
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        appActions: bindActionCreators(appActions, dispatch)
+        appActions: bindActionCreators(appActions, dispatch),
     };
 }
 
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(HelpControl);
+export default connect(mapStateToProps, mapDispatchToProps)(HelpControl);

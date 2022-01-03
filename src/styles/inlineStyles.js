@@ -5,4 +5,4 @@
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-require("styles/inlineStyles.scss");
+import "styles/inlineStyles.scss";

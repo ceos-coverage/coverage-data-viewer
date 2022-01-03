@@ -7,11 +7,12 @@
 
 "use strict";
 
-const webpack = require("webpack");
 const path = require("path");
-const ExtractTextPlugin = require("extract-text-webpack-plugin");
+const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-const StyleExtHtmlWebpackPlugin = require("style-ext-html-webpack-plugin");
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const cssAutoPrefixPlugin = require('autoprefixer');
 
 const BASE_DIR = path.resolve("./");
 
@@ -28,22 +29,18 @@ module.exports = options => {
         options.globals
     );
 
-    // extract style modules into a single file
-    const ExtractStyles = new ExtractTextPlugin({ filename: "bundle.css" });
-
-    // extract inline css files
-    const InternalCSS = new ExtractTextPlugin({ filename: "internal.css" });
-
-    // define set of rules for building style modules
-
     // postCSS loader for applying autoprefixer
-    let postCSSLoader = {
-        loader: "postcss-loader",
-        options: {
-            ident: "postcss",
-            sourceMap: !options.isProduction,
-            plugins: loader => [require("autoprefixer")()] // applies autoprefixer to handle cross-browser styling
-        }
+    const postCSSLoader = () => {
+        return {
+            loader: 'postcss-loader',
+            options: {
+                postcssOptions: {
+                    ident: 'postcss',
+                    sourceMap: GLOBALS.__DEV__,
+                    plugins: loader => [cssAutoPrefixPlugin()], // applies autoprefixer to handle cross-browser styling
+                },
+            },
+        };
     };
 
     // CSS loader for loading @import and url() in style files. "enableModules" parameter to enable/disable cssModules
@@ -52,10 +49,13 @@ module.exports = options => {
             loader: "css-loader",
             options: {
                 url: false,
-                modules: enableModules,
+                modules: enableModules
+                    ? {
+                          localIdentName: '[name]__[local]___[hash:base64:5]',
+                      }
+                    : false,
                 importLoaders: 2,
-                localIdentName: "[name]__[local]___[hash:base64:5]",
-                sourceMap: !options.isProduction
+                sourceMap: GLOBALS.__DEV__
             }
         };
     };
@@ -64,52 +64,55 @@ module.exports = options => {
     let sassLoader = {
         loader: "sass-loader",
         options: {
-            ident: "sass",
-            sourceMap: !options.isProduction
+            sourceMap: GLOBALS.__DEV__
         }
     };
 
-    let cssModuleRule = [cssLoader(true), postCSSLoader, sassLoader];
+    // extract style modules into a single file
+    const cssExtractor = new MiniCssExtractPlugin({
+        filename: ({ chunk }) => `${chunk.name.replace('/js/', '/css/')}.css`,
+    });
 
-    // Configure the files to exclude from Istanbul code coverage
-    // If we're not passed the INCLUDE_CORE_TESTS env variable we want to
-    // ignore _core files in code coverage
-    let istanbulExclusions = ["**/*.spec.js", "src/lib/*", "src/_core/tests/data/*"];
-    if (options.globals && !JSON.parse(options.globals.INCLUDE_CORE_TESTS)) {
-        istanbulExclusions.push("src/_core/*");
-    }
-    let babelPlugins =
-        options.node_env !== "test"
-            ? []
-            : [
-                  [
-                      "istanbul",
-                      {
-                          exclude: istanbulExclusions
-                      }
-                  ]
-              ];
+    let cssModuleRule = [MiniCssExtractPlugin.loader, cssLoader(true), postCSSLoader(), sassLoader];
+    let inlineCSSModuleRule = [MiniCssExtractPlugin.loader, cssLoader(false), postCSSLoader(), sassLoader];
 
-    // if in dev mode, use the style loader for hot style replacement
-    // otherwise extract the styles into a file
-    if (!options.isProduction) {
-        cssModuleRule.unshift({
-            loader: "style-loader",
+    // babel loader config
+    const babelLoader = () => {
+        const res = {
+            loader: 'babel-loader',
+
+            // In order to transform the sym-linked node_module packages the
+            // options must be specified in the loader options.
+            // https://github.com/babel/babel-loader/issues/149#issuecomment-417895085
             options: {
-                sourceMap: true,
-                insertInto: "body"
-            }
-        });
-    } else {
-        cssModuleRule = ExtractStyles.extract({ use: cssModuleRule });
-    }
+                ignore: [/\/core-js/],
+                presets: [
+                    [
+                        '@babel/preset-env',
+                        {
+                            targets: GLOBALS.__DEV__ ? 'last 2 versions' : '> 0.5%, not dead',
+                            useBuiltIns: 'entry',
+                            shippedProposals: true,
+                            corejs: 3,
+                        },
+                    ],
+                    '@babel/react',
+                ],
+                plugins: [['@babel/plugin-proposal-class-properties', { loose: false }]],
+                sourceType: 'unambiguous',
+            },
+        };
+
+        return res;
+    };
 
     // define the webpack config
     let webpackConfig = {
-        mode: options.isProduction ? "production" : "development",
-        devtool: options.devtool, // what kind of sourcemap to use
+        target: 'web',
+        mode: !GLOBALS.__DEV__ ? "production" : "development",
+        devtool: GLOBALS.__DEV__ ? 'eval-source-map' : false,
         optimization: {
-            minimize: options.isProduction
+            minimize: !GLOBALS.__DEV__
         },
         entry: {
             index:
@@ -118,34 +121,45 @@ module.exports = options => {
                     : [path.join(BASE_DIR, "src/index")], // Main index.js chunk
             inlineStyles: path.join(BASE_DIR, "src/styles/inlineStyles.js") // Inline style chunk
         },
-        target: "web", // necessary per https://webpack.github.io/docs/testing.html#compile-and-test
         output: {
             path: path.join(BASE_DIR, "dist"), // Note: Physical files are only output by the production build task `npm run build`.
-            publicPath: "", // Location of static assets relative to server root. Basically your standard `static_path` config
-            sourcePrefix: "" // Required for Cesium loading since Cesium uses some multi-line strings in its code and webpack indents them improperly - https://cesiumjs.org/2016/01/26/Cesium-and-Webpack/
+            filename: '[name].js',
+        },
+        devServer: {
+            static: [path.resolve(BASE_DIR, 'dist'), path.resolve(BASE_DIR, 'assets'), path.resolve(BASE_DIR, 'src')],
+            compress: true,
+            port: 9000,
+            hot: false,
         },
         plugins: [
             new webpack.DefinePlugin(GLOBALS),
-            new webpack.optimize.ModuleConcatenationPlugin(),
-            new webpack.LoaderOptionsPlugin({
-                debug: true
-            }),
+            new CleanWebpackPlugin(),
             new HtmlWebpackPlugin({
-                filename: "index.html",
+                title: "COVERAGE",
                 template: path.join(BASE_DIR, "src/index_template.html"),
+                filename: path.join(BASE_DIR, "dist/index.html"),
                 inject: false, // Do not auto inject js and css, we'll take care of that through templating for better control over asset positioning
-                isProduction: options.isProduction,
-                excludeChunks: ["inlineStyles"], // Don't include inlineStyles for templating purposes, we'll take care of that separately with our StyleExtHtmlWebpackPlugin
-                hash: true // Append a query string + the webpack build hash onto the output js and css files for cache busting
+                // excludeChunks: ["inlineStyles"], // Don't include inlineStyles for templating purposes, we'll take care of that separately with our StyleExtHtmlWebpackPlugin
+                hash: true, // Append a query string + the webpack build hash onto the output js and css files for cache busting
+                minify: GLOBALS.__DEV__
+                ? false
+                : {
+                      collapseWhitespace: true,
+                      removeComments: true,
+                      removeRedundantAttributes: true,
+                      removeScriptTypeAttributes: true,
+                      removeStyleLinkTypeAttributes: true,
+                      useShortDoctype: true,
+                      minifyCSS: true,
+                  },
             }),
-            new webpack.NoEmitOnErrorsPlugin(), // do not attempt to produce a bundle if there was an error
-            ExtractStyles // All imported styles are separated out from bundle and moved into a styles.css file which can be loaded in parallel with JS bundle during app load (see https://github.com/webpack/extract-text-webpack-plugin/blob/webpack-1/README.md)
+            cssExtractor,
         ],
         resolve: {
             modules: [path.join(BASE_DIR, "src"), path.join(BASE_DIR, "assets"), "node_modules"], // Tell webpack to look for imports using these prefixes
             extensions: [".js", ".jsx", ".json", ".scss", ".css", ".md"], // Tell webpack that these extensions are optionally specified in the import statements
             alias: {
-                modernizr$: path.join(BASE_DIR, "lib/modernizr/.modernizrrc.js")
+                modernizr$: path.join(BASE_DIR, "lib/modernizr/.modernizrrc")
             }
         },
         module: {
@@ -160,15 +174,8 @@ module.exports = options => {
                         path.join(BASE_DIR, "assets/assets/arc")
                     ],
                     exclude: /\/Cesium(DrawHelper)?\.js$/,
-                    use: [
-                        {
-                            loader: "babel-loader",
-                            query: {
-                                plugins: babelPlugins
-                            }
-                        },
-                        "eslint-loader"
-                    ]
+                    resolve: { fullySpecified: false },
+                    use: babelLoader()
                 },
                 {
                     // Load Cesium.js main JS file using webpack script loader which will not attempt to parse anything in the script
@@ -178,7 +185,7 @@ module.exports = options => {
                 {
                     // Load our inline styles
                     test: path.join(BASE_DIR, "src/styles/inlineStyles.scss"),
-                    use: InternalCSS.extract([cssLoader(false), postCSSLoader, sassLoader])
+                    use: inlineCSSModuleRule,
                 },
                 {
                     // Load our app styles through our main cssModule rules
@@ -197,9 +204,7 @@ module.exports = options => {
                         {
                             loader: "style-loader",
                             options: {
-                                sourceMap: !options.isProduction,
-                                insertInto: "body",
-                                insertAt: "top"
+                                insert: "body",
                             }
                         },
                         {
@@ -223,9 +228,8 @@ module.exports = options => {
                     ]
                 },
                 {
-                    // use special modernizer-loader
                     test: /\.modernizrrc.js$/,
-                    use: "modernizr-loader"
+                    use: "modernizr"
                 },
                 {
                     // Load all markdown using the raw-loader
@@ -236,31 +240,31 @@ module.exports = options => {
                 {
                     // visjs loader
                     test: /node_modules[\\\/]vis[\\\/].*\.js$/,
-                    loader: "babel-loader"
+                    use: babelLoader()
                 }
             ]
         }
     };
 
-    // optimize production build
-    if (options.node_env === "production") {
-        webpackConfig.plugins.push(new webpack.optimize.OccurrenceOrderPlugin());
-    }
+    // // optimize production build
+    // if (options.node_env === "production") {
+    //     webpackConfig.plugins.push(new webpack.optimize.OccurrenceOrderPlugin());
+    // }
 
-    // enable tools for dev
-    if (options.node_env === "development") {
-        webpackConfig.plugins.push(
-            new webpack.HotModuleReplacementPlugin() // Used for Browsersync
-        );
-    }
+    // // enable tools for dev
+    // if (options.node_env === "development") {
+    //     webpackConfig.plugins.push(
+    //         new webpack.HotModuleReplacementPlugin() // Used for Browsersync
+    //     );
+    // }
 
-    // Exclude inlineStyling from test builds
-    if (options.node_env !== "test") {
-        webpackConfig.plugins.push(
-            InternalCSS,
-            new StyleExtHtmlWebpackPlugin({ file: "internal.css", position: "head-bottom" })
-        );
-    }
+    // // Exclude inlineStyling from test builds
+    // if (options.node_env !== "test") {
+    //     webpackConfig.plugins.push(
+    //         InternalCSS,
+    //         new StyleExtHtmlWebpackPlugin({ file: "internal.css", position: "head-bottom" })
+    //     );
+    // }
 
     return webpackConfig;
 };

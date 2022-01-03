@@ -11,10 +11,10 @@ import * as appStrings from "constants/appStrings";
 import * as appStringsCore from "_core/constants/appStrings";
 
 // the config as defined by CMC Core
-const CORE_CONFIG = Immutable.fromJS(coreConfig);
+const CORE_CONFIG = Immutable.fromJS({ ...coreConfig });
 
 // this config is defined in `src/config.js` for in ops changes
-const OPS_CONFIG = Immutable.fromJS(window.APPLICATION_CONFIG);
+const OPS_CONFIG = Immutable.fromJS({ ...window.APPLICATION_CONFIG });
 
 // define your overrides for Core config here
 const APP_CONFIG = Immutable.fromJS({
@@ -23,26 +23,26 @@ const APP_CONFIG = Immutable.fromJS({
         layerConfig: [
             {
                 url: "default-data/layers_oiip.json",
-                type: "json"
+                type: "json",
             },
             {
                 url: "default-data/capabilities_oiip_dev.xml",
-                type: "wmts/xml"
+                type: "wmts/xml",
             },
             {
                 url: "default-data/capabilities_oiip_gibs.xml",
-                type: "wmts/xml"
+                type: "wmts/xml",
             },
             {
                 url: "https://oiip.jpl.nasa.gov/gwc/wmts?Request=GetCapabilities",
-                type: "wmts/xml"
-            }
+                type: "wmts/xml",
+            },
         ],
         paletteConfig: "default-data/palettes_oiip.json",
         geoserverBase: "https://oiip.jpl.nasa.gov/geoserver/ows",
         geoserverVectorTileBase: "https://oiip.jpl.nasa.gov/gwc/wmts",
         solrBase: "https://oiip.jpl.nasa.gov/solr/",
-        decimatorMiddleware: "https://oiip.jpl.nasa.gov/getDecData"
+        decimatorMiddleware: "https://oiip.jpl.nasa.gov/getDecData",
     },
     DEFAULT_WEB_WORKER_NUM: 1,
     DEFAULT_MAP_EXTENT: [-180 * 2, -90, 180 * 2, 90],
@@ -68,7 +68,7 @@ const APP_CONFIG = Immutable.fromJS({
         "#9C27B0", // purple
         "#673AB7", // deep purple
         "#3e2723", // brown
-        "#000000" // black
+        "#000000", // black
     ],
     CHART_SERIES_COLORS: [
         "#00BCD4", // cyan
@@ -78,7 +78,7 @@ const APP_CONFIG = Immutable.fromJS({
         "#4CAF50", // green
         "#FF5722", // deep orange
         "#2196F3", // blue
-        "#000000" // black
+        "#000000", // black
     ],
     CHART_COLORBAR_COLORS: ["#0288d1", "#fffbbc", "#d14702"],
     CHART_DATE_INDICATOR_COLOR: "rgba(0, 0, 0, 0.5)",
@@ -88,36 +88,36 @@ const APP_CONFIG = Immutable.fromJS({
         TIME_SERIES: [
             { value: appStrings.PLOT_STYLES.TIME_SERIES.LINES_AND_DOTS, label: "Lines and Dots" },
             { value: appStrings.PLOT_STYLES.TIME_SERIES.DOTS, label: "Dots Only" },
-            { value: appStrings.PLOT_STYLES.TIME_SERIES.BARS, label: "Bars" }
-        ]
+            { value: appStrings.PLOT_STYLES.TIME_SERIES.BARS, label: "Bars" },
+        ],
     },
     LAYER_SEARCH: {
         FACETS: [
             { value: "variables", label: "Variable" },
             { value: "platform", label: "Platform" },
             { value: "instrument", label: "Sensor" },
-            { value: "program", label: "Program" }
+            { value: "program", label: "Program" },
         ],
         SORT_PARAMS: [
             { value: "instrument", label: "Sensor" },
             { value: "platform", label: "Platform" },
-            { value: "program", label: "Program" }
+            { value: "program", label: "Program" },
         ],
-        DEFAULT_SORT_PARAM: "program"
+        DEFAULT_SORT_PARAM: "program",
     },
     SATELLITE_LAYER_SEARCH: {
         FACETS: [
             { value: "variables", label: "Variable" },
             { value: "platform", label: "Platform" },
             { value: "instrument", label: "Sensor" },
-            { value: "program", label: "Program" }
+            { value: "program", label: "Program" },
         ],
         SORT_PARAMS: [
             { value: "instrument", label: "Sensor" },
             { value: "platform", label: "Platform" },
-            { value: "program", label: "Program" }
+            { value: "program", label: "Program" },
         ],
-        DEFAULT_SORT_PARAM: "program"
+        DEFAULT_SORT_PARAM: "program",
     },
     DATE_INTERVAL: {
         SCALES: [
@@ -126,20 +126,20 @@ const APP_CONFIG = Immutable.fromJS({
             { label: "day", value: "day", abbr: "da" },
             { label: "week", value: "week", abbr: "wk" },
             { label: "month", value: "month", abbr: "mo" },
-            { label: "year", value: "year", abbr: "yr" }
-        ]
+            { label: "year", value: "year", abbr: "yr" },
+        ],
     },
     ANIMATION_SPEEDS: [
         { value: 100, label: "Very Fast (10 fps)" },
         { value: 200, label: "Fast (5 fps)" },
         { value: 500, label: "Medium (2 fps)" },
         { value: 1000, label: "Slow (1 fps)" },
-        { value: 2000, label: "Very Slow (0.5 fps)" }
+        { value: 2000, label: "Very Slow (0.5 fps)" },
     ],
     DEFAULT_ANIMAITON_SPEED: 500,
     INSITU_TITLE_FIELDS: [
         { value: "platform", label: "Platform" },
-        { value: "instrument", label: "Sensor" }
+        { value: "instrument", label: "Sensor" },
     ],
     TILE_LAYER_UPDATE_STRATEGY: appStringsCore.TILE_LAYER_UPDATE_STRATEGIES.LAYER,
     DEFAULT_TILE_TRANSITION_TIME: 0,
@@ -158,12 +158,10 @@ const APP_CONFIG = Immutable.fromJS({
         ANIMATION_DATE_RANGE: "adr",
         LAYER_INFO: "li",
         CHARTS: "c",
-        MENU_TAB: "m"
-    }
+        MENU_TAB: "m",
+    },
 });
 
 // define and export the final config
-const appConfig = CORE_CONFIG.mergeDeep(APP_CONFIG)
-    .mergeDeep(OPS_CONFIG)
-    .toJS();
+const appConfig = CORE_CONFIG.mergeDeep(APP_CONFIG).mergeDeep(OPS_CONFIG).toJS();
 export default appConfig;
