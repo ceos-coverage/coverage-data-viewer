@@ -57,7 +57,7 @@ export default class ChartUtil {
                     axis = axis[0];
                     axis.setExtremes(bounds[0], bounds[1], true, false, {
                         userMin: bounds[0],
-                        userMax: bounds[1]
+                        userMax: bounds[1],
                     });
                     chart.showResetZoom();
                 }
@@ -93,13 +93,13 @@ export default class ChartUtil {
                     let newIndicator = ChartUtil.getDateIndicatorOptions(chart);
 
                     // start line
-                    newIndicator.shapes[0].points = newIndicator.shapes[0].points.map(p => {
+                    newIndicator.shapes[0].points = newIndicator.shapes[0].points.map((p) => {
                         p.x = x;
                         return p;
                     });
 
                     // end line
-                    newIndicator.shapes[1].points = newIndicator.shapes[1].points.map(p => {
+                    newIndicator.shapes[1].points = newIndicator.shapes[1].points.map((p) => {
                         p.x = x2;
                         return p;
                     });
@@ -157,7 +157,7 @@ export default class ChartUtil {
                             {
                                 min: extremes.y.min - scale,
                                 max: extremes.y.max + scale,
-                                reversed: displayOptions.get("yAxisReversed")
+                                reversed: displayOptions.get("yAxisReversed"),
                             },
                             false
                         );
@@ -176,7 +176,7 @@ export default class ChartUtil {
                             type: displayOptions.get("markerType") || series.options.type,
                             color: series.options.color,
                             showInLegend: series.options.showInLegend,
-                            data: data[i]
+                            data: data[i],
                         },
                         false
                     );
@@ -251,11 +251,11 @@ export default class ChartUtil {
                 let chartConfig = this.getBaseChartConfig(options);
 
                 chartConfig.chart.events = {
-                    click: function(e) {
+                    click: function (e) {
                         if (typeof options.onClick === "function") {
                             options.onClick(hoveredPoint);
                         }
-                    }
+                    },
                 };
 
                 chartConfig.series = [];
@@ -268,11 +268,11 @@ export default class ChartUtil {
                         data: data[i],
                         point: {
                             events: {
-                                mouseOver: function(e) {
+                                mouseOver: function (e) {
                                     hoveredPoint = e.target;
-                                }
-                            }
-                        }
+                                },
+                            },
+                        },
                     });
                 }
 
@@ -307,11 +307,11 @@ export default class ChartUtil {
 
                 chartConfig.chart.marginRight = 90;
                 chartConfig.chart.events = {
-                    click: function(e) {
+                    click: function (e) {
                         if (typeof options.onClick === "function") {
                             options.onClick(hoveredPoint);
                         }
-                    }
+                    },
                 };
 
                 chartConfig.yAxis.push({
@@ -324,12 +324,12 @@ export default class ChartUtil {
                         rotation: -90,
                         margin: 30,
                         style: {
-                            fontSize: "1.4rem"
-                        }
+                            fontSize: "1.4rem",
+                        },
                     },
                     labels: {
-                        enabled: false
-                    }
+                        enabled: false,
+                    },
                 });
 
                 chartConfig.colorAxis = {
@@ -337,22 +337,23 @@ export default class ChartUtil {
                     reversed: false,
                     min: dataExtremes.z.min,
                     max: dataExtremes.z.max,
+                    marker: null,
                     stops: [
                         [0, appConfig.CHART_COLORBAR_COLORS[0]],
                         [0.1, appConfig.CHART_COLORBAR_COLORS[0]],
                         [0.5, appConfig.CHART_COLORBAR_COLORS[1]],
                         [0.9, appConfig.CHART_COLORBAR_COLORS[2]],
-                        [1, appConfig.CHART_COLORBAR_COLORS[2]]
+                        [1, appConfig.CHART_COLORBAR_COLORS[2]],
                     ],
                     title: {
                         text: keys.zLabel || keys.zKey,
                         style: {
-                            fontSize: "1.4rem"
-                        }
+                            fontSize: "1.4rem",
+                        },
                     },
                     labels: {
-                        x: 2
-                    }
+                        x: 2,
+                    },
                 };
 
                 chartConfig.legend = {
@@ -360,7 +361,7 @@ export default class ChartUtil {
                     layout: "vertical",
                     align: "right",
                     verticalAlign: "middle",
-                    x: 15
+                    x: 15,
                 };
 
                 chartConfig.series = [];
@@ -368,16 +369,16 @@ export default class ChartUtil {
                     chartConfig.series.push({
                         name: seriesTitles[i],
                         type: displayOptions.get("markerType") || "scatter",
-                        color: appConfig.CHART_SERIES_COLORS[i],
+                        // color: appConfig.CHART_SERIES_COLORS[i],
                         showInLegend: false,
                         data: data[i],
                         point: {
                             events: {
-                                mouseOver: function(e) {
+                                mouseOver: function (e) {
                                     hoveredPoint = e.target;
-                                }
-                            }
-                        }
+                                },
+                            },
+                        },
                     });
                 }
 
@@ -412,11 +413,11 @@ export default class ChartUtil {
                 let chartConfig = this.getBaseChartConfig(options);
 
                 chartConfig.chart.events = {
-                    click: function(e) {
+                    click: function (e) {
                         if (typeof options.onClick === "function") {
                             options.onClick(hoveredPoint);
                         }
-                    }
+                    },
                 };
 
                 chartConfig.title.text = "";
@@ -429,14 +430,14 @@ export default class ChartUtil {
                     verticalAlign: "top",
                     y: -8,
                     x: -12,
-                    labelFormatter: function() {
+                    labelFormatter: function () {
                         return (
                             "<span style='font-size:1.4rem;font-weight:500;'>" +
                             this.name +
                             "</span>"
                         );
                     },
-                    useHTML: true
+                    useHTML: true,
                 };
 
                 chartConfig.series = [];
@@ -449,11 +450,11 @@ export default class ChartUtil {
                         data: data[i],
                         point: {
                             events: {
-                                mouseOver: function(e) {
+                                mouseOver: function (e) {
                                     hoveredPoint = e.target;
-                                }
-                            }
-                        }
+                                },
+                            },
+                        },
                     });
                 }
 
@@ -488,11 +489,11 @@ export default class ChartUtil {
 
                 chartConfig.chart.marginRight = 90;
                 chartConfig.chart.events = {
-                    click: function(e) {
+                    click: function (e) {
                         if (typeof options.onClick === "function") {
                             options.onClick(hoveredPoint);
                         }
-                    }
+                    },
                 };
 
                 chartConfig.yAxis.push({
@@ -505,12 +506,12 @@ export default class ChartUtil {
                         rotation: -90,
                         margin: 30,
                         style: {
-                            fontSize: "1.4rem"
-                        }
+                            fontSize: "1.4rem",
+                        },
                     },
                     labels: {
-                        enabled: false
-                    }
+                        enabled: false,
+                    },
                 });
 
                 chartConfig.colorAxis = {
@@ -518,22 +519,23 @@ export default class ChartUtil {
                     reversed: false,
                     min: dataExtremes.z.min,
                     max: dataExtremes.z.max,
+                    marker: null,
                     stops: [
                         [0, appConfig.CHART_COLORBAR_COLORS[0]],
                         [0.1, appConfig.CHART_COLORBAR_COLORS[0]],
                         [0.5, appConfig.CHART_COLORBAR_COLORS[1]],
                         [0.9, appConfig.CHART_COLORBAR_COLORS[2]],
-                        [1, appConfig.CHART_COLORBAR_COLORS[2]]
+                        [1, appConfig.CHART_COLORBAR_COLORS[2]],
                     ],
                     title: {
                         text: keys.zLabel || keys.zKey,
                         style: {
-                            fontSize: "1.4rem"
-                        }
+                            fontSize: "1.4rem",
+                        },
                     },
                     labels: {
-                        x: 2
-                    }
+                        x: 2,
+                    },
                 };
 
                 chartConfig.legend = {
@@ -541,7 +543,7 @@ export default class ChartUtil {
                     layout: "vertical",
                     align: "right",
                     verticalAlign: "middle",
-                    x: 15
+                    x: 15,
                 };
                 // chartConfig.legend = {
                 //     enabled: true,
@@ -556,16 +558,16 @@ export default class ChartUtil {
                     chartConfig.series.push({
                         name: seriesTitles[i],
                         type: displayOptions.get("markerType") || "scatter",
-                        color: appConfig.CHART_SERIES_COLORS[i],
+                        // color: appConfig.CHART_SERIES_COLORS[i],
                         showInLegend: false,
                         data: data[i],
                         point: {
                             events: {
-                                mouseOver: function(e) {
+                                mouseOver: function (e) {
                                     hoveredPoint = e.target;
-                                }
-                            }
-                        }
+                                },
+                            },
+                        },
                     });
                 }
 
@@ -607,7 +609,7 @@ export default class ChartUtil {
                 spacingBottom: 10,
                 marginTop: 16 * (seriesTitles.length + 1) + 20,
                 style: {
-                    fontFamily: "'Roboto', Helvetica, Arial, sans-serif"
+                    fontFamily: "'Roboto', Helvetica, Arial, sans-serif",
                 },
                 resetZoomButton: {
                     relativeTo: "chart",
@@ -615,22 +617,22 @@ export default class ChartUtil {
                         align: "left",
                         verticalAlign: "bottom",
                         x: 10,
-                        y: -30
+                        y: -30,
                     },
                     theme: {
                         style: {
                             fontSize: "1.2rem",
                             fontWeight: 500,
-                            textTransform: "uppercase"
-                        }
-                    }
-                }
+                            textTransform: "uppercase",
+                        },
+                    },
+                },
             },
 
             annotations: [ChartUtil.getDateIndicatorOptions()],
 
             boost: {
-                seriesThreshold: 1 // always use boost for consistency
+                seriesThreshold: 1, // always use boost for consistency
             },
 
             xAxis: {
@@ -641,8 +643,8 @@ export default class ChartUtil {
                 title: {
                     text: keys.xLabel || keys.xKey,
                     style: {
-                        fontSize: "1.4rem"
-                    }
+                        fontSize: "1.4rem",
+                    },
                 },
                 dateTimeLabelFormats: {
                     millisecond: "%H:%M:%S.%L",
@@ -652,16 +654,16 @@ export default class ChartUtil {
                     day: "%b %e",
                     week: "%b %e",
                     month: "%b, %Y",
-                    year: "%Y"
+                    year: "%Y",
                 },
                 labels: {
                     style: {
-                        textAlign: "center"
+                        textAlign: "center",
                     },
-                    formatter: this.getTickFormatter(keys.xKey.indexOf("time") !== -1)
+                    formatter: this.getTickFormatter(keys.xKey.indexOf("time") !== -1),
                 },
                 events: {
-                    afterSetExtremes: zoomEvent => {
+                    afterSetExtremes: (zoomEvent) => {
                         if (zoomEvent.type === "setExtremes") {
                             if (
                                 typeof zoomEvent.userMin === "undefined" &&
@@ -672,8 +674,8 @@ export default class ChartUtil {
                                 onZoom([zoomEvent.userMin, zoomEvent.userMax]);
                             }
                         }
-                    }
-                }
+                    },
+                },
             },
 
             yAxis: [
@@ -689,13 +691,13 @@ export default class ChartUtil {
                     title: {
                         text: keys.yLabel || keys.yKey,
                         style: {
-                            fontSize: "1.4rem"
-                        }
+                            fontSize: "1.4rem",
+                        },
                     },
                     labels: {
-                        x: -4
-                    }
-                }
+                        x: -4,
+                    },
+                },
             ],
 
             title: {
@@ -705,8 +707,8 @@ export default class ChartUtil {
                 y: 18,
                 style: {
                     fontSize: "1.4rem",
-                    fontWeight: "500"
-                }
+                    fontWeight: "500",
+                },
             },
 
             subtitle: {
@@ -718,24 +720,24 @@ export default class ChartUtil {
                 style: {
                     fontSize: "1.2rem",
                     fontWeight: "300",
-                    fontStyle: "italic"
-                }
+                    fontStyle: "italic",
+                },
             },
 
             credits: {
-                enabled: false
+                enabled: false,
             },
 
             legend: {
-                enabled: false
+                enabled: false,
             },
 
             exporting: {
                 buttons: {
                     contextButton: {
-                        enabled: false
-                    }
-                }
+                        enabled: false,
+                    },
+                },
             },
 
             plotOptions: {
@@ -743,10 +745,10 @@ export default class ChartUtil {
                     findNearestPointBy: "xy",
                     marker: {
                         radius: 3,
-                        symbol: "circle"
+                        symbol: "circle",
                     },
-                    lineWidth: 3
-                }
+                    lineWidth: 3,
+                },
             },
 
             tooltip: {
@@ -761,10 +763,10 @@ export default class ChartUtil {
                 padding: 0,
                 backgroundColor: "rgba(247,247,247,0)",
                 borderWidth: 0,
-                positioner: function(labelWidth, labelHeight, point) {
+                positioner: function (labelWidth, labelHeight, point) {
                     return {
                         x: 6,
-                        y: 16 * seriesTitles.length + 6
+                        y: 16 * seriesTitles.length + 6,
                     };
                     // return {
                     //     x: this.chart.plotLeft + 1,
@@ -772,11 +774,11 @@ export default class ChartUtil {
                     // };
                 },
                 style: {
-                    fontSize: "1.2rem"
+                    fontSize: "1.2rem",
                 },
                 useHTML: true,
-                formatter: this.getTooltipFormatter(keys)
-            }
+                formatter: this.getTooltipFormatter(keys),
+            },
         };
     }
 
@@ -800,7 +802,7 @@ export default class ChartUtil {
                 type: options.format,
                 width: options.width,
                 sourceWidth: appConfig.CHART_WIDTH,
-                sourceHeight: appConfig.CHART_HEIGHT
+                sourceHeight: appConfig.CHART_HEIGHT,
             });
         } else {
             console.warn(
@@ -811,12 +813,11 @@ export default class ChartUtil {
     }
 
     static getTooltipFormatter(keys) {
-        return function() {
+        return function () {
             if (typeof this.point !== "undefined") {
                 let point = this.point;
                 let x = point.x;
                 let y = point.y;
-                let z = point.value;
 
                 let zText =
                     typeof keys.zKey !== "undefined"
@@ -825,7 +826,7 @@ export default class ChartUtil {
                           keys.zKey +
                           ": </span>" +
                           "<span class='tooltip-value'>" +
-                          parseFloat(parseFloat(z).toFixed(4)) +
+                          parseFloat(parseFloat(point.series.zData[point.index]).toFixed(4)) +
                           "</span>" +
                           "</div>"
                         : "";
@@ -857,7 +858,7 @@ export default class ChartUtil {
     }
 
     static getTickFormatter(isTimeAxis = false) {
-        return function() {
+        return function () {
             if (this.isFirst && isTimeAxis) {
                 let timeDiff = this.axis.paddedTicks[1] - this.axis.paddedTicks[0];
                 if (timeDiff >= 1.577e10) {
@@ -885,22 +886,55 @@ export default class ChartUtil {
 
     static getDateIndicatorOptions(chart) {
         let lPoint = { x: 0, y: 0 };
-        let startLine = [{ x: 0, y: 0 }, { x: 0, y: 250 }];
-        let midLineTop = [{ x: 0, y: 1 }, { x: 0, y: 1 }];
-        let midLineBottom = [{ x: 0, y: 250 }, { x: 0, y: 250 }];
-        let endLine = [{ x: 0, y: 0 }, { x: 0, y: 250 }];
+        let startLine = [
+            { x: 0, y: 0 },
+            { x: 0, y: 250 },
+        ];
+        let midLineTop = [
+            { x: 0, y: 1 },
+            { x: 0, y: 1 },
+        ];
+        let midLineBottom = [
+            { x: 0, y: 250 },
+            { x: 0, y: 250 },
+        ];
+        let endLine = [
+            { x: 0, y: 0 },
+            { x: 0, y: 250 },
+        ];
         if (typeof chart !== "undefined") {
             let bbox = chart.plotBoxClip.renderer.plotBox;
             if (chart.options.chart.inverted) {
                 lPoint = { x: 0, y: bbox.width };
-                startLine = [{ x: 0, y: 0 }, { x: 0, y: bbox.width }];
-                midLineTop = [{ x: 0, y: bbox.width }, { x: 0, y: bbox.width }];
-                midLineBottom = [{ x: 0, y: 0 }, { x: 0, y: 0 }];
-                endLine = [{ x: 0, y: 0 }, { x: 0, y: bbox.width }];
+                startLine = [
+                    { x: 0, y: 0 },
+                    { x: 0, y: bbox.width },
+                ];
+                midLineTop = [
+                    { x: 0, y: bbox.width },
+                    { x: 0, y: bbox.width },
+                ];
+                midLineBottom = [
+                    { x: 0, y: 0 },
+                    { x: 0, y: 0 },
+                ];
+                endLine = [
+                    { x: 0, y: 0 },
+                    { x: 0, y: bbox.width },
+                ];
             } else {
-                startLine = [{ x: 0, y: 0 }, { x: 0, y: bbox.height }];
-                midLineBottom = [{ x: 0, y: bbox.height - 1 }, { x: 0, y: bbox.height - 1 }];
-                endLine = [{ x: 0, y: 0 }, { x: 0, y: bbox.height }];
+                startLine = [
+                    { x: 0, y: 0 },
+                    { x: 0, y: bbox.height },
+                ];
+                midLineBottom = [
+                    { x: 0, y: bbox.height - 1 },
+                    { x: 0, y: bbox.height - 1 },
+                ];
+                endLine = [
+                    { x: 0, y: 0 },
+                    { x: 0, y: bbox.height },
+                ];
             }
         }
         return {
@@ -911,31 +945,31 @@ export default class ChartUtil {
                     type: "path",
                     fill: "none",
                     stroke: appConfig.CHART_DATE_INDICATOR_COLOR,
-                    strokeWidth: 2
+                    strokeWidth: 2,
                 },
                 {
                     points: endLine,
                     type: "path",
                     fill: "none",
                     stroke: appConfig.CHART_DATE_INDICATOR_COLOR,
-                    strokeWidth: 2
+                    strokeWidth: 2,
                 },
                 {
                     points: midLineTop,
                     type: "path",
                     fill: "none",
                     stroke: appConfig.CHART_DATE_INDICATOR_COLOR,
-                    strokeWidth: 2
+                    strokeWidth: 2,
                 },
                 {
                     points: midLineBottom,
                     type: "path",
                     fill: "none",
                     stroke: appConfig.CHART_DATE_INDICATOR_COLOR,
-                    strokeWidth: 2
-                }
+                    strokeWidth: 2,
+                },
             ],
-            visible: false
+            visible: false,
         };
     }
 }
