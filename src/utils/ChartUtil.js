@@ -369,7 +369,7 @@ export default class ChartUtil {
                     chartConfig.series.push({
                         name: seriesTitles[i],
                         type: displayOptions.get("markerType") || "scatter",
-                        // color: appConfig.CHART_SERIES_COLORS[i],
+                        color: appConfig.CHART_SERIES_COLORS[i],
                         showInLegend: false,
                         data: data[i],
                         point: {
@@ -558,7 +558,7 @@ export default class ChartUtil {
                     chartConfig.series.push({
                         name: seriesTitles[i],
                         type: displayOptions.get("markerType") || "scatter",
-                        // color: appConfig.CHART_SERIES_COLORS[i],
+                        color: appConfig.CHART_SERIES_COLORS[i],
                         showInLegend: false,
                         data: data[i],
                         point: {

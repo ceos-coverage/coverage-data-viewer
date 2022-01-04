@@ -6,7 +6,7 @@ import MiscUtil from "_core/utils/MiscUtil";
 import appConfig from "constants/appConfig";
 import moment from "moment";
 
-const constructFullURLWithParams = params => {
+const constructFullURLWithParams = (params) => {
     // Return full URL for params where params is an object of
     // url key -> values
     return (
@@ -19,7 +19,7 @@ const constructFullURLWithParams = params => {
     );
 };
 
-const updateUrl = store => {
+const updateUrl = (store) => {
     const state = store.getState();
 
     if (!state.view.get("initialLoadComplete")) {
@@ -31,15 +31,15 @@ const updateUrl = store => {
     const searchSelectedArea = layerSearch.getIn(["formOptions", "selectedArea"]).join(",");
     const searchDateRange = [
         layerSearch.getIn(["formOptions", "startDate"]),
-        layerSearch.getIn(["formOptions", "endDate"])
+        layerSearch.getIn(["formOptions", "endDate"]),
     ]
-        .map(x => moment.utc(x).format("YYYY-MM-DD"))
+        .map((x) => moment.utc(x).format("YYYY-MM-DD"))
         .join(",");
     const trackSelectedFacets = JSON.stringify(
-        layerSearch.getIn(["formOptions", "trackSelectedFacets"]).filter(x => x.size > 0)
+        layerSearch.getIn(["formOptions", "trackSelectedFacets"]).filter((x) => x.size > 0)
     );
     const satelliteSelectedFacets = JSON.stringify(
-        layerSearch.getIn(["formOptions", "satelliteSelectedFacets"]).filter(x => x.size > 0)
+        layerSearch.getIn(["formOptions", "satelliteSelectedFacets"]).filter((x) => x.size > 0)
     );
 
     // extract date information
@@ -50,7 +50,7 @@ const updateUrl = store => {
     const animationOpen = animationInfo.get("isOpen");
     const animationRange = animationOpen
         ? [animationInfo.get("startDate"), animationInfo.get("endDate")]
-              .map(x => moment.utc(x).toISOString())
+              .map((x) => moment.utc(x).toISOString())
               .join(",")
         : undefined;
 
@@ -58,31 +58,31 @@ const updateUrl = store => {
     const layers = state.map.get("layers");
     const basemapLayers = layers
         .get(appStringsCore.LAYER_GROUP_TYPE_BASEMAP)
-        .filter(layer => !layer.get("isDisabled") && layer.get("isActive"))
+        .filter((layer) => !layer.get("isDisabled") && layer.get("isActive"))
         .toList()
         .sort(MiscUtil.getImmutableObjectSort("displayIndex"))
-        .map(x => x.get("id"))
+        .map((x) => x.get("id"))
         .join(",");
     const satelliteLayers = layers
         .get(appStringsCore.LAYER_GROUP_TYPE_DATA)
-        .filter(layer => !layer.get("isDisabled") && layer.get("isActive"))
+        .filter((layer) => !layer.get("isDisabled") && layer.get("isActive"))
         .toList()
         .sort(MiscUtil.getImmutableObjectSort("displayIndex"))
-        .map(x => x.get("id"))
+        .map((x) => x.get("id"))
         .join(",");
     const insituLayers = layers
         .get(appStrings.LAYER_GROUP_TYPE_INSITU_DATA)
-        .filter(layer => !layer.get("isDisabled") && layer.get("isActive"))
+        .filter((layer) => !layer.get("isDisabled") && layer.get("isActive"))
         .toList()
         .sort(MiscUtil.getImmutableObjectSort("displayIndex"))
-        .map(x => x.get("id"))
+        .map((x) => x.get("id"))
         .join(",");
     const referenceLayers = layers
         .get(appStrings.LAYER_GROUP_TYPE_DATA_REFERENCE)
-        .filter(layer => !layer.get("isDisabled") && layer.get("isActive"))
+        .filter((layer) => !layer.get("isDisabled") && layer.get("isActive"))
         .toList()
         .sort(MiscUtil.getImmutableObjectSort("displayIndex"))
-        .map(x => x.get("id"))
+        .map((x) => x.get("id"))
         .join(",");
 
     // extract map view info
@@ -99,7 +99,7 @@ const updateUrl = store => {
             const formOptions = chart.get("formOptions");
             const tracks = formOptions
                 .get("selectedTracks")
-                .map(t => t.id)
+                .map((t) => t.id)
                 .join("|");
             const xAxis = formOptions.get("xAxis");
             const xAxisLabel = formOptions.get("xAxisLabel");
@@ -131,7 +131,7 @@ const updateUrl = store => {
         [appConfig.URL_KEYS.ANIMATION_DATE_RANGE]: animationRange || undefined,
         [appConfig.URL_KEYS.LAYER_INFO]: layerInfo || undefined,
         [appConfig.URL_KEYS.CHARTS]: charts || undefined,
-        [appConfig.URL_KEYS.MENU_TAB]: tabIndex || undefined
+        [appConfig.URL_KEYS.MENU_TAB]: tabIndex || undefined,
     };
     const newurl = constructFullURLWithParams(parsed);
 
@@ -140,7 +140,7 @@ const updateUrl = store => {
 
 const throttledUpdateUrl = throttle(updateUrl, 150, {
     leading: true,
-    trailing: true
+    trailing: true,
 });
 
 const actionsTriggeringURLUpdate = {
@@ -170,10 +170,11 @@ const actionsTriggeringURLUpdate = {
     SET_ANIMATION_SPEED: true,
     SET_LAYER_INFO: true,
     INITIALIZE_CHART: true,
-    SET_MAIN_MENU_TAB_INDEX: true
+    SET_MAIN_MENU_TAB_INDEX: true,
+    CLOSE_CHART: true,
 };
 
-export const urlParamMiddleware = store => next => action => {
+export const urlParamMiddleware = (store) => (next) => (action) => {
     const returnValue = next(action);
     if (actionsTriggeringURLUpdate[action.type]) {
         throttledUpdateUrl(store);

@@ -38,7 +38,7 @@ export class Chart extends Component {
             chartType: this.props.chart.get("chartType"),
             seriesTitles: this.props.chart
                 .getIn(["formOptions", "selectedTracks"])
-                .map(track => track.title)
+                .map((track) => track.title)
                 .toJS(),
             seriesNum: this.props.chart.getIn(["formOptions", "selectedTracks"]).size,
             // note: "decimation unknown",
@@ -48,12 +48,12 @@ export class Chart extends Component {
                 yKey: this.props.chart.getIn(["formOptions", "yAxis"]),
                 yLabel: this.props.chart.getIn(["formOptions", "yAxisLabel"]),
                 zKey: this.props.chart.getIn(["formOptions", "zAxis"]),
-                zLabel: this.props.chart.getIn(["formOptions", "zAxisLabel"])
+                zLabel: this.props.chart.getIn(["formOptions", "zAxisLabel"]),
             },
-            onZoom: bounds => {
+            onZoom: (bounds) => {
                 this.props.chartActions.zoomChartData(this.props.chart.get("id"), bounds);
             },
-            onClick: evt => {
+            onClick: (evt) => {
                 if (!this.props.chart.getIn(["displayOptions", "linkToDateInterval"])) {
                     let axisIsTime =
                         this.props.chart
@@ -68,7 +68,7 @@ export class Chart extends Component {
                         }
                     }
                 }
-            }
+            },
         });
     }
 
@@ -84,12 +84,12 @@ export class Chart extends Component {
                     ? this.refs.chartWrapper
                     : document.getElementById(this.props.chart.get("nodeId"));
             if (prevProps.chart !== this.props.chart) {
-                let dec_size = this.props.chart.get("data").reduce((acc, data) => {
-                    return acc + data.meta.dec_size;
-                }, 0);
-                let sub_size = this.props.chart.get("data").reduce((acc, data) => {
-                    return acc + data.meta.sub_size;
-                }, 0);
+                // let dec_size = this.props.chart.get("data").reduce((acc, data) => {
+                //     return acc + data.meta.dec_size;
+                // }, 0);
+                // let sub_size = this.props.chart.get("data").reduce((acc, data) => {
+                //     return acc + data.meta.sub_size;
+                // }, 0);
 
                 // calculate extremes across all available data
                 let xKey = this.props.chart.getIn(["formOptions", "xAxis"]);
@@ -98,7 +98,7 @@ export class Chart extends Component {
                 let extremes = {
                     x: { min: Number.MAX_VALUE, max: -Number.MAX_VALUE },
                     y: { min: Number.MAX_VALUE, max: -Number.MAX_VALUE },
-                    z: { min: Number.MAX_VALUE, max: -Number.MAX_VALUE }
+                    z: { min: Number.MAX_VALUE, max: -Number.MAX_VALUE },
                 };
                 extremes = this.props.chart.get("data").reduce((acc, data) => {
                     if (data.meta.extremes[xKey].min < acc.x.min) {
@@ -140,7 +140,7 @@ export class Chart extends Component {
                     extremes.z.max = this.props.chart.getIn(["displayOptions", "customZMax"]);
                 }
 
-                let data = this.props.chart.get("data").map(data => data.data);
+                let data = this.props.chart.get("data").map((data) => data.data);
 
                 ChartUtil.updateData({
                     node: node,
@@ -148,12 +148,12 @@ export class Chart extends Component {
                     dataExtremes: extremes,
                     // note: ((dec_size / sub_size) * 100).toFixed(1) + "% of points shown",
                     chartType: this.props.chart.get("chartType"),
-                    displayOptions: this.props.chart.get("displayOptions")
+                    displayOptions: this.props.chart.get("displayOptions"),
                 });
                 ChartUtil.setDateIndicator({
                     node: node,
                     date: this.props.mapDate,
-                    intervalDate: this.props.mapIntervalDate
+                    intervalDate: this.props.mapIntervalDate,
                 });
             } else if (
                 prevProps.mapDate !== this.props.mapDate ||
@@ -162,7 +162,7 @@ export class Chart extends Component {
                 ChartUtil.setDateIndicator({
                     node: node,
                     date: this.props.mapDate,
-                    intervalDate: this.props.mapIntervalDate
+                    intervalDate: this.props.mapIntervalDate,
                 });
             }
         }
@@ -174,8 +174,8 @@ export class Chart extends Component {
                 [styles.chart]: true,
                 [styles.dateLinked]: this.props.chart.getIn([
                     "displayOptions",
-                    "linkToDateInterval"
-                ])
+                    "linkToDateInterval",
+                ]),
             });
             return (
                 <div
@@ -200,7 +200,7 @@ export class Chart extends Component {
             [styles.loadingWrapper]: true,
             [styles.loadingHidden]:
                 !this.props.chart.get("dataLoading") &&
-                !this.props.chart.getIn(["warning", "active"])
+                !this.props.chart.getIn(["warning", "active"]),
         });
 
         let height = this.getHeight();
@@ -242,24 +242,21 @@ Chart.propTypes = {
     mapDate: PropTypes.object.isRequired,
     chartActions: PropTypes.object.isRequired,
     mapActions: PropTypes.object.isRequired,
-    mapIntervalDate: PropTypes.object.isRequired
+    mapIntervalDate: PropTypes.object.isRequired,
 };
 
 function mapStateToProps(state) {
     return {
         mapDate: state.map.get("date"),
-        mapIntervalDate: state.map.get("intervalDate")
+        mapIntervalDate: state.map.get("intervalDate"),
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
         chartActions: bindActionCreators(chartActions, dispatch),
-        mapActions: bindActionCreators(mapActions, dispatch)
+        mapActions: bindActionCreators(mapActions, dispatch),
     };
 }
 
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(Chart);
+export default connect(mapStateToProps, mapDispatchToProps)(Chart);
