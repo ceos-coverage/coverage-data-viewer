@@ -31,6 +31,7 @@
 .rightContent {
     flex: 1 1;
     overflow: hidden;
+    overflow-x: auto;
     overflow-y: auto;
 }
 
@@ -49,15 +50,37 @@
 
 .markdown h3 {
     border-top: 1px solid rgba(0, 0, 0, 0.3);
-    margin-top: 1.2rem;
-    padding-top: 1.2rem;
+    padding-top: 3.6rem;
 }
 
 .markdown h3:first-of-type {
     border-top: none;
+    padding-top: 1.2rem;
 }
 
 :global(.helpContainer-iframe) {
     display: block;
     text-align: center;
+}
+
+:global(.helpContainer-image) {
+    display: block;
+    width: 100%;
+    position: relative;
+    margin-bottom: 2.4rem;
+    padding: 0px 2.4rem;
+    &:global(.left) {
+        text-align: left;
+    }
+    &:global(.center) {
+        text-align: center;
+    }
+    &:global(.right) {
+        text-align: right;
+    }
+    img {
+        border-radius: 4px;
+        box-shadow: 0px 1px 5px 0px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14),
+            0px 3px 1px -2px rgba(0, 0, 0, 0.12);
+    }
 }

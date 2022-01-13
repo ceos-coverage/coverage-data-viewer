@@ -17,8 +17,6 @@ Innovative features of the Data Viewer include:
 -   Integrated online Help-system
 -   Ability to share a URL link allowing precise recreation of data views by other users
 
-The COVERAGE Data Viewer is based on the [Common Mapping Client](https://coverage.ceos.org/cmc/) (CMC) framework, an open source technology development from the NASA Jet Propulsion Laboratory.
+The COVERAGE Data Viewer is based on the [Common Mapping Client](https://coverage.ceos.org/cmc/) (CMC) framework, an open source technology development from the NASA Jet Propulsion Laboratory. Viewer development is ongoing under the COVERAGE project.
 
-<div class="helpContainer-iframe">
-<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/WrTYCBQULxg?controls=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-</div>
+The tool is accessible via the COVERAGE web-portal at https://coverage.ceos.org (Data Services: Visualization).

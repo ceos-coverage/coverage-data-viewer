@@ -1,12 +1,16 @@
 ### How can I animate the data on the map?
 
-Click on the **video camera** icon on the far right of the _current date selector_ (in the lower left corner of the application). This will open the _animation controls_ which you should fill in as follows (note all steps are optional):
+Click on the **video camera** icon **(A)** on the far right of the _current date selector_ (in the lower left corner of the application). This will open the _animation controls_ **(B)** which you should fill in as follows (note all steps are optional):
 
-1. Use the date inputs to enter a start time and end time for the animation to loop through.
-2. Click on the **timer** icon to open a popover where you can set the speed of the animation
-3. Click on the **skip** icon to open a popover where you can set the size of each animation step
+1. Use the date inputs to enter a start time **(C)** and end time **(D)** for the animation to loop through.
+2. Click on the **timer** icon **(E)** to open a popover where you can set the speed of the animation **(F)**
+3. Click on the **skip** icon to open a popover **(G)** where you can set the size of each animation step **(H)**
 
 Once you have made your selections, click the **play** icon in the upper middle of the _animation controls_ to begin playing the animation.
+
+<div class="helpContainer-image left">
+<img src="img/time-animation-fig1.png">
+</div>
 
 ### How can I tell the current time step in an animation?
 
