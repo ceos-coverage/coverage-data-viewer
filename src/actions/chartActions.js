@@ -15,7 +15,7 @@ import TrackDataUtil from "utils/TrackDataUtil";
 import appConfig from "constants/appConfig";
 
 export function setTrackSelected(trackId, isSelected) {
-    return dispatch => {
+    return (dispatch) => {
         dispatch({ type: types.SET_CHART_TRACK_SELECTED, trackId, isSelected });
         dispatch(updateAvailableVariables());
     };
@@ -34,7 +34,7 @@ export function closeChart(id) {
 }
 
 export function setChartDisplayOptions(id, displayOptions) {
-    return dispatch => {
+    return (dispatch) => {
         dispatch({ type: types.SET_CHART_DISPLAY_OPTIONS, id, displayOptions });
 
         if (typeof displayOptions.linkToDateInterval !== "undefined") {
@@ -65,9 +65,9 @@ export function createChart() {
             "selectedTracks",
             state.map
                 .getIn(["layers", appStrings.LAYER_GROUP_TYPE_INSITU_DATA])
-                .filter(track => trackIds.contains(track.get("id")))
+                .filter((track) => trackIds.contains(track.get("id")))
                 .toList()
-                .map(track => {
+                .map((track) => {
                     let title =
                         track.get("title").size > 0
                             ? track.getIn(["title", 0])
@@ -77,17 +77,17 @@ export function createChart() {
                         title: `${title} (id: ${track.get("shortId")})`,
                         program: track.getIn(["insituMeta", "program"]),
                         project: track.getIn(["insituMeta", "project"]),
-                        source_id: track.getIn(["insituMeta", "source_id"])
+                        source_id: track.getIn(["insituMeta", "source_id"]),
                     };
                 })
-                .sortBy(track => track.title)
+                .sortBy((track) => track.title)
         );
 
         dispatch(createChartFromOptions(formOptions));
     };
 }
 
-export function createChartFromOptions(formOptions) {
+export function createChartFromOptions(formOptions, displayOptions) {
     return (dispatch, getState) => {
         let state = getState();
         let urls = TrackDataUtil.getUrlsForQuery(
@@ -106,29 +106,36 @@ export function createChartFromOptions(formOptions) {
         let zKey = chart.getIn(["formOptions", "zAxis"]);
 
         Promise.all(
-            urls.map(url => {
+            urls.map((url) => {
                 return dataStore.getData(
                     {
                         url: url,
-                        processMeta: true
+                        processMeta: true,
                     },
                     {
                         keys: { xKey, yKey, zKey },
                         target: -1,
-                        format: "array"
+                        format: "array",
                     }
                 );
             })
         ).then(
-            dataArrs => {
+            (dataArrs) => {
                 dispatch(updateChartData(chartId, dataArrs));
                 dispatch(setChartLoading(chartId, false));
+                if (displayOptions) {
+                    const { bounds, ...rest } = displayOptions;
+                    dispatch(setChartDisplayOptions(chartId, rest));
+                    if (bounds) {
+                        dispatch(zoomChartData(chartId, bounds));
+                    }
+                }
             },
-            err => {
+            (err) => {
                 dispatch(
                     updateChartData(chartId, {
                         error: true,
-                        message: "Failed to get chart data"
+                        message: "Failed to get chart data",
                     })
                 );
                 dispatch(setChartLoading(chartId, false));
@@ -157,34 +164,34 @@ export function zoomChartData(chartId, bounds) {
             yAxis: yKey,
             zAxis: zKey,
             target: decimationRate,
-            bounds: bounds
+            bounds: bounds,
         });
 
         Promise.all(
-            urls.map(url => {
+            urls.map((url) => {
                 return dataStore.getData(
                     {
                         url: url,
                         no_cache: typeof bounds !== "undefined",
-                        processMeta: true
+                        processMeta: true,
                     },
                     {
                         keys: { xKey, yKey, zKey },
                         target: -1,
-                        format: "array"
+                        format: "array",
                     }
                 );
             })
         )
-            .then(dataArrs => {
+            .then((dataArrs) => {
                 dispatch(updateChartData(chart.get("id"), dataArrs));
                 dispatch(setChartLoading(chartId, false));
             })
-            .catch(err => {
+            .catch((err) => {
                 dispatch(
                     updateChartData(chart.get("id"), {
                         error: true,
-                        message: "Failed to get chart data"
+                        message: "Failed to get chart data",
                     })
                 );
                 dispatch(setChartLoading(chartId, false));
@@ -210,13 +217,13 @@ export function updateChartData(id, data) {
 }
 
 export function exportChart(chartId) {
-    return dispatch => {
+    return (dispatch) => {
         ChartUtil.downloadChartAsImage(
             { id: chartId },
             {
                 filename: chartId,
                 format: "image/png",
-                width: 640
+                width: 640,
             }
         );
     };
@@ -232,7 +239,7 @@ export function updateAvailableVariables() {
         let trackList = state.map
             .getIn(["layers", appStrings.LAYER_GROUP_TYPE_INSITU_DATA])
             .filter(
-                track =>
+                (track) =>
                     !track.get("isDisabled") &&
                     track.get("isActive") &&
                     trackIds.contains(track.get("id"))
@@ -259,8 +266,8 @@ export function updateAvailableVariables() {
                   }, undefined)
                 : Immutable.Set();
 
-        let sharedVariableList = sharedVariableSet.map(x => x.get("label")).toList();
-        ["xAxis", "yAxis", "zAxis"].map(axis => {
+        let sharedVariableList = sharedVariableSet.map((x) => x.get("label")).toList();
+        ["xAxis", "yAxis", "zAxis"].map((axis) => {
             let currVal = formOptions.get(axis);
             if (typeof currVal !== "undefined" && !sharedVariableList.contains(currVal)) {
                 dispatch(setAxisVariable(axis, undefined));
@@ -270,7 +277,7 @@ export function updateAvailableVariables() {
         dispatch({
             type: types.SET_CHART_FORM_VARIABLE_OPTIONS,
             sharedVariableSet,
-            nonsharedVariableSet
+            nonsharedVariableSet,
         });
     };
 }
@@ -281,7 +288,7 @@ export function updateDateLinkedCharts(chartId = undefined, bounds = []) {
 
         // attempt to extract dates
         if (bounds && bounds.length === 2) {
-            bounds = bounds.map(val => {
+            bounds = bounds.map((val) => {
                 let d = moment.utc(val);
                 if (d.isValid()) {
                     return d.valueOf();
@@ -330,7 +337,7 @@ export function blockChartAnimationUpdates(shouldBlock = true) {
                         type: types.SET_CHART_WARNING,
                         id: chartId,
                         active: true,
-                        text: "Linking Unavailable During Animation"
+                        text: "Linking Unavailable During Animation",
                     });
                 }
             });
@@ -340,7 +347,7 @@ export function blockChartAnimationUpdates(shouldBlock = true) {
                     type: types.SET_CHART_WARNING,
                     id: chartId,
                     active: false,
-                    text: ""
+                    text: "",
                 });
             });
         }

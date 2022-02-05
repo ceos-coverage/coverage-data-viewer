@@ -25,20 +25,20 @@ export function runUrlConfig(params) {
     // Takes an array of key value pairs and dispatches associated actions for each
     // one.
 
-    return dispatch => {
+    return (dispatch) => {
         const keys = Object.keys(params);
         return Promise.all(
-            keys.map(key => {
+            keys.map((key) => {
                 return dispatch(translateUrlParamToActionDispatch({ key, value: params[key] }));
             })
-        ).catch(err => {
+        ).catch((err) => {
             console.warn("Error in appActions.runUrlConfig:", err);
             dispatch(
                 alertActions.addAlert({
-                    title: appStrings.ALERTS.URL_CONFIG_FAILED.title,
-                    body: appStrings.ALERTS.URL_CONFIG_FAILED.formatString,
-                    severity: appStrings.ALERTS.URL_CONFIG_FAILED.severity,
-                    time: new Date()
+                    title: appStringsCore.ALERTS.URL_CONFIG_FAILED.title,
+                    body: appStringsCore.ALERTS.URL_CONFIG_FAILED.formatString,
+                    severity: appStringsCore.ALERTS.URL_CONFIG_FAILED.severity,
+                    time: new Date(),
                 })
             );
         });
@@ -65,7 +65,7 @@ export function translateUrlParamToActionDispatch(param) {
                 param.value.split("__")[1]
             );
         case appConfig.URL_KEYS.SEARCH_AREA:
-            return setSearchArea(param.value.split(",").map(x => parseFloat(x)));
+            return setSearchArea(param.value.split(",").map((x) => parseFloat(x)));
         case appConfig.URL_KEYS.SEARCH_TIME:
             return setSearchDateRange(
                 moment(param.value.split(",")[0], "YYYY-MM-DD").toDate(),
@@ -94,14 +94,14 @@ export function translateUrlParamToActionDispatch(param) {
 }
 
 function setAnimationRange(start, end) {
-    return dispatch => {
+    return (dispatch) => {
         dispatch(mapActions.setAnimationOpen(true, false));
         dispatch(mapActions.setAnimationDateRange(start, end));
     };
 }
 
 function setSearchArea(area) {
-    return dispatch => {
+    return (dispatch) => {
         dispatch(setSearchSelectedArea(area, appStrings.GEOMETRY_BOX));
 
         dispatch(
@@ -111,7 +111,7 @@ function setSearchArea(area) {
                     id: "area-selection_" + Math.random(),
                     proj: appConfig.DEFAULT_PROJECTION,
                     coordinates: area,
-                    coordinateType: appStringsCore.COORDINATE_TYPE_CARTOGRAPHIC
+                    coordinateType: appStringsCore.COORDINATE_TYPE_CARTOGRAPHIC,
                 },
                 appStrings.INTERACTION_AREA_SELECTION,
                 false
@@ -123,7 +123,7 @@ function setSearchArea(area) {
 function setReferenceLayer(layerId) {
     return (dispatch, getState) => {
         const state = getState();
-        state.map.getIn(["layers", appStrings.LAYER_GROUP_TYPE_DATA_REFERENCE]).forEach(layer => {
+        state.map.getIn(["layers", appStrings.LAYER_GROUP_TYPE_DATA_REFERENCE]).forEach((layer) => {
             dispatch(mapActionsCore.setLayerActive(layer.get("id"), false));
         });
         dispatch(mapActionsCore.setLayerActive(layerId, true));
@@ -131,10 +131,10 @@ function setReferenceLayer(layerId) {
 }
 
 function setTrackSearchFacetsFromUrl(params) {
-    return dispatch => {
+    return (dispatch) => {
         for (let group in params) {
             const values = params[group];
-            values.forEach(value => {
+            values.forEach((value) => {
                 dispatch(setTrackSearchFacetSelected({ group, value }, true));
             });
         }
@@ -142,10 +142,10 @@ function setTrackSearchFacetsFromUrl(params) {
 }
 
 function setSatelliteSearchFacetsFromUrl(params) {
-    return dispatch => {
+    return (dispatch) => {
         for (let group in params) {
             const values = params[group];
-            values.forEach(value => {
+            values.forEach((value) => {
                 dispatch(setSatelliteSearchFacetSelected({ group, value }, true));
             });
         }
@@ -153,28 +153,43 @@ function setSatelliteSearchFacetsFromUrl(params) {
 }
 
 function addTracksFromUrl(trackIds) {
-    return dispatch => {
-        trackIds.forEach(id => {
-            SearchUtil.searchForSingleTrack(id).then(layer => {
-                dispatch(setTrackSelected(id, true, layer));
+    return (dispatch) => {
+        trackIds.forEach((id) => {
+            SearchUtil.searchForSingleTrack(id).then((layer) => {
+                if (layer) {
+                    dispatch(setTrackSelected(id, true, layer));
+                }
             });
         });
     };
 }
 
 function addSatellitesFromUrl(trackIds) {
-    return dispatch => {
-        trackIds.forEach(id => {
-            SearchUtil.searchForSingleSatellite(id).then(layer => {
-                dispatch(setTrackSelected(id, true, layer));
-            });
+    return (dispatch) => {
+        return new Promise((resolve, reject) => {
+            Promise.all(
+                trackIds.map((id) => {
+                    return SearchUtil.searchForSingleSatellite(id);
+                })
+            )
+                .then((layers) => {
+                    layers.forEach((l) => {
+                        if (l) {
+                            dispatch(setTrackSelected(l.get("id"), true, l));
+                        }
+                    });
+                    resolve();
+                })
+                .catch((err) => {
+                    reject(err);
+                });
         });
     };
 }
 
 function setLayerInfoFromUrl(id) {
-    return dispatch => {
-        SearchUtil.searchForSingleItem(id).then(layer => {
+    return (dispatch) => {
+        SearchUtil.searchForSingleItem(id).then((layer) => {
             if (layer) {
                 dispatch(setLayerInfo(layer));
             }
@@ -184,16 +199,18 @@ function setLayerInfoFromUrl(id) {
 
 function setChartsFromUrl(chartStrs) {
     return (dispatch, getState) => {
-        chartStrs.forEach(chartStr => {
-            const ids = chartStr.split(":")[0].split("|");
-            const vars = chartStr.split(":")[1].split("|");
+        chartStrs.forEach((chartStr) => {
+            const pieces = chartStr.split(":");
+            const ids = pieces[0].split("|");
+            const vars = pieces[1].split("|");
+            const displayOptions = pieces[2].split("|");
 
-            Promise.all(ids.map(id => SearchUtil.searchForSingleTrack(id))).then(tracks => {
+            Promise.all(ids.map((id) => SearchUtil.searchForSingleTrack(id))).then((tracks) => {
                 const state = getState();
                 let formOptions = state.chart.get("formOptions");
                 formOptions = formOptions.set(
                     "selectedTracks",
-                    tracks.map(track => {
+                    tracks.map((track) => {
                         let title =
                             track.get("title").size > 0
                                 ? track.getIn(["title", 0])
@@ -203,7 +220,7 @@ function setChartsFromUrl(chartStrs) {
                             title: `${title} (id: ${track.get("shortId")})`,
                             program: track.getIn(["insituMeta", "program"]),
                             project: track.getIn(["insituMeta", "project"]),
-                            source_id: track.getIn(["insituMeta", "source_id"])
+                            source_id: track.getIn(["insituMeta", "source_id"]),
                         };
                     })
                 );
@@ -222,7 +239,15 @@ function setChartsFromUrl(chartStrs) {
                     formOptions = formOptions.set("zAxisLabel", zAxisLabel);
                 }
 
-                dispatch(chartActions.createChartFromOptions(formOptions));
+                const linkToDateInterval = displayOptions[0] === "true";
+                const markerType = displayOptions[1];
+                const bounds = displayOptions[2].split("_").map((x) => parseFloat(x));
+                const newDisplayOptions = {
+                    linkToDateInterval,
+                    markerType,
+                    bounds,
+                };
+                dispatch(chartActions.createChartFromOptions(formOptions, newDisplayOptions));
             });
         });
     };
@@ -318,19 +343,19 @@ export function setTrackSelected(trackId, isSelected, track = null) {
                                 track.getIn(["insituMeta", "lon_min"]),
                                 track.getIn(["insituMeta", "lat_min"]),
                                 track.getIn(["insituMeta", "lon_max"]),
-                                track.getIn(["insituMeta", "lat_max"])
+                                track.getIn(["insituMeta", "lat_max"]),
                             ]),
                             urlFunctions:
                                 track.getIn(["insituMeta", "handle_as"]) ===
                                 appStrings.LAYER_VECTOR_POINTS_WFS
                                     ? {
                                           [appStringsCore.MAP_LIB_2D]:
-                                              appStrings.URL_FUNC_WFS_AREA_TIME_FILTER
+                                              appStrings.URL_FUNC_WFS_AREA_TIME_FILTER,
                                       }
-                                    : {}
+                                    : {},
                         },
                         insituMeta: track.get("insituMeta"),
-                        timeFormat: "YYYY-MM-DD[T]HH:mm:ss[Z]"
+                        timeFormat: "YYYY-MM-DD[T]HH:mm:ss[Z]",
                     })
                 );
             } else {
@@ -350,15 +375,15 @@ export function setTrackSelected(trackId, isSelected, track = null) {
                         palette: {
                             name: track.get("shortId"),
                             url: track.get("colorbarUrl"),
-                            handleAs: appStrings.COLORBAR_GIBS_XML
+                            handleAs: appStrings.COLORBAR_GIBS_XML,
                         },
                         mappingOptions: {
                             urlFunctions: {
                                 openlayers: "kvpTimeParam_wmts",
-                                cesium: "kvpTimeParam_wmts"
-                            }
+                                cesium: "kvpTimeParam_wmts",
+                            },
                         },
-                        insituMeta: track.get("insituMeta")
+                        insituMeta: track.get("insituMeta"),
                     })
                 );
             }
@@ -367,7 +392,7 @@ export function setTrackSelected(trackId, isSelected, track = null) {
                 mapActions.removeLayer(
                     Immutable.Map({
                         id: trackId + "_error",
-                        type: appStrings.LAYER_GROUP_TYPE_INSITU_DATA_ERROR
+                        type: appStrings.LAYER_GROUP_TYPE_INSITU_DATA_ERROR,
                     })
                 )
             );
@@ -375,7 +400,7 @@ export function setTrackSelected(trackId, isSelected, track = null) {
                 mapActions.removeLayer(
                     Immutable.Map({
                         id: trackId,
-                        type: appStrings.LAYER_GROUP_TYPE_INSITU_DATA
+                        type: appStrings.LAYER_GROUP_TYPE_INSITU_DATA,
                     })
                 )
             );
@@ -383,7 +408,7 @@ export function setTrackSelected(trackId, isSelected, track = null) {
                 mapActions.removeLayer(
                     Immutable.Map({
                         id: trackId,
-                        type: appStringsCore.LAYER_GROUP_TYPE_DATA
+                        type: appStringsCore.LAYER_GROUP_TYPE_DATA,
                     })
                 )
             );
@@ -400,7 +425,7 @@ export function setTrackErrorActive(trackId, isActive) {
             let track = state.map.getIn([
                 "layers",
                 appStrings.LAYER_GROUP_TYPE_INSITU_DATA,
-                trackId
+                trackId,
             ]);
             let errTrackId =
                 "oiip:err_poly_" +
@@ -409,7 +434,7 @@ export function setTrackErrorActive(trackId, isActive) {
                 track.getIn(["insituMeta", "source_id"]);
             let errTrackPartial = state.map
                 .getIn(["layers", appStringsCore.LAYER_GROUP_TYPE_PARTIAL])
-                .find(layer => layer.get("id") === errTrackId);
+                .find((layer) => layer.get("id") === errTrackId);
             if (typeof errTrackPartial !== "undefined") {
                 dispatch(
                     mapActions.addLayer({
@@ -422,9 +447,9 @@ export function setTrackErrorActive(trackId, isActive) {
                         updateParameters: { time: false },
                         mappingOptions: {
                             extents: track.getIn(["mappingOptions", "extents"]).toJS(),
-                            tileGrid: errTrackPartial.getIn(["mappingOptions", "tileGrid"]).toJS()
+                            tileGrid: errTrackPartial.getIn(["mappingOptions", "tileGrid"]).toJS(),
                         },
-                        timeFormat: "YYYY-MM-DDTHH:mm:ssZ"
+                        timeFormat: "YYYY-MM-DDTHH:mm:ssZ",
                     })
                 );
             }
@@ -433,7 +458,7 @@ export function setTrackErrorActive(trackId, isActive) {
                 mapActions.removeLayer(
                     Immutable.Map({
                         id: trackId + "_error",
-                        type: appStrings.LAYER_GROUP_TYPE_INSITU_DATA_ERROR
+                        type: appStrings.LAYER_GROUP_TYPE_INSITU_DATA_ERROR,
                     })
                 )
             );
@@ -453,20 +478,20 @@ export function runLayerSearch() {
             SearchUtil.searchForTracks({
                 area: searchParams.get("selectedArea").toJS(),
                 dateRange: [searchParams.get("startDate"), searchParams.get("endDate")],
-                facets: searchParams.get("trackSelectedFacets").toJS()
+                facets: searchParams.get("trackSelectedFacets").toJS(),
             }),
             SearchUtil.searchForSatelliteSets({
                 area: searchParams.get("selectedArea").toJS(),
                 dateRange: [searchParams.get("startDate"), searchParams.get("endDate")],
-                facets: searchParams.get("satelliteSelectedFacets").toJS()
-            })
+                facets: searchParams.get("satelliteSelectedFacets").toJS(),
+            }),
         ])
-            .then(allResults => {
+            .then((allResults) => {
                 const results = allResults.flat();
                 dispatch(setSearchResults(results));
                 dispatch(setSearchLoading(false));
             })
-            .catch(err => {
+            .catch((err) => {
                 console.warn("Track search fail: ", err);
                 dispatch(setSearchLoading(false));
             });
@@ -491,12 +516,12 @@ function updateFacets(dispatch, getState) {
         datatype: "datatype:track",
         area: searchParams.get("selectedArea").toJS(),
         dateRange: [searchParams.get("startDate"), searchParams.get("endDate")],
-        facets: searchParams.get("trackSelectedFacets").toJS()
+        facets: searchParams.get("trackSelectedFacets").toJS(),
     }).then(
-        results => {
+        (results) => {
             dispatch(setTrackSearchFacets(results));
         },
-        err => {
+        (err) => {
             console.warn("Facet search Fail: ", err);
         }
     );
@@ -505,12 +530,12 @@ function updateFacets(dispatch, getState) {
         datatype: "datatype:layer",
         area: searchParams.get("selectedArea").toJS(),
         dateRange: [searchParams.get("startDate"), searchParams.get("endDate")],
-        facets: searchParams.get("satelliteSelectedFacets").toJS()
+        facets: searchParams.get("satelliteSelectedFacets").toJS(),
     }).then(
-        results => {
+        (results) => {
             dispatch(setSatelliteSearchFacets(results));
         },
-        err => {
+        (err) => {
             console.warn("Facet search Fail: ", err);
         }
     );

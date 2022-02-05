@@ -108,8 +108,16 @@ const updateUrl = (store) => {
             const zAxis = formOptions.get("zAxis") || "";
             const zAxisLabel = formOptions.get("zAxisLabel") || "";
 
+            const displayOptions = chart.get("displayOptions");
+            const linkToDateInterval = displayOptions.get("linkToDateInterval");
+            const markerType = displayOptions.get("markerType");
+            const bounds = displayOptions
+                .get("bounds")
+                .map((x) => x.toFixed(2))
+                .join("_");
+
             acc.push(
-                `${tracks}:${xAxis}|${xAxisLabel}|${yAxis}|${yAxisLabel}|${zAxis}|${zAxisLabel}`
+                `${tracks}:${xAxis}|${xAxisLabel}|${yAxis}|${yAxisLabel}|${zAxis}|${zAxisLabel}:${linkToDateInterval}|${markerType}|${bounds}`
             );
             return acc;
         }, [])
@@ -172,6 +180,7 @@ const actionsTriggeringURLUpdate = {
     INITIALIZE_CHART: true,
     SET_MAIN_MENU_TAB_INDEX: true,
     CLOSE_CHART: true,
+    SET_CHART_DISPLAY_OPTIONS: true,
 };
 
 export const urlParamMiddleware = (store) => (next) => (action) => {

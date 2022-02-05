@@ -14,6 +14,8 @@ import Ol_Layer_VectorTile from "ol/layer/VectorTile";
 import Ol_Source_Vector from "ol/source/Vector";
 import Ol_Source_VectorTile from "ol/source/VectorTile";
 import Ol_Source_ImageCanvas from "ol/source/ImageCanvas";
+import Ol_Layer_TileLayer from "ol/layer/Tile.js";
+import Ol_Source_TileWMS from "ol/source/TileWMS.js";
 import Ol_Format_KML from "ol/format/KML";
 import Ol_Format_MVT from "ol/format/MVT";
 import Ol_Style from "ol/style/Style";
@@ -70,7 +72,7 @@ const HACK_AIS_COLORS = [
     ["squid_jigger", "#ffff99"],
     ["trawlers", "#b15928"],
     ["trollers", "#2B2118"],
-    ["tuna_purse_seines", "#4C5760"]
+    ["tuna_purse_seines", "#4C5760"],
 ];
 
 export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
@@ -117,12 +119,12 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
             let areaDisplayNormalLayer = new Ol_Layer_Vector({
                 source: areaDisplayNormalSource,
                 extent: appConfig.DEFAULT_MAP_EXTENT,
-                style: this.areaDisplayNormalStyle
+                style: this.areaDisplayNormalStyle,
             });
             let areaDisplayLayer = new Ol_Layer_Group({
                 extent: appConfig.DEFAULT_MAP_EXTENT,
                 layers: [areaDisplayNormalLayer],
-                visible: true
+                visible: true,
             });
             areaDisplayLayer.set("_layerId", "_area_display_layer");
             areaDisplayLayer.set("_layerType", appStringsCore.LAYER_GROUP_TYPE_REFERENCE);
@@ -133,19 +135,42 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
             let pointHighlightLayer = new Ol_Layer_Vector({
                 source: pointHighlightSource,
                 renderMode: "image",
-                style: this.pointHighlightStyle
+                style: this.pointHighlightStyle,
             });
             pointHighlightLayer.set("_layerId", "_point_highlight_layer");
             pointHighlightLayer.set("_layerType", appStringsCore.LAYER_GROUP_TYPE_REFERENCE);
             map.addLayer(pointHighlightLayer);
 
-            map.on("precompose", function(evt) {
+            map.on("precompose", function (evt) {
                 evt.context.imageSmoothingEnabled = false;
                 evt.context.webkitImageSmoothingEnabled = false;
                 evt.context.mozImageSmoothingEnabled = false;
                 evt.context.msImageSmoothingEnabled = false;
             });
+
+            // https://cwcgom.aoml.noaa.gov/thredds/wms/SEASCAPE_MONTH/SEASCAPES.nc?&TIME=2021-12-15T12:00:00Z&LAYERS=CLASS&service=WMS&version=1.3.0&REQUEST=GetMap&MAXRESOLUTION=auto&TRANSPARENT=true&FORMAT=image/png&NUMCOLORBANDS=215&CRS=CRS:84&STYLES=boxfill/seascapes&COLORSCALERANGE=1,33&BBOX=-157.50,-0.00,-135.00,22.50&CRS=EPSG:4326&WIDTH=256&HEIGHT=256
+            // const testFunc = () => {
+            //     const testLayer = new Ol_Layer_TileLayer({
+            //         extent: [
+            //             -179.97500610351562, -89.97499847412111, 179.97500610351562,
+            //             89.9749984741211,
+            //         ],
+            //         source: new Ol_Source_TileWMS({
+            //             url: "https://cwcgom.aoml.noaa.gov/thredds/wms/SEASCAPE_MONTH/SEASCAPES.nc",
+            //             projection: "EPSG:4326",
+            //             params: {
+            //                 LAYERS: "CLASS",
+            //                 TIME: "2021-12-15T12:00:00Z",
+            //                 FORMAT: "image/png",
+            //             },
+            //             transition: 0,
+            //         }),
+            //     });
+            //     map.addLayer(testLayer);
+            // };
+            // console.log(testFunc);
         }
+
         return map;
     }
 
@@ -168,107 +193,107 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                     new Ol_Style({
                         image: new Ol_Style_RegularShape({
                             fill: new Ol_Style_Fill({
-                                color: "#fff"
+                                color: "#fff",
                             }),
                             points: 3,
                             stroke: new Ol_Style_Stroke({
-                                color: "#000"
+                                color: "#000",
                             }),
                             rotation: Math.PI,
-                            radius: 13
+                            radius: 13,
                         }),
-                        zIndex: 2
+                        zIndex: 2,
                     }),
                     new Ol_Style({
                         image: new Ol_Style_RegularShape({
                             fill: new Ol_Style_Fill({
-                                color: color
+                                color: color,
                             }),
                             points: 3,
                             stroke: new Ol_Style_Stroke({
-                                color: "#000"
+                                color: "#000",
                             }),
                             rotation: Math.PI,
-                            radius: 8
+                            radius: 8,
                         }),
-                        zIndex: 2
-                    })
+                        zIndex: 2,
+                    }),
                 ];
             } else if (feature.get("_isLast")) {
                 return [
                     new Ol_Style({
                         image: new Ol_Style_RegularShape({
                             fill: new Ol_Style_Fill({
-                                color: "#fff"
+                                color: "#fff",
                             }),
                             points: 3,
                             stroke: new Ol_Style_Stroke({
-                                color: "#000"
+                                color: "#000",
                             }),
-                            radius: 13
+                            radius: 13,
                         }),
-                        zIndex: 2
+                        zIndex: 2,
                     }),
                     new Ol_Style({
                         image: new Ol_Style_RegularShape({
                             fill: new Ol_Style_Fill({
-                                color: color
+                                color: color,
                             }),
                             points: 3,
                             stroke: new Ol_Style_Stroke({
-                                color: "#000"
+                                color: "#000",
                             }),
-                            radius: 8
+                            radius: 8,
                         }),
-                        zIndex: 2
-                    })
+                        zIndex: 2,
+                    }),
                 ];
             } else {
                 return [
                     new Ol_Style({
                         stroke: new Ol_Style_Stroke({
                             color: "#000",
-                            width: 9.75
+                            width: 9.75,
                         }),
-                        zIndex: 2
+                        zIndex: 2,
                     }),
                     new Ol_Style({
                         stroke: new Ol_Style_Stroke({
                             color: "#fff",
-                            width: 8.5
+                            width: 8.5,
                         }),
-                        zIndex: 2
+                        zIndex: 2,
                     }),
                     new Ol_Style({
                         image: new Ol_Style_Circle({
                             fill: new Ol_Style_Fill({ color: "#fff" }),
                             stroke: new Ol_Style_Stroke({
-                                color: "#000"
+                                color: "#000",
                             }),
-                            radius: 7
+                            radius: 7,
                         }),
                         stroke: new Ol_Style_Stroke({
                             color: "#000",
-                            width: 5.25
+                            width: 5.25,
                         }),
-                        zIndex: 2
+                        zIndex: 2,
                     }),
                     new Ol_Style({
                         image: new Ol_Style_Circle({
                             fill: new Ol_Style_Fill({
-                                color: color
+                                color: color,
                             }),
                             stroke: new Ol_Style_Stroke({
-                                color: "#000"
+                                color: "#000",
                             }),
-                            radius: 4
+                            radius: 4,
                         }),
                         stroke: new Ol_Style_Stroke({
                             color: color,
-                            width: 4
+                            width: 4,
                         }),
-                        zIndex: 2
-                    })
+                        zIndex: 2,
+                    }),
                 ];
             }
         };
@@ -278,23 +303,23 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
         try {
             switch (eventStr) {
                 case appStringsCore.EVENT_MOUSE_HOVER:
-                    return this.map.addEventListener("pointermove", position => {
+                    return this.map.addEventListener("pointermove", (position) => {
                         this.miscUtil.throttledCallback(() => {
                             callback(position.pixel);
                         });
                     });
                 case appStringsCore.EVENT_MOUSE_CLICK:
-                    return this.map.addEventListener("click", clickEvt => {
+                    return this.map.addEventListener("click", (clickEvt) => {
                         this.miscUtil.throttledCallback(() => {
                             callback({ pixel: clickEvt.pixel });
                         });
                     });
                 case appStringsCore.EVENT_MOVE_END:
-                    return this.map.addEventListener("moveend", e => {
+                    return this.map.addEventListener("moveend", (e) => {
                         this.miscUtil.throttledCallback(callback);
                     });
                 default:
-                    return this.map.addEventListener(eventStr, e => {
+                    return this.map.addEventListener(eventStr, (e) => {
                         this.miscUtil.throttledCallback(callback);
                     });
             }
@@ -311,7 +336,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                 this.map.getView().fit(extent, {
                     size: mapSize,
                     constrainResolution: false,
-                    padding: padView ? [70, 70, 70, 70] : undefined
+                    padding: padView ? [70, 70, 70, 70] : undefined,
                 });
                 return true;
             }
@@ -441,7 +466,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
             // create a layer grouping
             let mapLayer = new Ol_Layer_Group({
                 opacity: layer.get("opacity"),
-                visible: layer.get("isActive")
+                visible: layer.get("isActive"),
             });
 
             // source for dummy canvas layer
@@ -459,13 +484,13 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                     );
                 },
                 projection: this.map.getView().getProjection(),
-                ratio: 1
+                ratio: 1,
             });
             imageSource.set("_dummyCanvas", true);
 
             // dummy canvas image layer to track map movements
             let imageLayer = new Ol_Layer_Image({
-                source: imageSource
+                source: imageSource,
             });
 
             // add a canvas layer that will find intersecting KMLs on each map move
@@ -501,7 +526,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
             if (cExtent[0] > cExtent[2]) {
                 viewExtentsArr = [
                     [cExtent[0], cExtent[1], 180, cExtent[3]],
-                    [-180, cExtent[1], cExtent[2], cExtent[3]]
+                    [-180, cExtent[1], cExtent[2], cExtent[3]],
                 ];
             } else {
                 viewExtentsArr = [cExtent];
@@ -548,21 +573,21 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
 
         // define a function to generate vector layers for each section of the view
         const _context = this;
-        const genVectorLayer = extent => {
+        const genVectorLayer = (extent) => {
             const url = urlFunction({
                 layer: layer,
                 url: layer.get("url"),
                 extent: extent,
                 endTime,
-                startTime
+                startTime,
             });
             const source = new Ol_Source_Vector({
-                loader: function(e, r, p) {
+                loader: function (e, r, p) {
                     MiscUtil.asyncFetch({
                         url: url,
-                        handleAs: appStringsCore.FILE_TYPE_JSON
+                        handleAs: appStringsCore.FILE_TYPE_JSON,
                     }).then(
-                        data => {
+                        (data) => {
                             const featuresToAdd = [];
                             const features = data.features;
                             const featureMap = {};
@@ -575,7 +600,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                                 let combinedFeature = featureMap[coordsStr];
                                 if (typeof combinedFeature === "undefined") {
                                     combinedFeature = new Ol_Feature({
-                                        geometry: new Ol_Geom_Point(coords)
+                                        geometry: new Ol_Geom_Point(coords),
                                     });
                                     combinedFeature.set("oiipFeatureCollection", [feature]);
                                     combinedFeature.set("_layerId", layer.get("id"));
@@ -598,12 +623,12 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                                 _context.layerLoadCallback(layer);
                             }
                         },
-                        err => {
+                        (err) => {
                             console.warn("Error fetching vector data", err);
                         }
                     );
                 },
-                format: new Ol_Format_GeoJSON()
+                format: new Ol_Format_GeoJSON(),
             });
             source.set("_loadingState", TILE_STATE_IDLE);
 
@@ -612,7 +637,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                 visible: true,
                 renderMode: "image",
                 source: source,
-                style: this.createVectorPointLayerStyles(layer, layer.get("vectorColor"))
+                style: this.createVectorPointLayerStyles(layer, layer.get("vectorColor")),
             });
 
             vecLayer.set("_layerId", layer.get("id"));
@@ -623,7 +648,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
         };
 
         // build a vector layer for each section of the view
-        viewExtentsArr.forEach(extent => {
+        viewExtentsArr.forEach((extent) => {
             const layer = genVectorLayer(extent);
             layerGroup.push(layer);
         });
@@ -653,7 +678,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
             // create a layer grouping
             let mapLayer = new Ol_Layer_Group({
                 opacity: layer.get("opacity"),
-                visible: layer.get("isActive")
+                visible: layer.get("isActive"),
             });
 
             // source for dummy canvas layer
@@ -670,13 +695,13 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                     );
                 },
                 projection: this.map.getView().getProjection(),
-                ratio: 1
+                ratio: 1,
             });
             imageSource.set("_dummyCanvas", true);
 
             // dummy canvas image layer to track map movements
             let imageLayer = new Ol_Layer_Image({
-                source: imageSource
+                source: imageSource,
             });
 
             // add a canvas layer that will find intersecting KMLs on each map move
@@ -704,7 +729,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
             if (cExtent[0] > cExtent[2]) {
                 viewExtentsArr = [
                     [cExtent[0], cExtent[1], 180, cExtent[3]],
-                    [-180, cExtent[1], cExtent[2], cExtent[3]]
+                    [-180, cExtent[1], cExtent[2], cExtent[3]],
                 ];
             } else {
                 viewExtentsArr = [cExtent];
@@ -736,7 +761,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                 { tiles: [], foundZoom: 0 }
             );
             let tiles = tileEntries.tiles;
-            let allTileCoords = tiles.map(tile => {
+            let allTileCoords = tiles.map((tile) => {
                 return tile.tileCoord.join(",");
             });
             let foundZoom = tileEntries.foundZoom;
@@ -788,19 +813,19 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                         loader: Ol_FeatureLoader.loadFeaturesXhr(
                             tileUrl,
                             tileFormat,
-                            function(features, dataProjection) {
+                            function (features, dataProjection) {
                                 this.addFeatures(features);
                                 this.set("_loadingState", TILE_STATE_LOADED);
                                 mapLayer.dispatchEvent(appStrings.VECTOR_FEATURE_LOAD);
                             },
-                            function(err) {
+                            function (err) {
                                 console.warn("Error in vector feature loader", err);
                                 this.set("_loadingState", TILE_STATE_ERROR);
                                 mapLayer.dispatchEvent(appStrings.VECTOR_FEATURE_LOAD);
                             }
-                        )
+                        ),
                     });
-                    source.on("addfeature", event => {
+                    source.on("addfeature", (event) => {
                         let feature = event.feature;
                         let geometry = feature.getGeometry();
                         if (geometry.getType() === "LineString") {
@@ -816,7 +841,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                         opacity: 1,
                         visible: true,
                         renderMode: "image",
-                        source: source
+                        source: source,
                     });
                 }
 
@@ -881,29 +906,29 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                         origin: options.tileGrid.origin,
                         resolutions: options.tileGrid.resolutions,
                         matrixIds: options.tileGrid.matrixIds,
-                        tileSize: options.tileGrid.tileSize
+                        tileSize: options.tileGrid.tileSize,
                     }),
-                    url: layer.get("url")
+                    url: layer.get("url"),
                 }),
-                style: function(feature) {
+                style: function (feature) {
                     return [
                         new Ol_Style({
                             stroke: new Ol_Style_Stroke({
                                 color: "#212121",
-                                width: 2.5
-                            })
+                                width: 2.5,
+                            }),
                         }),
                         new Ol_Style({
                             stroke: new Ol_Style_Stroke({
                                 color: "#FFFFFF",
-                                width: 0.75
+                                width: 0.75,
                             }),
                             fill: new Ol_Style_Fill({
-                                color: "rgba(255,255,255,0.01)"
-                            })
-                        })
+                                color: "rgba(255,255,255,0.01)",
+                            }),
+                        }),
                     ];
-                }
+                },
             });
 
             return outlineLayer;
@@ -918,7 +943,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
             let layerSource = this.createVectorPointTrackSource(
                 layer,
                 {
-                    url: layer.get("url")
+                    url: layer.get("url"),
                 },
                 fromCache
             );
@@ -928,7 +953,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                 renderMode: "image",
                 opacity: layer.get("opacity"),
                 visible: layer.get("isActive"),
-                style: this.createVectorPointTrackLayerStyles(layer.get("vectorColor"))
+                style: this.createVectorPointTrackLayerStyles(layer.get("vectorColor")),
             });
         } catch (err) {
             console.warn("Error in MapWrapperOpenlayers.createVectorPointTrackLayer:", err);
@@ -949,18 +974,18 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                         origin: options.tileGrid.origin,
                         resolutions: options.tileGrid.resolutions,
                         matrixIds: options.tileGrid.matrixIds,
-                        tileSize: options.tileGrid.tileSize
+                        tileSize: options.tileGrid.tileSize,
                     }),
-                    url: layer.get("url")
+                    url: layer.get("url"),
                 }),
                 style: new Ol_Style({
                     stroke: new Ol_Style_Stroke({
-                        color: "rgba(0,0,0,0.4)"
+                        color: "rgba(0,0,0,0.4)",
                     }),
                     fill: new Ol_Style_Fill({
-                        color: "rgba(255,255,255,0.4)"
-                    })
-                })
+                        color: "rgba(255,255,255,0.4)",
+                    }),
+                }),
             });
         } catch (err) {
             console.warn("Error in MapWrapperOpenlayers.createVectorTileTrackLayer:", err);
@@ -972,11 +997,11 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
         try {
             let options = layer.get("mappingOptions").toJS();
             const defFill = new Ol_Style_Fill({
-                color: "rgba(255,255,255,1)"
+                color: "rgba(255,255,255,1)",
             });
             const defStroke = new Ol_Style_Stroke({
                 color: "rgba(0,0,0,1)",
-                width: 1.25
+                width: 1.25,
             });
 
             let style;
@@ -992,9 +1017,9 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                     let fill = defFill;
                     if (colorProp) {
                         const colorRef = feature.getProperties()[colorProp];
-                        const color = HACK_AIS_COLORS.find(x => x[0] === colorRef)[1];
+                        const color = HACK_AIS_COLORS.find((x) => x[0] === colorRef)[1];
                         fill = new Ol_Style_Fill({
-                            color: color
+                            color: color,
                         });
                     }
 
@@ -1002,10 +1027,10 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                         image: new Ol_Style_Circle({
                             fill: fill,
                             stroke: defStroke,
-                            radius: Math.max(5, Math.min(13, size))
+                            radius: Math.max(5, Math.min(13, size)),
                         }),
                         stroke: defStroke,
-                        fill: fill
+                        fill: fill,
                     });
                 };
             } else {
@@ -1013,10 +1038,10 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                     image: new Ol_Style_Circle({
                         fill: defFill,
                         stroke: defStroke,
-                        radius: 5
+                        radius: 5,
                     }),
                     stroke: defStroke,
-                    fill: defFill
+                    fill: defFill,
                 });
             }
 
@@ -1041,11 +1066,11 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                         origin: options.tileGrid.origin,
                         resolutions: options.tileGrid.resolutions,
                         matrixIds: options.tileGrid.matrixIds,
-                        tileSize: options.tileGrid.tileSize
+                        tileSize: options.tileGrid.tileSize,
                     }),
-                    url
+                    url,
                 }),
-                style: style
+                style: style,
             });
         } catch (err) {
             console.warn("Error in MapWrapperOpenlayers.createVectorTileTrackLayer:", err);
@@ -1089,7 +1114,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
             );
             options.url = urlFunction({
                 layer: layer,
-                url: options.url
+                url: options.url,
             });
         }
 
@@ -1097,12 +1122,12 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
         let _context = this;
         let source = new Ol_Source_Vector({
             url: options.url,
-            loader: function(extent, resolution, projection) {
+            loader: function (extent, resolution, projection) {
                 MiscUtil.asyncFetch({
                     url: options.url,
-                    handleAs: appStringsCore.FILE_TYPE_JSON
+                    handleAs: appStringsCore.FILE_TYPE_JSON,
                 }).then(
-                    data => {
+                    (data) => {
                         let linePoints = [];
                         let featuresToAdd = [];
                         let featureMap = {};
@@ -1135,7 +1160,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                                 let combinedFeature = featureMap[coordStr];
                                 if (typeof combinedFeature === "undefined") {
                                     combinedFeature = new Ol_Feature({
-                                        geometry: new Ol_Geom_Point(coords)
+                                        geometry: new Ol_Geom_Point(coords),
                                     });
                                     combinedFeature.set("_layerId", layer.get("id"));
                                     combinedFeature.set("position_date_time", [dateStr]);
@@ -1154,7 +1179,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                         // create the connecting line
                         featuresToAdd.push(
                             new Ol_Feature({
-                                geometry: new Ol_Geom_MultiLineString(linePoints)
+                                geometry: new Ol_Geom_MultiLineString(linePoints),
                             })
                         );
 
@@ -1177,12 +1202,12 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                             _context.layerLoadCallback(layer);
                         }
                     },
-                    err => {
+                    (err) => {
                         console.warn("Error fetching vector data", err);
                     }
                 );
             },
-            format: geojsonFormat
+            format: geojsonFormat,
         });
 
         // cache the source
@@ -1225,7 +1250,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
         const _context = this;
         const source = new Ol_Source_Vector({
             url: options.url,
-            loader: function(extent, resolution, projection) {
+            loader: function (extent, resolution, projection) {
                 const date = moment.utc(_context.mapDate);
                 const endTime = date.valueOf();
                 const startTime = date
@@ -1236,13 +1261,13 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                     url: options.url,
                     extent: _context.getExtent(),
                     endTime,
-                    startTime
+                    startTime,
                 });
                 MiscUtil.asyncFetch({
                     url: url,
-                    handleAs: appStringsCore.FILE_TYPE_JSON
+                    handleAs: appStringsCore.FILE_TYPE_JSON,
                 }).then(
-                    data => {
+                    (data) => {
                         const featuresToAdd = [];
                         const features = data.features;
                         for (let i = 0; i < features.length; ++i) {
@@ -1252,7 +1277,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                             if (Math.abs(coords[0]) <= 180 && Math.abs(coords[1]) <= 90) {
                                 const dateStr = new Date(feature.properties["dates"]);
                                 const olFeature = new Ol_Feature({
-                                    geometry: new Ol_Geom_Point(coords)
+                                    geometry: new Ol_Geom_Point(coords),
                                 });
                                 olFeature.set("_layerId", layer.get("id"));
                                 olFeature.set("position_date_time", [dateStr]);
@@ -1272,12 +1297,12 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                             _context.layerLoadCallback(layer);
                         }
                     },
-                    err => {
+                    (err) => {
                         console.warn("Error fetching vector data", err);
                     }
                 );
             },
-            format: geojsonFormat
+            format: geojsonFormat,
         });
 
         // cache the source
@@ -1305,13 +1330,13 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                     image: new Ol_Style_Circle({
                         radius: radius,
                         fill: new Ol_Style_Fill({
-                            color: color
+                            color: color,
                         }),
                         stroke: new Ol_Style_Stroke({
                             color: "#000000",
-                            width: 0.5
-                        })
-                    })
+                            width: 0.5,
+                        }),
+                    }),
                 });
             };
         } else {
@@ -1319,9 +1344,9 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                 image: new Ol_Style_Circle({
                     radius: 4,
                     fill: new Ol_Style_Fill({
-                        color: color
-                    })
-                })
+                        color: color,
+                    }),
+                }),
             });
         }
     }
@@ -1332,56 +1357,56 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                 return new Ol_Style({
                     image: new Ol_Style_RegularShape({
                         fill: new Ol_Style_Fill({
-                            color: color
+                            color: color,
                         }),
                         points: 3,
                         stroke: new Ol_Style_Stroke({
-                            color: color === "#000000" || color === "#3e2723" ? "#fff" : "#000"
+                            color: color === "#000000" || color === "#3e2723" ? "#fff" : "#000",
                         }),
                         rotation: Math.PI,
-                        radius: 7
+                        radius: 7,
                     }),
-                    zIndex: 2
+                    zIndex: 2,
                 });
             } else if (feature.get("_isLast")) {
                 return new Ol_Style({
                     image: new Ol_Style_RegularShape({
                         fill: new Ol_Style_Fill({
-                            color: color
+                            color: color,
                         }),
                         points: 3,
                         stroke: new Ol_Style_Stroke({
-                            color: color === "#000000" || color === "#3e2723" ? "#fff" : "#000"
+                            color: color === "#000000" || color === "#3e2723" ? "#fff" : "#000",
                         }),
-                        radius: 7
+                        radius: 7,
                     }),
-                    zIndex: 2
+                    zIndex: 2,
                 });
             } else if (resolution > 0.017578125) {
                 return new Ol_Style({
                     fill: new Ol_Style_Fill({
-                        color: color
+                        color: color,
                     }),
                     stroke: new Ol_Style_Stroke({
                         color: color,
-                        width: 2
-                    })
+                        width: 2,
+                    }),
                 });
             } else {
                 return new Ol_Style({
                     fill: new Ol_Style_Fill({
-                        color: color
+                        color: color,
                     }),
                     stroke: new Ol_Style_Stroke({
                         color: color,
-                        width: 1
+                        width: 1,
                     }),
                     image: new Ol_Style_Circle({
                         radius: 4,
                         fill: new Ol_Style_Fill({
-                            color: color
-                        })
-                    })
+                            color: color,
+                        }),
+                    }),
                 });
             }
         };
@@ -1400,7 +1425,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
 
         if (layer.get("handleAs") === appStrings.LAYER_VECTOR_POINTS_WFS) {
             const layers = mapLayer.getLayers();
-            layers.forEach(l => {
+            layers.forEach((l) => {
                 if (typeof l.setStyle === "function") {
                     l.setStyle(this.createVectorPointLayerStyles(layer, color));
                 }
@@ -1437,7 +1462,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                     size: this.map.getSize() || [],
                     padding: padding,
                     duration: 350,
-                    constrainResolution: false
+                    constrainResolution: false,
                 });
             }
 
@@ -1454,30 +1479,30 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
             let coord = this.map.getCoordinateFromPixel(pixel);
             this.map.forEachLayerAtPixel(
                 pixel,
-                mapLayer => {
+                (mapLayer) => {
                     if (mapLayer) {
                         let feature = mapLayer
                             .getSource()
-                            .getClosestFeatureToCoordinate(coord, feature => {
+                            .getClosestFeatureToCoordinate(coord, (feature) => {
                                 return feature.getGeometry() instanceof Ol_Geom_Point;
                             });
                         if (feature.getGeometry() instanceof Ol_Geom_Point) {
                             data.push({
                                 layerId: mapLayer.get("_layerId"),
                                 properties: feature.getProperties(),
-                                coords: feature.getGeometry().getCoordinates()
+                                coords: feature.getGeometry().getCoordinates(),
                             });
                             return false;
                         }
                     }
                 },
                 {
-                    layerFilter: mapLayer => {
+                    layerFilter: (mapLayer) => {
                         return (
                             mapLayer.getVisible() &&
                             mapLayer.get("_layerType") === appStrings.LAYER_GROUP_TYPE_INSITU_DATA
                         );
-                    }
+                    },
                 }
             );
 
@@ -1487,7 +1512,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                     data.push({
                         layerId: mapLayer.get("_layerId"),
                         properties: feature.getProperties(),
-                        coords: coord
+                        coords: coord,
                     });
 
                     if (mapLayer.get("_layerType") === appStringsCore.LAYER_GROUP_TYPE_DATA) {
@@ -1495,14 +1520,14 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                     }
                 },
                 {
-                    layerFilter: mapLayer => {
+                    layerFilter: (mapLayer) => {
                         return (
                             mapLayer.getVisible() &&
                             (mapLayer.get("_layerType") ===
                                 appStrings.LAYER_GROUP_TYPE_DATA_REFERENCE ||
                                 mapLayer.get("_layerType") === appStringsCore.LAYER_GROUP_TYPE_DATA)
                         );
-                    }
+                    },
                 }
             );
 
@@ -1530,7 +1555,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                 return {
                     lat: coordinate[0],
                     lon: coordinate[1],
-                    isValid: coordinate[1] <= 90 && coordinate[1] >= -90
+                    isValid: coordinate[1] <= 90 && coordinate[1] >= -90,
                 };
             }
             return false;
@@ -1561,11 +1586,11 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                             type: "Circle",
                             geometryFunction: createBox(),
                             style: drawStyle,
-                            wrapX: true
+                            wrapX: true,
                         });
 
                         // Set callback
-                        drawInteraction.on("drawend", event => {
+                        drawInteraction.on("drawend", (event) => {
                             if (typeof onDrawEnd === "function") {
                                 // store type of feature and id for later reference
                                 let geometry = this.retrieveGeometryFromEvent(event, geometryType);
@@ -1632,12 +1657,9 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
             return {
                 type: appStrings.GEOMETRY_BOX,
                 id: Math.random(),
-                proj: this.map
-                    .getView()
-                    .getProjection()
-                    .getCode(),
-                coordinates: extent.map(x => parseFloat(x.toFixed(3))),
-                coordinateType: appStringsCore.COORDINATE_TYPE_CARTOGRAPHIC
+                proj: this.map.getView().getProjection().getCode(),
+                coordinates: extent.map((x) => parseFloat(x.toFixed(3))),
+                coordinateType: appStringsCore.COORDINATE_TYPE_CARTOGRAPHIC,
             };
         } else {
             return MapWrapperOpenlayersCore.prototype.retrieveGeometryFromEvent.call(
@@ -1680,7 +1702,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                 appStrings.INTERACTION_AREA_SELECTION,
                 true
             );
-            drawInteractions.map(handler => {
+            drawInteractions.map((handler) => {
                 handler.setActive(false);
 
                 // Check that handler is not active
@@ -1711,7 +1733,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                 appStrings.INTERACTION_AREA_SELECTION,
                 true
             );
-            drawInteractions.map(handler => {
+            drawInteractions.map((handler) => {
                 if (handler.getActive()) {
                     handler.finishDrawing();
                 }
@@ -1733,7 +1755,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
         // Remove geometries
         let mapLayerFeatures = mapLayer.getSource().getFeatures();
         let featuresToRemove = mapLayerFeatures.filter(
-            x => x.get("interactionType") === appStrings.INTERACTION_AREA_SELECTION
+            (x) => x.get("interactionType") === appStrings.INTERACTION_AREA_SELECTION
         );
         for (let i = 0; i < featuresToRemove.length; i++) {
             mapLayer.getSource().removeFeature(featuresToRemove[i]);
@@ -1742,7 +1764,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
             mapLayer
                 .getSource()
                 .getFeatures()
-                .filter(x => x.get("interactionType") === appStrings.INTERACTION_AREA_SELECTION)
+                .filter((x) => x.get("interactionType") === appStrings.INTERACTION_AREA_SELECTION)
                 .length === 0
         );
     }
@@ -1816,7 +1838,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                 let brCoord = [maxLon, minLat];
 
                 let lineStringFeature = new Ol_Feature({
-                    geometry: new Ol_Geom_Polygon([[ulCoord, urCoord, brCoord, blCoord]])
+                    geometry: new Ol_Geom_Polygon([[ulCoord, urCoord, brCoord, blCoord]]),
                 });
 
                 lineStringFeature.set("interactionType", interactionType);
@@ -1869,14 +1891,8 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                 return false;
             }
 
-            let outerSource = mapLayer
-                .getLayers()
-                .item(0)
-                .getSource();
-            let innerSource = mapLayer
-                .getLayers()
-                .item(1)
-                .getSource();
+            let outerSource = mapLayer.getLayers().item(0).getSource();
+            let innerSource = mapLayer.getLayers().item(1).getSource();
 
             let outerFeature = outerSource.getFeatureById(geometry.id);
             let innerFeature = innerSource.getFeatureById(geometry.id);
@@ -2006,18 +2022,18 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                         let nextFeature = highlightFeatures[i + 1];
                         return [
                             feature.getGeometry().getCoordinates(),
-                            nextFeature.getGeometry().getCoordinates()
+                            nextFeature.getGeometry().getCoordinates(),
                         ];
                     } else {
                         return [
                             feature.getGeometry().getCoordinates(),
-                            feature.getGeometry().getCoordinates()
+                            feature.getGeometry().getCoordinates(),
                         ];
                     }
                 });
 
                 let lineFeature = new Ol_Feature({
-                    geometry: new Ol_Geom_MultiLineString(linePoints)
+                    geometry: new Ol_Geom_MultiLineString(linePoints),
                 });
                 lineFeature.set("_color", highlightFeatures[0].get("_color"));
                 lineFeature.set("_layerId", highlightFeatures[0].get("_layerId"));
@@ -2071,12 +2087,12 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                 createLayer: (layer, date) => {
                     return this.createBufferLayer(layer, date, callback);
                 },
-                checkLayerStatus: mapLayer => {
+                checkLayerStatus: (mapLayer) => {
                     return this.loadTiles(mapLayer);
                 },
-                clearFrameLayer: mapLayer => {
+                clearFrameLayer: (mapLayer) => {
                     return this.clearBufferLayer(mapLayer);
-                }
+                },
             });
 
             // start the buffering
@@ -2148,7 +2164,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
 
     clearDisplay() {
         try {
-            this.animationBuffer.getMapLayers().forEach(mapLayer => {
+            this.animationBuffer.getMapLayers().forEach((mapLayer) => {
                 this.clearLayerTileListeners(mapLayer);
             });
 
@@ -2216,10 +2232,16 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
         // start listening for the tile load events
         let source = mapLayer.getSource();
         if (typeof source.get("_tileLoadEndListener") === "undefined") {
-            source.set("_tileLoadEndListener", source.on("tileloadend", () => tileComplete()));
+            source.set(
+                "_tileLoadEndListener",
+                source.on("tileloadend", () => tileComplete())
+            );
         }
         if (typeof source.get("_tileLoadErrorListener") === "undefined") {
-            source.set("_tileLoadErrorListener", source.on("tileloaderror", () => tileComplete()));
+            source.set(
+                "_tileLoadErrorListener",
+                source.on("tileloaderror", () => tileComplete())
+            );
         }
     }
 
@@ -2281,7 +2303,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
         let extent = this.map.getView().calculateExtent(this.map.getSize());
         let resolution = this.map.getView().getResolution();
         let zoom = tileGrid.getZForResolution(resolution);
-        tileGrid.forEachTileCoord(extent, zoom, tileCoord => {
+        tileGrid.forEachTileCoord(extent, zoom, (tileCoord) => {
             // If the tile has not been created, it should create a new one. If the tile has been created
             // it should return a cached reference to that tile
             let tile = source.getTile(
@@ -2325,7 +2347,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
         let extent = this.map.getView().calculateExtent(this.map.getSize());
         let resolution = this.map.getView().getResolution();
         let zoom = tileGrid.getZForResolution(resolution);
-        tileGrid.forEachTileCoord(extent, zoom, tileCoord => {
+        tileGrid.forEachTileCoord(extent, zoom, (tileCoord) => {
             let tileCoordStr = tileCoord.join("/");
             if (
                 source.tileCache.containsKey(tileCoordStr) &&

@@ -34,7 +34,7 @@ import displayStyles from "_core/styles/display.scss";
 const theme = createMuiTheme({
     typography: {
         useNextVariants: true,
-        htmlFontSize: 10
+        htmlFontSize: 10,
     },
     palette: {
         primary: cyan,
@@ -42,9 +42,9 @@ const theme = createMuiTheme({
             light: "#ffffff",
             main: "#f5f5f5",
             dark: "#c2c2c2",
-            contrastText: "#000"
-        }
-    }
+            contrastText: "#000",
+        },
+    },
 });
 
 export class AppContainer extends Component {
@@ -65,7 +65,7 @@ export class AppContainer extends Component {
         // disable the right click listener
         document.addEventListener(
             "contextmenu",
-            function(e) {
+            function (e) {
                 e.preventDefault();
             },
             false
@@ -87,13 +87,15 @@ export class AppContainer extends Component {
                     // set initial view
                     this.props.setMapView({ extent: appConfig.DEFAULT_BBOX_EXTENT }, true);
 
-                    // activate default params
-                    this.props.activateDefaultLayers();
-
                     // activate url params
                     this.urlParams = MiscUtil.getUrlParams();
                     if (Object.keys(this.urlParams).length > 0) {
                         this.props.runUrlConfig(this.urlParams);
+                    }
+
+                    if (!this.urlParams[appConfig.URL_KEYS.SATELLITE_LAYERS]) {
+                        // activate default params
+                        this.props.activateDefaultLayers();
                     }
 
                     // signal complete
@@ -111,16 +113,16 @@ export class AppContainer extends Component {
         let containerClasses = MiscUtil.generateStringFromSet({
             [stylesCore.appContainer]: true,
             [displayStyles.mouseVisible]: !hideMouse,
-            [displayStyles.mouseHidden]: hideMouse
+            [displayStyles.mouseHidden]: hideMouse,
         });
 
         let mapControlsClasses = MiscUtil.generateStringFromSet({
             [styles.mapControls]: true,
-            [styles.lifted]: this.props.animationOpen
+            [styles.lifted]: this.props.animationOpen,
         });
 
         let dataSubsettingClasses = MiscUtil.generateStringFromSet({
-            [styles.lifted]: this.props.animationOpen
+            [styles.lifted]: this.props.animationOpen,
         });
 
         return (
@@ -159,14 +161,14 @@ AppContainer.propTypes = {
     runLayerSearch: PropTypes.func.isRequired,
     distractionFreeMode: PropTypes.bool.isRequired,
     mapControlsHidden: PropTypes.bool.isRequired,
-    animationOpen: PropTypes.bool.isRequired
+    animationOpen: PropTypes.bool.isRequired,
 };
 
 function mapStateToProps(state) {
     return {
         distractionFreeMode: state.view.get("distractionFreeMode"),
         mapControlsHidden: state.view.get("mapControlsHidden"),
-        animationOpen: state.map.getIn(["animation", "isOpen"])
+        animationOpen: state.map.getIn(["animation", "isOpen"]),
     };
 }
 
@@ -182,11 +184,8 @@ function mapDispatchToProps(dispatch) {
         runUrlConfig: bindActionCreators(appActions.runUrlConfig, dispatch),
         initializeMap: bindActionCreators(mapActionsCore.initializeMap, dispatch),
         setMapView: bindActionCreators(mapActionsCore.setMapView, dispatch),
-        runLayerSearch: bindActionCreators(appActions.runLayerSearch, dispatch)
+        runLayerSearch: bindActionCreators(appActions.runLayerSearch, dispatch),
     };
 }
 
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(AppContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(AppContainer);
