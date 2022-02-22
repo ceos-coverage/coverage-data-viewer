@@ -16,17 +16,32 @@ import * as chartActions from "actions/chartActions";
 import { WMTSUtil } from "utils/WMTSUtil";
 
 export function addLayer(layer, setActive = true) {
-    return dispatch => {
+    return (dispatch) => {
         const capUrl = layer.insituMeta.get("service_url");
         const handleAs = layer.handleAs;
-        if (handleAs === appStringsCore.LAYER_GIBS_RASTER && capUrl) {
+        const tileTypes = [
+            appStringsCore.LAYER_GIBS_RASTER,
+            appStrings.LAYER_WMS_TILE_RASTER,
+            appStringsCore.LAYER_WMS_RASTER,
+        ];
+        if (tileTypes.indexOf(handleAs) !== -1 && capUrl) {
             WMTSUtil.getWMTSData(capUrl)
-                .then(wmtsString => {
-                    if (wmtsString) {
+                .then((configString) => {
+                    if (configString) {
+                        const isWMS =
+                            [
+                                appStrings.LAYER_WMS_TILE_RASTER,
+                                appStringsCore.LAYER_WMS_RASTER,
+                            ].indexOf(handleAs) != -1;
                         dispatch({
                             type: typesCore.INGEST_LAYER_CONFIG,
-                            config: wmtsString,
-                            options: { url: capUrl, type: appStringsCore.LAYER_CONFIG_WMTS_XML }
+                            config: configString,
+                            options: {
+                                url: capUrl,
+                                type: isWMS
+                                    ? appStringsCore.LAYER_CONFIG_WMS_XML
+                                    : appStringsCore.LAYER_CONFIG_WMTS_XML,
+                            },
                         });
 
                         dispatch({ type: types.ADD_LAYER, layer, setActive });
@@ -36,14 +51,14 @@ export function addLayer(layer, setActive = true) {
                             if (layer.palette.handleAs === appStrings.COLORBAR_GIBS_XML) {
                                 p = WMTSUtil.getGIBSColormapFromURL(layer.palette.url, layer.id);
                             } else {
-                                p = WMTSUtil.getGIBSColormapFromCapabilities(wmtsString, {
-                                    layer: layer.id
+                                p = WMTSUtil.getGIBSColormapFromCapabilities(configString, {
+                                    layer: layer.id,
                                 });
                             }
-                            p.then(palette => {
+                            p.then((palette) => {
                                 dispatch({
                                     type: typesCore.INGEST_LAYER_PALETTES,
-                                    paletteConfig: { paletteArray: [palette] }
+                                    paletteConfig: { paletteArray: [palette] },
                                 });
                                 dispatch({
                                     type: types.UPDATE_LAYER,
@@ -55,17 +70,17 @@ export function addLayer(layer, setActive = true) {
                                             name: palette.name,
                                             handleAs: palette.handleAs,
                                             min: palette.min,
-                                            max: palette.max
-                                        }
-                                    })
+                                            max: palette.max,
+                                        },
+                                    }),
                                 });
-                            }).catch(err => {
+                            }).catch((err) => {
                                 console.warn(err);
                             });
                         }
                     }
                 })
-                .catch(err => {
+                .catch((err) => {
                     console.warn(err);
                     dispatch({ type: types.ADD_LAYER, layer, setActive });
                 });
@@ -112,13 +127,13 @@ export function removeGeometryFromMap(geometry, interactionType) {
 }
 
 export function setSelectedArea(area, geometryType) {
-    return dispatch => {
+    return (dispatch) => {
         dispatch(appActions.setSearchSelectedArea(area, geometryType));
     };
 }
 
 export function setDate(date) {
-    return dispatch => {
+    return (dispatch) => {
         dispatch({ type: typesCore.SET_MAP_DATE, date });
 
         dispatch(chartActions.updateDateLinkedCharts());
@@ -139,7 +154,7 @@ export function stepDate(forward) {
 }
 
 export function setDateInterval(size, scale) {
-    return dispatch => {
+    return (dispatch) => {
         dispatch({ type: types.SET_DATE_INTERVAL, size, scale });
 
         dispatch(chartActions.updateDateLinkedCharts());

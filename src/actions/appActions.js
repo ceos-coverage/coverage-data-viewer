@@ -360,18 +360,30 @@ export function setTrackSelected(trackId, isSelected, track = null) {
                 );
             } else {
                 const tempRes = track.getIn(["insituMeta", "resolution_temporal"]);
+                const handleAs =
+                    track.getIn(["insituMeta", "handle_as"]) || appStringsCore.LAYER_GIBS_RASTER;
+                const isWMS =
+                    [appStrings.LAYER_WMS_TILE_RASTER, appStringsCore.LAYER_WMS_RASTER].indexOf(
+                        handleAs
+                    ) != -1;
                 dispatch(
                     mapActions.addLayer({
                         id: track.get("id"),
                         shortId: track.get("shortId"),
                         title: track.get("title"),
                         type: appStringsCore.LAYER_GROUP_TYPE_DATA,
-                        handleAs: appStringsCore.LAYER_GIBS_RASTER,
+                        handleAs: handleAs,
                         fromJson: true,
-                        timeFormat:
-                            tempRes && parseFloat(tempRes) % 1 !== 0
-                                ? "YYYY-MM-DD[T]HH:mm:ss[Z]"
-                                : "YYYY-MM-DD",
+                        timeFormat: track.getIn(["insituMeta", "time_format"])
+                            ? track
+                                  .getIn(["insituMeta", "time_format"])
+                                  .replace("[T]", "T")
+                                  .replace("T", "[T]")
+                                  .replace("[Z]", "Z")
+                                  .replace("Z", "[Z]") // force assumption of UTC and allow escaped or non-escaped strings
+                            : tempRes && parseFloat(tempRes) % 1 !== 0
+                            ? "YYYY-MM-DD[T]HH:mm:ss[Z]"
+                            : "YYYY-MM-DD",
                         palette: {
                             name: track.get("shortId"),
                             url: track.get("colorbarUrl"),
@@ -379,8 +391,12 @@ export function setTrackSelected(trackId, isSelected, track = null) {
                         },
                         mappingOptions: {
                             urlFunctions: {
-                                openlayers: "kvpTimeParam_wmts",
-                                cesium: "kvpTimeParam_wmts",
+                                openlayers: isWMS
+                                    ? appStringsCore.KVP_TIME_PARAM_WMS
+                                    : appStringsCore.KVP_TIME_PARAM_WMTS,
+                                cesium: isWMS
+                                    ? appStringsCore.KVP_TIME_PARAM_WMS
+                                    : appStringsCore.KVP_TIME_PARAM_WMTS,
                             },
                         },
                         insituMeta: track.get("insituMeta"),

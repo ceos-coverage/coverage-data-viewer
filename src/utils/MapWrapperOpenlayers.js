@@ -147,28 +147,6 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                 evt.context.mozImageSmoothingEnabled = false;
                 evt.context.msImageSmoothingEnabled = false;
             });
-
-            // https://cwcgom.aoml.noaa.gov/thredds/wms/SEASCAPE_MONTH/SEASCAPES.nc?&TIME=2021-12-15T12:00:00Z&LAYERS=CLASS&service=WMS&version=1.3.0&REQUEST=GetMap&MAXRESOLUTION=auto&TRANSPARENT=true&FORMAT=image/png&NUMCOLORBANDS=215&CRS=CRS:84&STYLES=boxfill/seascapes&COLORSCALERANGE=1,33&BBOX=-157.50,-0.00,-135.00,22.50&CRS=EPSG:4326&WIDTH=256&HEIGHT=256
-            // const testFunc = () => {
-            //     const testLayer = new Ol_Layer_TileLayer({
-            //         extent: [
-            //             -179.97500610351562, -89.97499847412111, 179.97500610351562,
-            //             89.9749984741211,
-            //         ],
-            //         source: new Ol_Source_TileWMS({
-            //             url: "https://cwcgom.aoml.noaa.gov/thredds/wms/SEASCAPE_MONTH/SEASCAPES.nc",
-            //             projection: "EPSG:4326",
-            //             params: {
-            //                 LAYERS: "CLASS",
-            //                 TIME: "2021-12-15T12:00:00Z",
-            //                 FORMAT: "image/png",
-            //             },
-            //             transition: 0,
-            //         }),
-            //     });
-            //     map.addLayer(testLayer);
-            // };
-            // console.log(testFunc);
         }
 
         return map;
@@ -424,6 +402,9 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
             case appStrings.LAYER_VECTOR_POINTS_WFS:
                 mapLayer = this.createDynamicVectorPointLayer(layer, fromCache);
                 break;
+            case appStrings.LAYER_WMS_TILE_RASTER:
+                mapLayer = this.createTiledWMSLayer(layer, fromCache);
+                break;
             default:
                 mapLayer = MapWrapperOpenlayersCore.prototype.createLayer.call(
                     this,
@@ -448,6 +429,41 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                 );
             }
         }
+
+        return mapLayer;
+    }
+
+    createTiledWMSLayer(layer, fromCache = true) {
+        const mappingOptions = layer.get("mappingOptions").toJS();
+
+        // check cache for source
+        let cacheSource = false;
+        if (fromCache) {
+            let cacheHash = this.getCacheHash(layer) + "_source";
+            if (this.layerCache.get(cacheHash)) {
+                cacheSource = this.layerCache.get(cacheHash);
+            }
+        }
+
+        const layerSource =
+            cacheSource ||
+            new Ol_Source_TileWMS({
+                url: mappingOptions.url,
+                projection: mappingOptions.crs || "EPSG:4326",
+                params: {
+                    LAYERS: mappingOptions.layer,
+                    TIME: "{Time}",
+                    FORMAT: mappingOptions.format,
+                },
+                transition: 0,
+            });
+
+        const mapLayer = new Ol_Layer_TileLayer({
+            extent: mappingOptions.extents || [-180, -90, 180, 90],
+            source: layerSource,
+        });
+
+        this.setWMSLayerOverrides(layer, mapLayer, layerSource);
 
         return mapLayer;
     }
