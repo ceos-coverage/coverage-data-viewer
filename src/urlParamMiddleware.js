@@ -111,10 +111,12 @@ const updateUrl = (store) => {
             const displayOptions = chart.get("displayOptions");
             const linkToDateInterval = displayOptions.get("linkToDateInterval");
             const markerType = displayOptions.get("markerType");
-            const bounds = displayOptions
-                .get("bounds")
-                .map((x) => x.toFixed(2))
-                .join("_");
+            const bounds = displayOptions.get("bounds")
+                ? displayOptions
+                      .get("bounds")
+                      .map((x) => x.toFixed(2))
+                      .join("_")
+                : "__NONE__";
 
             acc.push(
                 `${tracks}:${xAxis}|${xAxisLabel}|${yAxis}|${yAxisLabel}|${zAxis}|${zAxisLabel}:${linkToDateInterval}|${markerType}|${bounds}`
