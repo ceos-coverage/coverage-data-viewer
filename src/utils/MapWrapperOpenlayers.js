@@ -2217,8 +2217,8 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                 this.addRasterLayerLoadListeners(mapLayer, callback);
             }
 
-            // // add the layer to cache for faster access later
-            // this.layerCache.set(mapLayer.get("_layerCacheHash"), mapLayer);
+            // add the layer to cache for faster access later
+            this.layerCache.set(mapLayer.get("_layerCacheHash"), mapLayer);
 
             // check if this is coming from the cache
             if (!status.isLoaded) {
@@ -2384,13 +2384,17 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
             return `${layer.get("id")}_${moment
                 .utc(date)
                 .format(layer.get("timeFormat"))}_${layer.get("vectorColor")}`;
-        } else {
+        } else if (layer.get("handleAs") === appStrings.LAYER_MULTI_FILE_VECTOR_KML) {
             const date = moment.utc(this.mapDate);
             const endTime = date.format(layer.get("timeFormat"));
             const startTime = date
                 .subtract(this.dateInterval.size, this.dateInterval.scale)
                 .format(layer.get("timeFormat"));
             return `${layer.get("id")}_${startTime}_${endTime}_${layer.get("vectorColor")}`;
+        } else {
+            return `${layer.get("id")}_${moment
+                .utc(this.mapDate)
+                .format(layer.get("timeFormat"))}_${layer.get("vectorColor")}`;
         }
     }
 
