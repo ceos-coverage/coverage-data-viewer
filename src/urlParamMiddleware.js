@@ -75,7 +75,7 @@ const updateUrl = (store) => {
         .filter((layer) => !layer.get("isDisabled") && layer.get("isActive"))
         .toList()
         .sort(MiscUtil.getImmutableObjectSort("displayIndex"))
-        .map((x) => x.get("id"))
+        .map((x) => `${x.get("id")}|${x.get("vectorColor")}`)
         .join(",");
     const referenceLayers = layers
         .get(appStrings.LAYER_GROUP_TYPE_DATA_REFERENCE)
@@ -183,6 +183,7 @@ const actionsTriggeringURLUpdate = {
     SET_MAIN_MENU_TAB_INDEX: true,
     CLOSE_CHART: true,
     SET_CHART_DISPLAY_OPTIONS: true,
+    SET_INSITU_LAYER_COLOR: true,
 };
 
 export const urlParamMiddleware = (store) => (next) => (action) => {

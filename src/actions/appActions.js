@@ -152,12 +152,16 @@ function setSatelliteSearchFacetsFromUrl(params) {
     };
 }
 
-function addTracksFromUrl(trackIds) {
+function addTracksFromUrl(trackData) {
     return (dispatch) => {
-        trackIds.forEach((id) => {
+        trackData.forEach((data) => {
+            const pieces = data.split("|");
+            const id = pieces[0];
+            const color = pieces[1];
             SearchUtil.searchForSingleTrack(id).then((layer) => {
                 if (layer) {
                     dispatch(setTrackSelected(id, true, layer));
+                    dispatch(mapActions.setInsituLayerColor(id, color));
                 }
             });
         });
@@ -337,6 +341,7 @@ export function setTrackSelected(trackId, isSelected, track = null, noMerge = fa
 
             const mergedTrack = noMerge ? track : mergeTrackData(track, titleField);
             dispatch(mapActions.addLayer(mergedTrack));
+            return mergedTrack;
         } else {
             dispatch(
                 mapActions.removeLayer(
