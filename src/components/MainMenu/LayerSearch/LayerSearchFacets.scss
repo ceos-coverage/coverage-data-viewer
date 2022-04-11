@@ -35,6 +35,7 @@
     overflow-y: scroll;
     &.empty {
         overflow-y: hidden;
+        padding: 1.6rem;
     }
 }
 

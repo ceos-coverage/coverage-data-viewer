@@ -50,7 +50,7 @@ export function translateUrlParamToActionDispatch(param) {
         case appConfig.URL_KEYS.INSITU_LAYERS:
             return addTracksFromUrl(param.value.split(","));
         case appConfig.URL_KEYS.SATELLITE_LAYERS:
-            return addSatellitesFromUrl(param.value.split(","));
+            return addSatelliteLayersFromUrl(param.value.split(","));
         case appConfig.URL_KEYS.BASEMAP:
             return param.value === "__NONE__"
                 ? mapActionsCore.hideBasemap()
@@ -164,7 +164,7 @@ function addTracksFromUrl(trackIds) {
     };
 }
 
-function addSatellitesFromUrl(trackIds) {
+function addSatelliteLayersFromUrl(trackIds) {
     return (dispatch) => {
         return new Promise((resolve, reject) => {
             Promise.all(
@@ -173,12 +173,22 @@ function addSatellitesFromUrl(trackIds) {
                 })
             )
                 .then((layers) => {
-                    layers.forEach((l) => {
-                        if (l) {
-                            dispatch(setTrackSelected(l.get("id"), true, l));
-                        }
-                    });
-                    resolve();
+                    Promise.all(
+                        layers.reduce((acc, l) => {
+                            if (l) {
+                                const mergedTrack = mergeTrackData(l);
+                                acc.push(dispatch(mapActions.ingestSingleLayer(mergedTrack)));
+                            }
+                            return acc;
+                        }, [])
+                    )
+                        .then((layerList) => {
+                            layerList.reverse().forEach((l) => {
+                                dispatch(setTrackSelected(l.id, true, l, true));
+                                resolve();
+                            });
+                        })
+                        .catch((err) => reject(err));
                 })
                 .catch((err) => {
                     reject(err);
@@ -317,92 +327,16 @@ export function clearSatelliteSearchFacet(facetGroup) {
     return { type: types.CLEAR_SATELLITE_SEARCH_FACET, facetGroup };
 }
 
-export function setTrackSelected(trackId, isSelected, track = null) {
+export function setTrackSelected(trackId, isSelected, track = null, noMerge = false) {
     return (dispatch, getState) => {
         dispatch({ type: types.SET_TRACK_SELECTED, trackId, isSelected });
         if (isSelected) {
             let state = getState();
             track = track || state.view.getIn(["layerSearch", "searchResults", "results", trackId]);
             let titleField = state.map.get("insituLayerTitleField");
-            if (track.get("isTrack")) {
-                dispatch(
-                    mapActions.addLayer({
-                        id: track.get("id"),
-                        shortId: track.get("shortId"),
-                        title:
-                            track.getIn(["insituMeta", "title"]) ||
-                            track.getIn(["insituMeta", titleField]),
-                        type: appStrings.LAYER_GROUP_TYPE_INSITU_DATA,
-                        handleAs:
-                            track.getIn(["insituMeta", "handle_as"]) ||
-                            appStrings.LAYER_VECTOR_POINT_TRACK,
-                        url: GeoServerUtil.getUrlForTrack(track),
-                        mappingOptions: {
-                            url: GeoServerUtil.getUrlForTrack(track),
-                            extents: MapUtil.constrainExtent([
-                                track.getIn(["insituMeta", "lon_min"]),
-                                track.getIn(["insituMeta", "lat_min"]),
-                                track.getIn(["insituMeta", "lon_max"]),
-                                track.getIn(["insituMeta", "lat_max"]),
-                            ]),
-                            urlFunctions:
-                                track.getIn(["insituMeta", "handle_as"]) ===
-                                appStrings.LAYER_VECTOR_POINTS_WFS
-                                    ? {
-                                          [appStringsCore.MAP_LIB_2D]:
-                                              appStrings.URL_FUNC_WFS_AREA_TIME_FILTER,
-                                      }
-                                    : {},
-                        },
-                        insituMeta: track.get("insituMeta"),
-                        timeFormat: "YYYY-MM-DD[T]HH:mm:ss[Z]",
-                    })
-                );
-            } else {
-                const tempRes = track.getIn(["insituMeta", "resolution_temporal"]);
-                const handleAs =
-                    track.getIn(["insituMeta", "handle_as"]) || appStringsCore.LAYER_GIBS_RASTER;
-                const isWMS =
-                    [appStrings.LAYER_WMS_TILE_RASTER, appStringsCore.LAYER_WMS_RASTER].indexOf(
-                        handleAs
-                    ) != -1;
-                dispatch(
-                    mapActions.addLayer({
-                        id: track.get("id"),
-                        shortId: track.get("shortId"),
-                        title: track.get("title"),
-                        type: appStringsCore.LAYER_GROUP_TYPE_DATA,
-                        handleAs: handleAs,
-                        fromJson: true,
-                        timeFormat: track.getIn(["insituMeta", "time_format"])
-                            ? track
-                                  .getIn(["insituMeta", "time_format"])
-                                  .replace("[T]", "T")
-                                  .replace("T", "[T]")
-                                  .replace("[Z]", "Z")
-                                  .replace("Z", "[Z]") // force assumption of UTC and allow escaped or non-escaped strings
-                            : tempRes && parseFloat(tempRes) % 1 !== 0
-                            ? "YYYY-MM-DD[T]HH:mm:ss[Z]"
-                            : "YYYY-MM-DD",
-                        palette: {
-                            name: track.get("shortId"),
-                            url: track.get("colorbarUrl"),
-                            handleAs: appStrings.COLORBAR_GIBS_XML,
-                        },
-                        mappingOptions: {
-                            urlFunctions: {
-                                openlayers: isWMS
-                                    ? appStringsCore.KVP_TIME_PARAM_WMS
-                                    : appStringsCore.KVP_TIME_PARAM_WMTS,
-                                cesium: isWMS
-                                    ? appStringsCore.KVP_TIME_PARAM_WMS
-                                    : appStringsCore.KVP_TIME_PARAM_WMTS,
-                            },
-                        },
-                        insituMeta: track.get("insituMeta"),
-                    })
-                );
-            }
+
+            const mergedTrack = noMerge ? track : mergeTrackData(track, titleField);
+            dispatch(mapActions.addLayer(mergedTrack));
         } else {
             dispatch(
                 mapActions.removeLayer(
@@ -559,4 +493,76 @@ function updateFacets(dispatch, getState) {
 
 export function setHelpPage(pageKey) {
     return { type: types.SET_HELP_PAGE_KEY, pageKey };
+}
+
+function mergeTrackData(track, titleField) {
+    if (track.get("isTrack")) {
+        return {
+            id: track.get("id"),
+            shortId: track.get("shortId"),
+            title: track.getIn(["insituMeta", "title"]) || track.getIn(["insituMeta", titleField]),
+            type: appStrings.LAYER_GROUP_TYPE_INSITU_DATA,
+            handleAs:
+                track.getIn(["insituMeta", "handle_as"]) || appStrings.LAYER_VECTOR_POINT_TRACK,
+            url: GeoServerUtil.getUrlForTrack(track),
+            mappingOptions: {
+                url: GeoServerUtil.getUrlForTrack(track),
+                extents: MapUtil.constrainExtent([
+                    track.getIn(["insituMeta", "lon_min"]),
+                    track.getIn(["insituMeta", "lat_min"]),
+                    track.getIn(["insituMeta", "lon_max"]),
+                    track.getIn(["insituMeta", "lat_max"]),
+                ]),
+                urlFunctions:
+                    track.getIn(["insituMeta", "handle_as"]) === appStrings.LAYER_VECTOR_POINTS_WFS
+                        ? {
+                              [appStringsCore.MAP_LIB_2D]: appStrings.URL_FUNC_WFS_AREA_TIME_FILTER,
+                          }
+                        : {},
+            },
+            insituMeta: track.get("insituMeta"),
+            timeFormat: "YYYY-MM-DD[T]HH:mm:ss[Z]",
+        };
+    } else {
+        const tempRes = track.getIn(["insituMeta", "resolution_temporal"]);
+        const handleAs =
+            track.getIn(["insituMeta", "handle_as"]) || appStringsCore.LAYER_GIBS_RASTER;
+        const isWMS =
+            [appStrings.LAYER_WMS_TILE_RASTER, appStringsCore.LAYER_WMS_RASTER].indexOf(handleAs) !=
+            -1;
+        return {
+            id: track.get("id"),
+            shortId: track.get("shortId"),
+            title: track.get("title"),
+            type: appStringsCore.LAYER_GROUP_TYPE_DATA,
+            handleAs: handleAs,
+            fromJson: true,
+            timeFormat: track.getIn(["insituMeta", "time_format"])
+                ? track
+                      .getIn(["insituMeta", "time_format"])
+                      .replace("[T]", "T")
+                      .replace("T", "[T]")
+                      .replace("[Z]", "Z")
+                      .replace("Z", "[Z]") // force assumption of UTC and allow escaped or non-escaped strings
+                : tempRes && parseFloat(tempRes) % 1 !== 0
+                ? "YYYY-MM-DD[T]HH:mm:ss[Z]"
+                : "YYYY-MM-DD",
+            palette: {
+                name: track.get("shortId"),
+                url: track.get("colorbarUrl"),
+                handleAs: appStrings.COLORBAR_GIBS_XML,
+            },
+            mappingOptions: {
+                urlFunctions: {
+                    openlayers: isWMS
+                        ? appStringsCore.KVP_TIME_PARAM_WMS
+                        : appStringsCore.KVP_TIME_PARAM_WMTS,
+                    cesium: isWMS
+                        ? appStringsCore.KVP_TIME_PARAM_WMS
+                        : appStringsCore.KVP_TIME_PARAM_WMTS,
+                },
+            },
+            insituMeta: track.get("insituMeta"),
+        };
+    }
 }

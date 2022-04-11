@@ -24,7 +24,7 @@ export class LayerSearchFacets extends Component {
             selected.size === 0
                 ? "Any"
                 : selected.size === 1 && propFacet.size > 0
-                ? propFacet.find(f => selected.contains(f.get("value"))).get("label")
+                ? propFacet.find((f) => selected.contains(f.get("value"))).get("label")
                 : selected.size + " Selected";
 
         if (propFacet.size === 0) {
@@ -37,6 +37,19 @@ export class LayerSearchFacets extends Component {
                     contentClass={`${styles.facetContent} ${styles.empty}`}
                 >
                     <div className={`${styles.optionsList} ${styles.empty}`}>No values found</div>
+                    <div className={styles.clearRow}>
+                        <Button
+                            size="small"
+                            variant="text"
+                            color="primary"
+                            onClick={() =>
+                                this.props.appActions.clearTrackSearchFacet(configFacet.value)
+                            }
+                            className={styles.clearBtn}
+                        >
+                            clear
+                        </Button>
+                    </div>
                 </LabelPopover>
             );
         } else {
@@ -105,16 +118,13 @@ export class LayerSearchFacets extends Component {
 LayerSearchFacets.propTypes = {
     facets: PropTypes.object,
     selectedFacets: PropTypes.object,
-    appActions: PropTypes.object.isRequired
+    appActions: PropTypes.object.isRequired,
 };
 
 function mapDispatchToProps(dispatch) {
     return {
-        appActions: bindActionCreators(appActions, dispatch)
+        appActions: bindActionCreators(appActions, dispatch),
     };
 }
 
-export default connect(
-    null,
-    mapDispatchToProps
-)(LayerSearchFacets);
+export default connect(null, mapDispatchToProps)(LayerSearchFacets);

@@ -90,6 +90,48 @@ export function addLayer(layer, setActive = true) {
     };
 }
 
+export function ingestSingleLayer(layer) {
+    return (dispatch) => {
+        return new Promise((resolve, reject) => {
+            const capUrl = layer.insituMeta.get("service_url");
+            const handleAs = layer.handleAs;
+            const tileTypes = [
+                appStringsCore.LAYER_GIBS_RASTER,
+                appStrings.LAYER_WMS_TILE_RASTER,
+                appStringsCore.LAYER_WMS_RASTER,
+            ];
+            if (tileTypes.indexOf(handleAs) !== -1 && capUrl) {
+                WMTSUtil.getWMTSData(capUrl)
+                    .then((configString) => {
+                        if (configString) {
+                            const isWMS =
+                                [
+                                    appStrings.LAYER_WMS_TILE_RASTER,
+                                    appStringsCore.LAYER_WMS_RASTER,
+                                ].indexOf(handleAs) != -1;
+                            dispatch({
+                                type: typesCore.INGEST_LAYER_CONFIG,
+                                config: configString,
+                                options: {
+                                    url: capUrl,
+                                    type: isWMS
+                                        ? appStringsCore.LAYER_CONFIG_WMS_XML
+                                        : appStringsCore.LAYER_CONFIG_WMTS_XML,
+                                },
+                            });
+                            resolve(layer);
+                        } else {
+                            reject(new Error("failed to parse WMTS data"));
+                        }
+                    })
+                    .catch((err) => reject(err));
+            } else {
+                resolve(layer);
+            }
+        });
+    };
+}
+
 export function removeLayer(layer) {
     return { type: types.REMOVE_LAYER, layer };
 }
