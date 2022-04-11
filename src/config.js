@@ -41,8 +41,16 @@ APPLICATION_CONFIG = {
 
 APPLICATION_CONFIG = {
     URLS: {
-        decimatorMiddleware: "https://oiip.jpl.nasa.gov/getDecData"
-        // decimatorMiddleware: "http://babywhale1.jpl.nasa.gov:8100/getData/"
-        // decimatorMiddleware: "http://localhost:8100/getData"
-    }
+        decimatorMiddleware: "https://oiip.jpl.nasa.gov/getDecData",
+    },
+    LAYER_URL_PARAM_OVERRIDES: {
+        CLASS: {
+            STYLES: "boxfill/seascapes",
+            COLORSCALERANGE: "1,33",
+        },
+        P: {
+            STYLES: "boxfill/seascapes",
+            COLORSCALERANGE: "0,1",
+        },
+    },
 };

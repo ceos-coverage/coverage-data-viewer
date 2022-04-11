@@ -445,6 +445,8 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
             }
         }
 
+        const urlOverrides = appConfig.LAYER_URL_PARAM_OVERRIDES[layer.get("id")] || {};
+
         const layerSource =
             cacheSource ||
             new Ol_Source_TileWMS({
@@ -454,6 +456,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                     LAYERS: mappingOptions.layer,
                     TIME: "{Time}",
                     FORMAT: mappingOptions.format,
+                    ...urlOverrides,
                 },
                 transition: 0,
             });
@@ -1328,7 +1331,6 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
     }
 
     createVectorPointLayerStyles(layer, color = false) {
-        // TODO - start here and scale shapes according to layer variable
         const variables = layer.getIn(["insituMeta", "variables"]);
         color = color || layer.get("vectorColor");
         if (variables.size > 0) {
