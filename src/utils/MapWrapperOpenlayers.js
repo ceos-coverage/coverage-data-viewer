@@ -447,10 +447,16 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
 
         const urlOverrides = appConfig.LAYER_URL_PARAM_OVERRIDES[layer.get("id")] || {};
 
+        // url swap
+        let url = mappingOptions.url;
+        config.LAYER_URL_SWAPS.forEach((swap) => {
+            url = url.replace(swap[0], swap[1]);
+        });
+
         const layerSource =
             cacheSource ||
             new Ol_Source_TileWMS({
-                url: mappingOptions.url,
+                url,
                 projection: mappingOptions.crs || "EPSG:4326",
                 params: {
                     LAYERS: mappingOptions.layer,

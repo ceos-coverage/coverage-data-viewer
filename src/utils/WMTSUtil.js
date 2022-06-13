@@ -1,11 +1,17 @@
 import MiscUtil from "utils/MiscUtil";
 import * as appStringsCore from "_core/constants/appStrings";
+import appConfig from "constants/appConfig";
 
 export class WMTSUtil {
     static _WMTS_CACHE = {};
     static _PARSED_WMTS_CACHE = {};
 
     static getWMTSData(url) {
+        // url swap
+        config.LAYER_URL_SWAPS.forEach((swap) => {
+            url = url.replace(swap[0], swap[1]);
+        });
+
         return new Promise((resolve, reject) => {
             if (this._WMTS_CACHE[url]) {
                 resolve(this._WMTS_CACHE[url]);
@@ -13,13 +19,13 @@ export class WMTSUtil {
                 MiscUtil.asyncFetch({
                     url,
                     handleAs: appStringsCore.FILE_TYPE_XML,
-                    options: { credentials: "same-origin" }
+                    options: { credentials: "same-origin" },
                 })
-                    .then(xmlString => {
+                    .then((xmlString) => {
                         this._WMTS_CACHE[url] = xmlString;
                         resolve(xmlString);
                     })
-                    .catch(err => {
+                    .catch((err) => {
                         reject(err);
                     });
             }
@@ -42,14 +48,14 @@ export class WMTSUtil {
 
             // check cache
             const p = this._WMTS_CACHE[colormapUrl]
-                ? new Promise(resolve => resolve(this._WMTS_CACHE[colormapUrl]))
+                ? new Promise((resolve) => resolve(this._WMTS_CACHE[colormapUrl]))
                 : MiscUtil.asyncFetch({
                       url: colormapUrl,
                       handleAs: appStringsCore.FILE_TYPE_XML,
-                      options: { credentials: "same-origin" }
+                      options: { credentials: "same-origin" },
                   });
 
-            p.then(data => {
+            p.then((data) => {
                 this._WMTS_CACHE[colormapUrl] = data;
 
                 // parse the document
@@ -95,7 +101,7 @@ export class WMTSUtil {
                         min,
                         max,
                         units,
-                        handleAs: appStringsCore.COLORBAR_JSON_FIXED
+                        handleAs: appStringsCore.COLORBAR_JSON_FIXED,
                     });
                 } else {
                     const colorEntries = map.getElementsByTagName("ColorMapEntry");
@@ -117,10 +123,10 @@ export class WMTSUtil {
                         min,
                         max,
                         units,
-                        handleAs: appStringsCore.COLORBAR_JSON_FIXED
+                        handleAs: appStringsCore.COLORBAR_JSON_FIXED,
                     });
                 }
-            }).catch(err => reject(err));
+            }).catch((err) => reject(err));
         });
     }
 
@@ -166,8 +172,8 @@ export class WMTSUtil {
             }
 
             this.getGIBSColormapFromURL(colormapUrl, config.layer)
-                .then(data => resolve(data))
-                .catch(err => reject(err));
+                .then((data) => resolve(data))
+                .catch((err) => reject(err));
         });
     }
 }
