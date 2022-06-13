@@ -449,7 +449,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
 
         // url swap
         let url = mappingOptions.url;
-        config.LAYER_URL_SWAPS.forEach((swap) => {
+        appConfig.LAYER_URL_SWAPS.forEach((swap) => {
             url = url.replace(swap[0], swap[1]);
         });
 

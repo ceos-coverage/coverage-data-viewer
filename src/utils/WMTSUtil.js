@@ -8,7 +8,7 @@ export class WMTSUtil {
 
     static getWMTSData(url) {
         // url swap
-        config.LAYER_URL_SWAPS.forEach((swap) => {
+        appConfig.LAYER_URL_SWAPS.forEach((swap) => {
             url = url.replace(swap[0], swap[1]);
         });
 
