@@ -19,6 +19,7 @@ import { LabelPopover, Checkbox } from "components/Reusables";
 import styles from "components/Chart/ChartCreateForm.scss";
 import * as chartActions from "actions/chartActions";
 import * as appStrings from "constants/appStrings";
+import * as appStringsCore from "_core/constants/appStrings";
 import MiscUtil from "utils/MiscUtil";
 
 export class ChartCreateForm extends Component {
@@ -29,7 +30,7 @@ export class ChartCreateForm extends Component {
 
     renderTrackList(trackList) {
         if (trackList.size > 0) {
-            return trackList.map(track => {
+            return trackList.map((track) => {
                 let title =
                     track.get("title").size > 0 ? track.getIn(["title", 0]) : track.get("title");
                 return (
@@ -39,7 +40,7 @@ export class ChartCreateForm extends Component {
                         checked={this.props.formOptions
                             .get("selectedTracks")
                             .includes(track.get("id"))}
-                        onChange={isSelected =>
+                        onChange={(isSelected) =>
                             this.props.chartActions.setTrackSelected(track.get("id"), isSelected)
                         }
                     />
@@ -52,7 +53,7 @@ export class ChartCreateForm extends Component {
     renderVariableSelect(sharedVariableSet, nonSharedVariableSet, axis) {
         if (axis !== "xAxis") {
             sharedVariableSet = sharedVariableSet.filter(
-                key => key.get("label").indexOf("time") === -1
+                (key) => key.get("label").indexOf("time") === -1
             );
         }
 
@@ -62,12 +63,12 @@ export class ChartCreateForm extends Component {
                     aria-label={axis}
                     name={axis}
                     value={this.props.formOptions.get(axis) || appStrings.NO_DATA}
-                    onClick={evt => {
+                    onClick={(evt) => {
                         this.selectAxisVariable(axis, evt.target.value);
                     }}
-                    onChange={evt => this.selectAxisVariable(axis, evt.target.value)}
+                    onChange={(evt) => this.selectAxisVariable(axis, evt.target.value)}
                 >
-                    {sharedVariableSet.map(variable => (
+                    {sharedVariableSet.map((variable) => (
                         <FormControlLabel
                             key={"shared_var_" + variable.get("label")}
                             value={variable.get("label")}
@@ -91,9 +92,9 @@ export class ChartCreateForm extends Component {
         let selectorList = [
             { label: "X-Axis", val: "xAxis" },
             { label: "Y-Axis", val: "yAxis" },
-            { label: "Z-Axis", val: "zAxis" }
+            { label: "Z-Axis", val: "zAxis" },
         ];
-        return selectorList.map(selector => {
+        return selectorList.map((selector) => {
             return (
                 <LabelPopover
                     key={"variable_selector_" + selector.val}
@@ -113,19 +114,19 @@ export class ChartCreateForm extends Component {
 
     render() {
         let trackList = this.props.availableTracks
-            .filter(track => !track.get("isDisabled") && track.get("isActive"))
+            .filter((track) => !track.get("isDisabled") && track.get("isActive"))
             .toList()
             .sort(MiscUtil.getImmutableObjectSort("title"));
 
         let sharedVariableSet = this.props.formOptions
             .getIn(["variables", "shared"])
             .toList()
-            .sortBy(x => x.get("label"));
+            .sortBy((x) => x.get("label"));
 
         let nonSharedVariableSet = this.props.formOptions
             .getIn(["variables", "nonshared"])
             .toList()
-            .sortBy(x => x.get("label"));
+            .sortBy((x) => x.get("label"));
 
         let couldCreateChart =
             this.props.formOptions.get("selectedTracks").size > 0 &&
@@ -134,13 +135,9 @@ export class ChartCreateForm extends Component {
 
         let datasetsSubtitle = this.props.formOptions.get("selectedTracks").size + " Selected";
         if (this.props.formOptions.get("selectedTracks").size === 1) {
-            const track = trackList.find(track => {
+            const track = trackList.find((track) => {
                 return (
-                    track.get("id") ===
-                    this.props.formOptions
-                        .get("selectedTracks")
-                        .toList()
-                        .get(0)
+                    track.get("id") === this.props.formOptions.get("selectedTracks").toList().get(0)
                 );
             });
             datasetsSubtitle =
@@ -149,25 +146,61 @@ export class ChartCreateForm extends Component {
 
         return (
             <Paper elevation={3} className={styles.root}>
-                <div className={styles.options}>
-                    <LabelPopover
-                        label="Datasets"
-                        subtitle={datasetsSubtitle}
-                        className={styles.chartOption}
+                <div className={styles.selectorRow}>
+                    <div className={styles.options}>
+                        <LabelPopover
+                            label="Dataset Type"
+                            subtitle={this.props.formOptions.get("datasetType")}
+                            className={styles.chartOption}
+                        >
+                            <RadioGroup
+                                aria-labelledby="dataset-type-selector"
+                                value={this.props.formOptions.get("datasetType")}
+                                name="dataset-type-selector"
+                                onClick={(evt) => {
+                                    this.props.chartActions.setChartDatasetType(evt.target.value);
+                                }}
+                                onChange={(evt) =>
+                                    this.props.chartActions.setChartDatasetType(evt.target.value)
+                                }
+                            >
+                                <FormControlLabel
+                                    value={appStrings.CHART_DATASET_TYPE_INSITU}
+                                    control={<Radio color="primary" />}
+                                    label="In-Situ"
+                                    className={styles.varLabel}
+                                />
+                                <FormControlLabel
+                                    value={appStrings.CHART_DATASET_TYPE_SATELLITE}
+                                    control={<Radio color="primary" />}
+                                    label="Satellite"
+                                    className={styles.varLabel}
+                                />
+                            </RadioGroup>
+                        </LabelPopover>
+                        <LabelPopover
+                            label="Datasets"
+                            subtitle={datasetsSubtitle}
+                            className={styles.chartOption}
+                        >
+                            <FormGroup>{this.renderTrackList(trackList)}</FormGroup>
+                        </LabelPopover>
+                    </div>
+                    <Button
+                        variant="contained"
+                        size="small"
+                        color="primary"
+                        disabled={!couldCreateChart}
+                        onClick={this.props.chartActions.createChart}
                     >
-                        <FormGroup>{this.renderTrackList(trackList)}</FormGroup>
-                    </LabelPopover>
-                    {this.renderVariableSelections(sharedVariableSet, nonSharedVariableSet)}
+                        Create Chart
+                    </Button>
                 </div>
-                <Button
-                    variant="contained"
-                    size="small"
-                    color="primary"
-                    disabled={!couldCreateChart}
-                    onClick={this.props.chartActions.createChart}
-                >
-                    Create Chart
-                </Button>
+                <div className={styles.selectorRow}>
+                    <div className={styles.options}>
+                        {this.renderVariableSelections(sharedVariableSet, nonSharedVariableSet)}
+                    </div>
+                </div>
             </Paper>
         );
     }
@@ -176,23 +209,24 @@ export class ChartCreateForm extends Component {
 ChartCreateForm.propTypes = {
     chartActions: PropTypes.object.isRequired,
     formOptions: PropTypes.object.isRequired,
-    availableTracks: PropTypes.object.isRequired
+    availableTracks: PropTypes.object.isRequired,
 };
 
 function mapStateToProps(state) {
     return {
         formOptions: state.chart.get("formOptions"),
-        availableTracks: state.map.getIn(["layers", appStrings.LAYER_GROUP_TYPE_INSITU_DATA])
+        availableTracks: state.map.getIn(["layers", appStrings.LAYER_GROUP_TYPE_INSITU_DATA]),
+        availableSatelliteDatasets: state.map.getIn([
+            "layers",
+            appStringsCore.LAYER_GROUP_TYPE_DATA,
+        ]),
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        chartActions: bindActionCreators(chartActions, dispatch)
+        chartActions: bindActionCreators(chartActions, dispatch),
     };
 }
 
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(ChartCreateForm);
+export default connect(mapStateToProps, mapDispatchToProps)(ChartCreateForm);

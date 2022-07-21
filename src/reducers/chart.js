@@ -17,6 +17,9 @@ export default function chart(state = chartState, action, opt_reducer = ChartRed
         case actionTypes.SET_AXIS_VARIABLE:
             return opt_reducer.setAxisVariable(state, action);
 
+        case actionTypes.SET_CHART_DATASET_TYPE:
+            return opt_reducer.setChartDatasetType(state, action);
+
         case actionTypes.INITIALIZE_CHART:
             return opt_reducer.initializeChart(state, action);
 

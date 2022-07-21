@@ -19,18 +19,20 @@ export const chartModel = Immutable.fromJS({
     dataLoading: false,
     dataError: {
         error: false,
-        message: ""
+        message: "",
     },
     datasets: [],
     chartType: appStrings.CHART_TYPES.SINGLE_SERIES,
     formOptions: {
+        datasetType: appStrings.CHART_DATASET_TYPE_INSITU,
         selectedTracks: [],
         xAxis: undefined,
         xAxisLabel: "",
         yAxis: undefined,
         yAxisLabel: "",
         zAxis: undefined,
-        zAxisLabel: ""
+        zAxisLabel: "",
+        satelliteChartType: appStrings.SATELLITE_CHART_TYPE_TIME_SERIES,
     },
     displayOptions: {
         isOpen: false,
@@ -44,12 +46,12 @@ export const chartModel = Immutable.fromJS({
         customYMax: 0,
         useCustomZAxisBounds: false,
         customZMin: 0,
-        customZMax: 0
+        customZMax: 0,
     },
     warning: {
         active: false,
-        text: ""
-    }
+        text: "",
+    },
 });
 
 export const chartState = Immutable.fromJS({
@@ -59,15 +61,15 @@ export const chartState = Immutable.fromJS({
             selectedTracks: "",
             xAxis: "",
             yAxis: "",
-            zAxis: ""
+            zAxis: "",
         })
         .set("selectedTracks", Immutable.Set())
         .set(
             "variables",
             Immutable.Map({
                 shared: Immutable.Set(),
-                nonshared: Immutable.Set()
+                nonshared: Immutable.Set(),
             })
         ),
-    charts: Immutable.OrderedMap()
+    charts: Immutable.OrderedMap(),
 });

@@ -52,6 +52,10 @@ export const GEOMETRY_BOX = "Box";
 
 export const COLORBAR_GIBS_XML = "gibs-xml";
 
+export const CHART_DATASET_TYPE_INSITU = "In-Situ";
+export const CHART_DATASET_TYPE_SATELLITE = "Satellite";
+export const SATELLITE_CHART_TYPE_TIME_SERIES = "SATELLITE_CHART_TYPE_TIME_SERIES";
+
 export const ALERTS = {
     FILL_BUFFER_FAILED: {
         title: "Buffering Animation Failed",

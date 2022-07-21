@@ -8,10 +8,15 @@
 .root {
     padding: 1.5rem 2rem;
     display: flex;
-    flex-flow: row nowrap;
-    align-items: center;
+    flex-flow: column nowrap;
     z-index: 2;
     background: darken(white, 3%);
+}
+
+.selectorRow {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
 }
 
 .options {

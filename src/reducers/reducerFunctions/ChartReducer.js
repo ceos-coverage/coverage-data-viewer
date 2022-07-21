@@ -28,6 +28,10 @@ export default class ChartReducer {
         return state.setIn(["formOptions", action.axis], action.variable);
     }
 
+    static setChartDatasetType(state, action) {
+        return state.setIn(["formOptions", "datasetType"], action.datasetType);
+    }
+
     static initializeChart(state, action) {
         let chartType = appStrings.CHART_TYPES.SINGLE_SERIES;
         if (typeof action.formOptions.zAxis !== "undefined") {
@@ -40,7 +44,7 @@ export default class ChartReducer {
             chartType = appStrings.CHART_TYPES.MULTI_SERIES;
         }
 
-        let title = action.formOptions.selectedTracks.map(track => track.title).join(", ");
+        let title = action.formOptions.selectedTracks.map((track) => track.title).join(", ");
 
         // try to be clever with defaults
         let cleverOptions = {};

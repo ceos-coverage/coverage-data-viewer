@@ -25,6 +25,10 @@ export function setAxisVariable(axis, variable) {
     return { type: types.SET_AXIS_VARIABLE, axis, variable };
 }
 
+export function setChartDatasetType(datasetType) {
+    return { type: types.SET_CHART_DATASET_TYPE, datasetType };
+}
+
 export function setChartFormError(key, value) {
     return { type: types.SET_CHART_FORM_ERROR, key, value };
 }
