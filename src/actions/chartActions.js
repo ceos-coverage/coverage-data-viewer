@@ -26,7 +26,17 @@ export function setAxisVariable(axis, variable) {
 }
 
 export function setChartDatasetType(datasetType) {
-    return { type: types.SET_CHART_DATASET_TYPE, datasetType };
+    return (dispatch) => {
+        dispatch({ type: types.SET_CHART_DATASET_TYPE, datasetType });
+        dispatch(clearSelectedTracks());
+    };
+}
+
+export function clearSelectedTracks() {
+    return (dispatch) => {
+        dispatch({ type: types.CLEAR_CHART_TRACKS_SELECTED });
+        dispatch(updateAvailableVariables());
+    };
 }
 
 export function setChartFormError(key, value) {

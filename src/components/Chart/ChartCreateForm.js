@@ -9,15 +9,17 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
+import moment from "moment";
 import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
-import { LabelPopover, Checkbox } from "components/Reusables";
+import { LabelPopover, Checkbox, DateRangePicker, AreaSelectionInput } from "components/Reusables";
 import styles from "components/Chart/ChartCreateForm.scss";
 import * as chartActions from "actions/chartActions";
+import * as subsettingActions from "actions/subsettingActions";
 import * as appStrings from "constants/appStrings";
 import * as appStringsCore from "_core/constants/appStrings";
 import MiscUtil from "utils/MiscUtil";
@@ -88,7 +90,17 @@ export class ChartCreateForm extends Component {
         return "No variables available";
     }
 
-    renderVariableSelections(sharedVariableSet, nonSharedVariableSet) {
+    renderVariableSelections() {
+        const sharedVariableSet = this.props.formOptions
+            .getIn(["variables", "shared"])
+            .toList()
+            .sortBy((x) => x.get("label"));
+
+        const nonSharedVariableSet = this.props.formOptions
+            .getIn(["variables", "nonshared"])
+            .toList()
+            .sortBy((x) => x.get("label"));
+
         let selectorList = [
             { label: "X-Axis", val: "xAxis" },
             { label: "Y-Axis", val: "yAxis" },
@@ -112,26 +124,38 @@ export class ChartCreateForm extends Component {
         });
     }
 
+    handleDateRangeUpdate = (startDate, endDate) => {
+        this.props.subsettingActions.setSubsettingOptions({
+            startDate: moment.utc(startDate).toDate(),
+            endDate: moment.utc(endDate).toDate(),
+        });
+    };
+
     render() {
-        let trackList = this.props.availableTracks
+        const useInsituTracks =
+            this.props.formOptions.get("datasetType") === appStrings.CHART_DATASET_TYPE_INSITU;
+
+        let trackList = (
+            useInsituTracks ? this.props.availableTracks : this.props.availableSatelliteDatasets
+        )
             .filter((track) => !track.get("isDisabled") && track.get("isActive"))
             .toList()
             .sort(MiscUtil.getImmutableObjectSort("title"));
 
-        let sharedVariableSet = this.props.formOptions
-            .getIn(["variables", "shared"])
-            .toList()
-            .sortBy((x) => x.get("label"));
-
-        let nonSharedVariableSet = this.props.formOptions
-            .getIn(["variables", "nonshared"])
-            .toList()
-            .sortBy((x) => x.get("label"));
-
-        let couldCreateChart =
+        const couldCreateInsituChart =
+            useInsituTracks &&
             this.props.formOptions.get("selectedTracks").size > 0 &&
             typeof this.props.formOptions.get("xAxis") !== "undefined" &&
             typeof this.props.formOptions.get("yAxis") !== "undefined";
+
+        const couldCreateSatelliteChart =
+            !useInsituTracks &&
+            this.props.formOptions.get("selectedTracks").size > 0 &&
+            this.props.selectedArea.size === 4 &&
+            this.props.startDate &&
+            this.props.endDate;
+
+        const couldCreateChart = couldCreateInsituChart || couldCreateSatelliteChart;
 
         let datasetsSubtitle = this.props.formOptions.get("selectedTracks").size + " Selected";
         if (this.props.formOptions.get("selectedTracks").size === 1) {
@@ -197,9 +221,23 @@ export class ChartCreateForm extends Component {
                     </Button>
                 </div>
                 <div className={styles.selectorRow}>
-                    <div className={styles.options}>
-                        {this.renderVariableSelections(sharedVariableSet, nonSharedVariableSet)}
-                    </div>
+                    {useInsituTracks ? (
+                        <div className={styles.options}>{this.renderVariableSelections()}</div>
+                    ) : null}
+                    {!useInsituTracks ? (
+                        <>
+                            <AreaSelectionInput
+                                className={styles.satField}
+                                selectedArea={this.props.selectedArea}
+                            />
+                            <DateRangePicker
+                                className={styles.satField}
+                                startDate={this.props.startDate}
+                                endDate={this.props.endDate}
+                                onUpdate={this.handleDateRangeUpdate}
+                            />
+                        </>
+                    ) : null}
                 </div>
             </Paper>
         );
@@ -220,12 +258,16 @@ function mapStateToProps(state) {
             "layers",
             appStringsCore.LAYER_GROUP_TYPE_DATA,
         ]),
+        selectedArea: state.view.getIn(["layerSearch", "formOptions", "selectedArea"]),
+        startDate: state.subsetting.get("startDate"),
+        endDate: state.subsetting.get("endDate"),
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
         chartActions: bindActionCreators(chartActions, dispatch),
+        subsettingActions: bindActionCreators(subsettingActions, dispatch),
     };
 }
 

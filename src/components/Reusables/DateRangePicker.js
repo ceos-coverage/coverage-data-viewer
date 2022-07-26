@@ -17,8 +17,8 @@ import DatePicker from "react-datepicker";
 import { SearchInput } from "components/Reusables";
 import MiscUtil from "utils/MiscUtil";
 import appConfig from "constants/appConfig";
-import styles from "components/Reusables/DateRangePicker.scss";
 import "react-datepicker/dist/react-datepicker.css";
+import styles from "components/Reusables/DateRangePicker.scss";
 
 export class LayerSearchForm extends Component {
     constructor(props) {
@@ -66,11 +66,11 @@ export class LayerSearchForm extends Component {
     renderDateRange(start, end) {
         let startClass = MiscUtil.generateStringFromSet({
             [styles.dateStr]: true,
-            [styles.activeDate]: this.popoverOpen && this.selectsStart
+            [styles.activeDate]: this.popoverOpen && this.selectsStart,
         });
         let endClass = MiscUtil.generateStringFromSet({
             [styles.dateStr]: true,
-            [styles.activeDate]: this.popoverOpen && !this.selectsStart
+            [styles.activeDate]: this.popoverOpen && !this.selectsStart,
         });
         return (
             <div className={styles.dateRange}>
@@ -83,7 +83,7 @@ export class LayerSearchForm extends Component {
 
     render() {
         let containerClasses = MiscUtil.generateStringFromSet({
-            [this.props.className]: typeof this.props.className !== "undefined"
+            [this.props.className]: typeof this.props.className !== "undefined",
         });
 
         let startDate = moment.utc(this.props.startDate);
@@ -98,7 +98,7 @@ export class LayerSearchForm extends Component {
                 onClose={() => this.handleClose()}
                 className={containerClasses}
                 leftAction={{
-                    icon: <TodayIcon />
+                    icon: <TodayIcon />,
                 }}
             >
                 <DatePicker
@@ -115,7 +115,7 @@ export class LayerSearchForm extends Component {
                     selected={this.selectsStart ? startDate.toDate() : endDate.toDate()}
                     startDate={startDate.toDate()}
                     endDate={endDate.toDate()}
-                    onSelect={value => this.handleDatePickerUpdate(value)}
+                    onSelect={(value) => this.handleDatePickerUpdate(value)}
                 />
                 <div className={styles.footer}>
                     <Typography variant="caption" className={styles.footerText}>
@@ -141,7 +141,7 @@ LayerSearchForm.propTypes = {
     startDate: PropTypes.object.isRequired,
     endDate: PropTypes.object.isRequired,
     onUpdate: PropTypes.func,
-    className: PropTypes.string
+    className: PropTypes.string,
 };
 
 export default connect()(LayerSearchForm);

@@ -204,7 +204,7 @@ module.exports = options => {
                         {
                             loader: "style-loader",
                             options: {
-                                insert: "body",
+                                insert: "head",
                             }
                         },
                         {

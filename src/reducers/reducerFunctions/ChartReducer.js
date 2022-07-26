@@ -32,6 +32,13 @@ export default class ChartReducer {
         return state.setIn(["formOptions", "datasetType"], action.datasetType);
     }
 
+    static clearTracksSelected(state, action) {
+        return state.setIn(
+            ["formOptions", "selectedTracks"],
+            state.getIn(["formOptions", "selectedTracks"]).clear()
+        );
+    }
+
     static initializeChart(state, action) {
         let chartType = appStrings.CHART_TYPES.SINGLE_SERIES;
         if (typeof action.formOptions.zAxis !== "undefined") {

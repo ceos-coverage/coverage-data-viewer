@@ -17,6 +17,10 @@
     display: flex;
     flex-flow: row nowrap;
     align-items: center;
+    margin-bottom: 1.5rem;
+    &:last-of-type {
+        margin-bottom: 0px;
+    }
 }
 
 .options {
@@ -26,7 +30,8 @@
 
 .chartOption {
     margin-right: 0.7rem;
-    width: 9rem;
+    min-width: 9rem;
+    max-width: 12rem;
     &:last-of-type {
         margin-right: 0px;
     }
@@ -38,4 +43,12 @@
 
 .varLabel {
     text-transform: capitalize;
+}
+
+.satField {
+    flex: 1 1;
+    margin-right: 1rem;
+    &:last-of-type {
+        margin-right: 0px;
+    }
 }

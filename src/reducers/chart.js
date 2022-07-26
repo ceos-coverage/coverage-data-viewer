@@ -44,6 +44,9 @@ export default function chart(state = chartState, action, opt_reducer = ChartRed
         case actionTypes.SET_CHART_WARNING:
             return opt_reducer.setChartWarning(state, action);
 
+        case actionTypes.CLEAR_CHART_TRACKS_SELECTED:
+            return opt_reducer.clearTracksSelected(state, action);
+
         default:
             return state;
     }
