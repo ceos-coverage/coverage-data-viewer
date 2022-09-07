@@ -40,6 +40,8 @@ export default class WebWorker extends WebWorkerCore {
                 return this._retrieveRemoteData(message);
             case appStrings.WORKER_TASK_DECIMATE_POINTS_LTTB:
                 return this._decimateLTTB(message);
+            case appStrings.WORKER_TASK_FORMAT_DAG_DATA:
+                return this._formatDataFromDAG(message);
             case appStrings.WORKER_TASK_CLEAR_CACHE_ENTRY:
                 return this._clearCacheEntry(message);
             default:
@@ -59,57 +61,30 @@ export default class WebWorker extends WebWorkerCore {
                 console.time("fetching");
                 MiscUtil.asyncFetch({
                     url: url,
-                    handleAs: appStringsCore.FILE_TYPE_JSON
+                    handleAs: appStringsCore.FILE_TYPE_JSON,
                 }).then(
-                    data => {
+                    (data) => {
                         console.timeEnd("fetching");
 
-                        // console.time("formatting");
-                        let dataArr = data.data.map(row => {
-                            return data.meta.columns.reduce((acc, col, i) => {
-                                acc[col] = row[i];
-                                return acc;
-                            }, {});
-                        });
-                        // console.timeEnd("formatting");
+                        let dataArr = options.formatColumns
+                            ? data.data.map((row) => {
+                                  return data.meta.columns.reduce((acc, col, i) => {
+                                      acc[col] = row[i];
+                                      return acc;
+                                  }, {});
+                              })
+                            : data;
 
                         this._remoteData[url] = { data: dataArr, meta: data.meta };
 
                         if (options.processMeta) {
-                            // console.time("process meta");
-                            this._processExtremes(url);
-                            // console.timeEnd("process meta");
+                            this._processExtremes({ url });
                         }
 
                         resolve("success");
                     },
-                    err => reject(err)
+                    (err) => reject(err)
                 );
-
-                // Papa.parse(url, {
-                //     download: true,
-                //     delimiter: ",",
-                //     header: true,
-                //     fastMode: true,
-                //     skipEmptyLines: true,
-                //     complete: results => {
-                //         console.timeEnd("fetching");
-                //         if (isNaN(results.data[results.data.length - 1][0])) {
-                //             results.data.splice(-1, 1); // wtf is with this werid parse
-                //         }
-                //         this._remoteData[url] = { data: results.data, meta: {} };
-                //         if (options.processMeta) {
-                //             console.time("process meta");
-                //             this._processExtremes(url);
-                //             console.timeEnd("process meta");
-                //         }
-                //         resolve("success");
-                //     },
-                //     error: err => {
-                //         console.warn("Error in _retrieveRemoteData: ", err);
-                //         reject(err);
-                //     }
-                // });
             }
         });
     }
@@ -127,10 +102,11 @@ export default class WebWorker extends WebWorkerCore {
         });
     }
 
-    _processExtremes(url) {
-        let dataRows = this._remoteData[url].data;
-        let meta = this._remoteData[url].meta;
-        let keys = meta.columns;
+    _processExtremes(options) {
+        let { url, dataRows, keys, readKeys, readFuncs } = options;
+
+        dataRows = dataRows || this._remoteData[url].data;
+        keys = keys || this._remoteData[url].meta.columns;
 
         // seed the extremes
         let extremes = keys.reduce((acc, key) => {
@@ -139,10 +115,12 @@ export default class WebWorker extends WebWorkerCore {
         }, {});
 
         // get the read functions
-        let readFuncs = keys.reduce((acc, key) => {
-            acc[key] = this._getReadFuncForKey(key);
-            return acc;
-        }, {});
+        readFuncs =
+            readFuncs ||
+            keys.reduce((acc, key, i) => {
+                acc[key] = this._getReadFuncForKey(key, readKeys ? readKeys[i] : undefined);
+                return acc;
+            }, {});
 
         // find the min/max for each key
         extremes = dataRows.reduce((acc, row) => {
@@ -158,9 +136,47 @@ export default class WebWorker extends WebWorkerCore {
         this._remoteData[url].meta.extremes = extremes;
     }
 
+    _formatDataFromDAG(eventData) {
+        return new Promise((resolve, reject) => {
+            let dagData = eventData.data
+                ? eventData.data
+                : eventData.url
+                ? this._remoteData[eventData.url].data
+                : [];
+
+            let chartDataObj = dagData.result.chart.find((x) => x.type === "xy_line_point");
+            if (!!!chartDataObj) {
+                // if we don't find an xy plot, assume its a histogram plot and just take the first chart obj
+                chartDataObj = dagData.result.chart[0];
+            }
+
+            let xySeriesData = chartDataObj.xySeries_data;
+            let xFunc = this._getReadFuncForKey(chartDataObj.xAxis_units, 0);
+            let yFunc = this._getReadFuncForKey(chartDataObj.yAxis_units, 1);
+
+            let data = this._transformRowData(xySeriesData, eventData.format, xFunc, yFunc);
+
+            const columns = [chartDataObj.xAxis_label, chartDataObj.yAxis_label];
+            this._remoteData[eventData.url].meta = {
+                columns,
+                dec_size: data.length,
+                sub_size: data.length,
+                dag_output: chartDataObj,
+            };
+            this._processExtremes({
+                url: eventData.url,
+                dataRows: data,
+                keys: columns,
+                readKeys: [0, 1],
+                readFuncs: { [columns[0]]: xFunc, [columns[1]]: yFunc },
+            });
+
+            resolve({ data, meta: this._remoteData[eventData.url].meta });
+        });
+    }
+
     _decimateLTTB(eventData) {
         return new Promise((resolve, reject) => {
-            // console.time("decimating");
             let dataRows = eventData.dataRows
                 ? eventData.dataRows
                 : eventData.url
@@ -173,13 +189,13 @@ export default class WebWorker extends WebWorkerCore {
             let range = eventData.xRange || [];
             if (range && range.length == 2) {
                 let startIndex = Math.max(
-                    this._binaryIndexOf(dataRows, range[0], index => {
+                    this._binaryIndexOf(dataRows, range[0], (index) => {
                         return xFunc(dataRows[index]);
                     }),
                     0
                 );
                 let endIndex = Math.min(
-                    this._binaryIndexOf(dataRows, range[1], index => {
+                    this._binaryIndexOf(dataRows, range[1], (index) => {
                         return xFunc(dataRows[index]);
                     }),
                     dataRows.length
@@ -222,41 +238,38 @@ export default class WebWorker extends WebWorkerCore {
             // format the downsampled data
             let data = this._transformRowData(decData, eventData.format, xFunc, yFunc, zFunc);
 
-            // console.timeEnd("decimating");
-
-            // resolve([data, this._remoteData[eventData.url].meta]);
             resolve({ data, meta: this._remoteData[eventData.url].meta });
         });
     }
 
     _transformRowData(rowData, format, xFunc, yFunc, zFunc = undefined) {
         if (typeof zFunc !== "undefined") {
-            return rowData.map(entry => {
+            return rowData.map((entry) => {
                 if (format === "array") {
                     return [xFunc(entry), yFunc(entry), zFunc(entry)];
                 } else {
                     return {
                         x: xFunc(entry),
                         y: yFunc(entry),
-                        z: zFunc(entry)
+                        z: zFunc(entry),
                     };
                 }
             });
         } else {
-            return rowData.map(entry => {
+            return rowData.map((entry) => {
                 if (format === "array") {
                     return [xFunc(entry), yFunc(entry)];
                 } else {
                     return {
                         x: xFunc(entry),
-                        y: yFunc(entry)
+                        y: yFunc(entry),
                     };
                 }
             });
         }
     }
 
-    _getReadFuncForKey(key) {
+    _getReadFuncForKey(key, readKey) {
         if (typeof key === "undefined") {
             return undefined;
         }
@@ -271,17 +284,18 @@ export default class WebWorker extends WebWorkerCore {
             case "measurement_date_time":
             // falls through
             case "position_date_time":
-                return this._readTime(key);
+                return this._readTime(key, readKey);
             default:
-                return this._readFloat(key);
+                return this._readFloat(key, readKey);
         }
     }
 
-    _readTime(key) {
-        return entry => {
-            let time = Date.parse(entry[key]);
+    _readTime(key, readKey) {
+        readKey = typeof readKey === "undefined" ? key : readKey;
+        return (entry) => {
+            let time = Date.parse(entry[readKey]);
             if (isNaN(time)) {
-                time = parseFloat(entry[key]);
+                time = parseFloat(entry[readKey]);
                 if (Math.floor(Math.log10(time)) <= 9) {
                     time *= 1000;
                 }
@@ -290,9 +304,10 @@ export default class WebWorker extends WebWorkerCore {
         };
     }
 
-    _readFloat(key) {
-        return entry => {
-            return parseFloat(entry[key]);
+    _readFloat(key, readKey) {
+        readKey = typeof readKey === "undefined" ? key : readKey;
+        return (entry) => {
+            return parseFloat(entry[readKey]);
         };
     }
 

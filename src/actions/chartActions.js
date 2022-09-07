@@ -8,10 +8,12 @@
 import Immutable from "immutable";
 import moment from "moment";
 import * as appStrings from "constants/appStrings";
+import * as appStringsCore from "_core/constants/appStrings";
 import * as types from "constants/actionTypes";
 import DataStore from "utils/DataStore";
 import ChartUtil from "utils/ChartUtil";
 import TrackDataUtil from "utils/TrackDataUtil";
+import DAGDataUtil from "utils/DAGDataUtil";
 import appConfig from "constants/appConfig";
 
 export function setTrackSelected(trackId, isSelected) {
@@ -30,6 +32,10 @@ export function setChartDatasetType(datasetType) {
         dispatch({ type: types.SET_CHART_DATASET_TYPE, datasetType });
         dispatch(clearSelectedTracks());
     };
+}
+
+export function setSatelliteChartType(chartType) {
+    return { type: types.SET_CHART_SATELLITE_CHART_TYPE, chartType };
 }
 
 export function clearSelectedTracks() {
@@ -75,28 +81,52 @@ export function createChart() {
 
         let formOptions = state.chart.get("formOptions");
         let trackIds = formOptions.get("selectedTracks");
-        formOptions = formOptions.set(
-            "selectedTracks",
-            state.map
-                .getIn(["layers", appStrings.LAYER_GROUP_TYPE_INSITU_DATA])
-                .filter((track) => trackIds.contains(track.get("id")))
-                .toList()
-                .map((track) => {
-                    let title =
-                        track.get("title").size > 0
-                            ? track.getIn(["title", 0])
-                            : track.get("title");
-                    return {
-                        id: track.get("id"),
-                        title: `${title} (id: ${track.get("shortId")})`,
-                        program: track.getIn(["insituMeta", "program"]),
-                        project: track.getIn(["insituMeta", "project"]),
-                        source_id: track.getIn(["insituMeta", "source_id"]),
-                    };
-                })
-                .sortBy((track) => track.title)
-        );
-
+        if (formOptions.get("datasetType") === appStrings.CHART_DATASET_TYPE_INSITU) {
+            formOptions = formOptions.set(
+                "selectedTracks",
+                state.map
+                    .getIn(["layers", appStrings.LAYER_GROUP_TYPE_INSITU_DATA])
+                    .filter((track) => trackIds.contains(track.get("id")))
+                    .toList()
+                    .map((track) => {
+                        let title =
+                            track.get("title").size > 0
+                                ? track.getIn(["title", 0])
+                                : track.get("title");
+                        return {
+                            id: track.get("id"),
+                            title: `${title} (id: ${track.get("shortId")})`,
+                            program: track.getIn(["insituMeta", "program"]),
+                            project: track.getIn(["insituMeta", "project"]),
+                            source_id: track.getIn(["insituMeta", "source_id"]),
+                        };
+                    })
+                    .sortBy((track) => track.title)
+            );
+        } else {
+            formOptions = formOptions
+                .set(
+                    "selectedTracks",
+                    state.map
+                        .getIn(["layers", appStringsCore.LAYER_GROUP_TYPE_DATA])
+                        .filter((layer) => trackIds.contains(layer.get("id")))
+                        .toList()
+                        .map((layer) => {
+                            return {
+                                id: layer.get("id"),
+                                title: layer.get("title"),
+                                colormap: layer.getIn(["palette", "url"]),
+                            };
+                        })
+                        .sortBy((layer) => layer.title)
+                )
+                .set(
+                    "selectedArea",
+                    state.view.getIn(["layerSearch", "formOptions", "selectedArea"])
+                )
+                .set("startDate", state.subsetting.get("startDate"))
+                .set("endDate", state.subsetting.get("endDate"));
+        }
         dispatch(createChartFromOptions(formOptions));
     };
 }
@@ -104,112 +134,176 @@ export function createChart() {
 export function createChartFromOptions(formOptions, displayOptions) {
     return (dispatch, getState) => {
         let state = getState();
-        let urls = TrackDataUtil.getUrlsForQuery(
-            formOptions.set("target", appConfig.DEFAULT_DECIMATION_RATE).toJS()
-        );
-        let dataStore = new DataStore({ workerManager: state.webWorker.get("workerManager") });
-        let chartId = "chart_" + new Date().getTime();
+        if (formOptions.get("datasetType") === appStrings.CHART_DATASET_TYPE_INSITU) {
+            let urls = TrackDataUtil.getUrlsForQuery(
+                formOptions.set("target", appConfig.DEFAULT_DECIMATION_RATE).toJS()
+            );
+            let dataStore = new DataStore({ workerManager: state.webWorker.get("workerManager") });
+            let chartId = "chart_" + new Date().getTime();
 
-        dispatch(initializeChart(chartId, formOptions.toJS(), urls, dataStore));
-        dispatch(setChartLoading(chartId, true));
+            dispatch(initializeChart(chartId, formOptions.toJS(), urls, dataStore));
+            dispatch(setChartLoading(chartId, true));
 
-        state = getState();
-        let chart = state.chart.getIn(["charts", chartId]);
-        let xKey = chart.getIn(["formOptions", "xAxis"]);
-        let yKey = chart.getIn(["formOptions", "yAxis"]);
-        let zKey = chart.getIn(["formOptions", "zAxis"]);
+            state = getState();
+            let chart = state.chart.getIn(["charts", chartId]);
+            let xKey = chart.getIn(["formOptions", "xAxis"]);
+            let yKey = chart.getIn(["formOptions", "yAxis"]);
+            let zKey = chart.getIn(["formOptions", "zAxis"]);
 
-        Promise.all(
-            urls.map((url) => {
-                return dataStore.getData(
-                    {
-                        url: url,
-                        processMeta: true,
-                    },
-                    {
-                        keys: { xKey, yKey, zKey },
-                        target: -1,
-                        format: "array",
+            Promise.all(
+                urls.map((url) => {
+                    return dataStore.getData(
+                        {
+                            url: url,
+                            formatColumns: true,
+                            processMeta: true,
+                        },
+                        {
+                            keys: { xKey, yKey, zKey },
+                            target: -1,
+                            format: "array",
+                        }
+                    );
+                })
+            ).then(
+                (dataArrs) => {
+                    console.log(dataArrs);
+                    dispatch(updateChartData(chartId, dataArrs));
+                    dispatch(setChartLoading(chartId, false));
+                    if (displayOptions) {
+                        const { bounds, ...rest } = displayOptions;
+                        dispatch(setChartDisplayOptions(chartId, rest));
+                        if (bounds) {
+                            dispatch(zoomChartData(chartId, bounds));
+                        }
                     }
-                );
-            })
-        ).then(
-            (dataArrs) => {
-                dispatch(updateChartData(chartId, dataArrs));
-                dispatch(setChartLoading(chartId, false));
-                if (displayOptions) {
-                    const { bounds, ...rest } = displayOptions;
-                    dispatch(setChartDisplayOptions(chartId, rest));
-                    if (bounds) {
-                        dispatch(zoomChartData(chartId, bounds));
-                    }
+                },
+                (err) => {
+                    dispatch(
+                        updateChartData(chartId, {
+                            error: true,
+                            message: "Failed to get chart data",
+                        })
+                    );
+                    dispatch(setChartLoading(chartId, false));
                 }
-            },
-            (err) => {
-                dispatch(
-                    updateChartData(chartId, {
-                        error: true,
-                        message: "Failed to get chart data",
-                    })
-                );
-                dispatch(setChartLoading(chartId, false));
-            }
-        );
+            );
+        } else {
+            const jsOptions = formOptions.toJS();
+            let urls = DAGDataUtil.getUrlsForQuery(jsOptions);
+            let dataStore = new DataStore({ workerManager: state.webWorker.get("workerManager") });
+            let chartId = "chart_" + new Date().getTime();
+
+            dispatch(initializeChart(chartId, jsOptions, urls, dataStore));
+            dispatch(setChartLoading(chartId, true));
+
+            state = getState();
+            Promise.all(
+                urls.map((url) => {
+                    return dataStore.getData(
+                        {
+                            url: url,
+                            formatColumns: false,
+                            processMeta: false,
+                        },
+                        {
+                            target: -1,
+                            format: "array",
+                            sourceFormat: appStrings.DAG_DATA_FORMAT,
+                        }
+                    );
+                })
+            ).then(
+                (dataArrs) => {
+                    console.log(dataArrs);
+                    // because the we didn't get proper form options pre-query, we remove the current chart and
+                    // initialize a new one with the proper form options
+                    const newFormOptions = formOptions
+                        .mergeDeep(DAGDataUtil.deriveFormOptions(dataArrs))
+                        .toJS();
+                    dispatch(closeChart(chartId));
+                    dispatch(initializeChart(chartId, newFormOptions, urls, dataStore));
+                    dispatch(setChartLoading(chartId, true));
+
+                    // update the new chart with the newly arrived data
+                    dispatch(updateChartData(chartId, dataArrs));
+                    dispatch(setChartLoading(chartId, false));
+                    if (displayOptions) {
+                        dispatch(setChartDisplayOptions(chartId, displayOptions));
+                    }
+                },
+                (err) => {
+                    console.log(err);
+                    dispatch(
+                        updateChartData(chartId, {
+                            error: true,
+                            message: "Failed to get chart data",
+                        })
+                    );
+                    dispatch(setChartLoading(chartId, false));
+                }
+            );
+        }
     };
 }
 
 export function zoomChartData(chartId, bounds) {
     return (dispatch, getState) => {
-        dispatch(setChartLoading(chartId, true));
-        dispatch(setChartDisplayOptions(chartId, { bounds: bounds }));
-
         let state = getState();
         let chart = state.chart.getIn(["charts", chartId]);
-        let dataStore = chart.get("dataStore");
-        let decimationRate = chart.getIn(["displayOptions", "decimationRate"]);
-        let selectedTracks = chart.getIn(["formOptions", "selectedTracks"]);
-        let xKey = chart.getIn(["formOptions", "xAxis"]);
-        let yKey = chart.getIn(["formOptions", "yAxis"]);
-        let zKey = chart.getIn(["formOptions", "zAxis"]);
+        if (chart.getIn(["formOptions", "datasetType"]) === appStrings.CHART_DATASET_TYPE_INSITU) {
+            dispatch(setChartLoading(chartId, true));
+            dispatch(setChartDisplayOptions(chartId, { bounds: bounds }));
 
-        let urls = TrackDataUtil.getUrlsForQuery({
-            selectedTracks: selectedTracks.toJS(),
-            xAxis: xKey,
-            yAxis: yKey,
-            zAxis: zKey,
-            target: decimationRate,
-            bounds: bounds,
-        });
+            state = getState();
+            chart = state.chart.getIn(["charts", chartId]);
+            let dataStore = chart.get("dataStore");
+            let decimationRate = chart.getIn(["displayOptions", "decimationRate"]);
+            let selectedTracks = chart.getIn(["formOptions", "selectedTracks"]);
+            let xKey = chart.getIn(["formOptions", "xAxis"]);
+            let yKey = chart.getIn(["formOptions", "yAxis"]);
+            let zKey = chart.getIn(["formOptions", "zAxis"]);
 
-        Promise.all(
-            urls.map((url) => {
-                return dataStore.getData(
-                    {
-                        url: url,
-                        no_cache: typeof bounds !== "undefined",
-                        processMeta: true,
-                    },
-                    {
-                        keys: { xKey, yKey, zKey },
-                        target: -1,
-                        format: "array",
-                    }
-                );
-            })
-        )
-            .then((dataArrs) => {
-                dispatch(updateChartData(chart.get("id"), dataArrs));
-                dispatch(setChartLoading(chartId, false));
-            })
-            .catch((err) => {
-                dispatch(
-                    updateChartData(chart.get("id"), {
-                        error: true,
-                        message: "Failed to get chart data",
-                    })
-                );
-                dispatch(setChartLoading(chartId, false));
+            let urls = TrackDataUtil.getUrlsForQuery({
+                selectedTracks: selectedTracks.toJS(),
+                xAxis: xKey,
+                yAxis: yKey,
+                zAxis: zKey,
+                target: decimationRate,
+                bounds: bounds,
             });
+
+            Promise.all(
+                urls.map((url) => {
+                    return dataStore.getData(
+                        {
+                            url: url,
+                            no_cache: typeof bounds !== "undefined",
+                            processMeta: true,
+                            formatColumns: true,
+                        },
+                        {
+                            keys: { xKey, yKey, zKey },
+                            target: -1,
+                            format: "array",
+                        }
+                    );
+                })
+            )
+                .then((dataArrs) => {
+                    dispatch(updateChartData(chart.get("id"), dataArrs));
+                    dispatch(setChartLoading(chartId, false));
+                })
+                .catch((err) => {
+                    dispatch(
+                        updateChartData(chart.get("id"), {
+                            error: true,
+                            message: "Failed to get chart data",
+                        })
+                    );
+                    dispatch(setChartLoading(chartId, false));
+                });
+        }
     };
 }
 
@@ -226,8 +320,8 @@ export function refreshChart(chartId) {
     };
 }
 
-export function updateChartData(id, data) {
-    return { type: types.UPDATE_CHART_DATA, id, data };
+export function updateChartData(id, data, formOptions = {}) {
+    return { type: types.UPDATE_CHART_DATA, id, data, formOptions };
 }
 
 export function exportChart(chartId) {

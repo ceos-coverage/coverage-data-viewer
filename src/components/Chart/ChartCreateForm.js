@@ -23,11 +23,24 @@ import * as subsettingActions from "actions/subsettingActions";
 import * as appStrings from "constants/appStrings";
 import * as appStringsCore from "_core/constants/appStrings";
 import MiscUtil from "utils/MiscUtil";
+import appConfig from "constants/appConfig";
 
 export class ChartCreateForm extends Component {
     selectAxisVariable(axis, variable) {
         variable = variable !== appStrings.NO_DATA ? variable : undefined;
         this.props.chartActions.setAxisVariable(axis, variable);
+    }
+
+    selectSatelliteChartType(chartType) {
+        if (chartType) {
+            this.props.chartActions.setSatelliteChartType(chartType);
+        }
+    }
+
+    setChartDatasetType(datasetType) {
+        if (datasetType) {
+            this.props.chartActions.setChartDatasetType(datasetType);
+        }
     }
 
     renderTrackList(trackList) {
@@ -124,6 +137,39 @@ export class ChartCreateForm extends Component {
         });
     }
 
+    renderChartTypeList = () => {
+        const selectedOp = appConfig.SATELLITE_CHART_TYPE_OPTIONS.find(
+            (x) => x.value === this.props.formOptions.get("satelliteChartType")
+        );
+        return (
+            <LabelPopover
+                label="Chart Type"
+                subtitle={selectedOp.label}
+                className={styles.chartOption}
+            >
+                <RadioGroup
+                    aria-label="Chart Type Selection"
+                    name="Chart Type Selection"
+                    value={this.props.formOptions.get("satelliteChartType")}
+                    onClick={(evt) => {
+                        this.selectSatelliteChartType(evt.target.value);
+                    }}
+                    onChange={(evt) => this.selectSatelliteChartType(evt.target.value)}
+                >
+                    {appConfig.SATELLITE_CHART_TYPE_OPTIONS.map((chartTypeObj) => (
+                        <FormControlLabel
+                            key={`sat_chart_type_${chartTypeObj.value}`}
+                            value={chartTypeObj.value}
+                            control={<Radio color="primary" />}
+                            label={chartTypeObj.label}
+                            className={styles.varLabel}
+                        />
+                    ))}
+                </RadioGroup>
+            </LabelPopover>
+        );
+    };
+
     handleDateRangeUpdate = (startDate, endDate) => {
         this.props.subsettingActions.setSubsettingOptions({
             startDate: moment.utc(startDate).toDate(),
@@ -182,11 +228,9 @@ export class ChartCreateForm extends Component {
                                 value={this.props.formOptions.get("datasetType")}
                                 name="dataset-type-selector"
                                 onClick={(evt) => {
-                                    this.props.chartActions.setChartDatasetType(evt.target.value);
+                                    this.setChartDatasetType(evt.target.value);
                                 }}
-                                onChange={(evt) =>
-                                    this.props.chartActions.setChartDatasetType(evt.target.value)
-                                }
+                                onChange={(evt) => this.setChartDatasetType(evt.target.value)}
                             >
                                 <FormControlLabel
                                     value={appStrings.CHART_DATASET_TYPE_INSITU}
@@ -209,6 +253,7 @@ export class ChartCreateForm extends Component {
                         >
                             <FormGroup>{this.renderTrackList(trackList)}</FormGroup>
                         </LabelPopover>
+                        {!useInsituTracks ? this.renderChartTypeList() : null}
                     </div>
                     <Button
                         variant="contained"

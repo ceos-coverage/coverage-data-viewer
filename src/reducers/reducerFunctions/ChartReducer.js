@@ -32,6 +32,10 @@ export default class ChartReducer {
         return state.setIn(["formOptions", "datasetType"], action.datasetType);
     }
 
+    static setSatelliteChartType(state, action) {
+        return state.setIn(["formOptions", "satelliteChartType"], action.chartType);
+    }
+
     static clearTracksSelected(state, action) {
         return state.setIn(
             ["formOptions", "selectedTracks"],
@@ -40,67 +44,100 @@ export default class ChartReducer {
     }
 
     static initializeChart(state, action) {
-        let chartType = appStrings.CHART_TYPES.SINGLE_SERIES;
-        if (typeof action.formOptions.zAxis !== "undefined") {
-            if (action.formOptions.selectedTracks.length !== 1) {
-                chartType = appStrings.CHART_TYPES.MULTI_SERIES_WITH_COLOR;
-            } else {
-                chartType = appStrings.CHART_TYPES.SINGLE_SERIES_WITH_COLOR;
-            }
-        } else if (action.formOptions.selectedTracks.length !== 1) {
-            chartType = appStrings.CHART_TYPES.MULTI_SERIES;
-        }
-
-        let title = action.formOptions.selectedTracks.map((track) => track.title).join(", ");
-
-        // try to be clever with defaults
-        let cleverOptions = {};
-        if (action.formOptions.xAxis.indexOf("time") !== -1) {
-            cleverOptions.markerType = appStrings.PLOT_STYLES.TIME_SERIES.LINES_AND_DOTS;
-        }
-        if (action.formOptions.yAxis.indexOf("depth") !== -1) {
-            cleverOptions.yAxisReversed = true;
-        }
-
-        // resolve labels
-        let axisLabels = ["xAxis", "yAxis", "zAxis"].map((axis, i) => {
-            return action.formOptions.variables.shared.reduce((acc, entry) => {
-                if (
-                    entry.label === action.formOptions[axis] &&
-                    entry.units &&
-                    entry.units !== "units"
-                ) {
-                    if (i < 2) {
-                        return entry.label + " (" + entry.units + ")";
-                    }
-                    return entry.units;
+        if (action.formOptions.datasetType === appStrings.CHART_DATASET_TYPE_INSITU) {
+            let chartType = appStrings.CHART_TYPES.SINGLE_SERIES;
+            if (typeof action.formOptions.zAxis !== "undefined") {
+                if (action.formOptions.selectedTracks.length !== 1) {
+                    chartType = appStrings.CHART_TYPES.MULTI_SERIES_WITH_COLOR;
+                } else {
+                    chartType = appStrings.CHART_TYPES.SINGLE_SERIES_WITH_COLOR;
                 }
-                return acc;
-            }, action.formOptions[axis] || "");
-        });
+            } else if (action.formOptions.selectedTracks.length !== 1) {
+                chartType = appStrings.CHART_TYPES.MULTI_SERIES;
+            }
 
-        let chart = chartModel
-            .set("id", action.id)
-            .set("title", title)
-            .set("nodeId", "chartWrapper_" + action.id)
-            .set("data", [])
-            .set("dataStore", action.dataStore)
-            .set("urls", action.urls)
-            .set("chartType", chartType)
-            .setIn(["dataError", "error"], false)
-            .setIn(["dataError", "message"], "")
-            .setIn(
-                ["formOptions", "selectedTracks"],
-                Immutable.List(action.formOptions.selectedTracks)
-            )
-            .setIn(["formOptions", "xAxis"], action.formOptions.xAxis)
-            .setIn(["formOptions", "xAxisLabel"], axisLabels[0])
-            .setIn(["formOptions", "yAxis"], action.formOptions.yAxis)
-            .setIn(["formOptions", "yAxisLabel"], axisLabels[1])
-            .setIn(["formOptions", "zAxis"], action.formOptions.zAxis)
-            .setIn(["formOptions", "zAxisLabel"], axisLabels[2])
-            .set("displayOptions", chartModel.get("displayOptions").mergeDeep(cleverOptions));
-        return state.setIn(["charts", action.id], chart);
+            let title = action.formOptions.selectedTracks.map((track) => track.title).join(", ");
+
+            // try to be clever with defaults
+            let cleverOptions = {};
+            if (action.formOptions.xAxis.indexOf("time") !== -1) {
+                cleverOptions.markerType = appStrings.PLOT_STYLES.TIME_SERIES.LINES_AND_DOTS;
+            }
+            if (action.formOptions.yAxis.indexOf("depth") !== -1) {
+                cleverOptions.yAxisReversed = true;
+            }
+
+            // resolve labels
+            let axisLabels = ["xAxis", "yAxis", "zAxis"].map((axis, i) => {
+                return action.formOptions.variables.shared.reduce((acc, entry) => {
+                    if (
+                        entry.label === action.formOptions[axis] &&
+                        entry.units &&
+                        entry.units !== "units"
+                    ) {
+                        if (i < 2) {
+                            return entry.label + " (" + entry.units + ")";
+                        }
+                        return entry.units;
+                    }
+                    return acc;
+                }, action.formOptions[axis] || "");
+            });
+
+            let chart = chartModel
+                .set("id", action.id)
+                .set("title", title)
+                .set("nodeId", "chartWrapper_" + action.id)
+                .set("data", [])
+                .set("dataStore", action.dataStore)
+                .set("urls", action.urls)
+                .set("chartType", chartType)
+                .setIn(["dataError", "error"], false)
+                .setIn(["dataError", "message"], "")
+                .setIn(
+                    ["formOptions", "selectedTracks"],
+                    Immutable.List(action.formOptions.selectedTracks)
+                )
+                .setIn(["formOptions", "xAxis"], action.formOptions.xAxis)
+                .setIn(["formOptions", "xAxisLabel"], axisLabels[0])
+                .setIn(["formOptions", "yAxis"], action.formOptions.yAxis)
+                .setIn(["formOptions", "yAxisLabel"], axisLabels[1])
+                .setIn(["formOptions", "zAxis"], action.formOptions.zAxis)
+                .setIn(["formOptions", "zAxisLabel"], axisLabels[2])
+                .set("displayOptions", chartModel.get("displayOptions").mergeDeep(cleverOptions));
+            return state.setIn(["charts", action.id], chart);
+        } else {
+            let chartType = appStrings.CHART_TYPES.SINGLE_SERIES;
+            let title = action.formOptions.selectedTracks.map((track) => track.title).join(", ");
+
+            // try to be clever with defaults
+            let cleverOptions = {};
+            cleverOptions.markerType = appStrings.PLOT_STYLES.TIME_SERIES.LINES_AND_DOTS;
+
+            let chart = chartModel
+                .set("id", action.id)
+                .set("title", title)
+                .set("nodeId", "chartWrapper_" + action.id)
+                .set("data", [])
+                .set("dataStore", action.dataStore)
+                .set("urls", action.urls)
+                .set("chartType", chartType)
+                .setIn(["dataError", "error"], false)
+                .setIn(["dataError", "message"], "")
+                .setIn(
+                    ["formOptions", "selectedTracks"],
+                    Immutable.List(action.formOptions.selectedTracks)
+                )
+                .setIn(["formOptions", "satelliteChartType"], true)
+                .setIn(["formOptions", "xAxis"], action.formOptions.xAxis || "")
+                .setIn(["formOptions", "xAxisLabel"], action.formOptions.xAxisLabel || "")
+                .setIn(["formOptions", "yAxis"], action.formOptions.yAxis || "")
+                .setIn(["formOptions", "yAxisLabel"], action.formOptions.yAxisLabel || "")
+                .setIn(["formOptions", "datasetType"], appStrings.CHART_DATASET_TYPE_SATELLITE)
+                // no zaxis support for satellite chart data
+                .set("displayOptions", chartModel.get("displayOptions").mergeDeep(cleverOptions));
+            return state.setIn(["charts", action.id], chart);
+        }
     }
 
     static updateChartData(state, action) {
@@ -110,7 +147,14 @@ export default class ChartReducer {
                 .setIn(["charts", action.id, "dataError", "error"], true)
                 .setIn(["charts", action.id, "dataError", "message"], action.data.message);
         } else {
-            state = state.setIn(["charts", action.id, "data"], action.data);
+            state = state
+                .setIn(["charts", action.id, "data"], action.data)
+                .setIn(
+                    ["charts", action.id, "formOptions"],
+                    state
+                        .getIn(["charts", action.id, "formOptions"])
+                        .mergeDeep(Immutable.fromJS(action.formOptions))
+                );
             return state;
         }
     }

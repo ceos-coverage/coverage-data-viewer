@@ -41,29 +41,38 @@ export default class DataStore {
                 this._workerManager
                     .queueJob({
                         operation: appStrings.WORKER_TASK_RETRIEVE_DATA,
-                        options: fetchOptions
+                        options: fetchOptions,
                     })
                     .then(
-                        result => {
+                        (result) => {
                             this._workerManager
-                                .queueJob({
-                                    operation: appStrings.WORKER_TASK_DECIMATE_POINTS_LTTB,
-                                    url: fetchOptions.url,
-                                    keys: decimateOptions.keys,
-                                    format: decimateOptions.format,
-                                    xRange: decimateOptions.xRange,
-                                    target: decimateOptions.target
-                                })
+                                .queueJob(
+                                    decimateOptions.sourceFormat === appStrings.DAG_DATA_FORMAT
+                                        ? {
+                                              operation: appStrings.WORKER_TASK_FORMAT_DAG_DATA,
+                                              url: fetchOptions.url,
+                                              format: decimateOptions.format,
+                                          }
+                                        : {
+                                              operation:
+                                                  appStrings.WORKER_TASK_DECIMATE_POINTS_LTTB,
+                                              url: fetchOptions.url,
+                                              keys: decimateOptions.keys,
+                                              format: decimateOptions.format,
+                                              xRange: decimateOptions.xRange,
+                                              target: decimateOptions.target,
+                                          }
+                                )
                                 .then(
-                                    result => {
+                                    (result) => {
                                         if (fetchOptions.no_cache) {
                                             this._workerManager
                                                 .queueJob({
                                                     operation:
                                                         appStrings.WORKER_TASK_CLEAR_CACHE_ENTRY,
-                                                    url: fetchOptions.url
+                                                    url: fetchOptions.url,
                                                 })
-                                                .catch(err => {
+                                                .catch((err) => {
                                                     console.warn(
                                                         "Failed to clear entry: ",
                                                         fetchOptions.url,
@@ -73,13 +82,13 @@ export default class DataStore {
                                         }
                                         resolve(result.data);
                                     },
-                                    err => {
+                                    (err) => {
                                         console.warn("ERROR in DataStore.getData: ", err);
                                         reject(err);
                                     }
                                 );
                         },
-                        err => {
+                        (err) => {
                             console.warn("ERROR in DataStore.getData: ", err);
                             reject(err);
                         }

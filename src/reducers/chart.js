@@ -47,6 +47,9 @@ export default function chart(state = chartState, action, opt_reducer = ChartRed
         case actionTypes.CLEAR_CHART_TRACKS_SELECTED:
             return opt_reducer.clearTracksSelected(state, action);
 
+        case actionTypes.SET_CHART_SATELLITE_CHART_TYPE:
+            return opt_reducer.setSatelliteChartType(state, action);
+
         default:
             return state;
     }

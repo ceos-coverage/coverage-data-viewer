@@ -637,7 +637,7 @@ export default class ChartUtil {
 
             xAxis: {
                 id: "x-axis",
-                type: keys.xKey.indexOf("time") !== -1 ? "datetime" : undefined,
+                type: keys.xKey.toLowerCase().indexOf("time") !== -1 ? "datetime" : undefined,
                 gridLineWidth: 1,
                 lineWidth: 2,
                 title: {
@@ -660,7 +660,9 @@ export default class ChartUtil {
                     style: {
                         textAlign: "center",
                     },
-                    formatter: this.getTickFormatter(keys.xKey.indexOf("time") !== -1),
+                    formatter: this.getTickFormatter(
+                        keys.xKey.toLowerCase().indexOf("time") !== -1
+                    ),
                 },
                 events: {
                     afterSetExtremes: (zoomEvent) => {
@@ -837,7 +839,7 @@ export default class ChartUtil {
                     keys.xKey +
                     ": </span>" +
                     "<span class='tooltip-value'>" +
-                    (keys.xKey.indexOf("time") !== -1
+                    (keys.xKey.toLowerCase().indexOf("time") !== -1
                         ? moment.utc(x).format("MMM DD, YYYY · HH:mm")
                         : parseFloat(parseFloat(x).toFixed(4))) +
                     "</span>" +
