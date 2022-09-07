@@ -249,61 +249,57 @@ export function createChartFromOptions(formOptions, displayOptions) {
 
 export function zoomChartData(chartId, bounds) {
     return (dispatch, getState) => {
+        dispatch(setChartLoading(chartId, true));
+        dispatch(setChartDisplayOptions(chartId, { bounds: bounds }));
+
         let state = getState();
         let chart = state.chart.getIn(["charts", chartId]);
-        if (chart.getIn(["formOptions", "datasetType"]) === appStrings.CHART_DATASET_TYPE_INSITU) {
-            dispatch(setChartLoading(chartId, true));
-            dispatch(setChartDisplayOptions(chartId, { bounds: bounds }));
+        let dataStore = chart.get("dataStore");
+        let decimationRate = chart.getIn(["displayOptions", "decimationRate"]);
+        let selectedTracks = chart.getIn(["formOptions", "selectedTracks"]);
+        let xKey = chart.getIn(["formOptions", "xAxis"]);
+        let yKey = chart.getIn(["formOptions", "yAxis"]);
+        let zKey = chart.getIn(["formOptions", "zAxis"]);
 
-            state = getState();
-            chart = state.chart.getIn(["charts", chartId]);
-            let dataStore = chart.get("dataStore");
-            let decimationRate = chart.getIn(["displayOptions", "decimationRate"]);
-            let selectedTracks = chart.getIn(["formOptions", "selectedTracks"]);
-            let xKey = chart.getIn(["formOptions", "xAxis"]);
-            let yKey = chart.getIn(["formOptions", "yAxis"]);
-            let zKey = chart.getIn(["formOptions", "zAxis"]);
+        let urls = TrackDataUtil.getUrlsForQuery({
+            selectedTracks: selectedTracks.toJS(),
+            xAxis: xKey,
+            yAxis: yKey,
+            zAxis: zKey,
+            target: decimationRate,
+            bounds: bounds,
+        });
 
-            let urls = TrackDataUtil.getUrlsForQuery({
-                selectedTracks: selectedTracks.toJS(),
-                xAxis: xKey,
-                yAxis: yKey,
-                zAxis: zKey,
-                target: decimationRate,
-                bounds: bounds,
+        Promise.all(
+            urls.map((url) => {
+                return dataStore.getData(
+                    {
+                        url: url,
+                        no_cache: typeof bounds !== "undefined",
+                        processMeta: true,
+                        formatColumns: true,
+                    },
+                    {
+                        keys: { xKey, yKey, zKey },
+                        target: -1,
+                        format: "array",
+                    }
+                );
+            })
+        )
+            .then((dataArrs) => {
+                dispatch(updateChartData(chart.get("id"), dataArrs));
+                dispatch(setChartLoading(chartId, false));
+            })
+            .catch((err) => {
+                dispatch(
+                    updateChartData(chart.get("id"), {
+                        error: true,
+                        message: "Failed to get chart data",
+                    })
+                );
+                dispatch(setChartLoading(chartId, false));
             });
-
-            Promise.all(
-                urls.map((url) => {
-                    return dataStore.getData(
-                        {
-                            url: url,
-                            no_cache: typeof bounds !== "undefined",
-                            processMeta: true,
-                            formatColumns: true,
-                        },
-                        {
-                            keys: { xKey, yKey, zKey },
-                            target: -1,
-                            format: "array",
-                        }
-                    );
-                })
-            )
-                .then((dataArrs) => {
-                    dispatch(updateChartData(chart.get("id"), dataArrs));
-                    dispatch(setChartLoading(chartId, false));
-                })
-                .catch((err) => {
-                    dispatch(
-                        updateChartData(chart.get("id"), {
-                            error: true,
-                            message: "Failed to get chart data",
-                        })
-                    );
-                    dispatch(setChartLoading(chartId, false));
-                });
-        }
     };
 }
 

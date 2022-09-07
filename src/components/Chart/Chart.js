@@ -13,6 +13,7 @@ import moment from "moment";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import ErrorIcon from "@material-ui/icons/ErrorOutline";
+import * as appStrings from "constants/appStrings";
 import * as mapActions from "actions/mapActions";
 import * as chartActions from "actions/chartActions";
 import { ChartButtons, ChartSettings } from "components/Chart";
@@ -51,7 +52,22 @@ export class Chart extends Component {
                 zLabel: this.props.chart.getIn(["formOptions", "zAxisLabel"]),
             },
             onZoom: (bounds) => {
-                this.props.chartActions.zoomChartData(this.props.chart.get("id"), bounds);
+                if (
+                    this.props.chart.getIn(["formOptions", "datasetType"]) ===
+                    appStrings.CHART_DATASET_TYPE_INSITU
+                ) {
+                    this.props.chartActions.zoomChartData(this.props.chart.get("id"), bounds);
+                } else {
+                    let node =
+                        typeof this.refs.chartWrapper !== "undefined"
+                            ? this.refs.chartWrapper
+                            : document.getElementById(this.props.chart.get("nodeId"));
+                    ChartUtil.setDateIndicator({
+                        node: node,
+                        date: this.props.mapDate,
+                        intervalDate: this.props.mapIntervalDate,
+                    });
+                }
             },
             onClick: (evt) => {
                 if (!this.props.chart.getIn(["displayOptions", "linkToDateInterval"])) {
