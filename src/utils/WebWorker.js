@@ -146,8 +146,11 @@ export default class WebWorker extends WebWorkerCore {
 
             let chartDataObj = dagData.result.chart.find((x) => x.type === "xy_line_point");
             if (!!!chartDataObj) {
-                // if we don't find an xy plot, assume its a histogram plot and just take the first chart obj
-                chartDataObj = dagData.result.chart[0];
+                // if we don't find an xy plot, assume its a set of histogram plot info just marge them together
+                // TODO - need to get better format
+                chartDataObj = dagData.result.chart.reduce((acc, obj) => {
+                    return Object.assign(acc, obj);
+                }, {});
             }
 
             let xySeriesData = chartDataObj.xySeries_data;
