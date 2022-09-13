@@ -128,12 +128,15 @@ export default class ChartReducer {
                     ["formOptions", "selectedTracks"],
                     Immutable.List(action.formOptions.selectedTracks)
                 )
-                .setIn(["formOptions", "satelliteChartType"], true)
+                .setIn(["formOptions", "satelliteChartType"], action.formOptions.satelliteChartType)
                 .setIn(["formOptions", "xAxis"], action.formOptions.xAxis || "")
                 .setIn(["formOptions", "xAxisLabel"], action.formOptions.xAxisLabel || "")
                 .setIn(["formOptions", "yAxis"], action.formOptions.yAxis || "")
                 .setIn(["formOptions", "yAxisLabel"], action.formOptions.yAxisLabel || "")
                 .setIn(["formOptions", "datasetType"], appStrings.CHART_DATASET_TYPE_SATELLITE)
+                .setIn(["formOptions", "selectedArea"], action.formOptions.selectedArea)
+                .setIn(["formOptions", "startDate"], action.formOptions.startDate)
+                .setIn(["formOptions", "endDate"], action.formOptions.endDate)
                 // no zaxis support for satellite chart data
                 .set("displayOptions", chartModel.get("displayOptions").mergeDeep(cleverOptions));
             return state.setIn(["charts", action.id], chart);

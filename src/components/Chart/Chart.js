@@ -13,6 +13,7 @@ import moment from "moment";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import ErrorIcon from "@material-ui/icons/ErrorOutline";
+import Grid from "@material-ui/core/Grid";
 import * as appStrings from "constants/appStrings";
 import * as mapActions from "actions/mapActions";
 import * as chartActions from "actions/chartActions";
@@ -22,7 +23,6 @@ import MiscUtil from "utils/MiscUtil";
 import ChartUtil from "utils/ChartUtil";
 import appConfig from "constants/appConfig";
 import styles from "components/Chart/Chart.scss";
-import displayStyles from "_core/styles/display.scss";
 
 export class Chart extends Component {
     componentDidMount() {
@@ -212,43 +212,198 @@ export class Chart extends Component {
     }
 
     render() {
-        let loadingClasses = MiscUtil.generateStringFromSet({
+        const isInsituChart =
+            this.props.chart.getIn(["formOptions", "datasetType"]) ===
+            appStrings.CHART_DATASET_TYPE_INSITU;
+
+        const showDAGSummaryStats =
+            !this.props.chart.get("dataLoading") &&
+            this.props.chart.getIn(["formOptions", "satelliteChartType"]) ===
+                appStrings.SATELLITE_CHART_TYPE_TIME_RANGE_HIST &&
+            this.props.chart.get("data").length > 0;
+
+        console.log(this.props.chart.get("data"));
+
+        const rootClasses = MiscUtil.generateStringFromSet({
+            [styles.root]: true,
+            [styles.hasFooter]: !isInsituChart,
+        });
+
+        const loadingClasses = MiscUtil.generateStringFromSet({
             [styles.loadingWrapper]: true,
             [styles.loadingHidden]:
                 !this.props.chart.get("dataLoading") &&
                 !this.props.chart.getIn(["warning", "active"]),
         });
 
-        let height = this.getHeight();
+        const footerInfoClasses = MiscUtil.generateStringFromSet({
+            [styles.chartFooter]: true,
+            [styles.chartFooterHidden]: isInsituChart,
+        });
+
+        const height = this.getHeight();
+
+        if (showDAGSummaryStats) console.log(this.props.chart);
+        const dagMeta = showDAGSummaryStats ? this.props.chart.get("data")[0].meta.dag_output : {};
+
+        const dagStatKeys = [
+            {
+                key: "count",
+                formatter: (v) => parseInt(v),
+            },
+            {
+                key: "min",
+                formatter: (v) => parseFloat(v).toFixed(2),
+            },
+            {
+                key: "max",
+                formatter: (v) => parseFloat(v).toFixed(2),
+            },
+            {
+                key: "mean",
+                formatter: (v) => parseFloat(v).toFixed(4),
+            },
+            {
+                key: "standard_deviation",
+                formatter: (v) => parseFloat(v).toFixed(4),
+            },
+            {
+                key: "standard_error",
+                formatter: (v) => parseFloat(v).toFixed(4),
+            },
+        ];
 
         return (
-            <Paper className={styles.root} elevation={2} style={{ height: height }}>
-                {this.renderChart()}
-                <ChartButtons
-                    chartId={this.props.chart.get("id")}
-                    nodeId={this.props.chart.get("nodeId")}
-                    error={this.props.chart.getIn(["dataError", "error"])}
-                />
-                <div className={loadingClasses}>
-                    <Typography variant="h6" component="div" className={styles.loading}>
-                        {this.props.chart.getIn(["warning", "active"])
-                            ? this.props.chart.getIn(["warning", "text"])
-                            : "loading data..."}
-                    </Typography>
-                </div>
-                <ChartSettings
-                    chartId={this.props.chart.get("id")}
-                    displayOptions={this.props.chart.get("displayOptions")}
-                    formOptions={this.props.chart.get("formOptions")}
-                />
-                <AreaDefaultMessage
-                    active={this.props.chart.getIn(["dataError", "error"])}
-                    label="Failed to Generate Chart"
-                    sublabel="try selecting a new track or different axis variables"
-                    icon={<ErrorIcon />}
-                    className={styles.error}
-                />
-            </Paper>
+            <>
+                <Paper className={rootClasses} elevation={2} style={{ height: height }}>
+                    {this.renderChart()}
+                    <ChartButtons
+                        chartId={this.props.chart.get("id")}
+                        nodeId={this.props.chart.get("nodeId")}
+                        error={this.props.chart.getIn(["dataError", "error"])}
+                    />
+                    <div className={loadingClasses}>
+                        <Typography variant="h6" component="div" className={styles.loading}>
+                            {this.props.chart.getIn(["warning", "active"])
+                                ? this.props.chart.getIn(["warning", "text"])
+                                : "loading data..."}
+                        </Typography>
+                    </div>
+                    <ChartSettings
+                        chartId={this.props.chart.get("id")}
+                        displayOptions={this.props.chart.get("displayOptions")}
+                        formOptions={this.props.chart.get("formOptions")}
+                    />
+                    <AreaDefaultMessage
+                        active={this.props.chart.getIn(["dataError", "error"])}
+                        label="Failed to Generate Chart"
+                        sublabel="try selecting a new track or different axis variables"
+                        icon={<ErrorIcon />}
+                        className={styles.error}
+                    />
+                </Paper>
+                {!isInsituChart ? (
+                    <Paper elevation={1} className={footerInfoClasses}>
+                        <Grid container spacing={0}>
+                            <Grid item xs={6}>
+                                <div className={styles.footerRow}>
+                                    <Typography
+                                        variant="caption"
+                                        component="span"
+                                        className={styles.footerLabel}
+                                    >
+                                        Area
+                                    </Typography>
+                                    <Typography
+                                        variant="body1"
+                                        component="span"
+                                        className={styles.footerValue}
+                                    >
+                                        {this.props.chart
+                                            .getIn(["formOptions", "selectedArea"])
+                                            .join(", ")}
+                                    </Typography>
+                                </div>
+                                <div className={styles.footerRow}>
+                                    <Typography
+                                        variant="caption"
+                                        component="span"
+                                        className={styles.footerLabel}
+                                    >
+                                        Time
+                                    </Typography>
+                                    <Typography
+                                        variant="body1"
+                                        component="span"
+                                        className={styles.footerValue}
+                                    >
+                                        {[
+                                            moment(
+                                                this.props.chart.getIn(["formOptions", "startDate"])
+                                            ).format("MMM DD, YYYY"),
+                                            moment(
+                                                this.props.chart.getIn(["formOptions", "endDate"])
+                                            ).format("MMM DD, YYYY"),
+                                        ].join(" to ")}
+                                    </Typography>
+                                </div>
+                            </Grid>
+                            {showDAGSummaryStats ? (
+                                <Grid item xs={6}>
+                                    <Grid container spacing={0}>
+                                        <Grid item xs={6}>
+                                            {dagStatKeys.slice(0, 3).map((keyObj) => (
+                                                <div
+                                                    key={`dag_stat_${keyObj.key}`}
+                                                    className={styles.footerRow}
+                                                >
+                                                    <Typography
+                                                        variant="caption"
+                                                        component="span"
+                                                        className={styles.footerLabel}
+                                                    >
+                                                        {keyObj.key}
+                                                    </Typography>
+                                                    <Typography
+                                                        variant="body1"
+                                                        component="span"
+                                                        className={styles.footerValue}
+                                                    >
+                                                        {keyObj.formatter(dagMeta[keyObj.key])}
+                                                    </Typography>
+                                                </div>
+                                            ))}
+                                        </Grid>
+                                        <Grid item xs={6}>
+                                            {dagStatKeys.slice(3).map((keyObj) => (
+                                                <div
+                                                    key={`dag_stat_${keyObj.key}`}
+                                                    className={styles.footerRow}
+                                                >
+                                                    <Typography
+                                                        variant="caption"
+                                                        component="span"
+                                                        className={styles.footerLabel}
+                                                    >
+                                                        {keyObj.key}
+                                                    </Typography>
+                                                    <Typography
+                                                        variant="body1"
+                                                        component="span"
+                                                        className={styles.footerValue}
+                                                    >
+                                                        {keyObj.formatter(dagMeta[keyObj.key])}
+                                                    </Typography>
+                                                </div>
+                                            ))}
+                                        </Grid>
+                                    </Grid>
+                                </Grid>
+                            ) : null}
+                        </Grid>
+                    </Paper>
+                ) : null}
+            </>
         );
     }
 }

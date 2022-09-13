@@ -71,6 +71,11 @@
     text-align: left;
     margin-bottom: 1.4rem;
     user-select: none;
+    &.hasFooter {
+        margin-bottom: 0px;
+        border-bottom-left-radius: 0px;
+        border-bottom-right-radius: 0px;
+    }
 }
 
 .chart {
@@ -117,4 +122,37 @@
     left: 50%;
     transform: translate(-50%, -50%);
     text-transform: capitalize;
+}
+
+.chartFooter {
+    width: calc(100% - 10px);
+    position: relative;
+    margin: auto;
+    margin-bottom: 1.4rem;
+    z-index: -1;
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
+    padding: 0.4rem 0.8rem;
+    text-align: left;
+    background: darken(white, 1%);
+}
+.chartFooterHidden {
+    display: none;
+}
+.footerRow {
+    margin-bottom: 0.4rem;
+    &:last-of-type {
+        margin-bottom: 0px;
+    }
+}
+.footerLabel {
+    font-weight: 500;
+    color: black;
+    display: block;
+    margin-right: 0.8rem;
+}
+.footerValue {
+    color: rgba(0, 0, 0, 0.54);
+    font-size: 1.2rem;
+    display: block;
 }
