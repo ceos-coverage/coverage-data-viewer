@@ -222,8 +222,6 @@ export class Chart extends Component {
                 appStrings.SATELLITE_CHART_TYPE_TIME_RANGE_HIST &&
             this.props.chart.get("data").length > 0;
 
-        console.log(this.props.chart.get("data"));
-
         const rootClasses = MiscUtil.generateStringFromSet({
             [styles.root]: true,
             [styles.hasFooter]: !isInsituChart,
@@ -243,7 +241,6 @@ export class Chart extends Component {
 
         const height = this.getHeight();
 
-        if (showDAGSummaryStats) console.log(this.props.chart);
         const dagMeta = showDAGSummaryStats ? this.props.chart.get("data")[0].meta.dag_output : {};
 
         const dagStatKeys = [
