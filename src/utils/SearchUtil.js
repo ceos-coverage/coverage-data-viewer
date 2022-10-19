@@ -36,7 +36,7 @@ export default class SearchUtil {
                 "facet.mincount=1",
                 "facet=on",
                 "rows=0",
-                "wt=json"
+                "wt=json",
             ];
 
             // add facet queries
@@ -45,7 +45,11 @@ export default class SearchUtil {
                 let key = keys[i];
                 if (facets[key].length > 0) {
                     query.push(
-                        "fq=" + key + ":(" + facets[key].map(x => '"' + x + '"').join(" OR ") + ")"
+                        "fq=" +
+                            key +
+                            ":(" +
+                            facets[key].map((x) => '"' + x + '"').join(" OR ") +
+                            ")"
                     );
                 }
             }
@@ -60,13 +64,13 @@ export default class SearchUtil {
 
             MiscUtil.asyncFetch({
                 url: url,
-                handleAs: appStringsCore.FILE_TYPE_JSON
+                handleAs: appStringsCore.FILE_TYPE_JSON,
             }).then(
-                data => {
+                (data) => {
                     let results = SearchUtil.processFacetResults([data]);
                     resolve(results);
                 },
-                err => {
+                (err) => {
                     reject(err);
                 }
             );
@@ -87,14 +91,14 @@ export default class SearchUtil {
 
             let query = [
                 "q=datatype:track",
-                "fq=lon_max:[" + area[0] + " TO *]",
-                "fq=lon_min:[* TO " + area[2] + "]",
-                "fq=lat_max:[" + area[1] + " TO *]",
-                "fq=lat_min:[* TO " + area[3] + "]",
-                "fq=start_date:[* TO " + eDateStr + "]",
-                "fq=end_date:[" + sDateStr + " TO *]",
-                "rows=1000",
-                "wt=json"
+                `fq=lon_max:[${area[0]} TO *]`,
+                `fq=lon_min:[* TO ${area[2]}]`,
+                `fq=lat_max:[${area[1]} TO *]`,
+                `fq=lat_min:[* TO ${area[3]}]`,
+                `fq=start_date:[* TO ${eDateStr}]`,
+                `fq=end_date:[${sDateStr} TO *]`,
+                `rows=${appConfig.SOLR_QUERY_ROWS_LIMIT || 5000}`,
+                "wt=json",
             ];
 
             // add facet queries
@@ -103,7 +107,11 @@ export default class SearchUtil {
                 let key = keys[i];
                 if (facets[key].length > 0) {
                     query.push(
-                        "fq=" + key + ":(" + facets[key].map(x => '"' + x + '"').join(" OR ") + ")"
+                        "fq=" +
+                            key +
+                            ":(" +
+                            facets[key].map((x) => '"' + x + '"').join(" OR ") +
+                            ")"
                     );
                 }
             }
@@ -112,13 +120,13 @@ export default class SearchUtil {
 
             MiscUtil.asyncFetch({
                 url: url,
-                handleAs: appStringsCore.FILE_TYPE_JSON
+                handleAs: appStringsCore.FILE_TYPE_JSON,
             }).then(
-                data => {
+                (data) => {
                     let results = SearchUtil.processLayerSearchResults([data], { isTrack: true });
                     resolve(results);
                 },
-                err => {
+                (err) => {
                     reject(err);
                 }
             );
@@ -132,9 +140,9 @@ export default class SearchUtil {
             const url = encodeURI(baseUrl + "?" + query.join("&"));
             MiscUtil.asyncFetch({
                 url: url,
-                handleAs: appStringsCore.FILE_TYPE_JSON
+                handleAs: appStringsCore.FILE_TYPE_JSON,
             }).then(
-                data => {
+                (data) => {
                     const results = SearchUtil.processLayerSearchResults([data], { isTrack: true });
                     if (results.length > 0) {
                         resolve(results[0]);
@@ -142,7 +150,7 @@ export default class SearchUtil {
                         resolve(null);
                     }
                 },
-                err => {
+                (err) => {
                     reject(err);
                 }
             );
@@ -156,19 +164,19 @@ export default class SearchUtil {
             const url = encodeURI(baseUrl + "?" + query.join("&"));
             MiscUtil.asyncFetch({
                 url: url,
-                handleAs: appStringsCore.FILE_TYPE_JSON
+                handleAs: appStringsCore.FILE_TYPE_JSON,
             }).then(
-                data => {
+                (data) => {
                     const results = SearchUtil.processSatelliteLayerSearchResults([data], {
-                        isSatellite: true
+                        isSatellite: true,
                     });
                     if (results.length > 0) {
-                        resolve(results.find(x => x.get("id") === id));
+                        resolve(results.find((x) => x.get("id") === id));
                     } else {
                         resolve(null);
                     }
                 },
-                err => {
+                (err) => {
                     reject(err);
                 }
             );
@@ -180,10 +188,10 @@ export default class SearchUtil {
             // attempt resolving the info layer as both a track and satellite layer
             // because the IDs shouldn't be duplicated between the two
             Promise.all([this.searchForSingleTrack(id), this.searchForSingleSatellite(id)])
-                .then(items => {
-                    resolve(items.find(i => !!i));
+                .then((items) => {
+                    resolve(items.find((i) => !!i));
                 })
-                .catch(err => reject(err));
+                .catch((err) => reject(err));
         });
     }
 
@@ -202,14 +210,14 @@ export default class SearchUtil {
 
             let query = [
                 "q=datatype:layer",
-                "fq=lon_max:[" + area[0] + " TO *]",
-                "fq=lon_min:[* TO " + area[2] + "]",
-                "fq=lat_max:[" + area[1] + " TO *]",
-                "fq=lat_min:[* TO " + area[3] + "]",
-                "fq=start_date:[* TO " + eDateStr + "]",
-                "fq=end_date:[" + sDateStr + " TO *]",
-                "rows=1000",
-                "wt=json"
+                `fq=lon_max:[${area[0]} TO *]`,
+                `fq=lon_min:[* TO ${area[2]}]`,
+                `fq=lat_max:[${area[1]} TO *]`,
+                `fq=lat_min:[* TO ${area[3]}]`,
+                `fq=start_date:[* TO ${eDateStr}]`,
+                `fq=end_date:[${sDateStr} TO *]`,
+                `rows=${appConfig.SOLR_QUERY_ROWS_LIMIT || 5000}`,
+                "wt=json",
             ];
 
             // add facet queries
@@ -217,9 +225,7 @@ export default class SearchUtil {
             for (let i = 0; i < keys.length; ++i) {
                 let key = keys[i];
                 if (facets[key].length > 0) {
-                    query.push(
-                        "fq=" + key + ":(" + facets[key].map(x => '"' + x + '"').join(" OR ") + ")"
-                    );
+                    query.push(`fq=${key}:(${facets[key].map((x) => `"${x}"`).join(" OR ")})`);
                 }
             }
 
@@ -227,15 +233,15 @@ export default class SearchUtil {
 
             MiscUtil.asyncFetch({
                 url: url,
-                handleAs: appStringsCore.FILE_TYPE_JSON
+                handleAs: appStringsCore.FILE_TYPE_JSON,
             }).then(
-                data => {
+                (data) => {
                     let results = SearchUtil.processSatelliteLayerSearchResults([data], {
-                        isSatellite: true
+                        isSatellite: true,
                     });
                     resolve(results);
                 },
-                err => {
+                (err) => {
                     reject(err);
                 }
             );
@@ -285,7 +291,7 @@ export default class SearchUtil {
                             false,
                             extraOps.isTrack
                         )
-                    )
+                    ),
                 }).mergeDeep(extraOps);
                 results.push(Immutable.fromJS(formattedTrack));
             }
@@ -321,7 +327,7 @@ export default class SearchUtil {
                         colorbarUrl: entry.get("colorbar_url")
                             ? entry.getIn(["colorbar_url", i])
                             : "",
-                        insituMeta: entry.set("variables", Immutable.Set().add(v))
+                        insituMeta: entry.set("variables", Immutable.Set().add(v)),
                     }).mergeDeep(extraOps);
                     results.push(Immutable.fromJS(formattedTrack));
                 });
@@ -350,14 +356,14 @@ export default class SearchUtil {
                         Immutable.Map({
                             label: varStr,
                             units: unitsList.get(i) || "",
-                            layerId: layerList.get(i) || ""
+                            layerId: layerList.get(i) || "",
                         })
                     );
                 }
                 return acc.add(
                     Immutable.Map({
                         label: varStr,
-                        units: unitsList.get(i) || ""
+                        units: unitsList.get(i) || "",
                     })
                 );
             }, Immutable.OrderedSet())
