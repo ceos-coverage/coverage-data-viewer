@@ -166,7 +166,7 @@ export function createChartFromOptions(formOptions, displayOptions) {
                 })
             ).then(
                 (dataArrs) => {
-                    console.log(dataArrs);
+                    console.log("chart data arrays", dataArrs);
                     dispatch(updateChartData(chartId, dataArrs));
                     dispatch(setChartLoading(chartId, false));
                     if (displayOptions) {

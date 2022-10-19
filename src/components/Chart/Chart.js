@@ -71,16 +71,38 @@ export class Chart extends Component {
             },
             onClick: (evt) => {
                 if (!this.props.chart.getIn(["displayOptions", "linkToDateInterval"])) {
-                    let axisIsTime =
+                    const axisIsTime =
                         this.props.chart
                             .getIn(["formOptions", "xAxis"])
                             .toLocaleLowerCase()
                             .indexOf("time") !== -1;
                     if (axisIsTime) {
-                        let date = moment.utc(evt.x);
+                        const date = moment.utc(evt.x);
                         // set the map date, if found
                         if (date.isValid()) {
                             this.props.mapActions.setDate(date.toDate());
+                        }
+                    } else {
+                        // find the series index
+                        const seriesIndex = evt.series.chart.series.findIndex(
+                            (series) => series === evt.series
+                        );
+
+                        // search columns for time and pull from state
+                        const data = this.props.chart.get("data")[seriesIndex];
+                        const { data: dataArr, meta } = data;
+
+                        const timeIndex = meta.columns.findIndex(
+                            (key) => key.indexOf("time") !== -1
+                        );
+                        if (timeIndex !== -1) {
+                            const dataEntry = dataArr[evt.index];
+                            const timeEntry = dataEntry[timeIndex];
+                            const date = moment.utc(timeEntry);
+                            // set the map date, if found
+                            if (date.isValid()) {
+                                this.props.mapActions.setDate(date.toDate());
+                            }
                         }
                     }
                 }

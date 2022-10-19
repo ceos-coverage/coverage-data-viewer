@@ -41,7 +41,8 @@ APPLICATION_CONFIG = {
 
 APPLICATION_CONFIG = {
     URLS: {
-        decimatorMiddleware: "https://oiip.jpl.nasa.gov/getDecData",
+        // decimatorMiddleware: "https://oiip.jpl.nasa.gov/getDecData",
+        decimatorMiddleware: "http://localhost:8101/getData",
     },
     LAYER_URL_SWAPS: [["cwcgom.aoml.noaa.gov/thredds/wms/", "coverage.wekeo.eu/onearth/"]],
     LAYER_URL_PARAM_OVERRIDES: {
@@ -54,4 +55,5 @@ APPLICATION_CONFIG = {
             COLORSCALERANGE: "0,1",
         },
     },
+    SOLR_QUERY_ROWS_LIMIT: 5000,
 };

@@ -428,6 +428,7 @@ export default class ChartUtil {
                     align: "left",
                     layout: "vertical",
                     verticalAlign: "top",
+                    width: 440,
                     y: -8,
                     x: -12,
                     labelFormatter: function () {
