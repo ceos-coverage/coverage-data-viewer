@@ -161,7 +161,6 @@ export function createChartFromOptions(formOptions, displayOptions) {
                         {
                             keys: { xKey, yKey, zKey },
                             target: -1,
-                            format: "array",
                         }
                     );
                 })
@@ -208,7 +207,6 @@ export function createChartFromOptions(formOptions, displayOptions) {
                         },
                         {
                             target: -1,
-                            format: "array",
                             sourceFormat: appStrings.DAG_DATA_FORMAT,
                         }
                     );
@@ -282,7 +280,6 @@ export function zoomChartData(chartId, bounds) {
                     {
                         keys: { xKey, yKey, zKey },
                         target: -1,
-                        format: "array",
                     }
                 );
             })

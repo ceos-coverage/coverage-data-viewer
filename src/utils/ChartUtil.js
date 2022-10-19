@@ -631,6 +631,8 @@ export default class ChartUtil {
 
             annotations: [ChartUtil.getDateIndicatorOptions()],
 
+            // TODO - start here and fix non-boosting z-axis coloring and making boost levels more consistent
+
             boost: {
                 seriesThreshold: 1, // always use boost for consistency
             },
@@ -744,12 +746,13 @@ export default class ChartUtil {
 
             plotOptions: {
                 series: {
+                    // boostThreshhold: 50,
                     findNearestPointBy: "xy",
                     marker: {
                         radius: 3,
                         symbol: "circle",
                     },
-                    lineWidth: 3,
+                    lineWidth: 1,
                 },
             },
 
@@ -941,6 +944,7 @@ export default class ChartUtil {
         }
         return {
             id: "date-indicator",
+            draggable: "",
             shapes: [
                 {
                     points: startLine,

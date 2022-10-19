@@ -157,7 +157,7 @@ export default class WebWorker extends WebWorkerCore {
             let xFunc = this._getReadFuncForKey(chartDataObj.xAxis_units, 0);
             let yFunc = this._getReadFuncForKey(chartDataObj.yAxis_units, 1);
 
-            let data = this._transformRowData(xySeriesData, eventData.format, xFunc, yFunc);
+            let data = this._transformRowData(xySeriesData, [xFunc, yFunc]);
 
             const columns = [chartDataObj.xAxis_label, chartDataObj.yAxis_label];
             this._remoteData[eventData.url].meta = {
@@ -180,14 +180,26 @@ export default class WebWorker extends WebWorkerCore {
 
     _decimateLTTB(eventData) {
         return new Promise((resolve, reject) => {
-            let dataRows = eventData.dataRows
+            const dataRows = eventData.dataRows
                 ? eventData.dataRows
                 : eventData.url
                 ? this._remoteData[eventData.url].data
                 : [];
-            let xFunc = this._getReadFuncForKey(eventData.keys.xKey);
-            let yFunc = this._getReadFuncForKey(eventData.keys.yKey);
-            let zFunc = this._getReadFuncForKey(eventData.keys.zKey);
+            const meta = eventData.meta
+                ? eventData.meta
+                : eventData.url
+                ? this._remoteData[eventData.url].meta
+                : {};
+
+            const inKeys = [eventData.keys.xKey, eventData.keys.yKey, eventData.keys.zKey].filter(
+                (x) => typeof x !== "undefined"
+            );
+            const keys = inKeys.concat(meta.columns.slice(inKeys.length));
+            const readFuncs = keys.map((key) => this._getReadFuncForKey(key));
+
+            let xFunc = readFuncs[0];
+            let yFunc = readFuncs[1];
+
             let target = eventData.target || NO_DECIMATION_TARGET;
             let range = eventData.xRange || [];
             if (range && range.length == 2) {
@@ -239,37 +251,16 @@ export default class WebWorker extends WebWorkerCore {
             }
 
             // format the downsampled data
-            let data = this._transformRowData(decData, eventData.format, xFunc, yFunc, zFunc);
+            let data = this._transformRowData(decData, readFuncs);
 
             resolve({ data, meta: this._remoteData[eventData.url].meta });
         });
     }
 
-    _transformRowData(rowData, format, xFunc, yFunc, zFunc = undefined) {
-        if (typeof zFunc !== "undefined") {
-            return rowData.map((entry) => {
-                if (format === "array") {
-                    return [xFunc(entry), yFunc(entry), zFunc(entry)];
-                } else {
-                    return {
-                        x: xFunc(entry),
-                        y: yFunc(entry),
-                        z: zFunc(entry),
-                    };
-                }
-            });
-        } else {
-            return rowData.map((entry) => {
-                if (format === "array") {
-                    return [xFunc(entry), yFunc(entry)];
-                } else {
-                    return {
-                        x: xFunc(entry),
-                        y: yFunc(entry),
-                    };
-                }
-            });
-        }
+    _transformRowData(rowData, readFuncs) {
+        return rowData.map((entry) => {
+            return readFuncs.map((func) => func(entry));
+        });
     }
 
     _getReadFuncForKey(key, readKey) {
