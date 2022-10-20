@@ -1505,7 +1505,9 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
     getDataAtPoint(coords, pixel, palettes) {
         try {
             let data = []; // the collection of pixel data to return
-            let coord = this.map.getCoordinateFromPixel(pixel);
+            // let coord = this.map.getCoordinateFromPixel(pixel);
+            let coordConstrained = this.getLatLonFromPixelCoordinate(pixel);
+            let coord = [coordConstrained.lat, coordConstrained.lon];
             this.map.forEachLayerAtPixel(
                 pixel,
                 (mapLayer) => {
