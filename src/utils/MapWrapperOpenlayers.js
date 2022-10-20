@@ -1153,15 +1153,15 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                     handleAs: appStringsCore.FILE_TYPE_JSON,
                 }).then(
                     (data) => {
-                        let linePoints = [];
-                        let featuresToAdd = [];
-                        let featureMap = {};
+                        const points = [];
+                        const featuresToAdd = [];
+                        const featureMap = {};
 
                         // we'll do this dumb but easy for now
                         // TODO - collapse this into a single pass
 
                         // combine repeat locations and build the points for the line
-                        let features = data.features;
+                        const features = data.features;
                         for (let i = 0; i < features.length; ++i) {
                             let feature = features[i];
                             let coords = feature.geometry.coordinates;
@@ -1176,12 +1176,14 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                                         Math.abs(nextCoords[1]) <= 90 &&
                                         (coords[0] !== nextCoords[0] || coords[1] !== nextCoords[1])
                                     ) {
-                                        linePoints.push([coords, nextCoords]);
+                                        points.push(coords);
                                     }
+                                } else {
+                                    points.push(coords);
                                 }
 
-                                let coordStr = coords.join(",");
-                                let dateStr = new Date(feature.properties["position_date_time"]);
+                                const coordStr = coords.join(",");
+                                const dateStr = new Date(feature.properties["position_date_time"]);
                                 let combinedFeature = featureMap[coordStr];
                                 if (typeof combinedFeature === "undefined") {
                                     combinedFeature = new Ol_Feature({
@@ -1201,10 +1203,13 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                         featuresToAdd[0].set("_isFirst", true);
                         featuresToAdd[featuresToAdd.length - 1].set("_isLast", true);
 
+                        // split points around the dateline
+                        const splitPoints = _context.splitPointsArray(points);
+
                         // create the connecting line
                         featuresToAdd.push(
                             new Ol_Feature({
-                                geometry: new Ol_Geom_MultiLineString(linePoints),
+                                geometry: new Ol_Geom_MultiLineString(splitPoints),
                             })
                         );
 
@@ -2041,23 +2046,14 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                         b.get("position_date_time")[b.get("_matchIndex")]
                     );
                 });
-                let linePoints = highlightFeatures.map((feature, i) => {
-                    if (i < highlightFeatures.length - 1) {
-                        let nextFeature = highlightFeatures[i + 1];
-                        return [
-                            feature.getGeometry().getCoordinates(),
-                            nextFeature.getGeometry().getCoordinates(),
-                        ];
-                    } else {
-                        return [
-                            feature.getGeometry().getCoordinates(),
-                            feature.getGeometry().getCoordinates(),
-                        ];
-                    }
+
+                const points = highlightFeatures.map((feature, i) => {
+                    return feature.getGeometry().getCoordinates();
                 });
+                const splitPoints = this.splitPointsArray(points);
 
                 let lineFeature = new Ol_Feature({
-                    geometry: new Ol_Geom_MultiLineString(linePoints),
+                    geometry: new Ol_Geom_MultiLineString(splitPoints),
                 });
                 lineFeature.set("_color", highlightFeatures[0].get("_color"));
                 lineFeature.set("_layerId", highlightFeatures[0].get("_layerId"));
@@ -2464,5 +2460,47 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
             index = 0;
         }
         return index;
+    }
+
+    splitPointsArray(points) {
+        let pointsSplitted = [];
+        const pointsArray = [];
+        pointsSplitted.push(points[0]);
+        let lastLambda = points[0][0];
+
+        for (let i = 1; i < points.length; i++) {
+            const lastPoint = points[i - 1];
+            const nextPoint = points[i];
+            if (Math.abs(nextPoint[0] - lastLambda) > 180) {
+                const deltaX = this.xToValueRange(nextPoint[0] - lastPoint[0]);
+                const deltaY = nextPoint[1] - lastPoint[1];
+                const deltaXS = this.xToValueRange(180 - nextPoint[0]);
+                let deltaYS;
+                if (deltaX === 0) {
+                    deltaYS = 0;
+                } else {
+                    deltaYS = (deltaY / deltaX) * deltaXS;
+                }
+                const sign = lastPoint[0] < 0 ? -1 : 1;
+                pointsSplitted.push([180 * sign, nextPoint[1] + deltaYS]);
+                pointsArray.push(pointsSplitted);
+                pointsSplitted = [];
+                pointsSplitted.push([-180 * sign, nextPoint[1] + deltaYS]);
+            }
+            pointsSplitted.push(nextPoint);
+            lastLambda = nextPoint[0];
+        }
+        pointsArray.push(pointsSplitted);
+
+        return pointsArray;
+    }
+
+    xToValueRange(x) {
+        if (Math.abs(x) > 180) {
+            var sign = x < 0 ? -1 : 1;
+            return x - 2 * 180 * sign;
+        } else {
+            return x;
+        }
     }
 }
