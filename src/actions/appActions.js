@@ -161,7 +161,9 @@ function addTracksFromUrl(trackData) {
             SearchUtil.searchForSingleTrack(id).then((layer) => {
                 if (layer) {
                     dispatch(setTrackSelected(id, true, layer));
-                    dispatch(mapActions.setInsituLayerColor(id, color));
+                    window.requestAnimationFrame(() => {
+                        dispatch(mapActions.setInsituLayerColor(id, color));
+                    });
                 }
             });
         });

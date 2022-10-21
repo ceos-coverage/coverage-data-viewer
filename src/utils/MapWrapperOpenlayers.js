@@ -1218,14 +1218,23 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                             this.addFeatures(featuresToAdd);
                         }
 
-                        // highlight track oints
-                        _context.highlightTrackPoints(
-                            featuresToAdd,
-                            layer.get("timeFormat"),
-                            layer.get("vectorColor")
-                        );
+                        // highlight track points
+                        window.requestAnimationFrame(() => {
+                            source.set("_hasLoaded", true);
 
-                        source.set("_hasLoaded", true);
+                            const mapLayers = _context.map.getLayers().getArray();
+                            const updatedMapLayer = _context.miscUtil.findObjectInArray(
+                                mapLayers,
+                                "_layerId",
+                                layer.get("id")
+                            );
+                            const updatedLayer = updatedMapLayer.get("_layerRef");
+                            _context.highlightTrackPoints(
+                                featuresToAdd,
+                                layer.get("timeFormat"),
+                                updatedLayer.get("vectorColor")
+                            );
+                        });
 
                         // run the call back (if it exists)
                         if (typeof _context.layerLoadCallback === "function") {
