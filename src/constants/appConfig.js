@@ -43,7 +43,7 @@ const APP_CONFIG = Immutable.fromJS({
         geoserverVectorTileBase: "https://oiip.jpl.nasa.gov/gwc/wmts",
         solrBase: "https://oiip.jpl.nasa.gov/solr/",
         decimatorMiddleware: "https://oiip.jpl.nasa.gov/getDecData",
-        dagBase: "http://ec2-52-13-63-64.us-west-2.compute.amazonaws.com:8080/get_stats_oiip_dag",
+        dagBase: "https://ec2-52-13-63-64.us-west-2.compute.amazonaws.com:8080/get_stats_oiip_dag",
     },
     DEFAULT_WEB_WORKER_NUM: 1,
     DEFAULT_MAP_EXTENT: [-180 * 2, -90, 180 * 2, 90],

@@ -54,6 +54,9 @@ APPLICATION_CONFIG = {
             STYLES: "boxfill/seascapes",
             COLORSCALERANGE: "0,1",
         },
+        sargassum: {
+            COLORSCALERANGE: "0,0.001",
+        },
     },
     SOLR_QUERY_ROWS_LIMIT: 5000,
 };
