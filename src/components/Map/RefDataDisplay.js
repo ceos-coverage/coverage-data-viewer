@@ -23,21 +23,26 @@ export class RefDataDisplay extends Component {
             let data = this.props.data.get(0);
             let coords = this.props.data.get("coords");
 
-            if (typeof data.getIn(["properties", "EEZ"]) !== "undefined") {
+            if (data.get("layerId") === "oiip:World_EEZ_v8_2014") {
                 label = "EEZ Region";
                 val = data.getIn(["properties", "EEZ"]);
-            } else if (typeof data.getIn(["properties", "F_CODE"]) !== "undefined") {
+            } else if (data.get("layerId") === "oiip:fao") {
                 label = "FAO Region";
                 val = data.getIn(["properties", "F_CODE"]);
-            } else if (typeof data.getIn(["properties", "NAME"]) !== "undefined") {
+            } else if (data.get("layerId") === "oiip:World_Seas") {
                 label = "IHO Region";
                 val = data.getIn(["properties", "NAME"]);
+            } else if (data.get("layerId") === "oiip:world_borders") {
+                label = "Area";
+                val = data.getIn(["properties", "NAME"]);
+            } else {
+                return null;
             }
         }
 
         let containerClasses = MiscUtil.generateStringFromSet({
             [styles.root]: true,
-            [displayStyles.hidden]: this.props.data.size === 0 || !this.props.pixelIsValid
+            [displayStyles.hidden]: this.props.data.size === 0 || !this.props.pixelIsValid,
         });
 
         return (
@@ -51,17 +56,14 @@ export class RefDataDisplay extends Component {
 
 RefDataDisplay.propTypes = {
     data: PropTypes.object.isRequired,
-    pixelIsValid: PropTypes.bool.isRequired
+    pixelIsValid: PropTypes.bool.isRequired,
 };
 
 function mapStateToProps(state) {
     return {
         data: state.map.getIn(["view", "refHoverData"]),
-        pixelIsValid: state.map.getIn(["view", "pixelHoverCoordinate", "isValid"])
+        pixelIsValid: state.map.getIn(["view", "pixelHoverCoordinate", "isValid"]),
     };
 }
 
-export default connect(
-    mapStateToProps,
-    null
-)(RefDataDisplay);
+export default connect(mapStateToProps, null)(RefDataDisplay);
