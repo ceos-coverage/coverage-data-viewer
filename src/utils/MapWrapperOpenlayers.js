@@ -1163,13 +1163,20 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                         // combine repeat locations and build the points for the line
                         const features = data.features;
                         for (let i = 0; i < features.length; ++i) {
-                            let feature = features[i];
-                            let coords = feature.geometry.coordinates;
+                            const feature = features[i];
+                            if (!feature.geometry) continue;
+                            const coords = feature.geometry.coordinates;
 
                             if (Math.abs(coords[0]) <= 180 && Math.abs(coords[1]) <= 90) {
                                 if (i < features.length - 1) {
                                     let nextFeature = features[i + 1];
-                                    let nextCoords = nextFeature.geometry.coordinates;
+
+                                    // scroll forward until we find a non-null geometry
+                                    while (!!!nextFeature.geometry) {
+                                        nextFeature = features[++i];
+                                    }
+
+                                    const nextCoords = nextFeature.geometry.coordinates;
 
                                     if (
                                         Math.abs(nextCoords[0]) <= 180 &&
