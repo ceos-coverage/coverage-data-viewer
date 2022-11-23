@@ -55,7 +55,8 @@ APPLICATION_CONFIG = {
             COLORSCALERANGE: "0,1",
         },
         sargassum: {
-            COLORSCALERANGE: "0,0.001",
+            STYLES: "default-scalar",
+            COLORSCALERANGE: "0,0.004",
         },
     },
     SOLR_QUERY_ROWS_LIMIT: 5000,
