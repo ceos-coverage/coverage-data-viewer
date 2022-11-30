@@ -15,6 +15,7 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import Paper from "@material-ui/core/Paper";
 import DownloadIcon from "@material-ui/icons/GetApp";
+import GraphIcon from "@material-ui/icons/Grain";
 import MiscUtil from "_core/utils/MiscUtil";
 import * as appActions from "actions/appActions";
 import * as subsettingActions from "actions/subsettingActions";
@@ -24,7 +25,7 @@ export class ExtraToolsMenu extends Component {
     render() {
         let containerClasses = MiscUtil.generateStringFromSet({
             [styles.mapToolsMenu]: true,
-            [this.props.className]: typeof this.props.className !== "undefined"
+            [this.props.className]: typeof this.props.className !== "undefined",
         });
         return (
             <Paper className={containerClasses}>
@@ -42,6 +43,19 @@ export class ExtraToolsMenu extends Component {
                         </ListItemIcon>
                         <ListItemText inset primary="Download Data" />
                     </MenuItem>
+                    <MenuItem
+                        className={styles.contextMenuItem}
+                        onClick={() => {
+                            this.props.subsettingActions.setSubsettingOptions({ isOpen: false });
+                            this.props.handleRequestClose();
+                        }}
+                        aria-label="CDMS: Advanced Charting"
+                    >
+                        <ListItemIcon classes={{ root: styles.listItemIcon }}>
+                            <GraphIcon />
+                        </ListItemIcon>
+                        <ListItemText inset primary="CDMS: Advanced Charting" />
+                    </MenuItem>
                 </MenuList>
             </Paper>
         );
@@ -52,17 +66,14 @@ ExtraToolsMenu.propTypes = {
     handleRequestClose: PropTypes.func.isRequired,
     appActions: PropTypes.object.isRequired,
     subsettingActions: PropTypes.object.isRequired,
-    className: PropTypes.string
+    className: PropTypes.string,
 };
 
 function mapDispatchToProps(dispatch) {
     return {
         appActions: bindActionCreators(appActions, dispatch),
-        subsettingActions: bindActionCreators(subsettingActions, dispatch)
+        subsettingActions: bindActionCreators(subsettingActions, dispatch),
     };
 }
 
-export default connect(
-    null,
-    mapDispatchToProps
-)(ExtraToolsMenu);
+export default connect(null, mapDispatchToProps)(ExtraToolsMenu);
