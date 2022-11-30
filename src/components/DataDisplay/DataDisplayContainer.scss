@@ -1,0 +1,43 @@
+@import "~styles/colors";
+
+.root {
+    position: absolute;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    width: 30rem;
+    display: block;
+    &.noData {
+        width: auto;
+    }
+}
+
+.noData {
+    line-height: 1.2rem;
+    color: $color-medium;
+    padding: 1px;
+}
+
+.valueWrapper {
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+    padding: 0.7rem;
+    position: relative;
+}
+
+.coordinateWrapper {
+    padding: 0.4rem;
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
+    z-index: -1;
+    text-align: right;
+    background: $color-medium-light;
+    &.noData {
+        border-top-left-radius: 4px;
+        border-top-right-radius: 4px;
+    }
+}
+
+.coordinates {
+    font-size: 1.2rem;
+    color: $color-dark;
+}

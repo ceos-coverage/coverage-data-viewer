@@ -119,3 +119,7 @@ export const ALERTS = {
         severity: 4,
     },
 };
+
+export const EXTRACT_DATA_OL = "extractData_OL";
+
+export const UNKNOWN = "Unknown";

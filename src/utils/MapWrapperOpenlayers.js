@@ -1552,6 +1552,103 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                 }
             );
 
+            this.map.forEachLayerAtPixel(
+                pixel,
+                (mapLayer) => {
+                    if (mapLayer) {
+                        const layer = mapLayer.get("_layerRef");
+                        if (layer && typeof mapLayer.getSource === "function") {
+                            const source = mapLayer.getSource();
+                            const tileGrid = source.getTileGrid(); // the tilegrid will give us tile coordinates and extents
+                            const res = this.map.getView().getResolution();
+                            const tileCoord = tileGrid.getTileCoordForCoordAndResolution(
+                                [coords.lat, coords.lon],
+                                res
+                            );
+                            if (source.tileCache.containsKey(tileCoord.join("/"))) {
+                                const tile = source.tileCache.get(tileCoord.join("/"));
+                                if (tile._processedImg) {
+                                    // calculate extents and scaling
+                                    const tileExtent = tileGrid.getTileCoordExtent(tileCoord);
+                                    const tileOrigin = [tileExtent[0], tileExtent[3]];
+                                    const tilePixelUL = this.map.getPixelFromCoordinate(tileOrigin);
+                                    const tilePixelBR = this.map.getPixelFromCoordinate([
+                                        tileExtent[2],
+                                        tileExtent[1],
+                                    ]);
+                                    const tileSize = tileGrid.getTileSize();
+                                    const tileWidth = tilePixelBR[0] - tilePixelUL[0];
+                                    const scale = tileWidth / tileSize;
+
+                                    // calculate offsets and index for the data. Round down to avoid and index >= tileSize
+                                    const imgDataX = Math.floor(
+                                        (pixel[0] - tilePixelUL[0]) / scale
+                                    );
+                                    const imgDataY = Math.floor(
+                                        (pixel[1] - tilePixelUL[1]) / scale
+                                    );
+
+                                    // retrieve RGBA of the displayed pixel
+                                    const ctx = tile._processedImg.getContext("2d", {
+                                        willReadFrequently: true,
+                                    });
+                                    const colorData = ctx
+                                        .getImageData(imgDataX, imgDataY, 1, 1)
+                                        .data.slice(0, 4);
+                                    const rgbColor = `rgba(${colorData.slice(0, 3).join(",")})`;
+                                    const hexColor = this.miscUtil.getHexFromColorString(rgbColor);
+
+                                    const palette = palettes.get(layer.getIn(["palette", "name"]));
+                                    if (typeof palette === "undefined") {
+                                        palette = palettes.get(layer.getIn(["palette", "base"]));
+                                    }
+
+                                    const value = this.mapUtil.mapColorToValue({
+                                        colorData,
+                                        palette,
+                                        handleAs: layer.getIn(["palette", "handleAs"]),
+                                        units: layer.get("units"),
+                                    });
+
+                                    data.push({
+                                        layer: layer.get("id"),
+                                        label: layer.get("title"),
+                                        subtitle: layer.get("subtitle"),
+                                        value: value,
+                                        color: hexColor,
+                                    });
+                                } else {
+                                    data.push({
+                                        layer: layer.get("id"),
+                                        label: layer.get("title"),
+                                        subtitle: layer.get("subtitle"),
+                                        value: appStrings.NO_DATA,
+                                        color: "#00000000",
+                                    });
+                                }
+                            } else {
+                                data.push({
+                                    layer: layer.get("id"),
+                                    label: layer.get("title"),
+                                    subtitle: layer.get("subtitle"),
+                                    value: appStrings.NO_DATA,
+                                    color: "#00000000",
+                                });
+                            }
+                        }
+                    }
+                },
+                {
+                    layerFilter: (mapLayer) => {
+                        return (
+                            mapLayer.getVisible() &&
+                            mapLayer.get("_layerType") === appStringsCore.LAYER_GROUP_TYPE_DATA &&
+                            false
+                        );
+                    },
+                }
+            );
+
             this.map.forEachFeatureAtPixel(
                 pixel,
                 (feature, mapLayer) => {

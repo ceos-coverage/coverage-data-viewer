@@ -1,0 +1,38 @@
+@import "~styles/colors";
+
+.root {
+    display: flex;
+    flex-flow: row nowrap;
+    padding-bottom: 0.7rem;
+    margin-bottom: 0.7rem;
+    font-size: 1.2rem;
+    border-bottom: 1px solid $color-medium-light;
+    &:last-of-type {
+        padding-bottom: 0px;
+        margin-bottom: 0px;
+        border-bottom: none;
+    }
+}
+.colorPreview {
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    border: 1px solid $color-medium-light;
+    &.noData {
+        background: $color-light !important;
+    }
+}
+.title {
+    padding: 0px 0.4rem;
+    font-family: "roboto", Helvetica, Arial, sans-serif;
+    white-space: normal;
+    word-break: break-all;
+}
+.value {
+    font-weight: 600;
+    font-family: "Roboto Mono";
+    text-align: right;
+    &.noData {
+        color: $color-medium;
+    }
+}
