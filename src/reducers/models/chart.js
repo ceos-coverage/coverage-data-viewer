@@ -72,4 +72,17 @@ export const chartState = Immutable.fromJS({
             })
         ),
     charts: Immutable.OrderedMap(),
+    cdmsCharting: {
+        isOpen: false,
+        formOptions: {
+            primaryDataset: undefined,
+            secondaryDataset: undefined,
+            depthMin: 0,
+            depthMax: 5,
+            timeTolerance: 86400,
+            radiusTolerance: 1000,
+            platformId: undefined,
+            parameter: undefined,
+        },
+    },
 });

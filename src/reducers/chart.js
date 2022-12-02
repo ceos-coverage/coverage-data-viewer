@@ -50,6 +50,9 @@ export default function chart(state = chartState, action, opt_reducer = ChartRed
         case actionTypes.SET_CHART_SATELLITE_CHART_TYPE:
             return opt_reducer.setSatelliteChartType(state, action);
 
+        case actionTypes.SET_CDMS_CHARTING_OPTIONS:
+            return opt_reducer.setCDMSChartingOptions(state, action);
+
         default:
             return state;
     }

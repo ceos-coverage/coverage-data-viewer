@@ -19,6 +19,7 @@ import GraphIcon from "@material-ui/icons/Grain";
 import MiscUtil from "_core/utils/MiscUtil";
 import * as appActions from "actions/appActions";
 import * as subsettingActions from "actions/subsettingActions";
+import * as chartActions from "actions/chartActions";
 import styles from "_core/components/Reusables/MapToolsMenu.scss";
 
 export class ExtraToolsMenu extends Component {
@@ -33,6 +34,7 @@ export class ExtraToolsMenu extends Component {
                     <MenuItem
                         className={styles.contextMenuItem}
                         onClick={() => {
+                            this.props.chartActions.setCDMSChartingOptions({ isOpen: false });
                             this.props.subsettingActions.setSubsettingOptions({ isOpen: true });
                             this.props.handleRequestClose();
                         }}
@@ -47,6 +49,7 @@ export class ExtraToolsMenu extends Component {
                         className={styles.contextMenuItem}
                         onClick={() => {
                             this.props.subsettingActions.setSubsettingOptions({ isOpen: false });
+                            this.props.chartActions.setCDMSChartingOptions({ isOpen: true });
                             this.props.handleRequestClose();
                         }}
                         aria-label="CDMS: Advanced Charting"
@@ -66,12 +69,14 @@ ExtraToolsMenu.propTypes = {
     handleRequestClose: PropTypes.func.isRequired,
     appActions: PropTypes.object.isRequired,
     subsettingActions: PropTypes.object.isRequired,
+    chartActions: PropTypes.object.isRequired,
     className: PropTypes.string,
 };
 
 function mapDispatchToProps(dispatch) {
     return {
         appActions: bindActionCreators(appActions, dispatch),
+        chartActions: bindActionCreators(chartActions, dispatch),
         subsettingActions: bindActionCreators(subsettingActions, dispatch),
     };
 }
