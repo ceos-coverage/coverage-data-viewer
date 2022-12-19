@@ -134,7 +134,7 @@
     border-top-right-radius: 0px;
     padding: 0.4rem 0.8rem;
     text-align: left;
-    background: darken(white, 1%);
+    background: darken($color-light, 5%);
 }
 .chartFooterHidden {
     display: none;

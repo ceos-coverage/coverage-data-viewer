@@ -537,6 +537,15 @@ function mergeTrackData(track, titleField) {
         const isWMS =
             [appStrings.LAYER_WMS_TILE_RASTER, appStringsCore.LAYER_WMS_RASTER].indexOf(handleAs) !=
             -1;
+
+        console.log(handleAs, track.get("id"));
+
+        const tileFunctions = isWMS
+            ? {}
+            : {
+                  openlayers: appStrings.EXTRACT_DATA_OL,
+                  cesium: appStrings.EXTRACT_DATA_CS,
+              };
         return {
             id: track.get("id"),
             shortId: track.get("shortId"),
@@ -568,6 +577,7 @@ function mergeTrackData(track, titleField) {
                         ? appStringsCore.KVP_TIME_PARAM_WMS
                         : appStringsCore.KVP_TIME_PARAM_WMTS,
                 },
+                tileFunctions: tileFunctions,
             },
             insituMeta: track.get("insituMeta"),
         };

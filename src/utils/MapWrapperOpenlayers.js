@@ -1598,28 +1598,34 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                                     const rgbColor = `rgba(${colorData.slice(0, 3).join(",")})`;
                                     const hexColor = this.miscUtil.getHexFromColorString(rgbColor);
 
-                                    const palette = palettes.get(layer.getIn(["palette", "name"]));
-                                    if (typeof palette === "undefined") {
-                                        palette = palettes.get(layer.getIn(["palette", "base"]));
+                                    let palette = palettes.get(layer.getIn(["palette", "name"]));
+                                    if (typeof palette !== "undefined") {
+                                        const value = this.mapUtil.mapColorToValue({
+                                            colorData,
+                                            palette,
+                                            handleAs: layer.getIn(["palette", "handleAs"]),
+                                            units: layer.get("units"),
+                                        });
+
+                                        data.push({
+                                            layerId: layer.get("id"),
+                                            label: layer.get("title"),
+                                            subtitle: layer.get("subtitle"),
+                                            value: value,
+                                            color: hexColor,
+                                        });
+                                    } else {
+                                        data.push({
+                                            layerId: layer.get("id"),
+                                            label: layer.get("title"),
+                                            subtitle: layer.get("subtitle"),
+                                            value: appStrings.NO_DATA,
+                                            color: "#00000000",
+                                        });
                                     }
-
-                                    const value = this.mapUtil.mapColorToValue({
-                                        colorData,
-                                        palette,
-                                        handleAs: layer.getIn(["palette", "handleAs"]),
-                                        units: layer.get("units"),
-                                    });
-
-                                    data.push({
-                                        layer: layer.get("id"),
-                                        label: layer.get("title"),
-                                        subtitle: layer.get("subtitle"),
-                                        value: value,
-                                        color: hexColor,
-                                    });
                                 } else {
                                     data.push({
-                                        layer: layer.get("id"),
+                                        layerId: layer.get("id"),
                                         label: layer.get("title"),
                                         subtitle: layer.get("subtitle"),
                                         value: appStrings.NO_DATA,
@@ -1628,7 +1634,7 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                                 }
                             } else {
                                 data.push({
-                                    layer: layer.get("id"),
+                                    layerId: layer.get("id"),
                                     label: layer.get("title"),
                                     subtitle: layer.get("subtitle"),
                                     value: appStrings.NO_DATA,
@@ -1643,7 +1649,8 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                         return (
                             mapLayer.getVisible() &&
                             mapLayer.get("_layerType") === appStringsCore.LAYER_GROUP_TYPE_DATA &&
-                            false
+                            mapLayer.get("_layerRef").get("handleAs") ===
+                                appStringsCore.LAYER_GIBS_RASTER
                         );
                     },
                 }
@@ -2101,6 +2108,15 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
         } catch (err) {
             console.warn("Error in MapWrapperOpenlayers.updateLayer:", err);
             return false;
+        }
+    }
+
+    updateLayerRefInfo(layer) {
+        const mapLayers = this.map.getLayers().getArray();
+        const mapLayer = this.miscUtil.findObjectInArray(mapLayers, "_layerId", layer.get("id"));
+        if (mapLayer) {
+            // update the layer
+            this.setLayerRefInfo(layer, mapLayer);
         }
     }
 

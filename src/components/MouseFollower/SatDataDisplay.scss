@@ -1,0 +1,39 @@
+/**
+ * Copyright 2018 California Institute of Technology.
+ *
+ * This source code is licensed under the APACHE 2.0 license found in the
+ * LICENSE.txt file in the root directory of this source tree.
+ */
+
+@import "~styles/colors";
+
+.root {
+    position: absolute;
+    bottom: 0.7rem;
+    left: 0px;
+    transform: translate(calc(-100% - 0.7rem), 0);
+    background: darken($color-light, 5%);
+    padding: 0px;
+    width: 30rem;
+}
+
+.noData {
+    width: auto;
+}
+
+.dataContainer {
+    background: $color-light;
+    padding: 0.4rem;
+    border-bottom-right-radius: 0px;
+    border-bottom-left-radius: 0px;
+}
+
+.coordsContainer {
+    text-align: right;
+    padding: 0.2rem 0.7rem;
+}
+
+.coords {
+    font-family: "Roboto Mono", Helvetica, Arial, sans-serif;
+    font-size: 1.2rem;
+}

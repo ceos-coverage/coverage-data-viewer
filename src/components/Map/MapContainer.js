@@ -14,15 +14,23 @@ import { MapContainer2D } from "components/Map";
 import styles from "_core/components/Map/MapContainer.scss";
 
 export class MapContainer extends Component {
+    constructor(props) {
+        super(props);
+
+        this.containerRef = React.createRef();
+    }
     componentDidMount() {
-        this.refs.container.addEventListener("mouseout", evt => {
+        this.containerRef.current.addEventListener("mouseout", (evt) => {
+            this.props.mapActions.invalidatePixelHover();
+        });
+        this.containerRef.current.addEventListener("mouseleave", (evt) => {
             this.props.mapActions.invalidatePixelHover();
         });
     }
 
     render() {
         return (
-            <div ref="container" className={styles.mapContainer}>
+            <div ref={this.containerRef} className={styles.mapContainer}>
                 <MapContainer2D />
             </div>
         );
@@ -30,12 +38,12 @@ export class MapContainer extends Component {
 }
 
 MapContainer.propTypes = {
-    mapActions: PropTypes.object.isRequired
+    mapActions: PropTypes.object.isRequired,
 };
 
 function mapDispatchToProps(dispatch) {
     return {
-        mapActions: bindActionCreators(mapActions, dispatch)
+        mapActions: bindActionCreators(mapActions, dispatch),
     };
 }
 

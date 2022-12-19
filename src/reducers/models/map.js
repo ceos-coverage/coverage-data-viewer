@@ -14,26 +14,24 @@ export const mapState = mapStateCore.mergeDeep(
     Immutable.fromJS({
         dateIntervalScale: "day",
         dateIntervalSize: 1,
-        intervalDate: moment
-            .utc(appConfig.DEFAULT_DATE)
-            .subtract(1, "day")
-            .toDate(),
+        intervalDate: moment.utc(appConfig.DEFAULT_DATE).subtract(1, "day").toDate(),
         layers: {
             insitu_data: {},
             insitu_data_error: {},
-            data_reference: {}
+            data_reference: {},
         },
         insituLayerTitleField: "platform",
         view: {
             pixelHoverCoordinate: {
                 data: [],
-                showData: true
+                showData: true,
             },
-            refHoverData: []
+            refHoverData: [],
+            satHoverData: [],
         },
         areaSelection: {
             isAreaSelectionEnabled: false,
-            geometryType: ""
+            geometryType: "",
         },
         animation: {
             isOpen: false, // true if widget should be open, false otherwise
@@ -49,12 +47,9 @@ export const mapState = mapStateCore.mergeDeep(
             nextFrameLoaded: false, // true if the next frame is loaded, false otherwise
             previousFrameLoaded: false, // true if the previous frame is loaded, false otherwise
             speed: appConfig.DEFAULT_ANIMAITON_SPEED, // ms delay between frames
-            startDate: moment
-                .utc(appConfig.DEFAULT_DATE)
-                .subtract(1, "week")
-                .toDate(), // date to begin animation
-            endDate: appConfig.DEFAULT_DATE // date to end animation
-        }
+            startDate: moment.utc(appConfig.DEFAULT_DATE).subtract(1, "week").toDate(), // date to begin animation
+            endDate: appConfig.DEFAULT_DATE, // date to end animation
+        },
     })
 );
 
@@ -64,6 +59,6 @@ export const layerModel = layerModelCore.mergeDeep(
         shortId: "",
         isLoading: false,
         isErrorActive: false,
-        vectorColor: appConfig.INSITU_VECTOR_COLORS[0]
+        vectorColor: appConfig.INSITU_VECTOR_COLORS[0],
     })
 );

@@ -121,5 +121,6 @@ export const ALERTS = {
 };
 
 export const EXTRACT_DATA_OL = "extractData_OL";
+export const EXTRACT_DATA_CS = "extractData_CS";
 
 export const UNKNOWN = "Unknown";

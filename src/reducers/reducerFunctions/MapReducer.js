@@ -221,17 +221,31 @@ export default class MapReducer extends MapReducerCore {
                         );
                     });
 
+                    // extract satellite layer data
+                    const satData = data.filter((entry) => {
+                        return (
+                            entry.getIn(["layer", "type"]) ===
+                                appStringsCore.LAYER_GROUP_TYPE_DATA &&
+                            entry.getIn(["layer", "handleAs"]) === appStringsCore.LAYER_GIBS_RASTER
+                        );
+                    });
+
                     data = data
                         .filterNot((entry) => {
                             return (
                                 entry.getIn(["layer", "type"]) ===
                                     appStrings.LAYER_GROUP_TYPE_DATA_REFERENCE ||
+                                (entry.getIn(["layer", "type"]) ===
+                                    appStringsCore.LAYER_GROUP_TYPE_DATA &&
+                                    entry.getIn(["layer", "handleAs"]) ===
+                                        appStringsCore.LAYER_GIBS_RASTER) ||
                                 entry.getIn(["layer", "opacity"]) === 0
                             );
                         })
                         .slice(0, 1);
 
                     state = state.setIn(["view", "refHoverData"], refData);
+                    state = state.setIn(["view", "satHoverData"], satData);
 
                     // set the coordinate as valid
                     pixelCoordinate = pixelCoordinate
@@ -351,9 +365,15 @@ export default class MapReducer extends MapReducerCore {
     static updateLayer(state, action) {
         if (state.hasIn(["layers", action.layer.get("type"), action.layer.get("id")])) {
             const layer = state.getIn(["layers", action.layer.get("type"), action.layer.get("id")]);
+            const newLayer = layer.mergeDeep(action.layer);
+            state.get("maps").forEach((map) => {
+                if (map.isActive) {
+                    map.updateLayerRefInfo(newLayer);
+                }
+            });
             return state.setIn(
                 ["layers", action.layer.get("type"), action.layer.get("id")],
-                layer.mergeDeep(action.layer)
+                newLayer
             );
         }
         return state;

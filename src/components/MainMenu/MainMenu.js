@@ -18,6 +18,7 @@ import ArrowBack from "@material-ui/icons/KeyboardArrowLeft";
 import { ChartMenu } from "components/Chart";
 import { LayerSearchMenu } from "components/MainMenu/LayerSearch";
 import { SatelliteLayerSearchMenu } from "components/MainMenu/SatelliteLayerSearch";
+import { SatDataDisplay } from "components/MouseFollower";
 import * as appActions from "actions/appActions";
 import MiscUtil from "_core/utils/MiscUtil";
 import styles from "components/MainMenu/MainMenu.scss";
@@ -27,22 +28,22 @@ export class MainMenu extends Component {
     render() {
         let toggleIconClasses = MiscUtil.generateStringFromSet({
             [styles.toggleIcon]: true,
-            [styles.toggleIconFlip]: this.props.isOpen
+            [styles.toggleIconFlip]: this.props.isOpen,
         });
 
         let tabDatasetsClasses = MiscUtil.generateStringFromSet({
             [styles.tabContent]: true,
-            [displayStyles.hidden]: this.props.tabIndex !== 0
+            [displayStyles.hidden]: this.props.tabIndex !== 0,
         });
 
         let tabSatelliteDatasetsClasses = MiscUtil.generateStringFromSet({
             [styles.tabContent]: true,
-            [displayStyles.hidden]: this.props.tabIndex !== 1
+            [displayStyles.hidden]: this.props.tabIndex !== 1,
         });
 
         let tabChartClasses = MiscUtil.generateStringFromSet({
             [styles.tabContent]: true,
-            [displayStyles.hidden]: this.props.tabIndex !== 2
+            [displayStyles.hidden]: this.props.tabIndex !== 2,
         });
 
         return (
@@ -70,21 +71,21 @@ export class MainMenu extends Component {
                             <Tab
                                 classes={{
                                     root: styles.tabLabel,
-                                    selected: styles.tabSelected
+                                    selected: styles.tabSelected,
                                 }}
                                 label="In-Situ Datasets"
                             />
                             <Tab
                                 classes={{
                                     root: styles.tabLabel,
-                                    selected: styles.tabSelected
+                                    selected: styles.tabSelected,
                                 }}
                                 label="Satellite Datasets"
                             />
                             <Tab
                                 classes={{
                                     root: styles.tabLabel,
-                                    selected: styles.tabSelected
+                                    selected: styles.tabSelected,
                                 }}
                                 label="Charts"
                             />
@@ -99,6 +100,7 @@ export class MainMenu extends Component {
                             <ChartMenu />
                         </div>
                     </div>
+                    <SatDataDisplay />
                 </Paper>
             </Slide>
         );
@@ -108,23 +110,20 @@ export class MainMenu extends Component {
 MainMenu.propTypes = {
     isOpen: PropTypes.bool.isRequired,
     tabIndex: PropTypes.number.isRequired,
-    appActions: PropTypes.object.isRequired
+    appActions: PropTypes.object.isRequired,
 };
 
 function mapStateToProps(state) {
     return {
         isOpen: state.view.get("isMainMenuOpen"),
-        tabIndex: state.view.get("mainMenuTabIndex")
+        tabIndex: state.view.get("mainMenuTabIndex"),
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        appActions: bindActionCreators(appActions, dispatch)
+        appActions: bindActionCreators(appActions, dispatch),
     };
 }
 
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(MainMenu);
+export default connect(mapStateToProps, mapDispatchToProps)(MainMenu);

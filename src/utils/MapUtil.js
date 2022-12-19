@@ -7,6 +7,8 @@
 
 import MapUtilCore from "_core/utils/MapUtil";
 import MiscUtil from "utils/MiscUtil";
+import * as appStrings from "constants/appStrings";
+import * as appStringsCore from "_core/constants/appStrings";
 
 export default class MapUtil extends MapUtilCore {
     static extentsIntersect(extent1, extent2) {
@@ -173,6 +175,7 @@ export default class MapUtil extends MapUtilCore {
                     value = `${colorMap.get("value")}${units}`;
                 } else {
                     value = appStrings.UNKNOWN;
+                    // console.log(hexColor);
                 }
             }
         }
