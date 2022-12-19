@@ -52,12 +52,12 @@ export class ExtraToolsMenu extends Component {
                             this.props.chartActions.setCDMSChartingOptions({ isOpen: true });
                             this.props.handleRequestClose();
                         }}
-                        aria-label="CDMS: Advanced Charting"
+                        aria-label="CDMS Matchup"
                     >
                         <ListItemIcon classes={{ root: styles.listItemIcon }}>
                             <GraphIcon />
                         </ListItemIcon>
-                        <ListItemText inset primary="CDMS: Advanced Charting" />
+                        <ListItemText inset primary="CDMS Matchup" />
                     </MenuItem>
                 </MenuList>
             </Paper>

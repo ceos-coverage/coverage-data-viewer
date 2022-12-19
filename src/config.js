@@ -43,6 +43,7 @@ APPLICATION_CONFIG = {
     URLS: {
         decimatorMiddleware: "https://oiip.jpl.nasa.gov/getDecData",
         // decimatorMiddleware: "http://localhost:8101/getData",
+        domsBase: "https://doms.jpl.nasa.gov",
     },
     LAYER_URL_SWAPS: [["cwcgom.aoml.noaa.gov/thredds/wms/", "coverage.wekeo.eu/onearth/"]],
     LAYER_URL_PARAM_OVERRIDES: {

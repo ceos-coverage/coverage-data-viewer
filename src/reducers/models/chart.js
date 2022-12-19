@@ -83,6 +83,7 @@ export const chartState = Immutable.fromJS({
             radiusTolerance: 1000,
             platformId: undefined,
             parameter: undefined,
+            matchOnce: true,
         },
     },
 });

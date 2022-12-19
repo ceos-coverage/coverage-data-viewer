@@ -6,7 +6,7 @@
 
     left: 4.4rem;
     bottom: 7rem;
-    height: 52rem;
+    height: 56rem;
     width: 30.8rem;
 
     border-radius: 4px;
@@ -86,4 +86,8 @@
     display: block;
     margin-bottom: 0.7rem;
     padding: 0px 0.5rem;
+}
+
+.noMargin {
+    margin: 0px;
 }

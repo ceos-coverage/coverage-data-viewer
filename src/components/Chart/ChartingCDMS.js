@@ -18,6 +18,7 @@ import RadioGroup from "@material-ui/core/RadioGroup";
 import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
+import Grid from "@material-ui/core/Grid";
 import { LabelPopover, Checkbox, DateRangePicker, AreaSelectionInput } from "components/Reusables";
 import { LoadingSpinner } from "_core/components/Reusables";
 import styles from "components/Chart/ChartingCDMS.scss";
@@ -26,6 +27,7 @@ import * as subsettingActions from "actions/subsettingActions";
 import * as appStringsCore from "_core/constants/appStrings";
 import * as appStrings from "constants/appStrings";
 import MiscUtil from "utils/MiscUtil";
+import CDMSDataUtil from "utils/CDMSDataUtil";
 
 export class ChartingCDMS extends Component {
     constructor(props) {
@@ -92,14 +94,54 @@ export class ChartingCDMS extends Component {
         });
     };
 
-    submitChartingRequest = () => {
-        const aTracks = this.props.availableTracks.concat(this.props.availableRemotes);
-        const sTracks = this.props.subsettingOptions.get("selectedTracks");
+    submitChartingRequest = async () => {
+        const primaryDatasetId = this.props.cdmsCharting.getIn(["formOptions", "primaryDataset"]);
+        const secondaryDatasetId = this.props.cdmsCharting.getIn([
+            "formOptions",
+            "secondaryDataset",
+        ]);
+        const depthMin = this.props.cdmsCharting.getIn(["formOptions", "depthMin"]);
+        const depthMax = this.props.cdmsCharting.getIn(["formOptions", "depthMax"]);
+        const timeTolerance = this.props.cdmsCharting.getIn(["formOptions", "timeTolerance"]);
+        const radiusTolerance = this.props.cdmsCharting.getIn(["formOptions", "radiusTolerance"]);
         const startDate = this.props.subsettingOptions.get("startDate");
         const endDate = this.props.subsettingOptions.get("endDate");
         const area = this.props.searchOptions.get("selectedArea");
 
-        console.log("submit");
+        const primaryDataset = this.props.availableRemotes.find(
+            (x) => x.get("id") === primaryDatasetId
+        );
+        const secondaryDataset = this.props.availableTracks.find(
+            (x) => x.get("id") === secondaryDatasetId
+        );
+
+        if (primaryDataset && secondaryDataset && startDate && endDate && area) {
+            try {
+                this.setState({ loading: true });
+                const cdmsResult = await CDMSDataUtil.getCDMSMatchup({
+                    primaryDataset,
+                    secondaryDataset,
+                    depthMin,
+                    depthMax,
+                    timeTolerance,
+                    radiusTolerance,
+                    startDate,
+                    endDate,
+                    area,
+                });
+
+                this.setState({ loading: false });
+
+                const formattedResult = CDMSDataUtil.formatResults(cdmsResult);
+                console.log(formattedResult);
+            } catch (err) {
+                this.setState({ loading: false });
+                console.warn("WARN: failed to fetch CDMS matchup", err);
+            }
+        } else {
+            this.setState({ loading: false });
+            console.warn("WARN: missing CDMS parameters");
+        }
     };
 
     close = () => {
@@ -155,7 +197,7 @@ export class ChartingCDMS extends Component {
             <Paper elevation={2} className={rootClasses}>
                 <div className={styles.header}>
                     <Typography variant="body2" className={styles.title}>
-                        CDMS Charting
+                        CDMS Matchup
                     </Typography>
                     {this.state.loading && (
                         <div className={styles.loadingWrapper}>
@@ -271,6 +313,25 @@ export class ChartingCDMS extends Component {
                                 }
                                 inputProps={{
                                     type: "number",
+                                }}
+                            />
+                        </FormGroup>
+                        <FormGroup className={styles.optionFieldPadded}>
+                            <Checkbox
+                                label="Match Once"
+                                labelPlacement="start"
+                                color="primary"
+                                checked={this.props.cdmsCharting.getIn([
+                                    "formOptions",
+                                    "matchOnce",
+                                ])}
+                                fullWidth={true}
+                                onChange={(checked) => {
+                                    this.props.chartActions.setCDMSChartingOptions({
+                                        formOptions: {
+                                            matchOnce: checked,
+                                        },
+                                    });
                                 }}
                             />
                         </FormGroup>
