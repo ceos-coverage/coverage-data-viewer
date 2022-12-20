@@ -164,7 +164,7 @@ export default class MapUtil extends MapUtilCore {
                         }
                     }
 
-                    value = `${value}${units}`;
+                    value = `${value} ${units}`;
                 }
             } else {
                 const colorEntry = paletteValueList.findLastEntry((entry) => {
@@ -172,7 +172,7 @@ export default class MapUtil extends MapUtilCore {
                 });
                 if (typeof colorEntry !== "undefined") {
                     const colorMap = colorEntry[1];
-                    value = `${colorMap.get("value")}${units}`;
+                    value = `${colorMap.get("value")} ${units}`;
                 } else {
                     value = appStrings.UNKNOWN;
                     // console.log(hexColor);
