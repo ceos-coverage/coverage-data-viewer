@@ -15,16 +15,18 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import Paper from "@material-ui/core/Paper";
 import DownloadIcon from "@material-ui/icons/GetApp";
+import GraphIcon from "@material-ui/icons/Grain";
 import MiscUtil from "_core/utils/MiscUtil";
 import * as appActions from "actions/appActions";
 import * as subsettingActions from "actions/subsettingActions";
+import * as chartActions from "actions/chartActions";
 import styles from "_core/components/Reusables/MapToolsMenu.scss";
 
 export class ExtraToolsMenu extends Component {
     render() {
         let containerClasses = MiscUtil.generateStringFromSet({
             [styles.mapToolsMenu]: true,
-            [this.props.className]: typeof this.props.className !== "undefined"
+            [this.props.className]: typeof this.props.className !== "undefined",
         });
         return (
             <Paper className={containerClasses}>
@@ -32,6 +34,7 @@ export class ExtraToolsMenu extends Component {
                     <MenuItem
                         className={styles.contextMenuItem}
                         onClick={() => {
+                            this.props.chartActions.setCDMSChartingOptions({ isOpen: false });
                             this.props.subsettingActions.setSubsettingOptions({ isOpen: true });
                             this.props.handleRequestClose();
                         }}
@@ -41,6 +44,20 @@ export class ExtraToolsMenu extends Component {
                             <DownloadIcon />
                         </ListItemIcon>
                         <ListItemText inset primary="Download Data" />
+                    </MenuItem>
+                    <MenuItem
+                        className={styles.contextMenuItem}
+                        onClick={() => {
+                            this.props.subsettingActions.setSubsettingOptions({ isOpen: false });
+                            this.props.chartActions.setCDMSChartingOptions({ isOpen: true });
+                            this.props.handleRequestClose();
+                        }}
+                        aria-label="CDMS Matchup"
+                    >
+                        <ListItemIcon classes={{ root: styles.listItemIcon }}>
+                            <GraphIcon />
+                        </ListItemIcon>
+                        <ListItemText inset primary="CDMS Matchup" />
                     </MenuItem>
                 </MenuList>
             </Paper>
@@ -52,17 +69,16 @@ ExtraToolsMenu.propTypes = {
     handleRequestClose: PropTypes.func.isRequired,
     appActions: PropTypes.object.isRequired,
     subsettingActions: PropTypes.object.isRequired,
-    className: PropTypes.string
+    chartActions: PropTypes.object.isRequired,
+    className: PropTypes.string,
 };
 
 function mapDispatchToProps(dispatch) {
     return {
         appActions: bindActionCreators(appActions, dispatch),
-        subsettingActions: bindActionCreators(subsettingActions, dispatch)
+        chartActions: bindActionCreators(chartActions, dispatch),
+        subsettingActions: bindActionCreators(subsettingActions, dispatch),
     };
 }
 
-export default connect(
-    null,
-    mapDispatchToProps
-)(ExtraToolsMenu);
+export default connect(null, mapDispatchToProps)(ExtraToolsMenu);

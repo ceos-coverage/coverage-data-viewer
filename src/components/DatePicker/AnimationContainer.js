@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import moment from "moment";
+import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import RemoveIcon from "@material-ui/icons/Close";
@@ -14,7 +15,7 @@ import {
     DatePicker,
     DateIntervalPicker,
     AnimationSpeedSelector,
-    CurrentDateDisplay
+    CurrentDateDisplay,
 } from "components/DatePicker";
 import styles from "components/DatePicker/AnimationContainer.scss";
 import * as mapActions from "actions/mapActions";
@@ -180,7 +181,7 @@ export class AnimationContainer extends Component {
                 .utc(this.props.animation.get("startDate"))
                 .subtract(this.props.dateIntervalSize, this.props.dateIntervalScale)
                 .toDate(),
-            this.props.animation.get("endDate")
+            this.props.animation.get("endDate"),
         ];
 
         if (
@@ -219,11 +220,11 @@ export class AnimationContainer extends Component {
 
         let containerClasses = MiscUtil.generateStringFromSet({
             [styles.root]: true,
-            [this.props.className]: typeof this.props.className !== "undefined"
+            [this.props.className]: typeof this.props.className !== "undefined",
         });
 
         return (
-            <div className={containerClasses}>
+            <Paper elevation={2} className={containerClasses}>
                 <Grid container spacing={0} alignItems="center" className={styles.controlsRow}>
                     <Grid item xs={6}>
                         <CurrentDateDisplay />
@@ -262,7 +263,7 @@ export class AnimationContainer extends Component {
                         />
                     </div>
                 </div>
-            </div>
+            </Paper>
         );
     }
 }
@@ -275,7 +276,7 @@ AnimationContainer.propTypes = {
     mapActions: PropTypes.object.isRequired,
     updateDateLinkedCharts: PropTypes.func.isRequired,
     blockChartAnimationUpdates: PropTypes.func.isRequired,
-    className: PropTypes.string
+    className: PropTypes.string,
 };
 
 function mapStateToProps(state) {
@@ -283,7 +284,7 @@ function mapStateToProps(state) {
         animation: state.map.get("animation"),
         dateIntervalScale: state.map.get("dateIntervalScale"),
         dateIntervalSize: state.map.get("dateIntervalSize"),
-        date: state.map.get("date")
+        date: state.map.get("date"),
     };
 }
 
@@ -294,7 +295,7 @@ function mapDispatchToProps(dispatch) {
         blockChartAnimationUpdates: bindActionCreators(
             chartActions.blockChartAnimationUpdates,
             dispatch
-        )
+        ),
     };
 }
 

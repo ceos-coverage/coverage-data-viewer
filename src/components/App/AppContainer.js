@@ -27,6 +27,7 @@ import { MouseFollowerContainer } from "components/MouseFollower";
 import { KeyboardControlsContainer } from "components/KeyboardControls";
 import { SatelliteLayerMenu, InsituLayerMenu } from "components/LayerMenu";
 import { DataSubsetting } from "components/DataSubsetting";
+import { ChartingCDMS } from "components/Chart";
 import styles from "components/App/AppContainer.scss";
 import stylesCore from "_core/components/App/AppContainer.scss";
 import displayStyles from "_core/styles/display.scss";
@@ -109,19 +110,23 @@ export class AppContainer extends Component {
     }
 
     render() {
-        let hideMouse = this.props.mapControlsHidden && this.props.distractionFreeMode;
-        let containerClasses = MiscUtil.generateStringFromSet({
+        const hideMouse = this.props.mapControlsHidden && this.props.distractionFreeMode;
+        const containerClasses = MiscUtil.generateStringFromSet({
             [stylesCore.appContainer]: true,
             [displayStyles.mouseVisible]: !hideMouse,
             [displayStyles.mouseHidden]: hideMouse,
         });
 
-        let mapControlsClasses = MiscUtil.generateStringFromSet({
+        const mapControlsClasses = MiscUtil.generateStringFromSet({
             [styles.mapControls]: true,
             [styles.lifted]: this.props.animationOpen,
         });
 
-        let dataSubsettingClasses = MiscUtil.generateStringFromSet({
+        const dataSubsettingClasses = MiscUtil.generateStringFromSet({
+            [styles.lifted]: this.props.animationOpen,
+        });
+
+        const cdmsChartingClasses = MiscUtil.generateStringFromSet({
             [styles.lifted]: this.props.animationOpen,
         });
 
@@ -131,6 +136,7 @@ export class AppContainer extends Component {
                     <MapContainer />
                     <DatePickerContainer />
                     <DataSubsetting className={dataSubsettingClasses} />
+                    <ChartingCDMS className={cdmsChartingClasses} />
                     <MapControlsContainer className={mapControlsClasses} />
                     <div className={styles.layers}>
                         <InsituLayerMenu />

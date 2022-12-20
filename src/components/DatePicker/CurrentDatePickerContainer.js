@@ -10,6 +10,7 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import moment from "moment";
+import Paper from "@material-ui/core/Paper";
 import VideoIcon from "@material-ui/icons/Videocam";
 import Typography from "@material-ui/core/Typography";
 import RightIcon from "mdi-material-ui/MenuRight";
@@ -25,10 +26,10 @@ export class CurrentDatePickerContainer extends Component {
     render() {
         let containerClasses = MiscUtil.generateStringFromSet({
             [styles.root]: true,
-            [this.props.className]: typeof this.props.className !== "undefined"
+            [this.props.className]: typeof this.props.className !== "undefined",
         });
         return (
-            <div className={containerClasses}>
+            <Paper elevation={2} className={containerClasses}>
                 <div className={styles.hintRow}>
                     <Typography variant="caption" className={styles.intervalDate}>
                         {moment.utc(this.props.intervalDate).format("YYYY MMM DD, HH:mm UTC")}
@@ -67,7 +68,7 @@ export class CurrentDatePickerContainer extends Component {
                         </Tooltip>
                     </div>
                 </div>
-            </div>
+            </Paper>
         );
     }
 }
@@ -76,19 +77,19 @@ CurrentDatePickerContainer.propTypes = {
     date: PropTypes.object.isRequired,
     intervalDate: PropTypes.object.isRequired,
     mapActions: PropTypes.object.isRequired,
-    className: PropTypes.string
+    className: PropTypes.string,
 };
 
 function mapStateToProps(state) {
     return {
         date: state.map.get("date"),
-        intervalDate: state.map.get("intervalDate")
+        intervalDate: state.map.get("intervalDate"),
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        mapActions: bindActionCreators(mapActions, dispatch)
+        mapActions: bindActionCreators(mapActions, dispatch),
     };
 }
 

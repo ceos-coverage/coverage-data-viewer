@@ -23,8 +23,8 @@
     height: 4rem;
     padding: 0.5rem 1rem;
     background: darken(white, 3%);
-    border-top-left-radius: 2px;
-    border-top-right-radius: 2px;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
     border-bottom: 1px solid darken(white, 10%);
 }
 
@@ -37,6 +37,7 @@
     flex: 1 1;
     overflow: hidden;
     overflow-y: scroll;
+    max-height: 47.5rem;
 }
 
 .empty {

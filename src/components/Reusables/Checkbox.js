@@ -9,7 +9,8 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import CheckboxMui from "@material-ui/core/Checkbox";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
-import styles from "components/Chart/ChartSettings.scss";
+import styles from "components/Reusables/Chart.scss";
+import MiscUtil from "utils/MiscUtil";
 
 export class Checkbox extends Component {
     handleChange(checked) {
@@ -18,7 +19,12 @@ export class Checkbox extends Component {
         }
     }
     render() {
-        let { label, checked, onChange, color, ...other } = this.props;
+        const { label, checked, onChange, color, labelPlacement, fullWidth, ...other } = this.props;
+
+        const rootClass = MiscUtil.generateStringFromSet({
+            [styles.fullWidth]: fullWidth,
+        });
+
         return (
             <FormControlLabel
                 control={
@@ -28,7 +34,7 @@ export class Checkbox extends Component {
                         onChange={(evt, checked) => {
                             this.handleChange(checked);
                         }}
-                        onClick={evt => {
+                        onClick={(evt) => {
                             this.handleChange(!(evt.target.value === "true"));
                         }}
                         color={color || "primary"}
@@ -36,7 +42,9 @@ export class Checkbox extends Component {
                         tabIndex="-1"
                     />
                 }
+                labelPlacement={labelPlacement}
                 label={label}
+                className={rootClass}
             />
         );
     }
@@ -46,7 +54,7 @@ Checkbox.propTypes = {
     checked: PropTypes.bool.isRequired,
     label: PropTypes.string,
     color: PropTypes.string,
-    onChange: PropTypes.func
+    onChange: PropTypes.func,
 };
 
 export default Checkbox;

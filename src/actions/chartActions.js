@@ -455,6 +455,10 @@ export function blockChartAnimationUpdates(shouldBlock = true) {
     };
 }
 
+export function setCDMSChartingOptions(options) {
+    return { type: types.SET_CDMS_CHARTING_OPTIONS, options };
+}
+
 function initializeChart(id, formOptions, urls, dataStore) {
     return { type: types.INITIALIZE_CHART, id, formOptions, urls, dataStore };
 }

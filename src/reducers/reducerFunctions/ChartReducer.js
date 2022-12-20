@@ -194,4 +194,8 @@ export default class ChartReducer {
             .setIn(["formOptions", "variables", "shared"], action.sharedVariableSet)
             .setIn(["formOptions", "variables", "nonshared"], action.nonsharedVariableSet);
     }
+
+    static setCDMSChartingOptions(state, action) {
+        return state.set("cdmsCharting", state.get("cdmsCharting").mergeDeep(action.options));
+    }
 }

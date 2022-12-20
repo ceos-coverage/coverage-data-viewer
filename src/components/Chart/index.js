@@ -11,3 +11,4 @@ export { default as ChartSettings } from "components/Chart/ChartSettings.js";
 export { default as Chart } from "components/Chart/Chart.js";
 export { default as ChartsList } from "components/Chart/ChartsList.js";
 export { default as ChartMenu } from "components/Chart/ChartMenu.js";
+export { default as ChartingCDMS } from "components/Chart/ChartingCDMS.js";
