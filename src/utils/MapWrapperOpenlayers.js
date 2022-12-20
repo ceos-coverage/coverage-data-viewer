@@ -1559,7 +1559,9 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                         const layer = mapLayer.get("_layerRef");
                         if (layer && typeof mapLayer.getSource === "function") {
                             const source = mapLayer.getSource();
-                            const tileGrid = source.getTileGrid(); // the tilegrid will give us tile coordinates and extents
+                            const tileGrid =
+                                source.getTileGrid() ||
+                                source.getTileGridForProjection(source.getProjection()); // the tilegrid will give us tile coordinates and extents
                             const res = this.map.getView().getResolution();
                             const tileCoord = tileGrid.getTileCoordForCoordAndResolution(
                                 [coords.lat, coords.lon],
@@ -1648,9 +1650,8 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
                     layerFilter: (mapLayer) => {
                         return (
                             mapLayer.getVisible() &&
-                            mapLayer.get("_layerType") === appStringsCore.LAYER_GROUP_TYPE_DATA &&
-                            mapLayer.get("_layerRef").get("handleAs") ===
-                                appStringsCore.LAYER_GIBS_RASTER
+                            mapLayer.get("_layerRef") &&
+                            this.mapUtil.layerSupportsDynamicRaster(mapLayer.get("_layerRef"))
                         );
                     },
                 }
@@ -2449,7 +2450,8 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
         // are in the tileCache and have a loaded state
         let tilesTotal = 0;
         let tilesLoaded = 0;
-        let tileGrid = source.getTileGrid();
+        let tileGrid =
+            source.getTileGrid() || source.getTileGridForProjection(source.getProjection());
         let extent = this.map.getView().calculateExtent(this.map.getSize());
         let resolution = this.map.getView().getResolution();
         let zoom = tileGrid.getZForResolution(resolution);
@@ -2493,7 +2495,8 @@ export default class MapWrapperOpenlayers extends MapWrapperOpenlayersCore {
         // are in the tileCache and have a loaded state
         let tilesTotal = 0;
         let tilesLoaded = 0;
-        let tileGrid = source.getTileGrid();
+        let tileGrid =
+            source.getTileGrid() || source.getTileGridForProjection(source.getProjection());
         let extent = this.map.getView().calculateExtent(this.map.getSize());
         let resolution = this.map.getView().getResolution();
         let zoom = tileGrid.getZForResolution(resolution);

@@ -14,6 +14,7 @@ import * as appStringsCore from "_core/constants/appStrings";
 import * as appStrings from "constants/appStrings";
 import appConfig from "constants/appConfig";
 import MiscUtil from "utils/MiscUtil";
+import MapUtil from "utils/MapUtil";
 
 //IMPORTANT: Note that with Redux, state should NEVER be changed.
 //State is considered immutable. Instead,
@@ -223,11 +224,7 @@ export default class MapReducer extends MapReducerCore {
 
                     // extract satellite layer data
                     const satData = data.filter((entry) => {
-                        return (
-                            entry.getIn(["layer", "type"]) ===
-                                appStringsCore.LAYER_GROUP_TYPE_DATA &&
-                            entry.getIn(["layer", "handleAs"]) === appStringsCore.LAYER_GIBS_RASTER
-                        );
+                        return MapUtil.layerSupportsDynamicRaster(entry.get("layer"));
                     });
 
                     data = data
@@ -235,10 +232,7 @@ export default class MapReducer extends MapReducerCore {
                             return (
                                 entry.getIn(["layer", "type"]) ===
                                     appStrings.LAYER_GROUP_TYPE_DATA_REFERENCE ||
-                                (entry.getIn(["layer", "type"]) ===
-                                    appStringsCore.LAYER_GROUP_TYPE_DATA &&
-                                    entry.getIn(["layer", "handleAs"]) ===
-                                        appStringsCore.LAYER_GIBS_RASTER) ||
+                                MapUtil.layerSupportsDynamicRaster(entry.get("layer")) ||
                                 entry.getIn(["layer", "opacity"]) === 0
                             );
                         })

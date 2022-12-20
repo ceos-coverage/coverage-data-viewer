@@ -181,4 +181,18 @@ export default class MapUtil extends MapUtilCore {
         }
         return value;
     }
+
+    static layerSupportsDynamicRaster(layer) {
+        const handleAs = layer.get("handleAs");
+        const layerType = layer.get("type");
+        switch (handleAs) {
+            case appStringsCore.LAYER_WMTS_RASTER:
+            case appStringsCore.LAYER_WMS_RASTER:
+            case appStringsCore.LAYER_GIBS_RASTER:
+            case appStrings.LAYER_WMS_TILE_RASTER:
+                return layerType === appStringsCore.LAYER_GROUP_TYPE_DATA;
+            default:
+                return false;
+        }
+    }
 }

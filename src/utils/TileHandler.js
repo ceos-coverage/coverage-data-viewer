@@ -36,7 +36,17 @@ export default class TileHandler extends TileHandlerCore {
     }
 
     static _dataExtraction_OL(options) {
-        const { layer, mapLayer, tile, url, defaultFunc } = options;
+        const {
+            layer,
+            mapLayer,
+            tile: inputTile,
+            image: inputImage,
+            url: inputUrl,
+            defaultFunc,
+        } = options;
+
+        const tile = inputTile || inputImage;
+        const url = inputUrl || tile.src_;
 
         // state valued found in ol source
         const STATE_LOADING = 1;
@@ -69,7 +79,7 @@ export default class TileHandler extends TileHandlerCore {
             tile.state = STATE_LOADING;
             TileHandler._loadImage({
                 node: img,
-                url: tile.src_,
+                url: url,
                 extractData: true,
                 filterFunction: layer.get("filterFunction"),
             })
