@@ -16,14 +16,14 @@ import styles from "components/MouseFollower/DataDisplay.scss";
 export class BubblePointDataDisplay extends Component {
     render() {
         const featureSet = this.props.data.getIn(["properties", "oiipFeatureCollection"]);
-        const dataSet = featureSet.map(feature => {
+        const dataSet = featureSet.map((feature) => {
             const properties = feature.get("properties");
             const variable = this.props.data.getIn(["layer", "insituMeta", "variables", 0]);
             return {
                 dateStr: moment.utc(properties.get("dates")).format("MMM DD, YYYY"),
                 dataStr: `${(properties.get(variable.get("label")) || 0).toFixed(2)} ${variable.get(
                     "units"
-                )}`
+                )}`,
             };
         });
 
@@ -80,7 +80,7 @@ export class BubblePointDataDisplay extends Component {
                     </Grid>
                 </Grid>
                 <Grid container spacing={0}>
-                    <Grid item xs={3}>
+                    <Grid item xs={4}>
                         <Typography variant="caption" className={styles.paramLabel}>
                             Data:
                         </Typography>
@@ -99,7 +99,7 @@ export class BubblePointDataDisplay extends Component {
 }
 
 BubblePointDataDisplay.propTypes = {
-    data: PropTypes.object.isRequired
+    data: PropTypes.object.isRequired,
 };
 
 export default BubblePointDataDisplay;
