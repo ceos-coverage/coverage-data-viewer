@@ -335,8 +335,8 @@ export function clearSatelliteSearchFacet(facetGroup) {
 
 export function setTrackSelected(trackId, isSelected, track = null, noMerge = false) {
     return (dispatch, getState) => {
-        dispatch({ type: types.SET_TRACK_SELECTED, trackId, isSelected });
         if (isSelected) {
+            dispatch({ type: types.SET_TRACK_SELECTED, trackId, isSelected });
             let state = getState();
             track = track || state.view.getIn(["layerSearch", "searchResults", "results", trackId]);
             let titleField = state.map.get("insituLayerTitleField");
@@ -369,8 +369,10 @@ export function setTrackSelected(trackId, isSelected, track = null, noMerge = fa
                     })
                 )
             );
+            dispatch(chartActions.setCDMSTrackSelected(trackId, isSelected));
             dispatch(chartActions.setTrackSelected(trackId, isSelected));
             dispatch(subsettingActions.setTrackSelected(trackId, isSelected));
+            dispatch({ type: types.SET_TRACK_SELECTED, trackId, isSelected });
         }
     };
 }

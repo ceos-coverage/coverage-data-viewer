@@ -53,6 +53,9 @@ export default function chart(state = chartState, action, opt_reducer = ChartRed
         case actionTypes.SET_CDMS_CHARTING_OPTIONS:
             return opt_reducer.setCDMSChartingOptions(state, action);
 
+        case actionTypes.SET_CDMS_TRACK_SELECTED:
+            return opt_reducer.setCDMSTrackSelected(state, action);
+
         default:
             return state;
     }

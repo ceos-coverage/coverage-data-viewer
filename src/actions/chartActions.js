@@ -459,6 +459,10 @@ export function setCDMSChartingOptions(options) {
     return { type: types.SET_CDMS_CHARTING_OPTIONS, options };
 }
 
+export function setCDMSTrackSelected(trackId, isSelected, isPrimary = false) {
+    return { type: types.SET_CDMS_TRACK_SELECTED, trackId, isSelected, isPrimary };
+}
+
 function initializeChart(id, formOptions, urls, dataStore) {
     return { type: types.INITIALIZE_CHART, id, formOptions, urls, dataStore };
 }

@@ -198,4 +198,30 @@ export default class ChartReducer {
     static setCDMSChartingOptions(state, action) {
         return state.set("cdmsCharting", state.get("cdmsCharting").mergeDeep(action.options));
     }
+
+    static setCDMSTrackSelected(state, action) {
+        const { trackId, isSelected, isPrimary } = action;
+
+        if (isSelected) {
+            state = state.setIn(
+                ["cdmsCharting", "formOptions", isPrimary ? "primaryDataset" : "secondaryDataset"],
+                trackId
+            );
+        } else {
+            if (
+                state.getIn(["cdmsCharting", "formOptions", "primaryDataset"]) === trackId ||
+                isPrimary
+            ) {
+                state = state.setIn(["cdmsCharting", "formOptions", "primaryDataset"], undefined);
+            }
+            if (
+                state.getIn(["cdmsCharting", "formOptions", "secondaryDataset"]) === trackId &&
+                !isPrimary
+            ) {
+                state = state.setIn(["cdmsCharting", "formOptions", "secondaryDataset"], undefined);
+            }
+        }
+
+        return state;
+    }
 }
