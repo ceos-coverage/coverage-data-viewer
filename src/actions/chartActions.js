@@ -10,10 +10,12 @@ import moment from "moment";
 import * as appStrings from "constants/appStrings";
 import * as appStringsCore from "_core/constants/appStrings";
 import * as types from "constants/actionTypes";
+import { setMainMenuTabIndex, setMainMenuOpen } from "actions/appActions";
 import DataStore from "utils/DataStore";
 import ChartUtil from "utils/ChartUtil";
 import TrackDataUtil from "utils/TrackDataUtil";
 import DAGDataUtil from "utils/DAGDataUtil";
+import CDMSDataUtil from "utils/CDMSDataUtil";
 import appConfig from "constants/appConfig";
 
 export function setTrackSelected(trackId, isSelected) {
@@ -103,7 +105,7 @@ export function createChart() {
                     })
                     .sortBy((track) => track.title)
             );
-        } else {
+        } else if (formOptions.get("datasetType") === appStrings.CHART_DATASET_TYPE_SATELLITE) {
             formOptions = formOptions
                 .set(
                     "selectedTracks",
@@ -126,8 +128,22 @@ export function createChart() {
                 )
                 .set("startDate", state.subsetting.get("startDate"))
                 .set("endDate", state.subsetting.get("endDate"));
+        } else {
+            console.warn("ERROR: unrecognized chart dataset type");
         }
         dispatch(createChartFromOptions(formOptions));
+    };
+}
+
+export function createCDMSChart(options) {
+    return (dispatch) => {
+        dispatch(setMainMenuOpen(true));
+        dispatch(setMainMenuTabIndex(2));
+
+        // delay to deal with css issues
+        window.requestAnimationFrame(() => {
+            dispatch(createChartFromOptions(options));
+        });
     };
 }
 
@@ -187,7 +203,7 @@ export function createChartFromOptions(formOptions, displayOptions) {
                     dispatch(setChartLoading(chartId, false));
                 }
             );
-        } else {
+        } else if (formOptions.get("datasetType") === appStrings.CHART_DATASET_TYPE_SATELLITE) {
             const jsOptions = formOptions.toJS();
             let urls = DAGDataUtil.getUrlsForQuery(jsOptions);
             let dataStore = new DataStore({ workerManager: state.webWorker.get("workerManager") });
@@ -213,7 +229,7 @@ export function createChartFromOptions(formOptions, displayOptions) {
                 })
             ).then(
                 (dataArrs) => {
-                    console.log(dataArrs);
+                    console.log("chart data arrays", dataArrs);
                     // because the we didn't get proper form options pre-query, we remove the current chart and
                     // initialize a new one with the proper form options
                     const newFormOptions = formOptions
@@ -241,6 +257,64 @@ export function createChartFromOptions(formOptions, displayOptions) {
                     dispatch(setChartLoading(chartId, false));
                 }
             );
+        } else if (formOptions.get("datasetType") === appStrings.CHART_DATASET_TYPE_CDMS) {
+            console.log("GOING CDMS");
+            // TODO - make all this work and use it
+            const jsOptions = formOptions.toJS();
+            let urls = CDMSDataUtil.getUrlsForQuery(jsOptions.cdmsOptions);
+            let dataStore = new DataStore({ workerManager: state.webWorker.get("workerManager") });
+            let chartId = "chart_" + new Date().getTime();
+
+            dispatch(initializeChart(chartId, jsOptions, urls, dataStore));
+            dispatch(setChartLoading(chartId, true));
+
+            state = getState();
+            Promise.all(
+                urls.map((url) => {
+                    return dataStore.getData(
+                        {
+                            url: url,
+                            formatColumns: false,
+                            processMeta: false,
+                        },
+                        {
+                            target: -1,
+                            sourceFormat: appStrings.CDMS_DATA_FORMAT,
+                        }
+                    );
+                })
+            ).then(
+                (dataArrs) => {
+                    console.log("chart data arrays", dataArrs);
+                    // because the we didn't get proper form options pre-query, we remove the current chart and
+                    // initialize a new one with the proper form options
+                    const newFormOptions = formOptions
+                        .mergeDeep(CDMSDataUtil.deriveFormOptions(dataArrs))
+                        .toJS();
+                    dispatch(closeChart(chartId));
+                    dispatch(initializeChart(chartId, newFormOptions, urls, dataStore));
+                    dispatch(setChartLoading(chartId, true));
+
+                    // update the new chart with the newly arrived data
+                    dispatch(updateChartData(chartId, dataArrs));
+                    dispatch(setChartLoading(chartId, false));
+                    if (displayOptions) {
+                        dispatch(setChartDisplayOptions(chartId, displayOptions));
+                    }
+                },
+                (err) => {
+                    console.log(err);
+                    dispatch(
+                        updateChartData(chartId, {
+                            error: true,
+                            message: "Failed to get chart data",
+                        })
+                    );
+                    dispatch(setChartLoading(chartId, false));
+                }
+            );
+        } else {
+            console.warn("ERROR: unrecognized chart dataset type");
         }
     };
 }

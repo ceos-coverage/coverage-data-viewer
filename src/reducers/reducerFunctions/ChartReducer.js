@@ -106,7 +106,7 @@ export default class ChartReducer {
                 .setIn(["formOptions", "zAxisLabel"], axisLabels[2])
                 .set("displayOptions", chartModel.get("displayOptions").mergeDeep(cleverOptions));
             return state.setIn(["charts", action.id], chart);
-        } else {
+        } else if (action.formOptions.datasetType === appStrings.CHART_DATASET_TYPE_SATELLITE) {
             let chartType = appStrings.CHART_TYPES.SINGLE_SERIES;
             let title = action.formOptions.selectedTracks.map((track) => track.title).join(", ");
 
@@ -119,6 +119,7 @@ export default class ChartReducer {
                 .set("title", title)
                 .set("nodeId", "chartWrapper_" + action.id)
                 .set("data", [])
+                .set("dataLoading", true)
                 .set("dataStore", action.dataStore)
                 .set("urls", action.urls)
                 .set("chartType", chartType)
@@ -140,6 +141,48 @@ export default class ChartReducer {
                 // no zaxis support for satellite chart data
                 .set("displayOptions", chartModel.get("displayOptions").mergeDeep(cleverOptions));
             return state.setIn(["charts", action.id], chart);
+        } else if (action.formOptions.datasetType === appStrings.CHART_DATASET_TYPE_CDMS) {
+            let chartType = appStrings.CHART_TYPES.SINGLE_SERIES;
+            // let title = action.formOptions.selectedTracks.map((track) => track.title).join(", ");
+            let title = "CDMS Demo Chart";
+
+            // try to be clever with defaults
+            let cleverOptions = {};
+            cleverOptions.markerType = appStrings.PLOT_STYLES.TIME_SERIES.DOTS;
+
+            let chart = chartModel
+                .set("id", action.id)
+                .set("title", title)
+                .set("nodeId", "chartWrapper_" + action.id)
+                .set("data", [])
+                .set("dataStore", action.dataStore)
+                .set("urls", action.urls)
+                .set("chartType", chartType)
+                .setIn(["dataError", "error"], false)
+                .setIn(["dataError", "message"], "")
+
+                .setIn(["formOptions", "datasetType"], appStrings.CHART_DATASET_TYPE_CDMS)
+                .setIn(
+                    ["formOptions", "selectedTracks"],
+                    Immutable.List([
+                        action.formOptions.cdmsOptions.primaryDataset,
+                        action.formOptions.cdmsOptions.secondaryDataset,
+                    ])
+                )
+                .setIn(["formOptions", "selectedArea"], action.formOptions.cdmsOptions.area)
+                .setIn(["formOptions", "startDate"], action.formOptions.cdmsOptions.startDate)
+                .setIn(["formOptions", "endDate"], action.formOptions.cdmsOptions.endDate)
+                .setIn(["formOptions", "cdmsOptions"], action.formOptions.cdmsOptions)
+
+                .setIn(["formOptions", "xAxis"], action.formOptions.xAxis || "")
+                .setIn(["formOptions", "xAxisLabel"], action.formOptions.xAxisLabel || "")
+                .setIn(["formOptions", "yAxis"], action.formOptions.yAxis || "")
+                .setIn(["formOptions", "yAxisLabel"], action.formOptions.yAxisLabel || "")
+
+                .set("displayOptions", chartModel.get("displayOptions").mergeDeep(cleverOptions));
+            return state.setIn(["charts", action.id], chart);
+        } else {
+            console.warn("ERROR unrecognized chart dataset type");
         }
     }
 
@@ -208,17 +251,13 @@ export default class ChartReducer {
                 trackId
             );
         } else {
-            if (
-                state.getIn(["cdmsCharting", "formOptions", "primaryDataset"]) === trackId ||
-                isPrimary
-            ) {
-                state = state.setIn(["cdmsCharting", "formOptions", "primaryDataset"], undefined);
+            const primaryPath = ["cdmsCharting", "formOptions", "primaryDataset"];
+            const secondaryPath = ["cdmsCharting", "formOptions", "secondaryDataset"];
+            if (state.getIn(primaryPath) === trackId || isPrimary) {
+                state = state.setIn(primaryPath, undefined);
             }
-            if (
-                state.getIn(["cdmsCharting", "formOptions", "secondaryDataset"]) === trackId &&
-                !isPrimary
-            ) {
-                state = state.setIn(["cdmsCharting", "formOptions", "secondaryDataset"], undefined);
+            if (state.getIn(secondaryPath) === trackId && !isPrimary) {
+                state = state.setIn(secondaryPath, undefined);
             }
         }
 

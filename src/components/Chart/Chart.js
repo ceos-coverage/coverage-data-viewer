@@ -41,6 +41,7 @@ export class Chart extends Component {
                 .getIn(["formOptions", "selectedTracks"])
                 .map((track) => track.title)
                 .toJS(),
+            title: this.props.chart.get("title"),
             seriesNum: this.props.chart.getIn(["formOptions", "selectedTracks"]).size,
             // note: "decimation unknown",
             keys: {
@@ -238,7 +239,16 @@ export class Chart extends Component {
             this.props.chart.getIn(["formOptions", "datasetType"]) ===
             appStrings.CHART_DATASET_TYPE_INSITU;
 
+        const isDAGChart =
+            this.props.chart.getIn(["formOptions", "datasetType"]) ===
+            appStrings.CHART_DATASET_TYPE_SATELLITE;
+
+        const isCDMSChart =
+            this.props.chart.getIn(["formOptions", "datasetType"]) ===
+            appStrings.CHART_DATASET_TYPE_CDMS;
+
         const showDAGSummaryStats =
+            isDAGChart &&
             !this.props.chart.get("dataLoading") &&
             this.props.chart.getIn(["formOptions", "satelliteChartType"]) ===
                 appStrings.SATELLITE_CHART_TYPE_TIME_RANGE_HIST &&
@@ -264,7 +274,6 @@ export class Chart extends Component {
         const height = this.getHeight();
 
         const dagMeta = showDAGSummaryStats ? this.props.chart.get("data")[0].meta.dag_output : {};
-
         const dagStatKeys = [
             {
                 key: "count",

@@ -42,6 +42,8 @@ export default class WebWorker extends WebWorkerCore {
                 return this._decimateLTTB(message);
             case appStrings.WORKER_TASK_FORMAT_DAG_DATA:
                 return this._formatDataFromDAG(message);
+            case appStrings.WORKER_TASK_FORMAT_CDMS_DATA:
+                return this._formatDataFromCDMS(message);
             case appStrings.WORKER_TASK_CLEAR_CACHE_ENTRY:
                 return this._clearCacheEntry(message);
             default:
@@ -178,6 +180,53 @@ export default class WebWorker extends WebWorkerCore {
         });
     }
 
+    _formatDataFromCDMS(eventData) {
+        return new Promise((resolve, reject) => {
+            console.log("Formatting CDMS data");
+            const cdmsData = eventData.data
+                ? eventData.data
+                : eventData.url
+                ? this._remoteData[eventData.url].data
+                : [];
+
+            let chartDataObj = cdmsData.result.chart.find((x) => x.type === "xy_scatter_point");
+            if (!!!chartDataObj) {
+                // if we don't find an xy plot, give up
+                // TODO - handle other options
+                reject("Error with CDMS data: No scatter plot found");
+            }
+
+            let xySeriesData = chartDataObj.xySeries_data;
+            let xFunc = this._getReadFuncForKey(
+                chartDataObj.xAxis_units || chartDataObj.xAxis_type,
+                0
+            );
+            let yFunc = this._getReadFuncForKey(
+                chartDataObj.yAxis_units || chartDataObj.yAxis_type,
+                1
+            );
+
+            let data = this._transformRowData(xySeriesData, [xFunc, yFunc]);
+
+            const columns = [chartDataObj.xAxis_label, chartDataObj.yAxis_label];
+            this._remoteData[eventData.url].meta = {
+                columns,
+                dec_size: data.length,
+                sub_size: data.length,
+                cdms_output: chartDataObj,
+            };
+            this._processExtremes({
+                url: eventData.url,
+                dataRows: data,
+                keys: columns,
+                readKeys: [0, 1],
+                readFuncs: { [columns[0]]: xFunc, [columns[1]]: yFunc },
+            });
+
+            resolve({ data, meta: this._remoteData[eventData.url].meta });
+        });
+    }
+
     _decimateLTTB(eventData) {
         return new Promise((resolve, reject) => {
             const dataRows = eventData.dataRows
@@ -279,6 +328,8 @@ export default class WebWorker extends WebWorkerCore {
             // falls through
             case "position_date_time":
                 return this._readTime(key, readKey);
+            case "number":
+                return this._readFloat(key, readKey);
             default:
                 return this._readFloat(key, readKey);
         }

@@ -84,6 +84,9 @@ export const chartState = Immutable.fromJS({
             platformId: undefined,
             parameter: undefined,
             matchOnce: true,
+            primaryVariable: undefined,
+            secondaryVariable: undefined,
+            chartType: undefined,
         },
     },
 });

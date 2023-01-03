@@ -53,6 +53,13 @@ export default class DataStore {
                                               url: fetchOptions.url,
                                               format: decimateOptions.format,
                                           }
+                                        : decimateOptions.sourceFormat ===
+                                          appStrings.CDMS_DATA_FORMAT
+                                        ? {
+                                              operation: appStrings.WORKER_TASK_FORMAT_CDMS_DATA,
+                                              url: fetchOptions.url,
+                                              format: decimateOptions.format,
+                                          }
                                         : {
                                               operation:
                                                   appStrings.WORKER_TASK_DECIMATE_POINTS_LTTB,

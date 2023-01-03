@@ -10,6 +10,7 @@ import PropTypes from "prop-types";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import moment from "moment";
+import Immutable from "immutable";
 import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import TextField from "@material-ui/core/TextField";
@@ -18,7 +19,7 @@ import RadioGroup from "@material-ui/core/RadioGroup";
 import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
-import Grid from "@material-ui/core/Grid";
+import { chartModel } from "reducers/models/chart";
 import { LabelPopover, Checkbox, DateRangePicker, AreaSelectionInput } from "components/Reusables";
 import { LoadingSpinner } from "_core/components/Reusables";
 import styles from "components/Chart/ChartingCDMS.scss";
@@ -104,6 +105,7 @@ export class ChartingCDMS extends Component {
         const depthMax = this.props.cdmsCharting.getIn(["formOptions", "depthMax"]);
         const timeTolerance = this.props.cdmsCharting.getIn(["formOptions", "timeTolerance"]);
         const radiusTolerance = this.props.cdmsCharting.getIn(["formOptions", "radiusTolerance"]);
+        const matchOnce = this.props.cdmsCharting.getIn(["formOptions", "matchOnce"]);
         const startDate = this.props.subsettingOptions.get("startDate");
         const endDate = this.props.subsettingOptions.get("endDate");
         const area = this.props.searchOptions.get("selectedArea");
@@ -118,22 +120,49 @@ export class ChartingCDMS extends Component {
         if (primaryDataset && secondaryDataset && startDate && endDate && area) {
             try {
                 this.setState({ loading: true });
-                const cdmsResult = await CDMSDataUtil.getCDMSMatchup({
-                    primaryDataset,
-                    secondaryDataset,
-                    depthMin,
-                    depthMax,
-                    timeTolerance,
-                    radiusTolerance,
-                    startDate,
-                    endDate,
-                    area,
-                });
+
+                // const cdmsResult = await CDMSDataUtil.getCDMSMatchup({
+                //     primaryDataset,
+                //     secondaryDataset,
+                //     depthMin,
+                //     depthMax,
+                //     timeTolerance,
+                //     radiusTolerance,
+                //     startDate,
+                //     endDate,
+                //     area,
+                //     matchOnce,
+                // });
+
+                const chartFormOptions = chartModel
+                    .get("formOptions")
+                    .set("selectedTracks", []) // default
+                    .set("xAxis", undefined) // default
+                    .set("xAxisLabel", "") // default
+                    .set("yAxis", undefined) // default
+                    .set("yAxisLabel", "") // default
+                    .set("zAxis", undefined) // default
+                    .set("zAxisLabel", "") // default
+                    .set("satelliteChartType", appStrings.SATELLITE_CHART_TYPE_TIME_SERIES) // default
+                    .set("datasetType", appStrings.CHART_DATASET_TYPE_CDMS)
+                    .set("cdmsOptions", {
+                        primaryDataset,
+                        secondaryDataset,
+                        depthMin,
+                        depthMax,
+                        timeTolerance,
+                        radiusTolerance,
+                        startDate,
+                        endDate,
+                        area,
+                        matchOnce,
+                    });
+
+                this.props.chartActions.createCDMSChart(chartFormOptions);
 
                 this.setState({ loading: false });
 
-                const formattedResult = CDMSDataUtil.formatResults(cdmsResult);
-                console.log(formattedResult);
+                // const formattedResult = CDMSDataUtil.formatResults(cdmsResult);
             } catch (err) {
                 this.setState({ loading: false });
                 console.warn("WARN: failed to fetch CDMS matchup", err);

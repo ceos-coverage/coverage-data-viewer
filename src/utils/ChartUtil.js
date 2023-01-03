@@ -242,6 +242,7 @@ export default class ChartUtil {
             let data = options.data;
             let displayOptions = options.displayOptions;
             let seriesNum = options.seriesNum || 0;
+            seriesNum = 1; // TODO - do single series ever need multiple series?
             let seriesTitles = options.seriesTitles || [];
 
             let hoveredPoint = undefined;
@@ -297,6 +298,7 @@ export default class ChartUtil {
             let keys = options.keys;
             let displayOptions = options.displayOptions;
             let seriesNum = options.seriesNum || 0;
+            seriesNum = 1; // TODO - do single series ever need multiple series?
             let seriesTitles = options.seriesTitles || [];
 
             let hoveredPoint = undefined;
