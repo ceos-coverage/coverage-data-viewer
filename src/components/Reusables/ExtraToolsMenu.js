@@ -43,19 +43,23 @@ export class ExtraToolsMenu extends Component {
                         </ListItemIcon>
                         <ListItemText inset primary="Download Data" />
                     </MenuItem>
-                    <MenuItem
-                        className={styles.contextMenuItem}
-                        onClick={() => {
-                            this.props.subsettingActions.setSubsettingOptions({ isOpen: false });
-                            this.props.handleRequestClose();
-                        }}
-                        aria-label="CDMS: Advanced Charting"
-                    >
-                        <ListItemIcon classes={{ root: styles.listItemIcon }}>
-                            <GraphIcon />
-                        </ListItemIcon>
-                        <ListItemText inset primary="CDMS: Advanced Charting" />
-                    </MenuItem>
+                    {false ? (
+                        <MenuItem
+                            className={styles.contextMenuItem}
+                            onClick={() => {
+                                this.props.subsettingActions.setSubsettingOptions({
+                                    isOpen: false,
+                                });
+                                this.props.handleRequestClose();
+                            }}
+                            aria-label="CDMS: Advanced Charting"
+                        >
+                            <ListItemIcon classes={{ root: styles.listItemIcon }}>
+                                <GraphIcon />
+                            </ListItemIcon>
+                            <ListItemText inset primary="CDMS: Advanced Charting" />
+                        </MenuItem>
+                    ) : null}
                 </MenuList>
             </Paper>
         );

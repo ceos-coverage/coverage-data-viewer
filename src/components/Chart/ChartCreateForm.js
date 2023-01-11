@@ -218,34 +218,36 @@ export class ChartCreateForm extends Component {
             <Paper elevation={3} className={styles.root}>
                 <div className={styles.selectorRow}>
                     <div className={styles.options}>
-                        <LabelPopover
-                            label="Dataset Type"
-                            subtitle={this.props.formOptions.get("datasetType")}
-                            className={styles.chartOption}
-                        >
-                            <RadioGroup
-                                aria-labelledby="dataset-type-selector"
-                                value={this.props.formOptions.get("datasetType")}
-                                name="dataset-type-selector"
-                                onClick={(evt) => {
-                                    this.setChartDatasetType(evt.target.value);
-                                }}
-                                onChange={(evt) => this.setChartDatasetType(evt.target.value)}
+                        {false ? (
+                            <LabelPopover
+                                label="Dataset Type"
+                                subtitle={this.props.formOptions.get("datasetType")}
+                                className={styles.chartOption}
                             >
-                                <FormControlLabel
-                                    value={appStrings.CHART_DATASET_TYPE_INSITU}
-                                    control={<Radio color="primary" />}
-                                    label="In-Situ"
-                                    className={styles.varLabel}
-                                />
-                                <FormControlLabel
-                                    value={appStrings.CHART_DATASET_TYPE_SATELLITE}
-                                    control={<Radio color="primary" />}
-                                    label="Satellite"
-                                    className={styles.varLabel}
-                                />
-                            </RadioGroup>
-                        </LabelPopover>
+                                <RadioGroup
+                                    aria-labelledby="dataset-type-selector"
+                                    value={this.props.formOptions.get("datasetType")}
+                                    name="dataset-type-selector"
+                                    onClick={(evt) => {
+                                        this.setChartDatasetType(evt.target.value);
+                                    }}
+                                    onChange={(evt) => this.setChartDatasetType(evt.target.value)}
+                                >
+                                    <FormControlLabel
+                                        value={appStrings.CHART_DATASET_TYPE_INSITU}
+                                        control={<Radio color="primary" />}
+                                        label="In-Situ"
+                                        className={styles.varLabel}
+                                    />
+                                    <FormControlLabel
+                                        value={appStrings.CHART_DATASET_TYPE_SATELLITE}
+                                        control={<Radio color="primary" />}
+                                        label="Satellite"
+                                        className={styles.varLabel}
+                                    />
+                                </RadioGroup>
+                            </LabelPopover>
+                        ) : null}
                         <LabelPopover
                             label="Datasets"
                             subtitle={datasetsSubtitle}
